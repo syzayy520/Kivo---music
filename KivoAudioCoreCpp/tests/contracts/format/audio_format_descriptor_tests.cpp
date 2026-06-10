@@ -3,65 +3,32 @@
 // Tests for AudioFormatDescriptor contract type
 // =============================================================================
 
-#include "kivo/core/contract/audio_format_descriptor.hpp"
-#include <cassert>
-#include <iostream>
+#include "kivo/core/contract/format/audio_format_descriptor.hpp"
+#include "../contract_tests_main.h"
 
 using namespace kivo::core::contract;
 
 // =============================================================================
-// Test helpers
+// Tests
 // =============================================================================
-static int tests_run = 0;
-static int tests_passed = 0;
-
-#define TEST(name) \
-    do { \
-        tests_run++; \
-        std::cout << "  " << #name << "... "; \
-        try { \
-            name(); \
-            tests_passed++; \
-            std::cout << "PASS\n"; \
-        } catch (const std::exception& e) { \
-            std::cout << "FAIL: " << e.what() << "\n"; \
-        } \
-    } while(0)
-
-#define ASSERT(cond) \
-    do { \
-        if (!(cond)) { \
-            throw std::runtime_error("Assertion failed: " #cond); \
-        } \
-    } while(0)
-
-// =============================================================================
-// SampleFormat enum tests
-// =============================================================================
-void sample_format_values() {
+static void sample_format_values() {
     ASSERT(static_cast<uint8_t>(SampleFormat::Unknown) == 0);
     ASSERT(SampleFormat::Int16 != SampleFormat::Int24);
     ASSERT(SampleFormat::Float32 != SampleFormat::Float64);
 }
 
-// =============================================================================
-// ChannelLayout enum tests
-// =============================================================================
-void channel_layout_values() {
+static void channel_layout_values() {
     ASSERT(static_cast<uint8_t>(ChannelLayout::Unknown) == 0);
     ASSERT(ChannelLayout::Mono != ChannelLayout::Stereo);
     ASSERT(ChannelLayout::Surround51 != ChannelLayout::Surround71);
 }
 
-// =============================================================================
-// AudioFormatDescriptor tests
-// =============================================================================
-void default_construction_is_invalid() {
+static void default_construction_is_invalid() {
     AudioFormatDescriptor fmt;
     ASSERT(!fmt.is_valid());
 }
 
-void valid_format() {
+static void valid_format() {
     AudioFormatDescriptor fmt;
     fmt.sample_format = SampleFormat::Int16;
     fmt.channel_layout = ChannelLayout::Stereo;
@@ -70,7 +37,7 @@ void valid_format() {
     ASSERT(fmt.is_valid());
 }
 
-void invalid_zero_sample_rate() {
+static void invalid_zero_sample_rate() {
     AudioFormatDescriptor fmt;
     fmt.sample_format = SampleFormat::Int16;
     fmt.channel_layout = ChannelLayout::Stereo;
@@ -79,7 +46,7 @@ void invalid_zero_sample_rate() {
     ASSERT(!fmt.is_valid());
 }
 
-void invalid_zero_bits() {
+static void invalid_zero_bits() {
     AudioFormatDescriptor fmt;
     fmt.sample_format = SampleFormat::Int16;
     fmt.channel_layout = ChannelLayout::Stereo;
@@ -88,7 +55,7 @@ void invalid_zero_bits() {
     ASSERT(!fmt.is_valid());
 }
 
-void equality_same() {
+static void equality_same() {
     AudioFormatDescriptor a;
     a.sample_format = SampleFormat::Float32;
     a.channel_layout = ChannelLayout::Stereo;
@@ -99,7 +66,7 @@ void equality_same() {
     ASSERT(a == b);
 }
 
-void equality_different() {
+static void equality_different() {
     AudioFormatDescriptor a;
     a.sample_format = SampleFormat::Int16;
     a.channel_layout = ChannelLayout::Stereo;
@@ -116,20 +83,17 @@ void equality_different() {
 }
 
 // =============================================================================
-// Main
+// Runner
 // =============================================================================
-int main() {
-    std::cout << "audio_format_descriptor_tests:\n";
-
-    TEST(sample_format_values);
-    TEST(channel_layout_values);
-    TEST(default_construction_is_invalid);
-    TEST(valid_format);
-    TEST(invalid_zero_sample_rate);
-    TEST(invalid_zero_bits);
-    TEST(equality_same);
-    TEST(equality_different);
-
-    std::cout << "\n  " << tests_passed << "/" << tests_run << " passed\n";
-    return (tests_passed == tests_run) ? 0 : 1;
+void run_audio_format_descriptor_contract_tests(ContractTestRunner& runner) {
+    std::cout << "--- AudioFormatDescriptor ---\n";
+    runner.run("sample_format_values", sample_format_values);
+    runner.run("channel_layout_values", channel_layout_values);
+    runner.run("default_construction_is_invalid", default_construction_is_invalid);
+    runner.run("valid_format", valid_format);
+    runner.run("invalid_zero_sample_rate", invalid_zero_sample_rate);
+    runner.run("invalid_zero_bits", invalid_zero_bits);
+    runner.run("equality_same", equality_same);
+    runner.run("equality_different", equality_different);
+    std::cout << "\n";
 }

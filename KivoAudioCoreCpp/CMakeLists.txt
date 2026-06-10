@@ -45,6 +45,12 @@ target_compile_features(kivo_core_contract INTERFACE cxx_std_20)
 # Contract tests
 add_executable(kivo_contract_tests
     tests/contracts/contract_tests_main.cpp
+    tests/contracts/foundation/result_tests.cpp
+    tests/contracts/foundation/generation_id_tests.cpp
+    tests/contracts/foundation/sample_position_tests.cpp
+    tests/contracts/format/audio_format_descriptor_tests.cpp
+    tests/contracts/clock/clock_domain_tests.cpp
+    tests/contracts/seek/seek_flush_tests.cpp
 )
 target_link_libraries(kivo_contract_tests PRIVATE kivo_core_contract)
 target_compile_features(kivo_contract_tests PRIVATE cxx_std_20)

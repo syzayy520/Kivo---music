@@ -11,8 +11,8 @@
 
 #include <cstdint>
 
-#include "generation_id.hpp"
-#include "sample_position.hpp"
+#include "../generation_id.hpp"
+#include "../sample_position.hpp"
 
 namespace kivo::core::contract {
 

@@ -4,52 +4,25 @@
 // =============================================================================
 
 #include "kivo/core/contract/generation_id.hpp"
-#include <cassert>
-#include <iostream>
+#include "../contract_tests_main.h"
 
 using namespace kivo::core::contract;
 
 // =============================================================================
-// Test helpers
-// =============================================================================
-static int tests_run = 0;
-static int tests_passed = 0;
-
-#define TEST(name) \
-    do { \
-        tests_run++; \
-        std::cout << "  " << #name << "... "; \
-        try { \
-            name(); \
-            tests_passed++; \
-            std::cout << "PASS\n"; \
-        } catch (const std::exception& e) { \
-            std::cout << "FAIL: " << e.what() << "\n"; \
-        } \
-    } while(0)
-
-#define ASSERT(cond) \
-    do { \
-        if (!(cond)) { \
-            throw std::runtime_error("Assertion failed: " #cond); \
-        } \
-    } while(0)
-
-// =============================================================================
 // Tests
 // =============================================================================
-void initial_value_is_zero() {
+static void initial_value_is_zero() {
     auto g = GenerationId::initial();
     ASSERT(g.value() == 0);
 }
 
-void next_increments() {
+static void next_increments() {
     auto g0 = GenerationId::initial();
     auto g1 = GenerationId::next(g0);
     ASSERT(g1.value() == 1);
 }
 
-void next_chain() {
+static void next_chain() {
     auto g = GenerationId::initial();
     for (uint64_t i = 0; i < 100; ++i) {
         g = GenerationId::next(g);
@@ -57,24 +30,24 @@ void next_chain() {
     ASSERT(g.value() == 100);
 }
 
-void equality_reflexive() {
+static void equality_reflexive() {
     auto g = GenerationId::initial();
     ASSERT(g == g);
 }
 
-void equality_same_value() {
+static void equality_same_value() {
     auto a = GenerationId::next(GenerationId::initial());
     auto b = GenerationId::next(GenerationId::initial());
     ASSERT(a == b);
 }
 
-void inequality_different_value() {
+static void inequality_different_value() {
     auto a = GenerationId::initial();
     auto b = GenerationId::next(a);
     ASSERT(!(a == b));
 }
 
-void ordering() {
+static void ordering() {
     auto a = GenerationId::initial();
     auto b = GenerationId::next(a);
     ASSERT(a < b);
@@ -84,19 +57,16 @@ void ordering() {
 }
 
 // =============================================================================
-// Main
+// Runner
 // =============================================================================
-int main() {
-    std::cout << "generation_id_tests:\n";
-
-    TEST(initial_value_is_zero);
-    TEST(next_increments);
-    TEST(next_chain);
-    TEST(equality_reflexive);
-    TEST(equality_same_value);
-    TEST(inequality_different_value);
-    TEST(ordering);
-
-    std::cout << "\n  " << tests_passed << "/" << tests_run << " passed\n";
-    return (tests_passed == tests_run) ? 0 : 1;
+void run_generation_id_contract_tests(ContractTestRunner& runner) {
+    std::cout << "--- GenerationId ---\n";
+    runner.run("initial_value_is_zero", initial_value_is_zero);
+    runner.run("next_increments", next_increments);
+    runner.run("next_chain", next_chain);
+    runner.run("equality_reflexive", equality_reflexive);
+    runner.run("equality_same_value", equality_same_value);
+    runner.run("inequality_different_value", inequality_different_value);
+    runner.run("ordering", ordering);
+    std::cout << "\n";
 }

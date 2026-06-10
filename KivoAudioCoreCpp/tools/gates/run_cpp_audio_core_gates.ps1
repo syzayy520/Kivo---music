@@ -30,6 +30,7 @@ Write-Host ""
 $gates = @(
     @{ Name = "Forbidden Token Gate"; Script = "check_forbidden_token_gate.ps1" },
     @{ Name = "Genealogy Gate"; Script = "check_genealogy_gate.ps1" },
+    @{ Name = "Contract Genealogy Gate"; Script = "check_contract_genealogy_gate.ps1" },
     @{ Name = "No Empty Forest Gate"; Script = "check_no_empty_forest_gate.ps1" },
     @{ Name = "No Audio Runtime Gate"; Script = "check_no_audio_runtime_gate.ps1" },
     @{ Name = "Policy Substance Gate"; Script = "check_policy_substance_gate.ps1" },
