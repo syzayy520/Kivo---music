@@ -4,6 +4,7 @@
 # =============================================================================
 # Validates that include/kivo/core/contract/ and tests/contracts/ follow
 # the genealogy tree structure. Prevents flatness regression.
+# P0-012: capability/ composite family with exact allowlists.
 # =============================================================================
 
 param(
@@ -38,7 +39,8 @@ $allowedProductionRoot = @(
 $allowedProductionDirs = @(
     "format",
     "clock",
-    "seek"
+    "seek",
+    "capability"
 )
 
 if (Test-Path $contractRoot) {
@@ -61,18 +63,88 @@ if (Test-Path $contractRoot) {
 }
 
 # =============================================================================
-# Rule G3: Each production family subdir contains exactly 1 .hpp file
+# Rule G3: Single-file families contain exactly 1 .hpp with exact name
 # =============================================================================
-foreach ($dir in $allowedProductionDirs) {
+$singleFileFamilies = @{
+    "format" = @("audio_format_descriptor.hpp")
+    "clock"  = @("clock_domain.hpp")
+    "seek"   = @("seek_flush.hpp")
+}
+
+foreach ($dir in $singleFileFamilies.Keys) {
     $dirPath = Join-Path $contractRoot $dir
     if (Test-Path $dirPath) {
         $hppFiles = Get-ChildItem -Path $dirPath -Filter "*.hpp"
         if ($hppFiles.Count -ne 1) {
             $violations += "G3: Production family '$dir' should contain exactly 1 .hpp file, found $($hppFiles.Count)"
         }
+        foreach ($f in $hppFiles) {
+            if ($f.Name -notin $singleFileFamilies[$dir]) {
+                $violations += "G3: Unexpected file in production family '$dir': $($f.Name)"
+            }
+        }
     } else {
         $violations += "G3: Missing production family directory: include/kivo/core/contract/$dir/"
     }
+}
+
+# =============================================================================
+# Rule G3b: Capability composite family — root items
+# =============================================================================
+$capabilityRoot = Join-Path $contractRoot "capability"
+
+$allowedCapabilityRootItems = @(
+    "mod.hpp",
+    "identity",
+    "quality",
+    "constraint",
+    "component",
+    "domain",
+    "negotiation"
+)
+
+if (Test-Path $capabilityRoot) {
+    $items = Get-ChildItem -Path $capabilityRoot
+    foreach ($item in $items) {
+        if ($item.Name -notin $allowedCapabilityRootItems) {
+            $violations += "G3b: Unauthorized item in capability/ root: $($item.Name)"
+        }
+    }
+
+    # =========================================================================
+    # Rule G3c: Each capability subdirectory has exact file allowlist
+    # =========================================================================
+    $capabilitySubdirAllowlists = @{
+        "identity"    = @("scope.hpp", "subject.hpp", "source.hpp")
+        "quality"     = @("level.hpp", "confidence.hpp", "path.hpp")
+        "constraint"  = @("strictness.hpp", "memory.hpp", "buffer.hpp")
+        "component"   = @("profile.hpp", "requirement.hpp", "hdr.hpp", "decode.hpp", "render.hpp", "output.hpp")
+        "domain"      = @("source_caps.hpp", "clock.hpp", "thread.hpp", "conversion.hpp")
+        "negotiation" = @("candidate.hpp", "candidate_presence.hpp", "result.hpp", "constraints.hpp", "comparison.hpp")
+    }
+
+    foreach ($subdir in $capabilitySubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $capabilityRoot $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.hpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $capabilitySubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G3c: Unexpected file in capability/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G3c: Missing file in capability/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G3c: Missing capability subdirectory: capability/$subdir/"
+        }
+    }
+} else {
+    $violations += "G3b: Missing capability directory: include/kivo/core/contract/capability/"
 }
 
 # =============================================================================
@@ -89,7 +161,8 @@ $allowedTestDirs = @(
     "foundation",
     "format",
     "clock",
-    "seek"
+    "seek",
+    "capability"
 )
 
 if (Test-Path $testsRoot) {
@@ -119,6 +192,7 @@ $expectedTestFiles = @{
     "format"     = @("audio_format_descriptor_tests.cpp")
     "clock"      = @("clock_domain_tests.cpp")
     "seek"       = @("seek_flush_tests.cpp")
+    "capability" = @("capability_tests_main.cpp", "identity_tests.cpp", "quality_tests.cpp", "constraint_tests.cpp", "component_tests.cpp", "domain_tests.cpp", "negotiation_tests.cpp")
 }
 
 foreach ($dir in $allowedTestDirs) {

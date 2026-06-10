@@ -20,7 +20,7 @@ if (-not $ProjectRoot) {
 }
 
 Write-Host "============================================================================="
-Write-Host "KivoAudioCoreCpp — P0-C Gate Runner"
+Write-Host "KivoAudioCoreCpp — P0-C + P0-012 Gate Runner"
 Write-Host "============================================================================="
 Write-Host "PROJECT_ROOT: $ProjectRoot"
 Write-Host "Date: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"

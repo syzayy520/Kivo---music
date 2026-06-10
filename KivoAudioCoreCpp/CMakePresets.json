@@ -39,6 +39,13 @@
       "description": "Build contract tests.",
       "configurePreset": "p0c-contract-debug",
       "targets": ["kivo_contract_tests"]
+    },
+    {
+      "name": "p0c-capability-build",
+      "displayName": "P0-012 Capability Build",
+      "description": "Build capability tests.",
+      "configurePreset": "p0c-contract-debug",
+      "targets": ["kivo_capability_tests"]
     }
   ],
   "testPresets": [
@@ -46,6 +53,15 @@
       "name": "p0c-contract-test",
       "displayName": "P0-C Contract Test",
       "description": "Run contract tests.",
+      "configurePreset": "p0c-contract-debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "p0c-capability-test",
+      "displayName": "P0-012 Capability Test",
+      "description": "Run capability tests.",
       "configurePreset": "p0c-contract-debug",
       "output": {
         "outputOnFailure": true

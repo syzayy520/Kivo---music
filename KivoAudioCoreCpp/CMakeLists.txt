@@ -59,6 +59,27 @@ target_compile_options(kivo_contract_tests PRIVATE
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
 )
 
+# =============================================================================
+# P0-012: Capability Negotiation Foundation
+# =============================================================================
+# Capability contract tests (separate executable)
+add_executable(kivo_capability_tests
+    tests/contracts/capability/capability_tests_main.cpp
+    tests/contracts/capability/identity_tests.cpp
+    tests/contracts/capability/quality_tests.cpp
+    tests/contracts/capability/constraint_tests.cpp
+    tests/contracts/capability/component_tests.cpp
+    tests/contracts/capability/domain_tests.cpp
+    tests/contracts/capability/negotiation_tests.cpp
+)
+target_link_libraries(kivo_capability_tests PRIVATE kivo_core_contract)
+target_compile_features(kivo_capability_tests PRIVATE cxx_std_20)
+target_compile_options(kivo_capability_tests PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc /wd4127>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
+
 # Register with CTest
 enable_testing()
 add_test(NAME contract_tests COMMAND kivo_contract_tests)
+add_test(NAME capability_tests COMMAND kivo_capability_tests)

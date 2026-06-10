@@ -119,7 +119,7 @@ if (Test-Path $cmakePath) {
     $lines = $cmakeContent -split "`n"
     
     # Allowed P0-C target names
-    $allowedTargetNames = @("kivo_core_contract", "kivo_contract_tests", "contract_tests")
+    $allowedTargetNames = @("kivo_core_contract", "kivo_contract_tests", "contract_tests", "kivo_capability_tests")
     
     # Check for executable/library targets
     $targetPatterns = @("add_executable", "add_library")
@@ -163,7 +163,7 @@ Write-Host "--- Scan Scope ---"
 Write-Host "Checking: runtime directories, source files, CMake targets, vendor dirs"
 Write-Host "Excluding: docs/, tools/, .build/, .git/"
 Write-Host "P0-C Allowed: include/kivo/core/contract/, src/core/contract/, tests/contracts/"
-Write-Host "P0-C Allowed CMake: kivo_core_contract, kivo_contract_tests"
+Write-Host "P0-C Allowed CMake: kivo_core_contract, kivo_contract_tests, kivo_capability_tests"
 Write-Host ""
 
 $docMentions = 0
