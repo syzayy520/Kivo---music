@@ -1,8 +1,8 @@
-# P0-C Core Contract Foundation — Task Specification
+# P0-C Core Contract Foundation — Master Phase Plan
 
 **Task ID:** KIVO-CPP-AUDIO-CORE-P0-C-CONTRACT-FOUNDATION-001  
 **Phase:** P0-C  
-**Type:** implementation / contract-definition / foundation  
+**Type:** phase-plan / master-specification  
 **Execution Basis:** V10.1 FINAL P0-B READY LOCKED PATCHED + Enhancement Input Document  
 **Prerequisite:** P0-B GO_TO_P0_C_TASK_AUTHORING  
 **Date:** 2026-06-10  
@@ -10,12 +10,14 @@
 
 ---
 
-## 1. Task Objective
+## 1. Phase Objective
 
-Define and implement the playback semantics foundation for KivoAudioCoreCpp. P0-C establishes the core contract language that all subsequent phases (P0-D through P0-P) will speak. This includes:
+Define and implement the playback semantics foundation for KivoAudioCoreCpp. P0-C establishes the core contract language that all subsequent phases (P0-D through P0-P) will speak.
 
-- 14 core contract families
-- Type definitions (enums, structs, traits/interfaces)
+**P0-C scope includes:**
+- 14 core contract families (split across multiple tickets)
+- Contract build/test harness
+- Type definitions (enums, structs, classes)
 - Behavioral contracts and constraints
 - Platform-neutral abstractions
 - Comprehensive test coverage
@@ -23,15 +25,17 @@ Define and implement the playback semantics foundation for KivoAudioCoreCpp. P0-
 **P0-C does NOT:**
 - Implement real audio playback
 - Connect WASAPI, FFmpeg, or mpv
-- Create fake backends or test harnesses
-- Modify P0-B output files
-- Expand P0-B scope
+- Create fake backends, runtime backends, or real playback harnesses
+- P0-C MUST create contract build/test harness limited to core contract validation
+- Expand P0-B scope beyond contract definitions
 
 ---
 
 ## 2. Scope Definition
 
-### 2.1 Allowed
+### 2.1 P0-C Allowed Directories (New for P0-C)
+
+These directories are **P0-C newly authorized scope**. P0-B's prohibition on `src/` and `tests/` applied only to P0-B. P0-C authorizes:
 
 | Category | Allowed Content |
 |----------|-----------------|
@@ -42,7 +46,21 @@ Define and implement the playback semantics foundation for KivoAudioCoreCpp. P0-
 | **Dependencies** | Standard C++20 library only |
 | **Documentation** | Inline documentation in headers |
 
-### 2.2 Forbidden
+### 2.2 P0-C Allowed P0-B File Modifications
+
+P0-C may modify the following P0-B files **only when explicitly required** for contract build/test harness and closeout:
+
+| File | Allowed Modification |
+|------|---------------------|
+| `CMakeLists.txt` | Add contract library/test targets |
+| `CMakePresets.json` | Add contract build preset (if needed) |
+| `tools/gates/` | Add/update P0-C contract gates |
+| `docs/tasks/` | Task specifications |
+| `docs/closeout/` | Phase closeout reports |
+
+**No unauthorized modification to P0-B output files.**
+
+### 2.3 Forbidden
 
 | Category | Forbidden Content |
 |----------|-------------------|
@@ -53,6 +71,10 @@ Define and implement the playback semantics foundation for KivoAudioCoreCpp. P0-
 | **State machine** | No state machine implementation (P0-J scope) |
 | **Host integration** | No Tauri, no C ABI, no host callbacks |
 | **External dependencies** | No third-party libraries |
+| **Bucket directories** | No helper/utils/common/misc/glue/facade/types/defs |
+| **Empty forests** | No empty contract directories |
+| **Sample player** | No sample player, no demo |
+| **Runtime executable** | No runtime binary, no playback executable |
 
 ---
 
@@ -87,9 +109,89 @@ Define and implement the playback semantics foundation for KivoAudioCoreCpp. P0-
 
 ---
 
-## 4. Contract Family Specifications
+## 4. Ticket Decomposition
 
-### 4.1 Audio Time Model / Clock Domain Contract
+P0-C is decomposed into incremental tickets. Each ticket must be independently compilable, testable, and gate-compliant.
+
+### 4.1 P0-C-001: Contract Harness and Foundational Types
+
+**Ticket ID:** KIVO-CPP-AUDIO-CORE-P0-C-001-CONTRACT-HARNESS-AND-FOUNDATIONAL-TYPES  
+**Scope:** Minimal compilable contract foundation
+
+**Deliverables:**
+- Contract build/test harness (CMake targets)
+- `result` / `status` foundational types
+- `generation_id` type
+- `sample_position` / `frame_count` types
+- `audio_format_descriptor` minimal version
+- `clock_domain` minimal enum/snapshot
+- `seek_flush` minimal semantic enums
+- Contract tests for all above
+- Gate compliance (7/7 PASS)
+
+**Constraints:**
+- No WASAPI
+- No FFmpeg
+- No mpv
+- No fake backend
+- No runtime
+- No real playback
+
+### 4.2 P0-C-002: Clock Domain Contract (Full)
+
+**Ticket ID:** KIVO-CPP-AUDIO-CORE-P0-C-002-CLOCK-DOMAIN  
+**Scope:** Full clock domain contract from Section 1.1
+
+**Deliverables:**
+- All clock types (device_clock, stream_clock, timeline_clock, etc.)
+- Clock reset rules
+- Generation counter logic
+- Drift estimation types
+- Clock contract tests
+
+### 4.3 P0-C-003: Seek/Flush/Drain Contract
+
+**Ticket ID:** KIVO-CPP-AUDIO-CORE-P0-C-003-SEEK-FLUSH-DRAIN  
+**Scope:** Full seek/flush/drain contract from Section 1.2
+
+**Deliverables:**
+- Seek intent/target/accuracy types
+- Flush scope types
+- Drain semantics
+- Generation counter integration
+- Seek/flush contract tests
+
+### 4.4 P0-C-004: Format Negotiation Contract
+
+**Ticket ID:** KIVO-CPP-AUDIO-CORE-P0-C-004-FORMAT-NEGOTIATION  
+**Scope:** Format negotiation from Section 1.3
+
+**Deliverables:**
+- AudioFormatDescriptor (full)
+- SampleFormat, ChannelLayout, FrameLayout
+- FormatNegotiationResult, ConversionPolicy
+- BitPerfectEligibility
+- Format contract tests
+
+### 4.5 P0-C-005 through P0-C-014
+
+Remaining contract families to be decomposed in subsequent tickets:
+- P0-C-005: Output Policy / Bit-perfect Truth
+- P0-C-006: Realtime Thread / Ownership / Buffer Policy
+- P0-C-007: Queue / Buffer Ownership + Generation
+- P0-C-008: Source / IO Reader / Container Boundary
+- P0-C-009: CUE / Whole-File / Album Continuity Reservation
+- P0-C-010: Error Taxonomy / Recovery Matrix
+- P0-C-011: Playback State Machine Semantics
+- P0-C-012: Command Ordering / Cancellation / User Race
+- P0-C-013: Observability / Telemetry / Ring Trace
+- P0-C-014: Privacy / Security / Credential / License
+
+---
+
+## 5. Contract Family Reference Specifications
+
+### 5.1 Audio Time Model / Clock Domain Contract
 
 **Location:** `src/core/contract/clock/`
 
@@ -115,13 +217,7 @@ Define and implement the playback semantics foundation for KivoAudioCoreCpp. P0-
 - Windows `IAudioClock` only appears in P0-F WASAPI platform adapter
 - Core only accepts platform-neutral clock snapshots
 
-**Test requirements:**
-- Unit tests for all clock types
-- Behavior tests for clock reset rules
-- Generation counter increment tests
-- Drift estimation tests
-
-### 4.2 Seek / Flush / Drain Contract
+### 5.2 Seek / Flush / Drain Contract
 
 **Location:** `src/core/contract/seek/`
 
@@ -149,14 +245,7 @@ Define and implement the playback semantics foundation for KivoAudioCoreCpp. P0-
 - Seek/device reset must cause old-generation frames to naturally expire
 - Flush must have explicit scope, not "clear everything" brute semantics
 
-**Test requirements:**
-- Seek intent validation tests
-- Flush scope tests
-- Generation counter tests
-- Stale frame discard tests
-- State-specific seek behavior tests
-
-### 4.3 Audio Format Negotiation / Format Truth Contract
+### 5.3 Audio Format Negotiation / Format Truth Contract
 
 **Location:** `src/core/contract/format/`
 
@@ -184,14 +273,7 @@ Define and implement the playback semantics foundation for KivoAudioCoreCpp. P0-
 - Device format mismatch must NOT silently truncate
 - Channel remix must NOT silently happen
 
-**Test requirements:**
-- Format descriptor construction tests
-- Format comparison tests
-- Conversion policy tests
-- Bit-perfect eligibility tests
-- Platform neutrality verification tests
-
-### 4.4 Output Policy / Bit-perfect Truth Contract
+### 5.4 Output Policy / Bit-perfect Truth Contract
 
 **Location:** `src/core/contract/output/`
 
@@ -213,29 +295,11 @@ Define and implement the playback semantics foundation for KivoAudioCoreCpp. P0-
 - `DeviceFormatEqualsSourceFormat` — format match confirmation
 - `SampleTransparentPath` — no sample format conversion
 
-**Bit-perfect must answer:**
-- Is shared mode enabled?
-- Is exclusive mode enabled?
-- Does audio pass through Windows audio engine?
-- Does audio pass through resampler?
-- Does audio pass through ReplayGain?
-- Does audio pass through volume?
-- Does audio pass through DSP?
-- Is int/float conversion happening?
-- Is channel remix happening?
-- What is the final device format?
-
 **Constraints:**
 - Bit-perfect is NOT a UI slogan. It is a provable state.
 - mpv fallback does NOT participate in bit-perfect truth claims.
 
-**Test requirements:**
-- State transition tests
-- Bit-perfect eligibility tests
-- Truth matrix tests
-- Explanation generation tests
-
-### 4.5 Realtime Thread / Ownership / Buffer Policy
+### 5.5 Realtime Thread / Ownership / Buffer Policy
 
 **Location:** `src/core/contract/realtime/`
 
@@ -254,15 +318,8 @@ Define and implement the playback semantics foundation for KivoAudioCoreCpp. P0-
 **Constraints:**
 - No Windows API names in core contract types
 - MMCSS / AVRT / COM apartment / Windows thread priority belong to P0-F/H platform policy
-- Memory locking, page disable, PowerSetRequest are future evaluation items only, not P0-C hard requirements
 
-**Test requirements:**
-- Ownership transfer tests
-- SPSC semantics tests
-- Bounded transport tests
-- Policy violation detection tests
-
-### 4.6 Queue / Buffer Ownership + Generation Contract
+### 5.6 Queue / Buffer Ownership + Generation Contract
 
 **Location:** `src/core/contract/queue/`
 
@@ -289,13 +346,7 @@ Define and implement the playback semantics foundation for KivoAudioCoreCpp. P0-
 - Queue is NOT a UI queue
 - Playback queue / decode queue / render queue must be distinct
 
-**Test requirements:**
-- Ownership transfer tests
-- Generation counter tests
-- Stale data discard tests
-- Capacity management tests
-
-### 4.7 Source / IO Reader / Container Boundary
+### 5.7 Source / IO Reader / Container Boundary
 
 **Location:** `src/core/contract/source/`
 
@@ -313,33 +364,13 @@ Define and implement the playback semantics foundation for KivoAudioCoreCpp. P0-
 - `virtual_track` — a logical track (may span segments)
 - `cache_state` — cache status
 
-**Source capability flags:**
-- `seekable`, `range_readable`, `length_known`, `duration_known`
-- `read_ahead_supported`, `cancel_supported`
-- `temporary_failure`, `fatal_failure`, `network_disconnect`
-- `permission_denied`, `credential_required`
-- `cache_available`, `cache_partial`, `cache_stale`
-
-**Future source types (reserved, not implemented):**
-- `LocalFileSource`
-- `SMB_NAS_Source`
-- `WebDAV_Source`
-- `CloudDriveSource`
-- `CachedRemoteSource`
-
 **Constraints:**
 - AudioCore does NOT directly depend on NAS/WebDAV/cloud drive APIs
 - AudioCore does NOT handle accounts, cookies, token refresh
 - AudioCore does NOT handle media library indexing, cover art, lyrics, tags, UI metadata
 - Source / Container / StreamProvider is a boundary, not a media library
 
-**Test requirements:**
-- Capability flag tests
-- Error domain tests
-- Interface definition tests
-- Reservation verification tests
-
-### 4.8 CUE / Whole-File / Album Continuity Reservation
+### 5.8 CUE / Whole-File / Album Continuity Reservation
 
 **Location:** `src/core/contract/cue/`
 
@@ -361,12 +392,7 @@ Define and implement the playback semantics foundation for KivoAudioCoreCpp. P0-
 - They must enter through source/container/track_segment boundary
 - P0-L implements gapless, but P0-C/P0-G must reserve semantics now
 
-**Test requirements:**
-- Type definition tests
-- Reservation verification tests
-- Boundary tests
-
-### 4.9 Error Taxonomy / Recovery Matrix
+### 5.9 Error Taxonomy / Recovery Matrix
 
 **Location:** `src/core/contract/error/`
 
@@ -391,18 +417,7 @@ Define and implement the playback semantics foundation for KivoAudioCoreCpp. P0-
 - `metrics_event` — must record metric
 - `safe_cleanup_path` — cleanup sequence
 
-**Recovery actions:**
-- `Retry`, `Drain`, `Flush`, `ReopenDevice`, `ReconfigureFormat`
-- `SkipFrame`, `SkipTrack`, `StopPlayback`, `ReportToUser`
-- `RebuildSource`, `RebuildDecoder`, `RebuildRenderer`
-
-**Test requirements:**
-- Error domain tests
-- Attribute tests
-- Recovery action tests
-- Error mapping tests
-
-### 4.10 Playback State Machine Semantics
+### 5.10 Playback State Machine Semantics
 
 **Location:** `src/core/contract/state/`
 
@@ -420,13 +435,7 @@ Define and implement the playback semantics foundation for KivoAudioCoreCpp. P0-
 - Device lost during seek — must define
 - Host shutdown during drain — must define
 
-**Test requirements:**
-- State transition tests
-- Illegal transition tests
-- Edge case tests
-- Recovery path tests
-
-### 4.11 Command Ordering / Cancellation / User Race Contract
+### 5.11 Command Ordering / Cancellation / User Race Contract
 
 **Location:** `src/core/contract/command/`
 
@@ -446,13 +455,7 @@ Define and implement the playback semantics foundation for KivoAudioCoreCpp. P0-
 - Old commands must NOT pollute new playback sessions
 - Host/UI must NOT directly manipulate render queue
 
-**Test requirements:**
-- Command ordering tests
-- Cancellation tests
-- Race condition tests
-- Generation tests
-
-### 4.12 Observability / Telemetry / Ring Trace Contract
+### 5.12 Observability / Telemetry / Ring Trace Contract
 
 **Location:** `src/core/contract/telemetry/`
 
@@ -467,28 +470,12 @@ Define and implement the playback semantics foundation for KivoAudioCoreCpp. P0-
 - `source_read_latency_ms`, `cache_hit_ratio`, `network_retry_count`
 - `format_renegotiation_count`
 
-**Ring trace events (definition only):**
-- `OpenSource`, `OpenDevice`, `NegotiateFormat`, `StartStream`
-- `DecoderPush`, `QueuePop`, `RenderWrite`
-- `Underrun`, `Overrun`
-- `SeekBegin`, `FlushDecoder`, `FlushQueue`, `FlushRenderer`, `SeekCommit`
-- `Pause`, `Resume`, `Drain`
-- `DeviceLost`, `SourceLost`
-- `RecoverBegin`, `RecoverCommit`
-- `FormatChanged`, `FallbackRequested`, `FallbackRejected`
-
 **Constraints:**
 - Realtime thread must NOT write logs synchronously
 - Only lightweight in-memory aggregation or ring trace
 - Crash report / telemetry must NOT leak full user paths, song names, or account tokens
 
-**Test requirements:**
-- Metric definition tests
-- Ring trace event tests
-- Constraint verification tests
-- Privacy compliance tests
-
-### 4.13 Privacy / Security / Credential Boundary
+### 5.13 Privacy / Security / Credential Boundary
 
 **Location:** `src/core/contract/privacy/`
 
@@ -502,13 +489,7 @@ Define and implement the playback semantics foundation for KivoAudioCoreCpp. P0-
 - Credentials are managed by Host / Source Adapter
 - AudioCore only receives opaque source handles / capability snapshots
 
-**Test requirements:**
-- Token leakage tests
-- Path sanitization tests
-- Credential boundary tests
-- Telemetry opt-out tests
-
-### 4.14 License / Distribution / Binary Provenance Policy
+### 5.14 License / Distribution / Binary Provenance Policy
 
 **Location:** `src/core/contract/license/`
 
@@ -530,16 +511,11 @@ Define and implement the playback semantics foundation for KivoAudioCoreCpp. P0-
 - P0-B/P0-C do NOT connect mpv binaries
 - Any fallback runtime must have separate legal audit
 
-**Test requirements:**
-- License type tests
-- Provenance tracking tests
-- Policy enforcement tests
-
 ---
 
-## 5. Implementation Structure
+## 6. Implementation Structure
 
-### 5.1 Directory Layout
+### 6.1 Directory Layout
 
 ```
 KivoAudioCoreCpp/
@@ -596,7 +572,7 @@ KivoAudioCoreCpp/
         └── license_tests/
 ```
 
-### 5.2 CMake Targets
+### 6.2 CMake Targets
 
 ```cmake
 # Contract library (header-only or compiled)
@@ -611,9 +587,9 @@ add_test(NAME contract_tests COMMAND kivo_contract_tests)
 
 ---
 
-## 6. Acceptance Criteria
+## 7. Acceptance Criteria
 
-### 6.1 Functional Requirements
+### 7.1 Functional Requirements
 
 - [ ] All 14 contract families defined
 - [ ] All required types implemented as C++20 types (enums, structs, classes)
@@ -621,7 +597,7 @@ add_test(NAME contract_tests COMMAND kivo_contract_tests)
 - [ ] All constraints verified by tests
 - [ ] Platform neutrality maintained (no Windows/FFmpeg/mpv types)
 
-### 6.2 Quality Requirements
+### 7.2 Quality Requirements
 
 - [ ] 100% test coverage for contract types
 - [ ] All tests pass
@@ -629,126 +605,19 @@ add_test(NAME contract_tests COMMAND kivo_contract_tests)
 - [ ] Code follows .clang-format style
 - [ ] Documentation complete for all public APIs
 
-### 6.3 Scope Requirements
+### 7.3 Scope Requirements
 
 - [ ] No runtime implementation
 - [ ] No platform-specific code
 - [ ] No external dependencies
-- [ ] No modification to P0-B output
+- [ ] No unauthorized modification to P0-B output
 - [ ] No scope expansion beyond contract definitions
 
 ---
 
-## 7. Risk Assessment
+## 8. Validation Criteria
 
-### 7.1 Technical Risks
-
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Type design complexity | Medium | High | Iterative refinement, peer review |
-| Test coverage gaps | Low | Medium | Comprehensive test planning |
-| Platform neutrality violation | Low | High | Automated checks, code review |
-| Scope creep | Medium | High | Strict adherence to allowed list |
-
-### 7.2 Schedule Risks
-
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Underestimated complexity | Medium | Medium | Buffer time in schedule |
-| Dependency on P0-B | Low | High | P0-B already complete |
-| Resource availability | Low | Medium | Clear task breakdown |
-
----
-
-## 8. Testing Strategy
-
-### 8.1 Unit Tests
-
-- Type construction tests
-- Type comparison tests
-- Type conversion tests
-- Boundary value tests
-- Error condition tests
-
-### 8.2 Behavioral Contract Tests
-
-- State transition tests
-- Ownership transfer tests
-- Generation counter tests
-- Constraint verification tests
-- Edge case tests
-
-### 8.3 Integration Tests
-
-- Cross-contract interaction tests
-- Contract compatibility tests
-- API surface tests
-
----
-
-## 9. Documentation Requirements
-
-### 9.1 Inline Documentation
-
-- All public types documented
-- All public methods documented
-- All constraints documented
-- All examples provided
-
-### 9.2 API Reference
-
-- Generated from inline documentation
-- Searchable
-- Cross-referenced
-
-### 9.3 Usage Guide
-
-- Getting started guide
-- Common patterns
-- Best practices
-- Anti-patterns
-
----
-
-## 10. Delivery Schedule
-
-### 10.1 Milestones
-
-| Milestone | Description | Target Date |
-|-----------|-------------|-------------|
-| M1 | Contract structure setup | TBD |
-| M2 | Clock domain contract | TBD |
-| M3 | Seek/flush/drain contract | TBD |
-| M4 | Format negotiation contract | TBD |
-| M5 | Output policy contract | TBD |
-| M6 | Realtime/thread contract | TBD |
-| M7 | Queue/buffer contract | TBD |
-| M8 | Source/IO contract | TBD |
-| M9 | CUE/album reservation | TBD |
-| M10 | Error taxonomy | TBD |
-| M11 | State machine semantics | TBD |
-| M12 | Command ordering | TBD |
-| M13 | Telemetry contract | TBD |
-| M14 | Privacy/security contract | TBD |
-| M15 | License/provenance contract | TBD |
-| M16 | Integration testing | TBD |
-| M17 | Documentation completion | TBD |
-| M18 | Final validation | TBD |
-
-### 10.2 Deliverables
-
-- [ ] Contract library (header-only or compiled)
-- [ ] Contract test suite
-- [ ] API documentation
-- [ ] Usage guide
-- [ ] Test coverage report
-- [ ] Validation report
-
----
-
-## 11. Validation Criteria
-
-### 11.1 Gate Validation
+### 8.1 Gate Validation
 
 All P0-B gates must continue to pass:
 - Forbidden Token Gate: PASS
@@ -759,7 +628,7 @@ All P0-B gates must continue to pass:
 - Dependency/License Gate: PASS
 - Toolchain/Configure Gate: PASS
 
-### 11.2 Contract Validation
+### 8.2 Contract Validation
 
 - All contract types compile
 - All tests pass
@@ -767,48 +636,18 @@ All P0-B gates must continue to pass:
 - No external dependencies
 - No runtime implementation
 
-### 11.3 Scope Validation
-
-- Only `src/core/contract/`, `tests/contracts/`, `include/kivo/core/contract/` modified
-- No modification to P0-B output
-- No scope expansion
-
 ---
 
-## 12. Go / No-Go Criteria
+## 9. Post-P0-C Handoff
 
-### 12.1 Go Criteria
-
-- [ ] All 14 contract families defined
-- [ ] All tests pass
-- [ ] All gates pass
-- [ ] Scope validation passes
-- [ ] Documentation complete
-- [ ] No platform-specific code
-- [ ] No external dependencies
-
-### 12.2 No-Go Criteria
-
-- Any contract family missing
-- Any test failure
-- Any gate failure
-- Scope violation
-- Platform-specific code detected
-- External dependency added
-- Runtime implementation present
-
----
-
-## 13. Post-P0-C Handoff
-
-### 13.1 P0-D Dependencies
+### 9.1 P0-D Dependencies
 
 P0-D (Fake Backend Contract Proof) depends on:
 - All 14 contract families from P0-C
 - Test infrastructure from P0-C
 - Contract interfaces from P0-C
 
-### 13.2 P0-E Dependencies
+### 9.2 P0-E Dependencies
 
 P0-E (Render Boundary Contract) depends on:
 - Clock domain contract
@@ -816,39 +655,32 @@ P0-E (Render Boundary Contract) depends on:
 - Format negotiation contract
 - Queue/buffer ownership contract
 
-### 13.3 Documentation Handoff
-
-- Contract specification document
-- API reference
-- Usage guide
-- Test coverage report
-
 ---
 
-## 14. Appendix
+## 10. Appendix
 
-### 14.1 References
+### 10.1 References
 
 - V10.1 FINAL P0-B READY LOCKED PATCHED
 - P0-C through P0-I Enhancement Input Document
 - KivoAudioCoreCpp Policy Pack
 
-### 14.2 Glossary
+### 10.2 Glossary
 
 - **Contract**: A formal specification of types, behaviors, and constraints
 - **Platform-neutral**: No dependency on specific operating system or library
 - **Generation counter**: A monotonic counter incremented on state changes
 - **Stale data**: Data from a previous generation that should be discarded
 
-### 14.3 Change History
+### 10.3 Change History
 
 | Date | Version | Description |
 |------|---------|-------------|
-| 2026-06-10 | 1.0 | Initial task specification |
+| 2026-06-10 | 1.0 | Initial phase plan (downgraded from monolithic task spec) |
 
 ---
 
 **Task Status:** DRAFT  
-**Next Action:** Review and approval  
+**Next Action:** Create P0-C-001 ticket  
 **Responsible:** Project owner  
 **Approval Required:** Yes
