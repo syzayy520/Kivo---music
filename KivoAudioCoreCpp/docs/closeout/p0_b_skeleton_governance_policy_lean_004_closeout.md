@@ -76,31 +76,29 @@ NONE — zero files outside KivoAudioCoreCpp/ were modified.
 | No Audio Runtime | PASS | No src/, tests/, playback/, platform/ directories; NO_RUNTIME_CARRIER_FOUND |
 | Policy Substance | PASS | All 7 policy packs have Purpose/Scope/Allowed/Forbidden/Gate/Failure/Deferred; POLICY_SUBSTANCE_SMOKE_PASS |
 | Dependency/License | PASS | Zero third-party dependencies; no vendor/, third_party/, FetchContent |
-| Toolchain/Configure | PASS_CONFIGURE_SMOKE | CMake 3.24+ available; configure-only smoke passed |
+| Toolchain/Configure | ENVIRONMENT_BLOCKED_TOOLCHAIN_MISSING | CMake not found in PATH; classification: DOCS_AND_GATES_COMPLETE_BUT_NO_GO_TO_P0_C_UNTIL_TOOLCHAIN_CONFIRMED |
 
 **POLICY_SUBSTANCE_SMOKE_PASS only means minimum executable structure exists. It does not mean policy content is permanently frozen for all future phases.**
 
 ## 4. CMake Configure Smoke
 
-- **Status:** PASS_CONFIGURE_SMOKE
-- **CMake Version:** 3.24+ available
-- **Preset:** p0b-configure-smoke
-- **Configure Result:** SUCCESS
-- **What This Means:** CMake 3.24+ can parse the project structure
-- **What This Does NOT Mean:** This is NOT a build pass, NOT a test pass, NOT a runtime pass
+- **Status:** ENVIRONMENT_BLOCKED_TOOLCHAIN_MISSING
+- **CMake Version:** Not available in PATH
+- **What This Means:** CMake is not installed or not in PATH on this machine
+- **Impact:** Docs, gates, policy pack are complete; CMake configure cannot run until toolchain is available
 
-CONFIGURE_SMOKE_ONLY  
+DOCS_AND_GATES_COMPLETE_BUT_NO_GO_TO_P0_C_UNTIL_TOOLCHAIN_CONFIRMED  
 NO_BUILD_TARGETS  
 NO_RUNTIME_TARGETS  
 NO_TEST_TARGETS  
 
 ## 5. Git Status
 
-- **Branch:** main
+- **Branch:** master
 - **Working Tree:** CLEAN
-- **Local HEAD:** [TO_BE_FILLED_AFTER_COMMIT]
-- **Remote HEAD:** [TO_BE_FILLED_AFTER_PUSH]
-- **Push Status:** [TO_BE_FILLED]
+- **Local HEAD:** 11de8fa8fadfa7d146eacc8cb2f9edef33965056
+- **Remote HEAD:** 11de8fa8fadfa7d146eacc8cb2f9edef33965056 (local HEAD == remote HEAD)
+- **Push Status:** PUSHED_SUCCESSFULLY
 
 ## 6. Policy Substance
 
@@ -143,17 +141,20 @@ All 8 gate scripts:
 
 ## 9. Go / No-Go
 
-**Conclusion:** GO_TO_P0_C
+**Conclusion:** DOCS_AND_GATES_COMPLETE_BUT_NO_GO_TO_P0_C_UNTIL_TOOLCHAIN_CONFIRMED
 
 **Reasoning:**
-1. All structural/policy/scope gates PASS
-2. CMake configure smoke PASS
+1. All structural/policy/scope gates PASS (6/7)
+2. CMake configure smoke: ENVIRONMENT_BLOCKED_TOOLCHAIN_MISSING (CMake not in PATH)
 3. Working tree clean
 4. All policy packs have substantive content
 5. No scope violations, no runtime pollution
 6. No files modified outside PROJECT_ROOT
 7. No empty directories or placeholder policies
 8. .gitignore correctly scoped (not over-broad)
+9. Push completed: local HEAD == remote HEAD
+
+**Note:** This is NOT a NO_GO. All docs/gates/policy are complete. P0-C can begin once CMake 3.24+ toolchain is confirmed available. Project owner may accept the toolchain debt and update closeout to GO_TO_P0_C.
 
 ## 10. P0-B Risk / Deferred Items
 
@@ -234,4 +235,4 @@ V9 blockers retained (all 22).
 ---
 
 **Classification:** KIVO-CPP-AUDIO-CORE-P0-B-SKELETON-GOVERNANCE-POLICY-LEAN-004  
-SKELETON_POLICY_GOVERNANCE_COMPLETE_CONFIGURE_SMOKE_ONLY_NO_AUDIO_RUNTIME_PUSHED_SUCCESSFULLY
+DOCS_AND_GATES_COMPLETE_BUT_NO_GO_TO_P0_C_UNTIL_TOOLCHAIN_CONFIRMED
