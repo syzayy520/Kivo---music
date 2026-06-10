@@ -2,7 +2,7 @@
 
 **Version:** V10.1 FINAL P0-B READY LOCKED PATCHED  
 **Current Task:** KIVO-CPP-AUDIO-CORE-P0-B-SKELETON-GOVERNANCE-POLICY-LEAN-004  
-**Last Updated:** P0-B execution  
+**Last Updated:** Post-P0B enhancement input planning  
 
 ## 1. Version Declaration
 
@@ -65,3 +65,23 @@ P0-C first step: extend P0-B configure-only CMake to contract build/test harness
 - PROJECT_ROOT = KivoAudioCoreCpp/ (subdirectory of repo root)
 - Only files within PROJECT_ROOT may be modified
 - No modification of src-tauri/, React frontend, Rust audio backend, freeze docs, or any existing files outside PROJECT_ROOT
+
+## 9. Enhancement Input Reference
+
+**Document:** `docs/architecture/p0c_through_p0i_enhancement_input.md`  
+**Task:** KIVO-CPP-AUDIO-CORE-POST-P0B-P0C-P0I-CONTRACT-FOUNDATION-ENHANCEMENT-INPUT-002  
+**Type:** planning-only / post-p0b-review / next-phase-task-authoring-input  
+**Status:** COMPLETED
+
+**Coverage:**
+- P0-C: 14 contract families with full type/responsibility/constraint specification
+- P0-D: Fault injection system (18 injection capabilities)
+- P0-E: Failure-first testing (14 failure scenarios)
+- P0-F: WASAPI adapter shell (12 reservation items)
+- P0-G: Decode contract + FFmpeg seam (11 seam layers)
+- P0-H/P0-I: Anti-demo requirements
+- P0-K through P0-P: Deferred but reserved
+- mpv fallback boundary
+- NAS/WebDAV/cloud drive source boundary
+
+**Go / No-Go:** GO_TO_P0_C_TASK_AUTHORING
