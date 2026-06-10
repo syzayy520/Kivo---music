@@ -14,11 +14,11 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-# Resolve PROJECT_ROOT
+# Resolve PROJECT_ROOT — always resolve to absolute path
 if (-not $ProjectRoot) {
     $ProjectRoot = Join-Path $PSScriptRoot "..\.."
-    $ProjectRoot = Resolve-Path $ProjectRoot
 }
+$ProjectRoot = (Resolve-Path $ProjectRoot).Path
 
 Write-Host "=== Audio Core Scope Lock Gate ==="
 Write-Host "PROJECT_ROOT: $ProjectRoot"
