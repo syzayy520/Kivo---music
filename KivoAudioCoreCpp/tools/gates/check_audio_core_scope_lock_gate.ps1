@@ -129,19 +129,43 @@ foreach ($path in $forbiddenPaths) {
 }
 
 # =============================================================================
-# Section 5: P0-013 Unauthorized Device Contract Paths
+# Section 5: P0-013 Restricted Device Contract Paths
 # =============================================================================
-$p013ForbiddenPaths = @(
+# These paths are RESTRICTED (not permanently forbidden).
+# P0-013 is blocked until complete allowlist + dependency proof + audio-only confirmation.
+$p013RestrictedPaths = @(
     "src\device\contracts",
-    "tests\device\contracts",
-    "src\device",
-    "tests\device"
+    "tests\device\contracts"
 )
 
-foreach ($path in $p013ForbiddenPaths) {
+foreach ($path in $p013RestrictedPaths) {
     $fullPath = Join-Path $ProjectRoot $path
     if (Test-Path $fullPath) {
-        $violations += "P0_013_UNAUTHORIZED_BLOCKER: P0-013 path exists without allowlist: $path/"
+        $violations += "P0_013_RESTRICTED: $path/ exists — P0-013 is blocked until complete allowlist + dependency proof + audio-only confirmation"
+    }
+}
+
+# Restricted device tokens (audio device family, not video)
+$p013RestrictedTokens = @(
+    "DeviceId",
+    "DeviceCapabilitySnapshot",
+    "DeviceMemorySnapshot",
+    "RecoveryTimelineImpact"
+)
+
+foreach ($file in $sourceFiles) {
+    $content = Get-Content $file.FullName -Raw -ErrorAction SilentlyContinue
+    if ($content) {
+        foreach ($token in $p013RestrictedTokens) {
+            if ($content -match [regex]::Escape($token)) {
+                $relativePath = $file.FullName.Replace($ProjectRoot, "").TrimStart("\", "/")
+                # Skip docs/policy mentions
+                if ($relativePath -like "docs/*" -or $relativePath -like "tools/gates/*") {
+                    continue
+                }
+                $violations += "P0_013_RESTRICTED: $relativePath contains: $token — P0-013 is blocked until complete allowlist + dependency proof + audio-only confirmation"
+            }
+        }
     }
 }
 
@@ -173,7 +197,8 @@ Write-Host "Forbidden Video Renderer Tokens: Video Renderer, RenderFrame, Render
 Write-Host "Forbidden Video Surface Tokens: video surface, swapchain, framebuffer"
 Write-Host "Forbidden Video HDR Tokens: video HDR, HDR pipeline, HDR metadata"
 Write-Host "Forbidden Paths: src/render/contracts, tests/render/contracts, src/render, tests/render"
-Write-Host "Forbidden P0-013 Paths: src/device/contracts, tests/device/contracts, src/device, tests/device"
+Write-Host "Restricted P0-013 Paths: src/device/contracts, tests/device/contracts"
+Write-Host "Restricted P0-013 Tokens: DeviceId, DeviceCapabilitySnapshot, DeviceMemorySnapshot, RecoveryTimelineImpact"
 Write-Host "Allowed Audio Tokens: kivo_capability_tests, kivo_contract_tests, audio, clock, seek, format, source, memory, output, RenderClientBoundary"
 Write-Host ""
 
