@@ -49,18 +49,24 @@ add_executable(kivo_contract_tests
     tests/contracts/foundation/generation_id_tests.cpp
     tests/contracts/foundation/sample_position_tests.cpp
     tests/contracts/format/audio_format_descriptor_tests.cpp
-    tests/contracts/clock/clock_domain_tests.cpp
-    tests/contracts/clock/device_clock_tests.cpp
-    tests/contracts/clock/stream_clock_tests.cpp
-    tests/contracts/clock/timeline_clock_tests.cpp
-    tests/contracts/clock/position_tests.cpp
-    tests/contracts/clock/drift_estimate_tests.cpp
-    tests/contracts/clock/clock_policy_tests.cpp
-    tests/contracts/seek/seek_flush_tests.cpp
-    tests/contracts/seek/seek_intent_tests.cpp
-    tests/contracts/seek/seek_target_tests.cpp
-    tests/contracts/seek/seek_generation_tests.cpp
-    tests/contracts/seek/seek_policy_tests.cpp
+    tests/contracts/clock/domain/clock_domain_tests.cpp
+    tests/contracts/clock/domain/device_clock_tests.cpp
+    tests/contracts/clock/domain/stream_clock_tests.cpp
+    tests/contracts/clock/domain/timeline_clock_tests.cpp
+    tests/contracts/clock/position/decoded_position_tests.cpp
+    tests/contracts/clock/position/rendered_position_tests.cpp
+    tests/contracts/clock/drift/drift_estimate_tests.cpp
+    tests/contracts/clock/policy/pause_resume_freeze_policy_tests.cpp
+    tests/contracts/clock/policy/device_lost_position_report_rule_tests.cpp
+    tests/contracts/clock/policy/seek_clock_reset_rule_tests.cpp
+    tests/contracts/clock/policy/drain_eos_timeline_rule_tests.cpp
+    tests/contracts/clock/policy/gapless_timeline_continuity_rule_tests.cpp
+    tests/contracts/seek/flush/seek_flush_tests.cpp
+    tests/contracts/seek/intent/seek_intent_tests.cpp
+    tests/contracts/seek/target/seek_target_tests.cpp
+    tests/contracts/seek/generation/seek_generation_tests.cpp
+    tests/contracts/seek/policy/seek_anti_glitch_policy_tests.cpp
+    tests/contracts/seek/policy/stale_frame_discard_rule_tests.cpp
 )
 target_link_libraries(kivo_contract_tests PRIVATE kivo_core_contract)
 target_compile_features(kivo_contract_tests PRIVATE cxx_std_20)

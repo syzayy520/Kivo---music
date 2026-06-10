@@ -5,6 +5,7 @@
 # Validates that include/kivo/core/contract/ and tests/contracts/ follow
 # the genealogy tree structure. Prevents flatness regression.
 # P0-012: capability/ composite family with exact allowlists.
+# P0-C-002/003: clock/ and seek/ migrated to subdirectory trees.
 # =============================================================================
 
 param(
@@ -64,37 +65,10 @@ if (Test-Path $contractRoot) {
 
 # =============================================================================
 # Rule G3: Single-file families contain exactly 1 .hpp with exact name
-# Clock family expanded in P0-C-002
 # =============================================================================
 $singleFileFamilies = @{
     "format" = @("audio_format_descriptor.hpp")
 }
-
-# Seek family — multi-file (P0-C-003)
-$seekFamilyFiles = @(
-    "seek_flush.hpp",
-    "seek_intent.hpp",
-    "seek_target.hpp",
-    "seek_generation.hpp",
-    "seek_anti_glitch_policy.hpp",
-    "stale_frame_discard_rule.hpp"
-)
-
-# Clock family — multi-file (P0-C-002)
-$clockFamilyFiles = @(
-    "clock_domain.hpp",
-    "device_clock.hpp",
-    "stream_clock.hpp",
-    "timeline_clock.hpp",
-    "decoded_position.hpp",
-    "rendered_position.hpp",
-    "drift_estimate.hpp",
-    "pause_resume_freeze_policy.hpp",
-    "device_lost_position_report_rule.hpp",
-    "seek_clock_reset_rule.hpp",
-    "drain_eos_timeline_rule.hpp",
-    "gapless_timeline_continuity_rule.hpp"
-)
 
 foreach ($dir in $singleFileFamilies.Keys) {
     $dirPath = Join-Path $contractRoot $dir
@@ -113,44 +87,99 @@ foreach ($dir in $singleFileFamilies.Keys) {
     }
 }
 
-# Validate clock family (multi-file)
-$clockDir = Join-Path $contractRoot "clock"
-if (Test-Path $clockDir) {
-    $hppFiles = Get-ChildItem -Path $clockDir -Filter "*.hpp"
-    foreach ($f in $hppFiles) {
-        if ($f.Name -notin $clockFamilyFiles) {
-            $violations += "G3: Unexpected file in production family 'clock': $($f.Name)"
-        }
-    }
-    foreach ($f in $clockFamilyFiles) {
-        if ($f -notin ($hppFiles | ForEach-Object { $_.Name })) {
-            $violations += "G3: Missing file in production family 'clock': $f"
-        }
-    }
-} else {
-    $violations += "G3: Missing production family directory: include/kivo/core/contract/clock/"
+# =============================================================================
+# Rule G3a: Clock family — subdirectory tree with exact allowlists
+# =============================================================================
+$clockSubdirAllowlists = @{
+    "domain"   = @("clock_domain.hpp", "device_clock.hpp", "stream_clock.hpp", "timeline_clock.hpp")
+    "position" = @("decoded_position.hpp", "rendered_position.hpp")
+    "drift"    = @("drift_estimate.hpp")
+    "policy"   = @("pause_resume_freeze_policy.hpp", "device_lost_position_report_rule.hpp", "seek_clock_reset_rule.hpp", "drain_eos_timeline_rule.hpp", "gapless_timeline_continuity_rule.hpp")
 }
 
-# Validate seek family (multi-file)
-$seekDir = Join-Path $contractRoot "seek"
-if (Test-Path $seekDir) {
-    $hppFiles = Get-ChildItem -Path $seekDir -Filter "*.hpp"
-    foreach ($f in $hppFiles) {
-        if ($f.Name -notin $seekFamilyFiles) {
-            $violations += "G3: Unexpected file in production family 'seek': $($f.Name)"
+$clockDir = Join-Path $contractRoot "clock"
+if (Test-Path $clockDir) {
+    # Root must be empty of .hpp files (all in subdirectories)
+    $rootHpp = Get-ChildItem -Path $clockDir -Filter "*.hpp"
+    if ($rootHpp.Count -gt 0) {
+        foreach ($f in $rootHpp) {
+            $violations += "G3a: Production file at clock/ root (should be in subdirectory): $($f.Name)"
         }
     }
-    foreach ($f in $seekFamilyFiles) {
-        if ($f -notin ($hppFiles | ForEach-Object { $_.Name })) {
-            $violations += "G3: Missing file in production family 'seek': $f"
+
+    # Validate each subdirectory
+    foreach ($subdir in $clockSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $clockDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.hpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $clockSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G3a: Unexpected file in clock/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G3a: Missing file in clock/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G3a: Missing clock subdirectory: clock/$subdir/"
         }
     }
 } else {
-    $violations += "G3: Missing production family directory: include/kivo/core/contract/seek/"
+    $violations += "G3a: Missing production family directory: include/kivo/core/contract/clock/"
 }
 
 # =============================================================================
-# Rule G3b: Capability composite family — root items
+# Rule G3b: Seek family — subdirectory tree with exact allowlists
+# =============================================================================
+$seekSubdirAllowlists = @{
+    "flush"      = @("seek_flush.hpp")
+    "intent"     = @("seek_intent.hpp")
+    "target"     = @("seek_target.hpp")
+    "generation" = @("seek_generation.hpp")
+    "policy"     = @("seek_anti_glitch_policy.hpp", "stale_frame_discard_rule.hpp")
+}
+
+$seekDir = Join-Path $contractRoot "seek"
+if (Test-Path $seekDir) {
+    # Root must be empty of .hpp files (all in subdirectories)
+    $rootHpp = Get-ChildItem -Path $seekDir -Filter "*.hpp"
+    if ($rootHpp.Count -gt 0) {
+        foreach ($f in $rootHpp) {
+            $violations += "G3b: Production file at seek/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    # Validate each subdirectory
+    foreach ($subdir in $seekSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $seekDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.hpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $seekSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G3b: Unexpected file in seek/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G3b: Missing file in seek/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G3b: Missing seek subdirectory: seek/$subdir/"
+        }
+    }
+} else {
+    $violations += "G3b: Missing production family directory: include/kivo/core/contract/seek/"
+}
+
+# =============================================================================
+# Rule G3c: Capability composite family — root items
 # =============================================================================
 $capabilityRoot = Join-Path $contractRoot "capability"
 
@@ -168,12 +197,12 @@ if (Test-Path $capabilityRoot) {
     $items = Get-ChildItem -Path $capabilityRoot
     foreach ($item in $items) {
         if ($item.Name -notin $allowedCapabilityRootItems) {
-            $violations += "G3b: Unauthorized item in capability/ root: $($item.Name)"
+            $violations += "G3c: Unauthorized item in capability/ root: $($item.Name)"
         }
     }
 
     # =========================================================================
-    # Rule G3c: Each capability subdirectory has exact file allowlist
+    # Rule G3d: Each capability subdirectory has exact file allowlist
     # =========================================================================
     $capabilitySubdirAllowlists = @{
         "identity"    = @("scope.hpp", "subject.hpp", "source.hpp")
@@ -192,20 +221,20 @@ if (Test-Path $capabilityRoot) {
 
             foreach ($f in $actualFiles) {
                 if ($f -notin $expectedFiles) {
-                    $violations += "G3c: Unexpected file in capability/$subdir/: $f"
+                    $violations += "G3d: Unexpected file in capability/$subdir/: $f"
                 }
             }
             foreach ($f in $expectedFiles) {
                 if ($f -notin $actualFiles) {
-                    $violations += "G3c: Missing file in capability/$subdir/: $f"
+                    $violations += "G3d: Missing file in capability/$subdir/: $f"
                 }
             }
         } else {
-            $violations += "G3c: Missing capability subdirectory: capability/$subdir/"
+            $violations += "G3d: Missing capability subdirectory: capability/$subdir/"
         }
     }
 } else {
-    $violations += "G3b: Missing capability directory: include/kivo/core/contract/capability/"
+    $violations += "G3c: Missing capability directory: include/kivo/core/contract/capability/"
 }
 
 # =============================================================================
@@ -251,12 +280,11 @@ if (Test-Path $testsRoot) {
 $expectedTestFiles = @{
     "foundation" = @("result_tests.cpp", "generation_id_tests.cpp", "sample_position_tests.cpp")
     "format"     = @("audio_format_descriptor_tests.cpp")
-    "clock"      = @("clock_domain_tests.cpp", "device_clock_tests.cpp", "stream_clock_tests.cpp", "timeline_clock_tests.cpp", "position_tests.cpp", "drift_estimate_tests.cpp", "clock_policy_tests.cpp")
-    "seek"       = @("seek_flush_tests.cpp", "seek_intent_tests.cpp", "seek_target_tests.cpp", "seek_generation_tests.cpp", "seek_policy_tests.cpp")
     "capability" = @("capability_tests_main.cpp", "identity_tests.cpp", "quality_tests.cpp", "constraint_tests.cpp", "component_tests.cpp", "domain_tests.cpp", "negotiation_tests.cpp")
 }
 
-foreach ($dir in $allowedTestDirs) {
+# Single-file test families
+foreach ($dir in $expectedTestFiles.Keys) {
     $dirPath = Join-Path $testsRoot $dir
     if (Test-Path $dirPath) {
         $actualFiles = Get-ChildItem -Path $dirPath -Filter "*.cpp" | ForEach-Object { $_.Name }
@@ -275,6 +303,95 @@ foreach ($dir in $allowedTestDirs) {
     } else {
         $violations += "G6: Missing test family directory: tests/contracts/$dir/"
     }
+}
+
+# =============================================================================
+# Rule G6a: Clock test family — subdirectory tree with exact allowlists
+# =============================================================================
+$clockTestSubdirAllowlists = @{
+    "domain"   = @("clock_domain_tests.cpp", "device_clock_tests.cpp", "stream_clock_tests.cpp", "timeline_clock_tests.cpp")
+    "position" = @("decoded_position_tests.cpp", "rendered_position_tests.cpp")
+    "drift"    = @("drift_estimate_tests.cpp")
+    "policy"   = @("pause_resume_freeze_policy_tests.cpp", "device_lost_position_report_rule_tests.cpp", "seek_clock_reset_rule_tests.cpp", "drain_eos_timeline_rule_tests.cpp", "gapless_timeline_continuity_rule_tests.cpp")
+}
+
+$clockTestDir = Join-Path $testsRoot "clock"
+if (Test-Path $clockTestDir) {
+    # Root must be empty of .cpp files (all in subdirectories)
+    $rootCpp = Get-ChildItem -Path $clockTestDir -Filter "*.cpp"
+    if ($rootCpp.Count -gt 0) {
+        foreach ($f in $rootCpp) {
+            $violations += "G6a: Test file at clock/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    foreach ($subdir in $clockTestSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $clockTestDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.cpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $clockTestSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G6a: Unexpected test file in clock/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G6a: Missing test file in clock/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G6a: Missing clock test subdirectory: clock/$subdir/"
+        }
+    }
+} else {
+    $violations += "G6a: Missing test family directory: tests/contracts/clock/"
+}
+
+# =============================================================================
+# Rule G6b: Seek test family — subdirectory tree with exact allowlists
+# =============================================================================
+$seekTestSubdirAllowlists = @{
+    "flush"      = @("seek_flush_tests.cpp")
+    "intent"     = @("seek_intent_tests.cpp")
+    "target"     = @("seek_target_tests.cpp")
+    "generation" = @("seek_generation_tests.cpp")
+    "policy"     = @("seek_anti_glitch_policy_tests.cpp", "stale_frame_discard_rule_tests.cpp")
+}
+
+$seekTestDir = Join-Path $testsRoot "seek"
+if (Test-Path $seekTestDir) {
+    # Root must be empty of .cpp files (all in subdirectories)
+    $rootCpp = Get-ChildItem -Path $seekTestDir -Filter "*.cpp"
+    if ($rootCpp.Count -gt 0) {
+        foreach ($f in $rootCpp) {
+            $violations += "G6b: Test file at seek/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    foreach ($subdir in $seekTestSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $seekTestDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.cpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $seekTestSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G6b: Unexpected test file in seek/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G6b: Missing test file in seek/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G6b: Missing seek test subdirectory: seek/$subdir/"
+        }
+    }
+} else {
+    $violations += "G6b: Missing test family directory: tests/contracts/seek/"
 }
 
 # =============================================================================
