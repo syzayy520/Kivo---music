@@ -41,7 +41,8 @@ $allowedProductionDirs = @(
     "format",
     "clock",
     "seek",
-    "capability"
+    "capability",
+    "output"
 )
 
 if (Test-Path $contractRoot) {
@@ -282,6 +283,49 @@ if (Test-Path $formatDir) {
 }
 
 # =============================================================================
+# Rule G3f: Output family — subdirectory tree with exact allowlists
+# =============================================================================
+$outputSubdirAllowlists = @{
+    "truth"       = @("output_truth_snapshot.hpp", "bitperfect_truth_report.hpp", "bitperfect_rejection_reason.hpp")
+    "processing"  = @("processing_participation.hpp")
+    "path"        = @("device_format_match.hpp", "sample_transparency.hpp", "host_audio_engine_participation.hpp", "output_path_truth.hpp")
+    "decision"    = @("output_policy_decision.hpp", "output_policy_explanation.hpp")
+}
+
+$outputDir = Join-Path $contractRoot "output"
+if (Test-Path $outputDir) {
+    $rootHpp = Get-ChildItem -Path $outputDir -Filter "*.hpp"
+    if ($rootHpp.Count -gt 0) {
+        foreach ($f in $rootHpp) {
+            $violations += "G3f: Production file at output/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    foreach ($subdir in $outputSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $outputDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.hpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $outputSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G3f: Unexpected file in output/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G3f: Missing file in output/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G3f: Missing output subdirectory: output/$subdir/"
+        }
+    }
+} else {
+    $violations += "G3f: Missing production family directory: include/kivo/core/contract/output/"
+}
+
+# =============================================================================
 # Rule G4: Test root allows only runner files + family dirs
 # =============================================================================
 $testsRoot = Join-Path $ProjectRoot "tests\contracts"
@@ -296,7 +340,8 @@ $allowedTestDirs = @(
     "format",
     "clock",
     "seek",
-    "capability"
+    "capability",
+    "output"
 )
 
 if (Test-Path $testsRoot) {
@@ -478,6 +523,49 @@ if (Test-Path $formatTestDir) {
     }
 } else {
     $violations += "G6c: Missing test family directory: tests/contracts/format/"
+}
+
+# =============================================================================
+# Rule G6d: Output test family — subdirectory tree with exact allowlists
+# =============================================================================
+$outputTestSubdirAllowlists = @{
+    "truth"       = @("output_truth_snapshot_tests.cpp", "bitperfect_truth_report_tests.cpp", "bitperfect_rejection_reason_tests.cpp")
+    "processing"  = @("processing_participation_tests.cpp")
+    "path"        = @("device_format_match_tests.cpp", "sample_transparency_tests.cpp", "host_audio_engine_participation_tests.cpp", "output_path_truth_tests.cpp")
+    "decision"    = @("output_policy_decision_tests.cpp", "output_policy_explanation_tests.cpp")
+}
+
+$outputTestDir = Join-Path $testsRoot "output"
+if (Test-Path $outputTestDir) {
+    $rootCpp = Get-ChildItem -Path $outputTestDir -Filter "*.cpp"
+    if ($rootCpp.Count -gt 0) {
+        foreach ($f in $rootCpp) {
+            $violations += "G6d: Test file at output/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    foreach ($subdir in $outputTestSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $outputTestDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.cpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $outputTestSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G6d: Unexpected test file in output/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G6d: Missing test file in output/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G6d: Missing output test subdirectory: output/$subdir/"
+        }
+    }
+} else {
+    $violations += "G6d: Missing test family directory: tests/contracts/output/"
 }
 
 # =============================================================================

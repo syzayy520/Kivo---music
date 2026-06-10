@@ -46,6 +46,16 @@ void run_seek_target_tests(ContractTestRunner& runner);
 void run_seek_generation_tests(ContractTestRunner& runner);
 void run_seek_anti_glitch_policy_tests(ContractTestRunner& runner);
 void run_stale_frame_discard_rule_tests(ContractTestRunner& runner);
+void run_output_truth_snapshot_tests(ContractTestRunner& runner);
+void run_bitperfect_truth_report_tests(ContractTestRunner& runner);
+void run_bitperfect_rejection_reason_tests(ContractTestRunner& runner);
+void run_processing_participation_tests(ContractTestRunner& runner);
+void run_device_format_match_tests(ContractTestRunner& runner);
+void run_sample_transparency_tests(ContractTestRunner& runner);
+void run_host_audio_engine_participation_tests(ContractTestRunner& runner);
+void run_output_path_truth_tests(ContractTestRunner& runner);
+void run_output_policy_decision_tests(ContractTestRunner& runner);
+void run_output_policy_explanation_tests(ContractTestRunner& runner);
 
 // =============================================================================
 // Main
@@ -90,6 +100,16 @@ int main() {
     run_seek_generation_tests(runner);
     run_seek_anti_glitch_policy_tests(runner);
     run_stale_frame_discard_rule_tests(runner);
+    run_output_truth_snapshot_tests(runner);
+    run_bitperfect_truth_report_tests(runner);
+    run_bitperfect_rejection_reason_tests(runner);
+    run_processing_participation_tests(runner);
+    run_device_format_match_tests(runner);
+    run_sample_transparency_tests(runner);
+    run_host_audio_engine_participation_tests(runner);
+    run_output_path_truth_tests(runner);
+    run_output_policy_decision_tests(runner);
+    run_output_policy_explanation_tests(runner);
 
     std::cout << "=== " << runner.tests_passed << "/" << runner.tests_run << " passed ===\n";
     return runner.exit_code();

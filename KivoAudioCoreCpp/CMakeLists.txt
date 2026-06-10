@@ -80,6 +80,16 @@ add_executable(kivo_contract_tests
     tests/contracts/seek/generation/seek_generation_tests.cpp
     tests/contracts/seek/policy/seek_anti_glitch_policy_tests.cpp
     tests/contracts/seek/policy/stale_frame_discard_rule_tests.cpp
+    tests/contracts/output/truth/output_truth_snapshot_tests.cpp
+    tests/contracts/output/truth/bitperfect_truth_report_tests.cpp
+    tests/contracts/output/truth/bitperfect_rejection_reason_tests.cpp
+    tests/contracts/output/processing/processing_participation_tests.cpp
+    tests/contracts/output/path/device_format_match_tests.cpp
+    tests/contracts/output/path/sample_transparency_tests.cpp
+    tests/contracts/output/path/host_audio_engine_participation_tests.cpp
+    tests/contracts/output/path/output_path_truth_tests.cpp
+    tests/contracts/output/decision/output_policy_decision_tests.cpp
+    tests/contracts/output/decision/output_policy_explanation_tests.cpp
 )
 target_link_libraries(kivo_contract_tests PRIVATE kivo_core_contract)
 target_compile_features(kivo_contract_tests PRIVATE cxx_std_20)
