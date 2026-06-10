@@ -23,6 +23,10 @@ void run_timeline_clock_tests(ContractTestRunner& runner);
 void run_position_tests(ContractTestRunner& runner);
 void run_drift_estimate_tests(ContractTestRunner& runner);
 void run_clock_policy_tests(ContractTestRunner& runner);
+void run_seek_intent_tests(ContractTestRunner& runner);
+void run_seek_target_tests(ContractTestRunner& runner);
+void run_seek_generation_tests(ContractTestRunner& runner);
+void run_seek_policy_tests(ContractTestRunner& runner);
 
 // =============================================================================
 // Main
@@ -44,6 +48,10 @@ int main() {
     run_position_tests(runner);
     run_drift_estimate_tests(runner);
     run_clock_policy_tests(runner);
+    run_seek_intent_tests(runner);
+    run_seek_target_tests(runner);
+    run_seek_generation_tests(runner);
+    run_seek_policy_tests(runner);
 
     std::cout << "=== " << runner.tests_passed << "/" << runner.tests_run << " passed ===\n";
     return runner.exit_code();

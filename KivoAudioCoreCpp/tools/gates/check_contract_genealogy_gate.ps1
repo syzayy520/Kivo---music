@@ -68,8 +68,17 @@ if (Test-Path $contractRoot) {
 # =============================================================================
 $singleFileFamilies = @{
     "format" = @("audio_format_descriptor.hpp")
-    "seek"   = @("seek_flush.hpp")
 }
+
+# Seek family — multi-file (P0-C-003)
+$seekFamilyFiles = @(
+    "seek_flush.hpp",
+    "seek_intent.hpp",
+    "seek_target.hpp",
+    "seek_generation.hpp",
+    "seek_anti_glitch_policy.hpp",
+    "stale_frame_discard_rule.hpp"
+)
 
 # Clock family — multi-file (P0-C-002)
 $clockFamilyFiles = @(
@@ -120,6 +129,24 @@ if (Test-Path $clockDir) {
     }
 } else {
     $violations += "G3: Missing production family directory: include/kivo/core/contract/clock/"
+}
+
+# Validate seek family (multi-file)
+$seekDir = Join-Path $contractRoot "seek"
+if (Test-Path $seekDir) {
+    $hppFiles = Get-ChildItem -Path $seekDir -Filter "*.hpp"
+    foreach ($f in $hppFiles) {
+        if ($f.Name -notin $seekFamilyFiles) {
+            $violations += "G3: Unexpected file in production family 'seek': $($f.Name)"
+        }
+    }
+    foreach ($f in $seekFamilyFiles) {
+        if ($f -notin ($hppFiles | ForEach-Object { $_.Name })) {
+            $violations += "G3: Missing file in production family 'seek': $f"
+        }
+    }
+} else {
+    $violations += "G3: Missing production family directory: include/kivo/core/contract/seek/"
 }
 
 # =============================================================================
@@ -225,7 +252,7 @@ $expectedTestFiles = @{
     "foundation" = @("result_tests.cpp", "generation_id_tests.cpp", "sample_position_tests.cpp")
     "format"     = @("audio_format_descriptor_tests.cpp")
     "clock"      = @("clock_domain_tests.cpp", "device_clock_tests.cpp", "stream_clock_tests.cpp", "timeline_clock_tests.cpp", "position_tests.cpp", "drift_estimate_tests.cpp", "clock_policy_tests.cpp")
-    "seek"       = @("seek_flush_tests.cpp")
+    "seek"       = @("seek_flush_tests.cpp", "seek_intent_tests.cpp", "seek_target_tests.cpp", "seek_generation_tests.cpp", "seek_policy_tests.cpp")
     "capability" = @("capability_tests_main.cpp", "identity_tests.cpp", "quality_tests.cpp", "constraint_tests.cpp", "component_tests.cpp", "domain_tests.cpp", "negotiation_tests.cpp")
 }
 

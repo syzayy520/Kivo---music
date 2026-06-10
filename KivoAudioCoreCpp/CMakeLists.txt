@@ -57,6 +57,10 @@ add_executable(kivo_contract_tests
     tests/contracts/clock/drift_estimate_tests.cpp
     tests/contracts/clock/clock_policy_tests.cpp
     tests/contracts/seek/seek_flush_tests.cpp
+    tests/contracts/seek/seek_intent_tests.cpp
+    tests/contracts/seek/seek_target_tests.cpp
+    tests/contracts/seek/seek_generation_tests.cpp
+    tests/contracts/seek/seek_policy_tests.cpp
 )
 target_link_libraries(kivo_contract_tests PRIVATE kivo_core_contract)
 target_compile_features(kivo_contract_tests PRIVATE cxx_std_20)
