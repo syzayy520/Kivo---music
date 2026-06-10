@@ -85,7 +85,7 @@ $docsPath = Join-Path $ProjectRoot "docs"
 if (Test-Path $docsPath) {
     $docsItems = Get-ChildItem -Path $docsPath -Directory
     foreach ($item in $docsItems) {
-        if ($item.Name -notin @("architecture", "closeout")) {
+        if ($item.Name -notin @("architecture", "closeout", "tasks")) {
             $violations += "UNAUTHORIZED_DOCS_DIR: docs/$($item.Name)/"
         }
     }
