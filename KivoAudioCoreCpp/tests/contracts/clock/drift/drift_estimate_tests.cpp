@@ -3,8 +3,8 @@
 // Tests for DriftEstimate contract type
 // =============================================================================
 
-#include "kivo/core/contract/clock/drift_estimate.hpp"
-#include "../contract_tests_main.h"
+#include "kivo/core/contract/clock/drift/drift_estimate.hpp"
+#include "../../contract_tests_main.h"
 
 using namespace kivo::core::contract;
 

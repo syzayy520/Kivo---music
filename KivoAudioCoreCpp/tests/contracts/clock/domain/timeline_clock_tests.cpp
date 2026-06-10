@@ -3,8 +3,8 @@
 // Tests for TimelineClock contract type
 // =============================================================================
 
-#include "kivo/core/contract/clock/timeline_clock.hpp"
-#include "../contract_tests_main.h"
+#include "kivo/core/contract/clock/domain/timeline_clock.hpp"
+#include "../../contract_tests_main.h"
 
 using namespace kivo::core::contract;
 

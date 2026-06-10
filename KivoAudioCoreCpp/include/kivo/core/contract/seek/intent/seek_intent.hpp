@@ -32,8 +32,8 @@ struct SeekIntent {
 
     // --- Validity check ---
     [[nodiscard]] bool is_valid() const noexcept {
-        // Absolute seek with offset 0 is a no-op (invalid intent)
-        if (origin == SeekOrigin::Absolute && offset == 0) return false;
+        // Absolute seek with negative offset is invalid (can't seek before start)
+        if (origin == SeekOrigin::Absolute && offset < 0) return false;
         return true;
     }
 

@@ -9,9 +9,9 @@
 
 #pragma once
 
-#include "../sample_position.hpp"
-#include "../generation_id.hpp"
-#include "seek_flush.hpp"
+#include "../../sample_position.hpp"
+#include "../../generation_id.hpp"
+#include "../flush/seek_flush.hpp"
 
 namespace kivo::core::contract {
 

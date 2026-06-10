@@ -3,8 +3,8 @@
 // Tests for DeviceClock contract type
 // =============================================================================
 
-#include "kivo/core/contract/clock/device_clock.hpp"
-#include "../contract_tests_main.h"
+#include "kivo/core/contract/clock/domain/device_clock.hpp"
+#include "../../contract_tests_main.h"
 
 using namespace kivo::core::contract;
 

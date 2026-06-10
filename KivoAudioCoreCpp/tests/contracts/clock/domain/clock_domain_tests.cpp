@@ -3,8 +3,8 @@
 // Tests for ClockDomain/ClockSnapshot contract types
 // =============================================================================
 
-#include "kivo/core/contract/clock/clock_domain.hpp"
-#include "../contract_tests_main.h"
+#include "kivo/core/contract/clock/domain/clock_domain.hpp"
+#include "../../contract_tests_main.h"
 
 using namespace kivo::core::contract;
 

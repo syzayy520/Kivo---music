@@ -3,8 +3,8 @@
 // Tests for SeekAccuracy/FlushScope/DrainSemantics contract types
 // =============================================================================
 
-#include "kivo/core/contract/seek/seek_flush.hpp"
-#include "../contract_tests_main.h"
+#include "kivo/core/contract/seek/flush/seek_flush.hpp"
+#include "../../contract_tests_main.h"
 
 using namespace kivo::core::contract;
 

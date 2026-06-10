@@ -3,8 +3,8 @@
 // Tests for SeekTarget contract type
 // =============================================================================
 
-#include "kivo/core/contract/seek/seek_target.hpp"
-#include "../contract_tests_main.h"
+#include "kivo/core/contract/seek/target/seek_target.hpp"
+#include "../../contract_tests_main.h"
 
 using namespace kivo::core::contract;
 

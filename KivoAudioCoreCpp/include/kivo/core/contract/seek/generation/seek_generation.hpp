@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "../generation_id.hpp"
+#include "../../generation_id.hpp"
 #include <cstdint>
 
 namespace kivo::core::contract {

@@ -3,8 +3,8 @@
 // Tests for SeekGeneration contract type
 // =============================================================================
 
-#include "kivo/core/contract/seek/seek_generation.hpp"
-#include "../contract_tests_main.h"
+#include "kivo/core/contract/seek/generation/seek_generation.hpp"
+#include "../../contract_tests_main.h"
 
 using namespace kivo::core::contract;
 

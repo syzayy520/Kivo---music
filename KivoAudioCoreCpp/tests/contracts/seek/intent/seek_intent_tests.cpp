@@ -3,8 +3,8 @@
 // Tests for SeekOrigin/SeekIntent contract types
 // =============================================================================
 
-#include "kivo/core/contract/seek/seek_intent.hpp"
-#include "../contract_tests_main.h"
+#include "kivo/core/contract/seek/intent/seek_intent.hpp"
+#include "../../contract_tests_main.h"
 
 using namespace kivo::core::contract;
 
@@ -17,9 +17,9 @@ static void seek_origin_values() {
     ASSERT(SeekOrigin::Absolute != SeekOrigin::RelativeToEnd);
 }
 
-static void seek_intent_default_construction_is_invalid() {
+static void seek_intent_default_construction_is_valid() {
     SeekIntent intent;
-    ASSERT(!intent.is_valid());
+    ASSERT(intent.is_valid());
 }
 
 static void seek_intent_absolute_valid() {
@@ -30,8 +30,13 @@ static void seek_intent_absolute_valid() {
     ASSERT(intent.request_flush == true);
 }
 
-static void seek_intent_absolute_zero_offset_is_invalid() {
+static void seek_intent_absolute_zero_offset_is_valid() {
     SeekIntent intent{0, SeekOrigin::Absolute, true};
+    ASSERT(intent.is_valid());
+}
+
+static void seek_intent_absolute_negative_offset_is_invalid() {
+    SeekIntent intent{-1, SeekOrigin::Absolute, true};
     ASSERT(!intent.is_valid());
 }
 
@@ -83,9 +88,10 @@ static void seek_intent_equality_different_flush() {
 void run_seek_intent_tests(ContractTestRunner& runner) {
     std::cout << "--- SeekOrigin/SeekIntent ---\n";
     runner.run("seek_origin_values", seek_origin_values);
-    runner.run("seek_intent_default_construction_is_invalid", seek_intent_default_construction_is_invalid);
+    runner.run("seek_intent_default_construction_is_valid", seek_intent_default_construction_is_valid);
     runner.run("seek_intent_absolute_valid", seek_intent_absolute_valid);
-    runner.run("seek_intent_absolute_zero_offset_is_invalid", seek_intent_absolute_zero_offset_is_invalid);
+    runner.run("seek_intent_absolute_zero_offset_is_valid", seek_intent_absolute_zero_offset_is_valid);
+    runner.run("seek_intent_absolute_negative_offset_is_invalid", seek_intent_absolute_negative_offset_is_invalid);
     runner.run("seek_intent_relative_valid", seek_intent_relative_valid);
     runner.run("seek_intent_relative_zero_offset_is_valid", seek_intent_relative_zero_offset_is_valid);
     runner.run("seek_intent_relative_to_end_valid", seek_intent_relative_to_end_valid);
