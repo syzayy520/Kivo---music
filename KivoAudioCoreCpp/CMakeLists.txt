@@ -50,6 +50,12 @@ add_executable(kivo_contract_tests
     tests/contracts/foundation/sample_position_tests.cpp
     tests/contracts/format/audio_format_descriptor_tests.cpp
     tests/contracts/clock/clock_domain_tests.cpp
+    tests/contracts/clock/device_clock_tests.cpp
+    tests/contracts/clock/stream_clock_tests.cpp
+    tests/contracts/clock/timeline_clock_tests.cpp
+    tests/contracts/clock/position_tests.cpp
+    tests/contracts/clock/drift_estimate_tests.cpp
+    tests/contracts/clock/clock_policy_tests.cpp
     tests/contracts/seek/seek_flush_tests.cpp
 )
 target_link_libraries(kivo_contract_tests PRIVATE kivo_core_contract)

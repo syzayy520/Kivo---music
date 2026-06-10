@@ -64,12 +64,28 @@ if (Test-Path $contractRoot) {
 
 # =============================================================================
 # Rule G3: Single-file families contain exactly 1 .hpp with exact name
+# Clock family expanded in P0-C-002
 # =============================================================================
 $singleFileFamilies = @{
     "format" = @("audio_format_descriptor.hpp")
-    "clock"  = @("clock_domain.hpp")
     "seek"   = @("seek_flush.hpp")
 }
+
+# Clock family — multi-file (P0-C-002)
+$clockFamilyFiles = @(
+    "clock_domain.hpp",
+    "device_clock.hpp",
+    "stream_clock.hpp",
+    "timeline_clock.hpp",
+    "decoded_position.hpp",
+    "rendered_position.hpp",
+    "drift_estimate.hpp",
+    "pause_resume_freeze_policy.hpp",
+    "device_lost_position_report_rule.hpp",
+    "seek_clock_reset_rule.hpp",
+    "drain_eos_timeline_rule.hpp",
+    "gapless_timeline_continuity_rule.hpp"
+)
 
 foreach ($dir in $singleFileFamilies.Keys) {
     $dirPath = Join-Path $contractRoot $dir
@@ -86,6 +102,24 @@ foreach ($dir in $singleFileFamilies.Keys) {
     } else {
         $violations += "G3: Missing production family directory: include/kivo/core/contract/$dir/"
     }
+}
+
+# Validate clock family (multi-file)
+$clockDir = Join-Path $contractRoot "clock"
+if (Test-Path $clockDir) {
+    $hppFiles = Get-ChildItem -Path $clockDir -Filter "*.hpp"
+    foreach ($f in $hppFiles) {
+        if ($f.Name -notin $clockFamilyFiles) {
+            $violations += "G3: Unexpected file in production family 'clock': $($f.Name)"
+        }
+    }
+    foreach ($f in $clockFamilyFiles) {
+        if ($f -notin ($hppFiles | ForEach-Object { $_.Name })) {
+            $violations += "G3: Missing file in production family 'clock': $f"
+        }
+    }
+} else {
+    $violations += "G3: Missing production family directory: include/kivo/core/contract/clock/"
 }
 
 # =============================================================================
@@ -190,7 +224,7 @@ if (Test-Path $testsRoot) {
 $expectedTestFiles = @{
     "foundation" = @("result_tests.cpp", "generation_id_tests.cpp", "sample_position_tests.cpp")
     "format"     = @("audio_format_descriptor_tests.cpp")
-    "clock"      = @("clock_domain_tests.cpp")
+    "clock"      = @("clock_domain_tests.cpp", "device_clock_tests.cpp", "stream_clock_tests.cpp", "timeline_clock_tests.cpp", "position_tests.cpp", "drift_estimate_tests.cpp", "clock_policy_tests.cpp")
     "seek"       = @("seek_flush_tests.cpp")
     "capability" = @("capability_tests_main.cpp", "identity_tests.cpp", "quality_tests.cpp", "constraint_tests.cpp", "component_tests.cpp", "domain_tests.cpp", "negotiation_tests.cpp")
 }
