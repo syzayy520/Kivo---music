@@ -5,7 +5,7 @@
 //
 // Represents the PCM format of audio data delivered to the audio render
 // boundary (audio device buffer). This is strictly an audio format type.
-// Platform-neutral. No WASAPI WAVEFORMATEX dependency.
+// Platform-neutral. No platform audio API dependency.
 // =============================================================================
 
 #pragma once

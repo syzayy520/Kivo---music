@@ -17,7 +17,7 @@ namespace kivo::core::contract {
 // =============================================================================
 //
 // Each bit position corresponds to a logical speaker role.
-// The interpretation is the same across all platforms — no WASAPI dependency.
+// The interpretation is platform-neutral.
 // =============================================================================
 enum class ChannelMaskBit : uint32_t {
     None            = 0x00000000,
