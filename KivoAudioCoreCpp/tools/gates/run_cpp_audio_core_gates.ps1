@@ -20,7 +20,7 @@ if (-not $ProjectRoot) {
 }
 
 Write-Host "============================================================================="
-Write-Host "KivoAudioCoreCpp — P0-C + P0-012 Gate Runner"
+Write-Host "KivoAudioCoreCpp — Audio Core Gate Runner (9 Gates)"
 Write-Host "============================================================================="
 Write-Host "PROJECT_ROOT: $ProjectRoot"
 Write-Host "Date: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
@@ -35,7 +35,8 @@ $gates = @(
     @{ Name = "No Audio Runtime Gate"; Script = "check_no_audio_runtime_gate.ps1" },
     @{ Name = "Policy Substance Gate"; Script = "check_policy_substance_gate.ps1" },
     @{ Name = "Dependency / License Gate"; Script = "check_dependency_license_gate.ps1" },
-    @{ Name = "Toolchain / Configure Gate"; Script = "check_toolchain_configure_gate.ps1" }
+    @{ Name = "Toolchain / Configure Gate"; Script = "check_toolchain_configure_gate.ps1" },
+    @{ Name = "Audio Core Scope Lock Gate"; Script = "check_audio_core_scope_lock_gate.ps1" }
 )
 
 $results = @()

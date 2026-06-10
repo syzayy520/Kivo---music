@@ -1,8 +1,8 @@
 # Policy Index
 
 **Version:** V10.1 FINAL P0-B READY LOCKED PATCHED  
-**Current Task:** KIVO-CPP-AUDIO-CORE-P0-B-SKELETON-GOVERNANCE-POLICY-LEAN-004  
-**Last Updated:** Post-P0B enhancement input planning  
+**Current Task:** KIVO-AUDIO-CORE-SCOPE-LOCK-001  
+**Last Updated:** 2026-06-11 (Audio Core Scope Lock)  
 
 ## 1. Version Declaration
 
@@ -10,7 +10,7 @@ This policy index is based on V10.1 FINAL P0-B READY LOCKED PATCHED. V10.1 does 
 
 ## 2. Current Task Name
 
-KIVO-CPP-AUDIO-CORE-P0-B-SKELETON-GOVERNANCE-POLICY-LEAN-004
+KIVO-AUDIO-CORE-SCOPE-LOCK-001
 
 ## 3. Phase Matrix
 
@@ -40,11 +40,13 @@ KIVO-CPP-AUDIO-CORE-P0-B-SKELETON-GOVERNANCE-POLICY-LEAN-004
 |------|-------------|-------------|
 | Forbidden Token Gate | All phases | SMOKE |
 | Genealogy Gate | All phases | SMOKE |
+| Contract Genealogy Gate | P0-C+ | PASS |
 | No Empty Forest Gate | All phases | SMOKE |
 | No Audio Runtime Gate | P0-B | SMOKE |
 | Policy Substance Gate | P0-B | SMOKE |
 | Dependency/License Gate | P0-B+ | SMOKE |
 | Toolchain/Configure Gate | P0-B | SMOKE |
+| Audio Core Scope Lock Gate | P0-012+ | PASS |
 
 ## 5. Future Blocker Registry
 
