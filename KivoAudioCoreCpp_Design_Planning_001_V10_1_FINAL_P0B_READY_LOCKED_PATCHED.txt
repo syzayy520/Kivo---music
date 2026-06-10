@@ -1,0 +1,1280 @@
+KivoAudioCoreCpp Design Planning 001 — V10.1 FINAL P0-B READY LOCKED PATCHED TXT
+任务：在 V10 FINAL P0-B READY LOCKED 的基础上做最后执行口径补丁，修正 P0-B 真落地时仍可能导致返工的边界、push、CMake preset、gate 扫描与 PROJECT_ROOT 歧义。
+输出类型：TXT / planning-review / p0b-ready-lock / final-actionable / no-runtime-implementation-this-round
+适用项目：KivoAudioCoreCpp
+修订版本：V10.1 FINAL P0-B READY LOCKED PATCHED
+基于文件：KivoAudioCoreCpp_Design_Planning_001_V10_FINAL_P0B_READY_LOCKED_REVIEW_TXT(1).txt
+
+================================================================================
+0. V10.1 最终裁定
+================================================================================
+
+结论：
+
+V10 主线成立，可以进入 P0-B。
+V10.1 不推翻 V10，不改长期路线，不改 P0-B 任务名，不新增远期大模块。
+V10.1 只修正最后 7 个执行风险点：
+
+1. 明确 P0-B 是“commit + push”模式，除非没有 remote 或工具链环境阻断。
+2. 明确 closeout 不写最终 commit hash，最终交付报告必须补完整 40-char hash。
+3. 明确 CMakePresets.json 使用 CMake 3.24 兼容 schema version 5。
+4. 明确 CMakePresets 不固定 architecture，除非使用 Visual Studio generator。
+5. 明确 forbidden token gate 分层扫描：docs/policy/gate list 允许说明禁令，source/runtime 实现层零容忍。
+6. 明确 gate 不能靠全仓库关键词蛮扫导致误报，也不能漏扫真实 runtime 污染。
+7. 明确 PROJECT_ROOT 外文件绝对不能改，若不确定执行位置必须 STOP。
+
+唯一 P0-B 任务名继续锁定：
+
+KIVO-CPP-AUDIO-CORE-P0-B-SKELETON-GOVERNANCE-POLICY-LEAN-004
+
+不得因为本文档叫 V10.1，就把任务名改成 LEAN-005。
+P0-B task id、closeout 文件名、commit message、policy_index stage id 全部继续使用 LEAN-004。
+
+最终路线保持：
+
+Rust 冻结为规格资产
+  -> C++ 独立音频核心
+  -> Windows 桌面主线采用 WASAPI
+  -> 解码主线采用 FFmpeg
+  -> mpv/libmpv 只作为 reference / benchmark / fallback research
+  -> P0-B 最小骨架 + policy pack + docs/closeout + smoke gates + configure-only CMake
+  -> P0-C core contract foundation
+  -> P0-D fake backend contract proof
+  -> P0-E render boundary contract
+  -> P0-F WASAPI adapter shell
+  -> P0-G decode contract + FFmpeg seam
+  -> P0-H minimum real WASAPI output
+  -> P0-I minimum FFmpeg decode -> WASAPI output loop
+  -> P0-J state machine hardening
+  -> P0-K commercial stability / device matrix / corrupted corpus
+  -> P0-L gapless playback / timeline accuracy
+  -> P0-M exclusive mode / bit-perfect truth
+  -> P0-N ReplayGain / volume / DSP / resampler boundary
+  -> P0-O host ABI / Tauri integration boundary
+  -> P0-P commercial release hardening / installer / signing / crash diagnostics / legal notices
+  -> P0-Q Hi-Res / DSD / DoP / decode isolation research
+  -> P0-R mpv/libmpv reference benchmark or fallback research
+
+最终裁定：
+
+这条路线已经可以作为 Kivo Windows 桌面商业播放器“最强可控自研音频核心路线”的正式工程基线。
+现在不要继续设计空转。
+下一步直接执行 P0-B，但必须按本文 V10.1 口径执行。
+
+================================================================================
+1. V10 还有没有致命问题
+================================================================================
+
+没有致命问题。
+
+V10 已经解决了：
+
+1. PROJECT_ROOT / repo boundary。
+2. PowerShell gate 运行契约。
+3. CMake configure-only。
+4. CMake 环境失败分类。
+5. policy pack 最低结构。
+6. forbidden token gate 误报问题。
+7. no audio runtime gate 误报问题。
+8. .gitignore 不过宽。
+9. closeout hash 不反复 amend。
+10. P0-B 不允许网络和依赖下载。
+11. No-Go 必须阻止 P0-C。
+12. P0-C handoff。
+
+V10.1 只补“执行时必须写死”的细节，避免 Agent 自行解释。
+
+================================================================================
+2. V10.1 必须补强点
+================================================================================
+
+--------------------------------------------------------------------------------
+2.1 Push / Commit 口径锁定
+--------------------------------------------------------------------------------
+
+V10 里既有“默认不 push”的旧口径，又有“local HEAD == remote HEAD after push”的验收口径，容易让 Agent 混乱。
+
+V10.1 锁定：
+
+P0-B 正常成功路径为：
+
+1. 创建 P0-B skeleton / docs / policy pack / gates / configure-only CMake。
+2. 运行 gate 和 configure smoke。
+3. 生成 closeout。
+4. 本地 commit。
+5. push 到远程。
+6. push 后证明 local HEAD == remote HEAD。
+7. 最终交付报告写完整 40-char commit hash。
+
+如果没有 remote，或者项目负责人明确要求不 push，则使用：
+
+IMPLEMENTED_LOCAL_COMMIT_READY_FOR_REVIEW_NO_PUSH
+
+否则默认 P0-B 要 push。
+
+P0-B 成功默认分类：
+
+KIVO-CPP-AUDIO-CORE-P0-B-SKELETON-GOVERNANCE-POLICY-LEAN-004
+SKELETON_POLICY_GOVERNANCE_COMPLETE_CONFIGURE_SMOKE_ONLY_NO_AUDIO_RUNTIME_PUSHED_SUCCESSFULLY
+
+禁止：
+
+1. 写了 closeout 但不 commit。
+2. commit 了但没有说明是否 push。
+3. push 了但只给 short hash。
+4. closeout 内写 final hash 后反复 amend。
+5. 最终报告不补完整 40-char hash。
+6. working tree 不 clean 就声明完成。
+
+新增/强化 blocker：
+
+FINAL_HASH_REPORTING_AMBIGUITY_BLOCKER
+P0B_PUSH_STATUS_AMBIGUITY_BLOCKER
+
+--------------------------------------------------------------------------------
+2.2 PROJECT_ROOT / repo root 再锁定
+--------------------------------------------------------------------------------
+
+P0-B 必须先确定：
+
+PROJECT_ROOT = KivoAudioCoreCpp/
+
+执行前必须报告：
+
+1. repo root。
+2. PROJECT_ROOT。
+3. PROJECT_ROOT 是否已存在。
+4. 是否独立仓库。
+5. 是否 monorepo 顶层子目录。
+6. 当前 git branch。
+7. 当前 local HEAD。
+8. remote HEAD，如果有 remote。
+9. 本轮 allowed modification root。
+
+执行规则：
+
+如果是独立仓库：
+
+repo root 就是 KivoAudioCoreCpp。
+
+如果是 monorepo：
+
+KivoAudioCoreCpp 必须是 repo root 下的顶层子目录。
+P0-B 只能修改 KivoAudioCoreCpp/ 内文件。
+不得修改 src-tauri/、Rust freeze 文档、React 前端、旧 playback 目录、旧 CMake、旧 README、旧 scripts。
+
+如果 PROJECT_ROOT 不存在：
+
+允许在 repo root 下创建 KivoAudioCoreCpp/。
+不得在用户目录、系统目录、旧 Rust playback 目录、临时目录、不可追踪目录里创建。
+
+如果 repo root 不明确：
+
+STOP_PROJECT_ROOT_AMBIGUITY_BLOCKER
+
+如果修改了 PROJECT_ROOT 外文件：
+
+STOP_SCOPE_OUTSIDE_PROJECT_ROOT_BLOCKER
+
+--------------------------------------------------------------------------------
+2.3 CMakePresets version / architecture 口径锁定
+--------------------------------------------------------------------------------
+
+P0-B CMake 最低版本：
+
+cmake_minimum_required(VERSION 3.24)
+
+因此 CMakePresets.json 推荐 schema：
+
+version = 5
+
+推荐 preset：
+
+{
+  "version": 5,
+  "configurePresets": [
+    {
+      "name": "p0b-configure-smoke",
+      "displayName": "P0-B configure smoke",
+      "description": "Configure-only smoke for P0-B skeleton. No build or test presets.",
+      "binaryDir": "${sourceDir}/.build/p0b-configure-smoke",
+      "cacheVariables": {
+        "CMAKE_CXX_STANDARD": "20",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_CXX_EXTENSIONS": "OFF"
+      }
+    }
+  ]
+}
+
+注意：
+
+1. 不强制 generator，避免绑定本机工具链。
+2. 不写 architecture，除非明确使用 Visual Studio generator。
+3. 不写 buildPresets。
+4. 不写 testPresets。
+5. 不引用 vcpkg/conan/toolchain file。
+6. 不写本机绝对路径。
+7. 不写 FetchContent。
+8. 不写第三方依赖。
+
+如果本机 CMake 低于 3.24：
+
+check_toolchain_configure_gate.ps1 必须输出：
+
+ENVIRONMENT_BLOCKED_CMAKE_TOO_OLD
+
+不得自行降低 CMake 版本。
+不得为了 configure PASS 创建 hello world。
+不得把环境阻断伪装为 PASS。
+
+新增/强化 blocker：
+
+CMAKE_VERSION_PRESET_AMBIGUITY_BLOCKER
+CONFIGURE_SMOKE_OVERCLAIM_BLOCKER
+
+--------------------------------------------------------------------------------
+2.4 Forbidden Token Gate 分层扫描锁定
+--------------------------------------------------------------------------------
+
+P0-B 文档和 policy 必然会提到 WASAPI / FFmpeg / mpv / GetBuffer / ReleaseBuffer 等词，因为它们是禁令、未来阶段和边界说明。
+
+因此 forbidden token gate 不能全仓库蛮扫。
+
+V10.1 锁定扫描分层：
+
+A. Strict Implementation Scope
+
+以下范围如果存在，禁止出现平台实现污染 token：
+
+src/
+core/
+platform/
+decode/
+playback/
+tests/
+examples/
+demo/
+sample_player/
+
+P0-B 正常情况下这些目录不应存在。
+如果出现，应先由 genealogy/no-runtime gate 判定 scope violation。
+
+B. Root Skeleton Scope
+
+README.md / CMakeLists.txt / CMakePresets.json 允许提到项目方向，但不得出现实现式内容。
+
+禁止示例：
+
+1. include Windows.h
+2. find_package(FFmpeg)
+3. add_library(wasapi...)
+4. add_executable(player...)
+5. target_link_libraries(... avcodec ...)
+6. main.cpp
+7. hello world player
+
+C. Docs / Policy Scope
+
+docs/architecture/*.md 允许提到禁令、未来阶段、policy、blocker、legal、truth matrix。
+这些 mention 必须分类为：
+
+DOC_MENTION_ALLOWED
+
+但如果文档把未来内容写成当前实现已完成，必须 FAIL：
+
+POLICY_OVERCLAIM_BLOCKER
+
+D. Gate Script Scope
+
+tools/gates/*.ps1 允许包含 forbidden token 列表。
+这些 mention 必须分类为：
+
+GATE_LIST_ALLOWED
+
+但脚本不得调用下载、安装、真实构建、真实运行。
+
+E. Generated Output Scope
+
+.build/
+build/
+out/
+CMakeFiles/
+
+必须忽略，不扫描。
+
+Gate 输出必须包含：
+
+1. 扫描范围。
+2. 被排除范围。
+3. DOC_MENTION_ALLOWED 数量。
+4. GATE_LIST_ALLOWED 数量。
+5. 真正违规路径和原因。
+6. PASS / FAIL。
+
+新增/强化 blocker：
+
+FORBIDDEN_TOKEN_FALSE_POSITIVE_BLOCKER
+FORBIDDEN_TOKEN_IMPLEMENTATION_POLLUTION_BLOCKER
+
+--------------------------------------------------------------------------------
+2.5 No Audio Runtime Gate 锁定
+--------------------------------------------------------------------------------
+
+No audio runtime gate 不得因为文档讨论禁令而误报。
+
+必须检查的是真实 runtime 载体：
+
+1. 是否创建 src/。
+2. 是否创建 tests/。
+3. 是否创建 add_executable/add_library/target_sources。
+4. 是否创建 .cpp/.h/.hpp 合同或实现。
+5. 是否创建 playback/render/decode/platform 目录。
+6. 是否创建 sample player / demo。
+7. 是否出现真实平台 include。
+8. 是否出现真实线程、queue、buffer runtime。
+9. 是否出现 FFmpeg/mpv/WASAPI 实现 token。
+10. 是否出现 vendor/bin/lib/third_party。
+
+如果只是 docs/policy 说明未来阶段，不能误报。
+
+Gate 输出必须区分：
+
+DOC_MENTION_ALLOWED
+NO_RUNTIME_CARRIER_FOUND
+RUNTIME_CARRIER_FOUND_FAIL
+
+新增/强化 blocker：
+
+NO_AUDIO_RUNTIME_FALSE_POSITIVE_BLOCKER
+P0B_RUNTIME_CARRIER_BLOCKER
+
+--------------------------------------------------------------------------------
+2.6 Policy Substance Gate 锁定
+--------------------------------------------------------------------------------
+
+policy substance smoke gate 只能做最低结构检查，不能宣称永久质量冻结。
+
+每个 policy pack 至少包含：
+
+1. Purpose。
+2. Scope。
+3. Current Phase Rule。
+4. Allowed。
+5. Forbidden。
+6. Gate / Check Method。
+7. Failure Classification。
+8. Future Phase Ownership。
+9. Deferred Items。
+10. Last Updated / Stage Source。
+
+Gate 只判断：
+
+1. 文件存在。
+2. 非空。
+3. 有必需小节。
+4. 不是 TODO-only。
+5. 不是 placeholder-only。
+6. 不是口号-only。
+7. 有 allowed/forbidden/gate/failure/deferred/future ownership。
+
+Closeout 必须写：
+
+POLICY_SUBSTANCE_SMOKE_PASS only means minimum executable structure exists.
+It does not mean policy content is permanently frozen for all future phases.
+
+新增/强化 blocker：
+
+POLICY_SUBSTANCE_OVERCLAIM_BLOCKER
+POLICY_SUBSTANCE_TOO_THIN_BLOCKER
+
+--------------------------------------------------------------------------------
+2.7 P0-B Go / No-Go 锁定
+--------------------------------------------------------------------------------
+
+P0-B closeout 必须给出唯一结论：
+
+1. GO_TO_P0_C
+2. DOCS_AND_GATES_COMPLETE_BUT_NO_GO_TO_P0_C_UNTIL_TOOLCHAIN_CONFIRMED
+3. NO_GO_SCOPE_VIOLATION
+4. NO_GO_POLICY_PLACEHOLDER
+5. NO_GO_DIRTY_TREE
+6. NO_GO_RUNTIME_OR_PLATFORM_POLLUTION
+7. NO_GO_TASK_ID_MISMATCH
+8. NO_GO_PROJECT_ROOT_AMBIGUITY
+9. NO_GO_CLOSEOUT_MISSING
+10. NO_GO_GATE_SCRIPT_CONTRACT_VIOLATION
+11. NO_GO_CMAKE_SCOPE_VIOLATION
+12. NO_GO_NETWORK_OR_DEPENDENCY_BOOTSTRAP
+13. NO_GO_PUSH_STATUS_AMBIGUITY
+14. NO_GO_FORBIDDEN_TOKEN_IMPLEMENTATION_POLLUTION
+
+只有 GO_TO_P0_C 可以直接进入 P0-C。
+
+如果工具链缺失但 docs/gates/policy 完成，允许：
+
+DOCS_AND_GATES_COMPLETE_BUT_NO_GO_TO_P0_C_UNTIL_TOOLCHAIN_CONFIRMED
+
+任何 No-Go 状态不得继续 P0-C，除非项目负责人明确签字接受债务并更新 closeout。
+
+新增/强化 blocker：
+
+NO_GO_IGNORED_BLOCKER
+
+================================================================================
+3. 最终 P0-B 任务书
+================================================================================
+
+任务名：
+
+KIVO-CPP-AUDIO-CORE-P0-B-SKELETON-GOVERNANCE-POLICY-LEAN-004
+
+任务类型：
+
+implementation / skeleton-only / governance-first / policy-pack-first / configure-smoke-only / no-audio-runtime / no-platform-api / no-contract-implementation / no-fake-backend / no-wasapi / no-ffmpeg / no-mpv / no-playback-thread / no-empty-directory-forest / no-empty-policy-forest / no-version-stack / no-future-gate-script-forest / no-build-target / no-test-target / no-runtime-target / no-network-bootstrap / no-dependency-download / self-commit / self-push-if-remote-exists
+
+--------------------------------------------------------------------------------
+3.1 执行范围
+--------------------------------------------------------------------------------
+
+必须先确定：
+
+PROJECT_ROOT = KivoAudioCoreCpp/
+
+如果是独立仓库：
+
+只在该仓库内执行。
+
+如果是在现有 Kivo monorepo 内：
+
+只允许修改 KivoAudioCoreCpp/ 子目录。
+不得修改 src-tauri/、React 前端、Rust audio freeze 分支、旧 playback 目录或其它现有项目文件。
+
+如果 PROJECT_ROOT 不存在：
+
+允许在 repo root 下创建 KivoAudioCoreCpp/。
+不得创建到旧 Rust playback 目录。
+不得创建到 PROJECT_ROOT 外不可追踪目录。
+
+P0-B closeout 必须记录：
+
+1. PROJECT_ROOT。
+2. repo root。
+3. 是否独立仓库。
+4. 是否 monorepo 子目录。
+5. 实际修改范围。
+6. 明确未修改旧 Rust/Tauri 项目。
+7. 若 PROJECT_ROOT 路径包含空格/中文，是否验证过路径安全。
+
+--------------------------------------------------------------------------------
+3.2 允许创建
+--------------------------------------------------------------------------------
+
+KivoAudioCoreCpp/
+  README.md
+  CMakeLists.txt
+  CMakePresets.json
+  .editorconfig
+  .gitignore
+  .clang-format
+
+  docs/
+    architecture/
+      design_planning_001.md
+      policy_index.md
+      toolchain_and_build_policy.md
+      dependency_and_license_policy.md
+      architecture_boundary_policy.md
+      realtime_thread_and_state_policy.md
+      audio_truth_policy.md
+      validation_and_release_policy.md
+      no_empty_forest_policy.md
+      phase_closeout_template.md
+
+    closeout/
+      p0_b_skeleton_governance_policy_lean_004_closeout.md
+
+  tools/
+    gates/
+      run_cpp_audio_core_gates.ps1
+      check_forbidden_token_gate.ps1
+      check_genealogy_gate.ps1
+      check_no_empty_forest_gate.ps1
+      check_no_audio_runtime_gate.ps1
+      check_policy_substance_gate.ps1
+      check_dependency_license_gate.ps1
+      check_toolchain_configure_gate.ps1
+
+允许 generated / gitignored configure output：
+
+KivoAudioCoreCpp/
+  .build/p0b-configure-smoke/
+
+说明：
+
+1. .build/ 是 generated build output，不是 source directory。
+2. .build/ 必须 gitignored。
+3. .build/ 不得提交。
+4. gates 必须忽略 gitignored generated build output。
+
+--------------------------------------------------------------------------------
+3.3 明确禁止
+--------------------------------------------------------------------------------
+
+P0-B 禁止：
+
+1. 禁止创建完整最终目录树。
+2. 禁止创建 src/。
+3. 禁止创建 core/。
+4. 禁止创建 platform/。
+5. 禁止创建 decode/。
+6. 禁止创建 playback/。
+7. 禁止创建 dsp/。
+8. 禁止创建 diagnostics/。
+9. 禁止创建 tests/。
+10. 禁止创建 third_party/。
+11. 禁止创建 vendor/。
+12. 禁止创建 bin/。
+13. 禁止创建 lib/。
+14. 禁止创建 examples/。
+15. 禁止创建 demo/。
+16. 禁止创建 sample_player/。
+17. 禁止实现任何合同。
+18. 禁止实现正式 fake backend。
+19. 禁止实现 WASAPI。
+20. 禁止实现 FFmpeg。
+21. 禁止接 mpv/libmpv。
+22. 禁止 include Windows.h。
+23. 禁止 include audioclient.h。
+24. 禁止 include mmdeviceapi.h。
+25. 禁止 include endpointvolume.h。
+26. 禁止 include avcodec/avformat/avutil/swresample。
+27. 禁止出现实现层 IAudioClient / IAudioRenderClient。
+28. 禁止出现实现层 AVFrame / AVPacket。
+29. 禁止出现实现层 mpv_handle。
+30. 禁止播放线程。
+31. 禁止 renderer。
+32. 禁止 pipeline runtime。
+33. 禁止 helper/utils/common/misc/glue/facade/types/defs 桶目录。
+34. 禁止为了完整感创建空目录森林。
+35. 禁止为了 policy 齐全创建空 policy 森林。
+36. 禁止 uncontrolled mutable global / hidden singleton。
+37. 禁止 agent 自行引入 vcpkg/FetchContent/Conan/第三方库。
+38. 禁止未登记 DLL。
+39. 禁止写示例播放器。
+40. 禁止写临时播放 demo。
+41. 禁止写 Tauri/Rust/UI 接入。
+42. 禁止提前写 P0-C 合同内容。
+43. 禁止把 codec 能力写成商业宣传。
+44. 禁止把 bit-perfect 写成宣传词。
+45. 禁止把 loopback 当 bit-perfect 唯一证明。
+46. 禁止把 DSD/DoP 当 P0 实现目标。
+47. 禁止把 configure smoke 写成 build/test proof。
+48. 禁止为 future hard gate 创建当前阶段不需要的脚本森林。
+49. 禁止把旧版 V4/V5/V6/V7/V8/V9 全量堆进 design_planning_001.md。
+50. 禁止 closeout 缺失或只写模板占位。
+51. 禁止 add_executable。
+52. 禁止 add_library。
+53. 禁止 target_sources。
+54. 禁止 target_link_libraries。
+55. 禁止 find_package 第三方依赖。
+56. 禁止 CMakePresets 引入 vcpkg/conan/toolchain file。
+57. 禁止 .gitignore 隐藏真实源文件或政策文件。
+58. 禁止任务名与 closeout 文件名不一致。
+59. 禁止环境缺失时伪造 PASS。
+60. 禁止 P0-B 创建任何测试 target。
+61. 禁止访问网络。
+62. 禁止下载依赖。
+63. 禁止下载测试音频。
+64. 禁止修改系统 PATH。
+65. 禁止修改 PROJECT_ROOT 外文件。
+66. 禁止 git reset / clean / checkout / rm -rf 等破坏命令。
+67. 禁止自动修改 PROJECT_ROOT 外 .gitignore。
+68. 禁止将 generated output 提交入库。
+
+--------------------------------------------------------------------------------
+3.4 CMake configure-only 限制
+--------------------------------------------------------------------------------
+
+P0-B CMakeLists.txt 允许：
+
+1. cmake_minimum_required(VERSION 3.24)
+2. project(KivoAudioCoreCpp VERSION 0.0.0 LANGUAGES CXX)
+3. set(CMAKE_CXX_STANDARD 20)
+4. set(CMAKE_CXX_STANDARD_REQUIRED ON)
+5. set(CMAKE_CXX_EXTENSIONS OFF)
+6. configure-only 注释。
+7. MSVC / Windows x64 / warning baseline 的 policy 注释。
+
+P0-B CMakeLists.txt 禁止：
+
+1. add_executable。
+2. add_library。
+3. target_sources。
+4. target_link_libraries。
+5. find_package。
+6. FetchContent。
+7. install。
+8. package。
+9. post-build copy。
+10. hello world。
+11. main.cpp。
+12. 任何可编译单元。
+13. 任何可运行程序。
+14. 任何生产 target。
+15. 任何测试 target。
+
+P0-B CMakePresets.json 允许：
+
+1. version = 5。
+2. configure preset：p0b-configure-smoke。
+3. binaryDir：${sourceDir}/.build/p0b-configure-smoke。
+4. 不含本机绝对路径。
+5. 不含第三方 toolchain。
+
+P0-B CMakePresets.json 禁止：
+
+1. buildPresets。
+2. testPresets。
+3. vcpkg。
+4. conan。
+5. third-party toolchain。
+6. dependency bootstrap。
+7. 用户本机绝对路径。
+8. 固定 architecture，除非明确使用 Visual Studio generator。
+
+Closeout 必须写：
+
+CONFIGURE_SMOKE_ONLY
+NO_BUILD_TARGETS
+NO_RUNTIME_TARGETS
+NO_TEST_TARGETS
+
+不能写：
+
+BUILD_PASS
+TEST_PASS
+RUNTIME_PASS
+
+--------------------------------------------------------------------------------
+3.5 Policy Pack 最低结构
+--------------------------------------------------------------------------------
+
+7 个 policy pack 必须都有实质内容：
+
+1. toolchain_and_build_policy.md
+2. dependency_and_license_policy.md
+3. architecture_boundary_policy.md
+4. realtime_thread_and_state_policy.md
+5. audio_truth_policy.md
+6. validation_and_release_policy.md
+7. no_empty_forest_policy.md
+
+每个 policy pack 至少包含：
+
+1. Purpose。
+2. Scope。
+3. Current Phase Rule。
+4. Allowed。
+5. Forbidden。
+6. Gate / Check Method。
+7. Failure Classification。
+8. Future Phase Ownership。
+9. Deferred Items。
+10. Last Updated / Stage Source。
+
+禁止：
+
+1. 只有标题。
+2. 只有口号。
+3. TODO-only。
+4. placeholder-only。
+5. 大段空话没有 allowed/forbidden。
+6. 没有 gate/check method。
+7. 没有 future ownership。
+8. 没有 failure classification。
+
+policy_index.md 至少包含：
+
+1. V10.1 为准的版本声明。
+2. 当前唯一任务名 LEAN-004。
+3. P0-B 到 P0-R 阶段矩阵。
+4. 每阶段允许创建的功能族摘要。
+5. 每阶段禁止事项摘要。
+6. gate 归属矩阵。
+7. future blocker registry。
+8. Go / No-Go 规则。
+9. P0-C handoff。
+10. PROJECT_ROOT 规则。
+
+--------------------------------------------------------------------------------
+3.6 P0-B gates
+--------------------------------------------------------------------------------
+
+P0-B 当前只实现 smoke gate：
+
+1. run_cpp_audio_core_gates.ps1
+2. check_forbidden_token_gate.ps1
+3. check_genealogy_gate.ps1
+4. check_no_empty_forest_gate.ps1
+5. check_no_audio_runtime_gate.ps1
+6. check_policy_substance_gate.ps1
+7. check_dependency_license_gate.ps1
+8. check_toolchain_configure_gate.ps1
+
+Gate 输出必须支持：
+
+1. PASS。
+2. FAIL。
+3. PASS_CONFIGURE_SMOKE。
+4. ENVIRONMENT_BLOCKED_TOOLCHAIN_MISSING。
+5. ENVIRONMENT_BLOCKED_CMAKE_TOO_OLD。
+6. SKIPPED_NO_CMAKE_ALLOWED，仅当任务正文明确允许时使用。
+7. DOC_MENTION_ALLOWED。
+8. GATE_LIST_ALLOWED。
+9. GENERATED_BUILD_DIR_IGNORED。
+10. NO_RUNTIME_CARRIER_FOUND。
+11. RUNTIME_CARRIER_FOUND_FAIL。
+12. 违规路径。
+13. 违规原因。
+
+Gate 脚本要求：
+
+1. 不需要管理员权限。
+2. 不访问网络。
+3. 不下载依赖。
+4. 不删除文件。
+5. 不自动修改文件。
+6. 不自动 commit / push。
+7. 不扫描 .build / build / out 等 generated output。
+8. 失败返回非 0 exit code。
+9. 汇总脚本能输出所有 gate 结果。
+10. 路径处理必须支持空格和中文路径。
+11. 使用 Join-Path 或等价安全路径拼接。
+12. 可从 PROJECT_ROOT 运行。
+13. 可从任意当前目录运行，并能通过脚本位置定位 PROJECT_ROOT。
+14. 输出可复制进 closeout。
+
+--------------------------------------------------------------------------------
+3.7 .gitignore 限制
+--------------------------------------------------------------------------------
+
+.gitignore 必须允许忽略：
+
+1. .build/
+2. build/
+3. out/
+4. CMakeFiles/
+5. CMakeCache.txt
+6. cmake_install.cmake
+7. compile_commands.json
+8. *.user
+9. .vs/
+
+.gitignore 禁止隐藏：
+
+1. docs/
+2. tools/
+3. CMakeLists.txt
+4. CMakePresets.json
+5. README.md
+6. .clang-format
+7. .editorconfig
+8. .gitignore
+9. src/
+10. core/
+11. platform/
+12. decode/
+13. playback/
+14. tests/
+15. *.cpp
+16. *.hpp
+17. *.h
+18. *.c
+19. *.cmake
+20. *.md
+21. *.ps1
+22. *.json
+
+--------------------------------------------------------------------------------
+3.8 P0-B 必须输出
+--------------------------------------------------------------------------------
+
+1. README.md。
+2. CMakeLists.txt。
+3. CMakePresets.json。
+4. .editorconfig。
+5. .gitignore。
+6. .clang-format。
+7. design_planning_001.md，且为 V10.1 单一干净版。
+8. policy_index.md 阶段矩阵。
+9. 7 个 policy pack。
+10. phase_closeout_template.md。
+11. docs/closeout/p0_b_skeleton_governance_policy_lean_004_closeout.md。
+12. 8 个 smoke gate 脚本。
+13. CMake configure smoke 结果或明确环境分类。
+14. gate 运行结果。
+15. forbidden token smoke 结果。
+16. no audio runtime smoke 结果。
+17. no empty forest smoke 结果。
+18. policy substance smoke 结果。
+19. dependency/license smoke 结果。
+20. toolchain/configure smoke 结果。
+21. future blocker registry。
+22. 明确说明没有创建 src/core/platform/decode/playback/dsp/diagnostics/tests。
+23. 明确说明没有实现合同/fake/WASAPI/FFmpeg/mpv。
+24. 明确说明没有音频 runtime。
+25. 明确说明 CMake 只是 configure-only。
+26. 明确说明 configure pass 不是 build/test pass。
+27. 明确说明执行依据是 V10.1。
+28. P0-C 输入说明。
+29. P0-B risk / deferred items。
+30. git status。
+31. commit hash 由最终交付报告记录完整 40-char SHA。
+32. push 状态。
+33. Go / No-Go 结论。
+34. P0B_TASK_ID 一致性说明。
+35. PROJECT_ROOT 一致性说明。
+36. .gitignore 非过宽检查结果。
+37. gate 脚本运行契约检查结果。
+38. policy substance smoke 不等于永久冻结的说明。
+
+--------------------------------------------------------------------------------
+3.9 P0-B 验收标准
+--------------------------------------------------------------------------------
+
+1. 工程骨架存在。
+2. PROJECT_ROOT 明确。
+3. docs/architecture 存在。
+4. docs/closeout 存在且只有本阶段非空 closeout 文件。
+5. policy_index.md 存在且有阶段矩阵。
+6. 7 个 policy pack 均有实质内容。
+7. 每个 policy pack 至少包含 Purpose / Scope / Current Phase Rule / Allowed / Forbidden / Gate / Failure Classification / Future Phase Ownership / Deferred Items。
+8. phase_closeout_template.md 存在。
+9. tools/gates 存在。
+10. gates 可运行。
+11. gate 脚本非破坏性、无网络、无外部依赖。
+12. forbidden token gate 不误报 docs/gate 自身。
+13. no audio runtime gate 不误报文档说明。
+14. no empty forest gate 忽略 gitignored configure output。
+15. 无音频 runtime。
+16. 无平台 API 实现。
+17. 无 FFmpeg 实现 token 污染。
+18. 无 mpv 实现 token 污染。
+19. 无 WASAPI 实现 token 污染。
+20. 无 src/core/platform/decode/playback/dsp/diagnostics/tests。
+21. 无 helper/utils/common/misc/glue/facade/types/defs。
+22. 无空 policy 占位。
+23. 无空 closeout。
+24. 无 uncontrolled hidden global state。
+25. CMake 只能 configure-only。
+26. CMake 不含 build/test/runtime target。
+27. CMakePresets 不引入第三方 toolchain。
+28. configure 生成物不污染 git status。
+29. .gitignore 不过宽。
+30. 不存在 future gate script forest。
+31. design_planning_001.md 不是历史版本堆叠。
+32. closeout 报告完整。
+33. P0B_TASK_ID 一致。
+34. PROJECT_ROOT 内修改范围一致。
+35. git status clean。
+36. push 后 local HEAD == remote HEAD；若无 remote，必须明确 no push classification。
+37. Go / No-Go 结论明确，否则不得进入 P0-C。
+38. 最终交付报告包含完整 40-char commit hash。
+
+最终分类：
+
+KIVO-CPP-AUDIO-CORE-P0-B-SKELETON-GOVERNANCE-POLICY-LEAN-004
+SKELETON_POLICY_GOVERNANCE_COMPLETE_CONFIGURE_SMOKE_ONLY_NO_AUDIO_RUNTIME_PUSHED_SUCCESSFULLY
+
+如果没有 remote 或明确不 push：
+
+KIVO-CPP-AUDIO-CORE-P0-B-SKELETON-GOVERNANCE-POLICY-LEAN-004
+IMPLEMENTED_LOCAL_COMMIT_READY_FOR_REVIEW_NO_PUSH
+
+如果工具链阻断但 docs/gates/policy 完成：
+
+KIVO-CPP-AUDIO-CORE-P0-B-SKELETON-GOVERNANCE-POLICY-LEAN-004
+DOCS_AND_GATES_COMPLETE_BUT_NO_GO_TO_P0_C_UNTIL_TOOLCHAIN_CONFIRMED
+
+================================================================================
+4. Go / No-Go 规则
+================================================================================
+
+P0-B closeout 必须给出唯一结论：
+
+1. GO_TO_P0_C
+2. DOCS_AND_GATES_COMPLETE_BUT_NO_GO_TO_P0_C_UNTIL_TOOLCHAIN_CONFIRMED
+3. NO_GO_SCOPE_VIOLATION
+4. NO_GO_POLICY_PLACEHOLDER
+5. NO_GO_DIRTY_TREE
+6. NO_GO_RUNTIME_OR_PLATFORM_POLLUTION
+7. NO_GO_TASK_ID_MISMATCH
+8. NO_GO_PROJECT_ROOT_AMBIGUITY
+9. NO_GO_CLOSEOUT_MISSING
+10. NO_GO_GATE_SCRIPT_CONTRACT_VIOLATION
+11. NO_GO_CMAKE_SCOPE_VIOLATION
+12. NO_GO_NETWORK_OR_DEPENDENCY_BOOTSTRAP
+13. NO_GO_PUSH_STATUS_AMBIGUITY
+14. NO_GO_FORBIDDEN_TOKEN_IMPLEMENTATION_POLLUTION
+
+进入 P0-C 的条件：
+
+1. 结构/污染/policy/scope gates 全部 PASS。
+2. CMake configure smoke PASS，或项目负责人明确接受工具链环境债务。
+3. git status clean。
+4. local HEAD == remote HEAD，或明确 no-push review mode。
+5. Go / No-Go 结论为 GO_TO_P0_C，或负责人明确接受债务后更新结论。
+
+任何 NO_GO 状态不得继续 P0-C。
+
+================================================================================
+5. P0-C 输入锁定
+================================================================================
+
+P0-C 名称建议：
+
+KIVO-CPP-AUDIO-CORE-P0-C-CORE-CONTRACT-FOUNDATION-001
+
+P0-C 前置条件：
+
+1. P0-B closeout 通过。
+2. P0-B closeout 记录执行依据为 V10.1。
+3. policy_index.md 存在。
+4. toolchain_and_build_policy.md 已冻结。
+5. architecture_boundary_policy.md 已冻结。
+6. audio_truth_policy.md 至少包含 channel/sample/output/resample 基线。
+7. realtime_thread_and_state_policy.md 至少包含 command/generation/event/queue 语义。
+8. no_empty_forest_policy.md 已冻结。
+9. P0-B smoke gates 通过。
+10. CMake configure smoke 通过，或项目负责人明确接受工具链环境债务。
+11. working tree clean。
+12. local HEAD == remote HEAD，或明确 no-push review mode。
+
+P0-C 第一小步：
+
+1. 把 P0-B configure-only CMake 扩展为 contract build/test harness。
+2. 新增 contract library target。
+3. 新增 contract test target。
+4. 只编译 core contract。
+5. 只运行 tests/contracts。
+6. 不链接 WASAPI/FFmpeg/mpv。
+7. 不创建 fake backend 家族。
+8. 不创建 runtime executable。
+9. 不创建 sample player。
+10. 不创建 platform/decode/playback runtime。
+
+P0-C 允许创建：
+
+core/
+  time/
+  result/
+  audio_format/
+  buffer/
+  clock_contract/
+  output_mode/
+  resample_policy/
+  device_writer/
+
+tests/
+  contracts/
+    device_writer/
+    clock_contract/
+    audio_format/
+    output_mode/
+
+P0-C 禁止：
+
+1. 禁止 WASAPI。
+2. 禁止 FFmpeg。
+3. 禁止 mpv。
+4. 禁止真实播放。
+5. 禁止正式 fake backend 家族。
+6. 禁止 tests/fakes。
+7. 禁止 playback/pipeline。
+8. 禁止 C ABI。
+9. 禁止真实线程。
+10. 禁止 Windows.h。
+11. 禁止 AVFrame/AVPacket。
+12. 禁止 uncontrolled singleton/global context。
+13. 禁止 helper/utils/common。
+14. 禁止空目录森林。
+15. 禁止 resampler 实现。
+16. 禁止 decoder。
+17. 禁止 device runtime。
+
+P0-C 必须包含：
+
+1. clock_contract，不得后置。
+2. audio_format truth。
+3. channel layout truth。
+4. sample format truth。
+5. output_mode shared/exclusive/bit-perfect eligibility。
+6. resample decision contract。
+7. result/error internal failure 与 user-facing diagnostic 分层。
+8. buffer generation/frame_position/frame_count 语义。
+9. no platform token。
+10. no hidden business global。
+11. test-local stub 不得演化为 fake backend。
+12. resampler policy 不得引入 swresample/FFmpeg 实现。
+
+================================================================================
+6. Blocker Registry
+================================================================================
+
+V10.1 新增/强化 blocker：
+
+1. P0B_PUSH_STATUS_AMBIGUITY_BLOCKER
+2. STOP_SCOPE_OUTSIDE_PROJECT_ROOT_BLOCKER
+3. FORBIDDEN_TOKEN_IMPLEMENTATION_POLLUTION_BLOCKER
+4. P0B_RUNTIME_CARRIER_BLOCKER
+
+V10 新增 blocker 继续保留：
+
+1. PROJECT_ROOT_AMBIGUITY_BLOCKER
+2. GATE_SCRIPT_EXECUTION_CONTRACT_BLOCKER
+3. CMAKE_VERSION_PRESET_AMBIGUITY_BLOCKER
+4. TEXT_ENCODING_POLICY_BLOCKER
+5. PATH_SAFE_GATE_BLOCKER
+6. POLICY_SUBSTANCE_OVERCLAIM_BLOCKER
+7. FINAL_HASH_REPORTING_AMBIGUITY_BLOCKER
+8. P0B_NETWORK_OR_DEPENDENCY_BOOTSTRAP_BLOCKER
+9. NO_GO_IGNORED_BLOCKER
+
+V9 执行 blocker 继续保留：
+
+1. P0B_TASK_ID_MISMATCH_BLOCKER
+2. CMAKE_CONFIGURE_ONLY_SCOPE_BLOCKER
+3. P0B_GO_NOGO_AMBIGUITY_BLOCKER
+4. FUTURE_CLOSEOUT_PLACEHOLDER_BLOCKER
+5. POLICY_PACK_MINIMUM_STRUCTURE_BLOCKER
+6. P0B_SCAN_SCOPE_AMBIGUITY_BLOCKER
+7. GITIGNORE_OVERBROAD_BLOCKER
+8. CLOSEOUT_GIT_HASH_STALENESS_BLOCKER
+9. BUILD_TEST_HANDOFF_AMBIGUITY_BLOCKER
+10. CLOSEOUT_PATH_MISSING_BLOCKER
+11. FORBIDDEN_TOKEN_FALSE_POSITIVE_BLOCKER
+12. NO_AUDIO_RUNTIME_FALSE_POSITIVE_BLOCKER
+13. CONFIGURE_ARTIFACT_DIRTY_TREE_BLOCKER
+14. FUTURE_BLOCKER_SCRIPT_FOREST_BLOCKER
+15. DESIGN_DOC_VERSION_STACK_BLOCKER
+16. P0C_STUB_TO_FAKE_LEAK_BLOCKER
+17. TOOLCHAIN_ENVIRONMENT_CLASSIFICATION_BLOCKER
+18. OLD_VERSION_SCOPE_LEAK_BLOCKER
+19. CONFIGURE_SMOKE_OVERCLAIM_BLOCKER
+20. P0B_HARD_GATE_OVERBUILD_BLOCKER
+21. POLICY_SUBSTANCE_TOO_THIN_BLOCKER
+22. PHASE_CHANGE_CONTROL_BLOCKER
+
+Future blocker registry 保留但 P0-B 不实现脚本。
+
+================================================================================
+7. V10.1 最终铁律
+================================================================================
+
+铁律 1：
+core contract 永远不能被 WASAPI / FFmpeg / mpv 污染。
+
+铁律 2：
+目录必须按家谱自然生长，不能桶目录，不能空壳森林。
+
+铁律 3：
+P0-B 不能从空目录森林变成空 policy 森林；policy 必须有实质内容。
+
+铁律 4：
+P0-B 任务名继续锁定 LEAN-004，不得因为 V10.1 文件名改成 LEAN-005。
+
+铁律 5：
+P0-B 必须明确 PROJECT_ROOT，不能修改 PROJECT_ROOT 外文件。
+
+铁律 6：
+P0-B CMake 只能 configure-only，不能创建 runtime target，不能用 hello world 伪装工具链验证。
+
+铁律 7：
+P0-B configure pass 不是 build/test pass。
+
+铁律 8：
+CMake configure generated artifacts 必须 gitignored 或清理，不得污染 git status。
+
+铁律 9：
+.gitignore 不能过宽，不能隐藏真实源文件、policy、gate、CMake 文件。
+
+铁律 10：
+forbidden token gate 必须区分 docs mention / gate list / implementation pollution，不得误报 policy 文档。
+
+铁律 11：
+no audio runtime gate 必须检查 runtime 载体，不得因为文档讨论禁令而误报。
+
+铁律 12：
+future blocker registry 只能登记，不得在 P0-B 变成脚本森林。
+
+铁律 13：
+design_planning_001.md 必须是 V10.1 单一干净执行版，不得继续叠历史全文。
+
+铁律 14：
+P0-B gate 脚本必须非破坏性、无网络、无依赖下载、无管理员要求、路径安全。
+
+铁律 15：
+P0-B 禁止网络初始化、依赖下载、vcpkg/conan/FetchContent、vendor/bin/lib/third_party。
+
+铁律 16：
+policy substance smoke gate 不是人工审查替代品，不能把结构 PASS 宣传成永久冻结。
+
+铁律 17：
+P0-H 必须真实 WASAPI 出声，P0-I 必须真实 decode-output 闭环，不能无限架构化。
+
+铁律 18：
+realtime audio path 禁止动态分配、阻塞、文件 IO、高频日志、UI callback。
+
+铁律 19：
+render thread 不做 decode、不做 FFmpeg call、不做磁盘 IO、不做 UI callback、不等待长锁。
+
+铁律 20：
+bit-perfect 不能当宣传词，必须可验证、可拒绝、可解释，并区分 eligible / active / rejected / unknown。
+
+铁律 21：
+shared mode 默认不能宣传 bit-perfect；APO / spatial audio / enhancement / system mixer / volume 影响必须进入 truth report。
+
+铁律 22：
+FFmpeg license 不是提醒，是商业发布阻断门闸。
+
+铁律 23：
+codec 能解码不等于商业可宣传；Dolby/DTS/Atmos/Hi-Res 等宣传必须进入 claim matrix，并且商业发布前必须有 legal/commercial approval。
+
+铁律 24：
+gapless 可以晚实现，但 sample-accurate 语义必须早预留。
+
+铁律 25：
+resample 不能偷偷发生，必须有 decision reason。
+
+铁律 26：
+resampler 实现不得污染 core；core 只定义 resample decision contract。
+
+铁律 27：
+设备兼容和质量验证不能靠“听起来正常”，必须有矩阵、有报告、有指标。
+
+铁律 28：
+音频核心就是音频核心，不把视频/HDR/字幕/杜比视频塞进 P0-AudioCore。
+
+铁律 29：
+音频核心不是媒体库，不负责封面缓存、标签索引、歌词、UI metadata 展示。
+
+铁律 30：
+C++ 工具链、依赖版本、FFmpeg DLL 来源必须可复现、可审计、可发布。
+
+铁律 31：
+WASAPI COM 生命周期必须由 platform/wasapi owner 管理，不能跨层泄漏，不能悬空 callback。
+
+铁律 32：
+FFmpeg 装载、版本、日志、错误域必须受控，不能依赖系统 PATH 随机库。
+
+铁律 33：
+所有 command/event 必须可排序、可追踪、可丢弃 stale generation。
+
+铁律 34：
+禁止 uncontrolled mutable global、随意 singleton、测试间共享状态污染。
+
+铁律 35：
+C ABI 必须版本化、能力可协商、struct 可扩展，不能把 C++/COM/FFmpeg/STL 类型暴露给 host。
+
+铁律 36：
+坏文件、损坏媒体、极端 metadata 必须可失败、可诊断、不可拖死核心。
+
+铁律 37：
+channel layout / sample format 必须是真语义，不允许只用 channel count 和 sample rate 糊弄。
+
+铁律 38：
+sample format 必须表达 valid bits、container bits、endian、signedness、alignment、planar/interleaved。
+
+铁律 39：
+日志、telemetry、support bundle 必须限流、脱敏、不可阻塞实时线程。
+
+铁律 40：
+P0-B 只能建最小骨架、policy pack、docs/closeout、gate smoke 和 configure-only CMake；不得写合同、fake、WASAPI、FFmpeg、播放线程、完整目录树。
+
+铁律 41：
+P0-C 才开始 core contract；P0-H 才开始真实 WASAPI；P0-I 才开始真实 FFmpeg 闭环。
+
+铁律 42：
+P0-C 必须包含 clock_contract，不得后置。
+
+铁律 43：
+P0-C 允许 tests/contracts 内 test-local stub，但禁止正式 fake backend 家族。
+
+铁律 44：
+P0-C 第一小步才允许把 CMake 从 configure-only 扩展成 contract build/test harness；P0-B 不准提前做。
+
+铁律 45：
+DSD/DoP/Hi-Res PCM 现在不实现，但 contract 不得把未来堵死。
+
+铁律 46：
+安装包、DLL、签名、符号、崩溃诊断不是发布小事，是商业音频核心稳定性的一部分。
+
+铁律 47：
+audio queue 必须 bounded；buffer ownership 必须明确；generation discard 必须可测试。
+
+铁律 48：
+test media corpus 必须有授权状态和 checksum，不得提交未知版权音频样本。
+
+铁律 49：
+路径必须明确 UTF-8/UTF-16 边界，不允许 ANSI path 成为真源。
+
+铁律 50：
+64-bit frame counter / duration trust / timestamp rounding 必须可解释，不能用 double 糊弄样本级位置。
+
+铁律 51：
+环境缺失必须如实分类，不能伪造 PASS；但环境缺失不是架构路线失败。
+
+铁律 52：
+从 V10.1 开始停止设计空转，直接执行 P0-B。
+
+================================================================================
+8. 最终分类
+================================================================================
+
+KIVO-CPP-AUDIO-CORE-DESIGN-PLANNING-001 V10_1_FINAL_P0B_READY_LOCKED_PATCHED_TXT_READY
+
+最终裁定：
+
+V10 已经是可执行交付版。
+V10.1 不推翻 V10，只修正执行现场仍可能返工的口径。
+
+V10.1 主要修正：
+
+1. 锁定 P0-B 正常路径为 commit + push。
+2. 锁定最终交付报告必须补完整 40-char hash。
+3. 锁定 CMakePresets version = 5。
+4. 锁定不写 architecture，除非 Visual Studio generator 明确需要。
+5. 锁定 forbidden token gate 分层扫描，不准蛮扫误报。
+6. 锁定 no audio runtime gate 检查 runtime 载体，不误报文档。
+7. 锁定 PROJECT_ROOT 外零修改。
+8. 锁定 No-Go 必须阻止 P0-C。
+9. 输出最终 P0-B LEAN-004 任务书。
+
+下一步：
+
+直接执行：
+
+KIVO-CPP-AUDIO-CORE-P0-B-SKELETON-GOVERNANCE-POLICY-LEAN-004
+
+P0-B 必须只建最小骨架、policy pack、docs/closeout、gate smoke 和 configure-only CMake。
+不准接 WASAPI。
+不准接 FFmpeg。
+不准写合同。
+不准写 fake backend。
+不准写播放线程。
+不准建完整目录树。
+不准建空 policy 森林。
+不准把 CMake 变成 runtime bootstrap。
+不准用 hello world 伪装工具链验证。
+不准把 configure pass 写成 build/test pass。
+不准让 gate 误报 policy 文档。
+不准把 future blocker 变成 P0-B 脚本森林。
+不准让任务名和 closeout 文件名不一致。
+不准修改 PROJECT_ROOT 外文件。
+不准网络下载依赖。
+
+最终一句话：
+
+这条路线已经足够进入工程落地。
+现在直接开 P0-B。

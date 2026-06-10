@@ -1,0 +1,21 @@
+{
+  "version": 5,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 24,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "p0b-configure-smoke",
+      "displayName": "P0-B Configure Smoke",
+      "description": "Configure-only smoke for P0-B skeleton. No build or test presets. Validates CMake 3.24+ can parse project structure.",
+      "binaryDir": "${sourceDir}/.build/p0b-configure-smoke",
+      "cacheVariables": {
+        "CMAKE_CXX_STANDARD": "20",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_CXX_EXTENSIONS": "OFF"
+      }
+    }
+  ]
+}

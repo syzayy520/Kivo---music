@@ -1,0 +1,57 @@
+# =============================================================================
+# KivoAudioCoreCpp — .gitignore
+# =============================================================================
+
+# --- CMake generated output ---
+.build/
+build/
+out/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+
+# --- IDE ---
+.vs/
+*.user
+*.suo
+*.sln.docstates
+.idea/
+*.swp
+*~
+
+# --- OS ---
+Thumbs.db
+.DS_Store
+
+# --- Compiled ---
+*.obj
+*.o
+*.exe
+*.dll
+*.lib
+*.pdb
+*.ilk
+*.exp
+
+# --- DO NOT ignore ---
+# The following are intentionally NOT ignored:
+# - docs/
+# - tools/
+# - CMakeLists.txt
+# - CMakePresets.json
+# - README.md
+# - .clang-format
+# - .editorconfig
+# - .gitignore
+# - src/ (when created in P0-C+)
+# - core/ (when created in P0-C+)
+# - platform/ (when created in P0-F+)
+# - decode/ (when created in P0-G+)
+# - playback/ (when created in P0-H+)
+# - tests/ (when created in P0-C+)
+# - *.cpp, *.hpp, *.h, *.c (when created in P0-C+)
+# - *.cmake
+# - *.md
+# - *.ps1
+# - *.json
