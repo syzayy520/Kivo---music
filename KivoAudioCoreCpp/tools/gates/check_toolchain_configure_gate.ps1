@@ -25,17 +25,35 @@ Write-Host "PROJECT_ROOT: $ProjectRoot"
 Write-Host ""
 
 # --- 1. Check CMake availability ---
+$cmakeExe = $null
 $cmakePath = Get-Command cmake -ErrorAction SilentlyContinue
-if (-not $cmakePath) {
+if ($cmakePath) {
+    $cmakeExe = "cmake"
+} else {
+    # Try common install locations
+    $commonPaths = @(
+        "C:\Program Files\CMake\bin\cmake.exe",
+        "C:\Program Files (x86)\CMake\bin\cmake.exe"
+    )
+    foreach ($p in $commonPaths) {
+        if (Test-Path $p) {
+            $cmakeExe = $p
+            Write-Host "CMake not in PATH but found at: $p"
+            break
+        }
+    }
+}
+
+if (-not $cmakeExe) {
     Write-Host "ENVIRONMENT_BLOCKED_TOOLCHAIN_MISSING"
-    Write-Host "CMake is not found in PATH."
+    Write-Host "CMake is not found in PATH or common install locations."
     Write-Host ""
     Write-Host "Classification: DOCS_AND_GATES_COMPLETE_BUT_NO_GO_TO_P0_C_UNTIL_TOOLCHAIN_CONFIRMED"
     exit 0  # Not a gate failure — environment issue
 }
 
 # --- 2. Check CMake version ---
-$cmakeVersionOutput = & cmake --version 2>&1 | Select-Object -First 1
+$cmakeVersionOutput = & $cmakeExe --version 2>&1 | Select-Object -First 1
 if ($cmakeVersionOutput -match "cmake version (\d+)\.(\d+)") {
     $major = [int]$Matches[1]
     $minor = [int]$Matches[2]
@@ -75,7 +93,7 @@ if (Test-Path $buildDir) {
 
 try {
     Push-Location $ProjectRoot
-    $configureOutput = & cmake --preset p0b-configure-smoke 2>&1
+    $configureOutput = & $cmakeExe --preset p0b-configure-smoke 2>&1
     $configureExitCode = $LASTEXITCODE
     Pop-Location
 } catch {

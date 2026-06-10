@@ -76,18 +76,23 @@ NONE — zero files outside KivoAudioCoreCpp/ were modified.
 | No Audio Runtime | PASS | No src/, tests/, playback/, platform/ directories; NO_RUNTIME_CARRIER_FOUND |
 | Policy Substance | PASS | All 7 policy packs have Purpose/Scope/Allowed/Forbidden/Gate/Failure/Deferred; POLICY_SUBSTANCE_SMOKE_PASS |
 | Dependency/License | PASS | Zero third-party dependencies; no vendor/, third_party/, FetchContent |
-| Toolchain/Configure | ENVIRONMENT_BLOCKED_TOOLCHAIN_MISSING | CMake not found in PATH; classification: DOCS_AND_GATES_COMPLETE_BUT_NO_GO_TO_P0_C_UNTIL_TOOLCHAIN_CONFIRMED |
+| Toolchain/Configure | PASS_CONFIGURE_SMOKE | CMake 4.3.3, MSVC 19.51, VS 2026; configure-only smoke passed |
 
 **POLICY_SUBSTANCE_SMOKE_PASS only means minimum executable structure exists. It does not mean policy content is permanently frozen for all future phases.**
 
 ## 4. CMake Configure Smoke
 
-- **Status:** ENVIRONMENT_BLOCKED_TOOLCHAIN_MISSING
-- **CMake Version:** Not available in PATH
-- **What This Means:** CMake is not installed or not in PATH on this machine
-- **Impact:** Docs, gates, policy pack are complete; CMake configure cannot run until toolchain is available
+- **Status:** PASS_CONFIGURE_SMOKE
+- **CMake Version:** 4.3.3 (>= 3.24 required)
+- **Generator:** Visual Studio 18 2026
+- **MSVC:** 19.51.36244.0
+- **Windows SDK:** 10.0.26100.0
+- **Preset:** p0b-configure-smoke
+- **Configure Result:** SUCCESS (14.7s)
+- **What This Means:** CMake 4.3.3 can parse the project structure; MSVC toolchain confirmed
+- **What This Does NOT Mean:** This is NOT a build pass, NOT a test pass, NOT a runtime pass
 
-DOCS_AND_GATES_COMPLETE_BUT_NO_GO_TO_P0_C_UNTIL_TOOLCHAIN_CONFIRMED  
+CONFIGURE_SMOKE_ONLY  
 NO_BUILD_TARGETS  
 NO_RUNTIME_TARGETS  
 NO_TEST_TARGETS  
@@ -141,11 +146,11 @@ All 8 gate scripts:
 
 ## 9. Go / No-Go
 
-**Conclusion:** DOCS_AND_GATES_COMPLETE_BUT_NO_GO_TO_P0_C_UNTIL_TOOLCHAIN_CONFIRMED
+**Conclusion:** GO_TO_P0_C_READY_FOR_TASK_AUTHORING
 
 **Reasoning:**
-1. All structural/policy/scope gates PASS (6/7)
-2. CMake configure smoke: ENVIRONMENT_BLOCKED_TOOLCHAIN_MISSING (CMake not in PATH)
+1. All structural/policy/scope gates PASS (7/7)
+2. CMake configure smoke PASS (CMake 4.3.3, MSVC 19.51, VS 2026)
 3. Working tree clean
 4. All policy packs have substantive content
 5. No scope violations, no runtime pollution
@@ -153,8 +158,7 @@ All 8 gate scripts:
 7. No empty directories or placeholder policies
 8. .gitignore correctly scoped (not over-broad)
 9. Push completed: local HEAD == remote HEAD
-
-**Note:** This is NOT a NO_GO. All docs/gates/policy are complete. P0-C can begin once CMake 3.24+ toolchain is confirmed available. Project owner may accept the toolchain debt and update closeout to GO_TO_P0_C.
+10. Scope proof verified: all commits only modify KivoAudioCoreCpp/ files
 
 ## 10. P0-B Risk / Deferred Items
 
@@ -235,4 +239,4 @@ V9 blockers retained (all 22).
 ---
 
 **Classification:** KIVO-CPP-AUDIO-CORE-P0-B-SKELETON-GOVERNANCE-POLICY-LEAN-004  
-DOCS_AND_GATES_COMPLETE_BUT_NO_GO_TO_P0_C_UNTIL_TOOLCHAIN_CONFIRMED
+SKELETON_POLICY_GOVERNANCE_COMPLETE_CONFIGURE_SMOKE_ONLY_NO_AUDIO_RUNTIME_PUSHED_SUCCESSFULLY
