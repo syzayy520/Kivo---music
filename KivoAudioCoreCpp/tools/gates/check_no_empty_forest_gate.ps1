@@ -35,7 +35,7 @@ function Test-EmptyDirectory {
 }
 
 $dirs = Get-ChildItem -Path $ProjectRoot -Directory -Recurse -Force |
-    Where-Object { $_.FullName -notlike "*\.git\*" -and $_.FullName -notlike "*\.build\*" }
+    Where-Object { $_.FullName -notlike "*\.git\*" -and $_.FullName -notlike "*\.build*" -and $_.FullName -notlike "*\.build\*" }
 
 foreach ($dir in $dirs) {
     if (Test-EmptyDirectory -Path $dir.FullName) {

@@ -1,6 +1,6 @@
 # =============================================================================
 # run_cpp_audio_core_gates.ps1
-# Aggregate Gate Runner — Runs All P0-B Gates
+# Aggregate Gate Runner — Runs All P0-C Gates
 # =============================================================================
 # Runs all gate scripts and reports summary.
 # Exit code 0 = all gates passed (or environment blocked).
@@ -20,7 +20,7 @@ if (-not $ProjectRoot) {
 }
 
 Write-Host "============================================================================="
-Write-Host "KivoAudioCoreCpp — P0-B Gate Runner"
+Write-Host "KivoAudioCoreCpp — P0-C Gate Runner"
 Write-Host "============================================================================="
 Write-Host "PROJECT_ROOT: $ProjectRoot"
 Write-Host "Date: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
@@ -94,7 +94,7 @@ Write-Host ""
 if ($allPassed) {
     Write-Host "OVERALL: PASS"
     Write-Host ""
-    Write-Host "All P0-B gates passed."
+    Write-Host "All P0-C gates passed."
     Write-Host "NOTE: Configure smoke PASS does NOT mean build/test/runtime PASS."
     exit 0
 } else {

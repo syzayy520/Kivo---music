@@ -16,6 +16,40 @@
         "CMAKE_CXX_STANDARD_REQUIRED": "ON",
         "CMAKE_CXX_EXTENSIONS": "OFF"
       }
+    },
+    {
+      "name": "p0c-contract-debug",
+      "displayName": "P0-C Contract Debug",
+      "description": "Configure and build contract tests in Debug mode.",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/.build/p0c-contract-debug",
+      "cacheVariables": {
+        "CMAKE_CXX_STANDARD": "20",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_COMPILER": "C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "p0c-contract-build",
+      "displayName": "P0-C Contract Build",
+      "description": "Build contract tests.",
+      "configurePreset": "p0c-contract-debug",
+      "targets": ["kivo_contract_tests"]
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "p0c-contract-test",
+      "displayName": "P0-C Contract Test",
+      "description": "Run contract tests.",
+      "configurePreset": "p0c-contract-debug",
+      "output": {
+        "outputOnFailure": true
+      }
     }
   ]
 }

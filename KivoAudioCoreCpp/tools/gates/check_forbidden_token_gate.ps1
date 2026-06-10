@@ -53,23 +53,24 @@ $violations = @()
 foreach ($dir in $strictDirs) {
     $dirPath = Join-Path $ProjectRoot $dir
     if (Test-Path $dirPath) {
-        foreach ($token in $implementationTokens) {
-            $results = Get-ChildItem -Path $dirPath -Recurse -File -Include "*.cpp","*.h","*.hpp","*.c" -ErrorAction SilentlyContinue |
-                Select-String -Pattern [regex]::Escape($token) -SimpleMatch
-            foreach ($r in $results) {
-                $violations += "STRICT_VIOLATION: $($r.Path):$($r.LineNumber): $token"
+        $files = Get-ChildItem -Path $dirPath -Recurse -File -Include "*.cpp","*.h","*.hpp","*.c" -ErrorAction SilentlyContinue
+        foreach ($file in $files) {
+            $content = Get-Content $file.FullName -Raw -ErrorAction SilentlyContinue
+            if ($content) {
+                foreach ($token in $implementationTokens) {
+                    if ($content -match [regex]::Escape($token)) {
+                        $violations += "STRICT_VIOLATION: $($file.Name): $token"
+                    }
+                }
             }
         }
     }
 }
 
 # --- Root Skeleton Scope ---
-$rootFiles = @("README.md", "CMakeLists.txt", "CMakePresets.json")
+# P0-C: CMakeLists.txt may contain contract-only targets
+$rootFiles = @("README.md", "CMakePresets.json")
 $rootBannedPatterns = @(
-    "add_executable",
-    "add_library",
-    "target_sources",
-    "target_link_libraries",
     "find_package(FFmpeg",
     "find_package(ffmpeg",
     "FetchContent",
@@ -85,6 +86,36 @@ foreach ($file in $rootFiles) {
         foreach ($pattern in $rootBannedPatterns) {
             if ($content -match [regex]::Escape($pattern)) {
                 $violations += "ROOT_SKELETON_VIOLATION: $file contains: $pattern"
+            }
+        }
+    }
+}
+
+# --- CMakeLists.txt P0-C Scope Check ---
+# Only authorized P0-C targets/patterns are allowed
+$cmakePath = Join-Path $ProjectRoot "CMakeLists.txt"
+if (Test-Path $cmakePath) {
+    $cmakeContent = Get-Content $cmakePath -Raw
+    $cmakeBannedPatterns = @(
+        "find_package(FFmpeg",
+        "find_package(ffmpeg",
+        "FetchContent",
+        "include <Windows.h>",
+        "include <audioclient.h>"
+    )
+    foreach ($pattern in $cmakeBannedPatterns) {
+        if ($cmakeContent -match [regex]::Escape($pattern)) {
+            $violations += "ROOT_SKELETON_VIOLATION: CMakeLists.txt contains: $pattern"
+        }
+    }
+    # Check for non-contract targets
+    $cmakeLines = $cmakeContent -split "`n"
+    $allowedTargets = @("kivo_core_contract", "kivo_contract_tests", "contract_tests")
+    foreach ($line in $cmakeLines) {
+        if ($line -match "^\s*add_executable\((\w+)" -or $line -match "^\s*add_library\((\w+)") {
+            $targetName = $Matches[1]
+            if ($targetName -notin $allowedTargets) {
+                $violations += "ROOT_SKELETON_VIOLATION: CMakeLists.txt contains unauthorized target: $targetName"
             }
         }
     }

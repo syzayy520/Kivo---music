@@ -23,7 +23,7 @@ Write-Host "=== Genealogy Gate ==="
 Write-Host "PROJECT_ROOT: $ProjectRoot"
 Write-Host ""
 
-# Allowed top-level items in P0-B
+# Allowed top-level items for P0-C
 $allowedTopLevel = @(
     "README.md",
     "CMakeLists.txt",
@@ -33,19 +33,20 @@ $allowedTopLevel = @(
     ".clang-format",
     "docs",
     "tools",
+    "include",
+    "src",
+    "tests",
     ".build"
 )
 
-# Forbidden directories that indicate runtime/implementation
+# Forbidden directories that indicate runtime/implementation (P0-C scope)
+# NOTE: src/, tests/, include/ are now authorized for P0-C contract scope
 $forbiddenDirs = @(
-    "src",
-    "core",
     "platform",
     "decode",
     "playback",
     "dsp",
     "diagnostics",
-    "tests",
     "examples",
     "demo",
     "sample_player",
@@ -61,7 +62,7 @@ $violations = @()
 foreach ($dir in $forbiddenDirs) {
     $dirPath = Join-Path $ProjectRoot $dir
     if (Test-Path $dirPath) {
-        $violations += "FORBIDDEN_DIRECTORY: $dir/ exists (not authorized for P0-B)"
+        $violations += "FORBIDDEN_DIRECTORY: $dir/ exists (not authorized for P0-C)"
     }
 }
 
@@ -111,7 +112,7 @@ Write-Host ""
 
 if ($violations.Count -eq 0) {
     Write-Host "PASS"
-    Write-Host "Directory structure follows P0-B genealogy."
+    Write-Host "Directory structure follows P0-C genealogy."
     exit 0
 } else {
     Write-Host "FAIL"

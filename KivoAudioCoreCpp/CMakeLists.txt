@@ -1,14 +1,14 @@
 # =============================================================================
 # KivoAudioCoreCpp — CMakeLists.txt
-# Phase: P0-B (Skeleton Governance, Configure-Only)
+# Phase: P0-C (Contract Harness and Foundational Types)
 # =============================================================================
 #
-# P0-B Status: CONFIGURE-ONLY
-# This file validates that CMake 3.24+ can parse the project structure.
-# No targets, no runtime, no dependencies. P0-C will extend this file.
+# P0-C Status: CONTRACT BUILD/TEST
+# Header-only contract library + contract test executable.
+# No runtime dependencies. No platform code. No third-party libraries.
 #
-# Iron Rule 6: P0-B CMake can only be configure-only.
-# Iron Rule 7: Configure pass is NOT build/test pass.
+# Iron Rule 6: P0-C CMake targets contract types only.
+# Iron Rule 7: Contract tests validate type semantics, not runtime behavior.
 # =============================================================================
 
 cmake_minimum_required(VERSION 3.24)
@@ -34,5 +34,25 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # These are documented in docs/architecture/toolchain_and_build_policy.md
 # but NOT enforced here in P0-B (configure-only).
 
-# --- P0-B: No targets below this line ---
-# This line intentionally left as a guard. P0-C will add contract targets.
+# =============================================================================
+# P0-C: Contract Build/Test Harness
+# =============================================================================
+# Header-only contract library
+add_library(kivo_core_contract INTERFACE)
+target_include_directories(kivo_core_contract INTERFACE include/)
+target_compile_features(kivo_core_contract INTERFACE cxx_std_20)
+
+# Contract tests
+add_executable(kivo_contract_tests
+    tests/contracts/contract_tests_main.cpp
+)
+target_link_libraries(kivo_contract_tests PRIVATE kivo_core_contract)
+target_compile_features(kivo_contract_tests PRIVATE cxx_std_20)
+target_compile_options(kivo_contract_tests PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc /wd4127>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
+
+# Register with CTest
+enable_testing()
+add_test(NAME contract_tests COMMAND kivo_contract_tests)

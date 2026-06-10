@@ -72,9 +72,10 @@ if ($cmakeVersionOutput -match "cmake version (\d+)\.(\d+)") {
 }
 
 # --- 3. Run configure-only smoke ---
+# P0-C: Use p0c-contract-debug preset which has correct MSVC compiler
 Write-Host ""
 Write-Host "Running configure-only smoke..."
-Write-Host "Preset: p0b-configure-smoke"
+Write-Host "Preset: p0c-contract-debug"
 Write-Host ""
 
 $presetPath = Join-Path $ProjectRoot "CMakePresets.json"
@@ -84,16 +85,33 @@ if (-not (Test-Path $presetPath)) {
     exit 1
 }
 
-$buildDir = Join-Path $ProjectRoot ".build\p0b-configure-smoke"
+$buildDir = Join-Path $ProjectRoot ".build\p0c-contract-debug"
 
 # Clean previous configure output
 if (Test-Path $buildDir) {
     Remove-Item -Path $buildDir -Recurse -Force -ErrorAction SilentlyContinue
 }
 
+# Set up Visual Studio environment (INCLUDE, LIB, PATH)
+$vcvarsall = "C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvarsall.bat"
+if (Test-Path $vcvarsall) {
+    # Capture environment after vcvarsall.bat
+    $envBefore = @{}
+    Get-ChildItem env: | ForEach-Object { $envBefore[$_.Name] = $_.Value }
+    
+    $vcvarsOutput = cmd /c "`"$vcvarsall`" x64 > nul 2>&1 && set" 2>&1
+    foreach ($line in $vcvarsOutput) {
+        if ($line -match "^(\w+)=(.*)$") {
+            $name = $Matches[1]
+            $value = $Matches[2]
+            [Environment]::SetEnvironmentVariable($name, $value, "Process")
+        }
+    }
+}
+
 try {
     Push-Location $ProjectRoot
-    $configureOutput = & $cmakeExe --preset p0b-configure-smoke 2>&1
+    $configureOutput = & $cmakeExe --preset p0c-contract-debug 2>&1
     $configureExitCode = $LASTEXITCODE
     Pop-Location
 } catch {
@@ -114,15 +132,13 @@ if ($configureExitCode -ne 0) {
 
 Write-Host "PASS_CONFIGURE_SMOKE"
 Write-Host ""
-Write-Host "CMake configure-only smoke passed."
+Write-Host "CMake configure-only smoke passed (p0c-contract-debug preset)."
 Write-Host ""
 Write-Host "IMPORTANT:"
 Write-Host "  This is a CONFIGURE_SMOKE_ONLY result."
 Write-Host "  This is NOT a BUILD pass."
 Write-Host "  This is NOT a TEST pass."
 Write-Host "  This is NOT a RUNTIME pass."
-Write-Host "  NO_BUILD_TARGETS"
-Write-Host "  NO_TEST_TARGETS"
-Write-Host "  NO_RUNTIME_TARGETS"
+Write-Host "  P0-C contract targets detected and configured successfully."
 
 exit 0
