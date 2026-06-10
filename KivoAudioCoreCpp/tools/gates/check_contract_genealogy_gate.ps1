@@ -66,8 +66,8 @@ if (Test-Path $contractRoot) {
 # =============================================================================
 # Rule G3: Single-file families contain exactly 1 .hpp with exact name
 # =============================================================================
+# (format/ moved to G3e as multi-subdirectory family in P0-C-004)
 $singleFileFamilies = @{
-    "format" = @("audio_format_descriptor.hpp")
 }
 
 foreach ($dir in $singleFileFamilies.Keys) {
@@ -238,6 +238,50 @@ if (Test-Path $capabilityRoot) {
 }
 
 # =============================================================================
+# Rule G3e: Format family — subdirectory tree with exact allowlists
+# =============================================================================
+$formatSubdirAllowlists = @{
+    "descriptor"   = @("audio_format_descriptor.hpp", "sample_format.hpp", "channel_layout.hpp", "frame_layout.hpp", "channel_mask.hpp")
+    "roles"        = @("native_decoded_format.hpp", "core_canonical_format.hpp", "render_format.hpp", "device_format.hpp")
+    "negotiation"  = @("format_negotiation_result.hpp", "conversion_policy.hpp", "resample_decision.hpp", "bit_perfect_eligibility.hpp", "negotiated_output_mode.hpp")
+}
+
+$formatDir = Join-Path $contractRoot "format"
+if (Test-Path $formatDir) {
+    # Root must be empty of .hpp files (all in subdirectories)
+    $rootHpp = Get-ChildItem -Path $formatDir -Filter "*.hpp"
+    if ($rootHpp.Count -gt 0) {
+        foreach ($f in $rootHpp) {
+            $violations += "G3e: Production file at format/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    # Validate each subdirectory
+    foreach ($subdir in $formatSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $formatDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.hpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $formatSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G3e: Unexpected file in format/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G3e: Missing file in format/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G3e: Missing format subdirectory: format/$subdir/"
+        }
+    }
+} else {
+    $violations += "G3e: Missing production family directory: include/kivo/core/contract/format/"
+}
+
+# =============================================================================
 # Rule G4: Test root allows only runner files + family dirs
 # =============================================================================
 $testsRoot = Join-Path $ProjectRoot "tests\contracts"
@@ -279,7 +323,6 @@ if (Test-Path $testsRoot) {
 # =============================================================================
 $expectedTestFiles = @{
     "foundation" = @("result_tests.cpp", "generation_id_tests.cpp", "sample_position_tests.cpp")
-    "format"     = @("audio_format_descriptor_tests.cpp")
     "capability" = @("capability_tests_main.cpp", "identity_tests.cpp", "quality_tests.cpp", "constraint_tests.cpp", "component_tests.cpp", "domain_tests.cpp", "negotiation_tests.cpp")
 }
 
@@ -392,6 +435,49 @@ if (Test-Path $seekTestDir) {
     }
 } else {
     $violations += "G6b: Missing test family directory: tests/contracts/seek/"
+}
+
+# =============================================================================
+# Rule G6c: Format test family — subdirectory tree with exact allowlists
+# =============================================================================
+$formatTestSubdirAllowlists = @{
+    "descriptor"   = @("audio_format_descriptor_tests.cpp", "sample_format_tests.cpp", "channel_layout_tests.cpp", "frame_layout_tests.cpp", "channel_mask_tests.cpp")
+    "roles"        = @("native_decoded_format_tests.cpp", "core_canonical_format_tests.cpp", "render_format_tests.cpp", "device_format_tests.cpp")
+    "negotiation"  = @("format_negotiation_result_tests.cpp", "conversion_policy_tests.cpp", "resample_decision_tests.cpp", "bit_perfect_eligibility_tests.cpp", "negotiated_output_mode_tests.cpp")
+}
+
+$formatTestDir = Join-Path $testsRoot "format"
+if (Test-Path $formatTestDir) {
+    # Root must be empty of .cpp files (all in subdirectories)
+    $rootCpp = Get-ChildItem -Path $formatTestDir -Filter "*.cpp"
+    if ($rootCpp.Count -gt 0) {
+        foreach ($f in $rootCpp) {
+            $violations += "G6c: Test file at format/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    foreach ($subdir in $formatTestSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $formatTestDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.cpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $formatTestSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G6c: Unexpected test file in format/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G6c: Missing test file in format/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G6c: Missing format test subdirectory: format/$subdir/"
+        }
+    }
+} else {
+    $violations += "G6c: Missing test family directory: tests/contracts/format/"
 }
 
 # =============================================================================

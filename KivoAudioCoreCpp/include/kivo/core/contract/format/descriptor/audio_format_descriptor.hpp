@@ -1,40 +1,20 @@
 // =============================================================================
 // KivoAudioCoreCpp — audio_format_descriptor.hpp
-// Contract: Audio format descriptor (minimal)
+// Contract: Audio format descriptor (full)
 // =============================================================================
 //
-// Describes the PCM format of audio data. No resampling, no channel remix.
-// Platform-neutral. No runtime dependencies.
+// Comprehensive PCM format description combining sample format, channel layout,
+// sample rate, and bit depth. Platform-neutral. No runtime dependencies.
 // =============================================================================
 
 #pragma once
 
 #include <cstdint>
 
+#include "sample_format.hpp"
+#include "channel_layout.hpp"
+
 namespace kivo::core::contract {
-
-// =============================================================================
-// SampleFormat — PCM sample encoding
-// =============================================================================
-enum class SampleFormat : uint8_t {
-    Unknown = 0,
-    Int16,
-    Int24,
-    Int32,
-    Float32,
-    Float64
-};
-
-// =============================================================================
-// ChannelLayout — Speaker arrangement
-// =============================================================================
-enum class ChannelLayout : uint8_t {
-    Unknown = 0,
-    Mono,
-    Stereo,
-    Surround51,
-    Surround71
-};
 
 // =============================================================================
 // AudioFormatDescriptor — PCM format metadata
@@ -44,6 +24,16 @@ struct AudioFormatDescriptor {
     ChannelLayout channel_layout = ChannelLayout::Unknown;
     uint32_t sample_rate = 0;
     uint8_t bits_per_sample = 0;
+
+    // --- Channel count (derived from layout) ---
+    [[nodiscard]] uint8_t channel_count() const noexcept {
+        return channel_layout_count(channel_layout);
+    }
+
+    // --- Frame size in bytes ---
+    [[nodiscard]] uint8_t bytes_per_frame() const noexcept {
+        return (bits_per_sample / 8u) * channel_count();
+    }
 
     // --- Validity check ---
     [[nodiscard]] bool is_valid() const noexcept {

@@ -48,7 +48,20 @@ add_executable(kivo_contract_tests
     tests/contracts/foundation/result_tests.cpp
     tests/contracts/foundation/generation_id_tests.cpp
     tests/contracts/foundation/sample_position_tests.cpp
-    tests/contracts/format/audio_format_descriptor_tests.cpp
+    tests/contracts/format/descriptor/audio_format_descriptor_tests.cpp
+    tests/contracts/format/descriptor/sample_format_tests.cpp
+    tests/contracts/format/descriptor/channel_layout_tests.cpp
+    tests/contracts/format/descriptor/frame_layout_tests.cpp
+    tests/contracts/format/descriptor/channel_mask_tests.cpp
+    tests/contracts/format/roles/native_decoded_format_tests.cpp
+    tests/contracts/format/roles/core_canonical_format_tests.cpp
+    tests/contracts/format/roles/render_format_tests.cpp
+    tests/contracts/format/roles/device_format_tests.cpp
+    tests/contracts/format/negotiation/format_negotiation_result_tests.cpp
+    tests/contracts/format/negotiation/conversion_policy_tests.cpp
+    tests/contracts/format/negotiation/resample_decision_tests.cpp
+    tests/contracts/format/negotiation/bit_perfect_eligibility_tests.cpp
+    tests/contracts/format/negotiation/negotiated_output_mode_tests.cpp
     tests/contracts/clock/domain/clock_domain_tests.cpp
     tests/contracts/clock/domain/device_clock_tests.cpp
     tests/contracts/clock/domain/stream_clock_tests.cpp

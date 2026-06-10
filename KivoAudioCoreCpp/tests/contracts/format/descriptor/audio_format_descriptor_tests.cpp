@@ -3,25 +3,10 @@
 // Tests for AudioFormatDescriptor contract type
 // =============================================================================
 
-#include "kivo/core/contract/format/audio_format_descriptor.hpp"
-#include "../contract_tests_main.h"
+#include "kivo/core/contract/format/descriptor/audio_format_descriptor.hpp"
+#include "../../contract_tests_main.h"
 
 using namespace kivo::core::contract;
-
-// =============================================================================
-// Tests
-// =============================================================================
-static void sample_format_values() {
-    ASSERT(static_cast<uint8_t>(SampleFormat::Unknown) == 0);
-    ASSERT(SampleFormat::Int16 != SampleFormat::Int24);
-    ASSERT(SampleFormat::Float32 != SampleFormat::Float64);
-}
-
-static void channel_layout_values() {
-    ASSERT(static_cast<uint8_t>(ChannelLayout::Unknown) == 0);
-    ASSERT(ChannelLayout::Mono != ChannelLayout::Stereo);
-    ASSERT(ChannelLayout::Surround51 != ChannelLayout::Surround71);
-}
 
 static void default_construction_is_invalid() {
     AudioFormatDescriptor fmt;
@@ -55,6 +40,23 @@ static void invalid_zero_bits() {
     ASSERT(!fmt.is_valid());
 }
 
+static void channel_count_derived() {
+    AudioFormatDescriptor fmt;
+    fmt.channel_layout = ChannelLayout::Stereo;
+    ASSERT(fmt.channel_count() == 2);
+
+    fmt.channel_layout = ChannelLayout::Surround51;
+    ASSERT(fmt.channel_count() == 6);
+}
+
+static void bytes_per_frame_calculation() {
+    AudioFormatDescriptor fmt;
+    fmt.sample_format = SampleFormat::Int16;
+    fmt.channel_layout = ChannelLayout::Stereo;
+    fmt.bits_per_sample = 16;
+    ASSERT(fmt.bytes_per_frame() == 4); // 2 bytes/sample * 2 channels
+}
+
 static void equality_same() {
     AudioFormatDescriptor a;
     a.sample_format = SampleFormat::Float32;
@@ -82,17 +84,14 @@ static void equality_different() {
     ASSERT(!(a == b));
 }
 
-// =============================================================================
-// Runner
-// =============================================================================
 void run_audio_format_descriptor_contract_tests(ContractTestRunner& runner) {
     std::cout << "--- AudioFormatDescriptor ---\n";
-    runner.run("sample_format_values", sample_format_values);
-    runner.run("channel_layout_values", channel_layout_values);
     runner.run("default_construction_is_invalid", default_construction_is_invalid);
     runner.run("valid_format", valid_format);
     runner.run("invalid_zero_sample_rate", invalid_zero_sample_rate);
     runner.run("invalid_zero_bits", invalid_zero_bits);
+    runner.run("channel_count_derived", channel_count_derived);
+    runner.run("bytes_per_frame_calculation", bytes_per_frame_calculation);
     runner.run("equality_same", equality_same);
     runner.run("equality_different", equality_different);
     std::cout << "\n";
