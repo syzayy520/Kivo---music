@@ -30,7 +30,7 @@ struct StateMachineContract {
     DeviceLostDuringSeekRule device_lost_during_seek{DeviceLostDuringSeekRule::Unknown};
     ShutdownDuringDrainRule shutdown_during_drain{ShutdownDuringDrainRule::Unknown};
 
-    [[nodiscard]] bool operator==(const StateMachineContract&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const StateMachineContract&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
