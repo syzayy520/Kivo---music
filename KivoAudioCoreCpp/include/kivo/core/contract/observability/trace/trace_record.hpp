@@ -14,7 +14,7 @@ struct TraceRecord {
     uint64_t span_id{0};
     uint64_t parent_span_id{0};
 
-    bool operator==(const TraceRecord&) const noexcept = default;
+    [[nodiscard]] bool operator==(const TraceRecord&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract::observability
