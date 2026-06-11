@@ -19,6 +19,17 @@ function Test-CommandAvailable {
     return $null -ne (Get-Command $Name -ErrorAction SilentlyContinue)
 }
 
+function Add-VswhereCandidate {
+    param(
+        [System.Collections.Generic.List[string]]$Candidates,
+        [string]$BasePath
+    )
+
+    if ($BasePath) {
+        $Candidates.Add((Join-Path $BasePath "Microsoft Visual Studio\Installer\vswhere.exe"))
+    }
+}
+
 Write-Host "============================================================================="
 Write-Host "KivoAudioCoreCpp Windows Toolchain Locator"
 Write-Host "============================================================================="
@@ -42,12 +53,20 @@ if ($hasCl) {
     exit 0
 }
 
-$vswhereCandidates = @(
-    "$env:ProgramFiles(x86)\Microsoft Visual Studio\Installer\vswhere.exe",
-    "$env:ProgramFiles\Microsoft Visual Studio\Installer\vswhere.exe"
-)
+$vswhereCommand = Get-Command "vswhere.exe" -ErrorAction SilentlyContinue
+$vswhereCandidates = [System.Collections.Generic.List[string]]::new()
 
-$vswhere = $vswhereCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+if ($vswhereCommand) {
+    $vswhereCandidates.Add($vswhereCommand.Source)
+}
+
+$programFilesX86 = [Environment]::GetEnvironmentVariable("ProgramFiles(x86)")
+$programFiles = [Environment]::GetEnvironmentVariable("ProgramFiles")
+
+Add-VswhereCandidate -Candidates $vswhereCandidates -BasePath $programFilesX86
+Add-VswhereCandidate -Candidates $vswhereCandidates -BasePath $programFiles
+
+$vswhere = $vswhereCandidates | Where-Object { $_ -and (Test-Path $_) } | Select-Object -First 1
 
 if ($vswhere) {
     Write-Host "vswhere found: $vswhere"
