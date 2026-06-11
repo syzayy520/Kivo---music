@@ -12,7 +12,7 @@ struct DiagnosticSnapshot {
     uint64_t snapshot_id{0};
     uint32_t severity_level{0};
 
-    [[nodiscard]] bool operator==(const DiagnosticSnapshot&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const DiagnosticSnapshot&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract::observability
