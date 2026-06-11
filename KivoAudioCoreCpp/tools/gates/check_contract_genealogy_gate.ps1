@@ -47,7 +47,8 @@ $allowedProductionDirs = @(
     "generation",
     "buffer",
     "queue",
-    "source"
+    "source",
+    "cue"
 )
 
 if (Test-Path $contractRoot) {
@@ -351,7 +352,8 @@ $allowedTestDirs = @(
     "generation",
     "buffer",
     "queue",
-    "source"
+    "source",
+    "cue"
 )
 
 if (Test-Path $testsRoot) {
@@ -1035,6 +1037,93 @@ if (Test-Path $sourceTestDir) {
     }
 } else {
     $violations += "G6i: Missing test family directory: tests/contracts/source/"
+}
+
+# =============================================================================
+# Rule G3l: Cue family — subdirectory tree with exact allowlists
+# =============================================================================
+$cueSubdirAllowlists = @{
+    "boundary"   = @("cue_sheet_boundary.hpp", "whole_album_file.hpp", "virtual_track_segment.hpp")
+    "range"      = @("source_time_range.hpp", "timeline_range.hpp", "track_segment_range.hpp")
+    "continuity" = @("gapless_metadata.hpp", "cross_track_clock_continuity.hpp", "codec_delay.hpp", "padding.hpp", "preroll.hpp", "prefetch.hpp")
+}
+
+$cueDir = Join-Path $contractRoot "cue"
+if (Test-Path $cueDir) {
+    # Root must be empty of .hpp files (all in subdirectories)
+    $rootHpp = Get-ChildItem -Path $cueDir -Filter "*.hpp"
+    if ($rootHpp.Count -gt 0) {
+        foreach ($f in $rootHpp) {
+            $violations += "G3l: Production file at cue/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    # Validate each subdirectory
+    foreach ($subdir in $cueSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $cueDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.hpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $cueSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G3l: Unexpected file in cue/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G3l: Missing file in cue/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G3l: Missing cue subdirectory: cue/$subdir/"
+        }
+    }
+} else {
+    $violations += "G3l: Missing production family directory: include/kivo/core/contract/cue/"
+}
+
+# =============================================================================
+# Rule G6j: Cue test family — subdirectory tree with exact allowlists
+# =============================================================================
+$cueTestSubdirAllowlists = @{
+    "boundary"   = @("cue_boundary_tests.cpp")
+    "range"      = @("cue_range_tests.cpp")
+    "continuity" = @("cue_continuity_tests.cpp")
+}
+
+$cueTestDir = Join-Path $testsRoot "cue"
+if (Test-Path $cueTestDir) {
+    # Root must be empty of .cpp files (all in subdirectories)
+    $rootCpp = Get-ChildItem -Path $cueTestDir -Filter "*.cpp"
+    if ($rootCpp.Count -gt 0) {
+        foreach ($f in $rootCpp) {
+            $violations += "G6j: Test file at cue/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    foreach ($subdir in $cueTestSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $cueTestDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.cpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $cueTestSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G6j: Unexpected test file in cue/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G6j: Missing test file in cue/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G6j: Missing cue test subdirectory: cue/$subdir/"
+        }
+    }
+} else {
+    $violations += "G6j: Missing test family directory: tests/contracts/cue/"
 }
 
 # =============================================================================

@@ -116,6 +116,9 @@ add_executable(kivo_contract_tests
     tests/contracts/source/container/source_container_tests.cpp
     tests/contracts/source/boundary/source_boundary_tests.cpp
     tests/contracts/source/outcome/source_outcome_tests.cpp
+    tests/contracts/cue/boundary/cue_boundary_tests.cpp
+    tests/contracts/cue/range/cue_range_tests.cpp
+    tests/contracts/cue/continuity/cue_continuity_tests.cpp
 )
 target_link_libraries(kivo_contract_tests PRIVATE kivo_core_contract)
 target_compile_features(kivo_contract_tests PRIVATE cxx_std_20)

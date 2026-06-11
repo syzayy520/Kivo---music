@@ -82,6 +82,9 @@ void run_source_reader_tests(ContractTestRunner& runner);
 void run_source_container_tests(ContractTestRunner& runner);
 void run_source_boundary_tests(ContractTestRunner& runner);
 void run_source_outcome_tests(ContractTestRunner& runner);
+void run_cue_boundary_tests(ContractTestRunner& runner);
+void run_cue_range_tests(ContractTestRunner& runner);
+void run_cue_continuity_tests(ContractTestRunner& runner);
 
 // =============================================================================
 // Main
@@ -162,6 +165,9 @@ int main() {
     run_source_container_tests(runner);
     run_source_boundary_tests(runner);
     run_source_outcome_tests(runner);
+    run_cue_boundary_tests(runner);
+    run_cue_range_tests(runner);
+    run_cue_continuity_tests(runner);
 
     std::cout << "=== " << runner.tests_passed << "/" << runner.tests_run << " passed ===\n";
     return runner.exit_code();
