@@ -10,6 +10,7 @@ struct CommandOrderingContract {
     CommandOrderingPolicy ordering{CommandOrderingPolicy::Unknown};
     CommandSupersessionPolicy supersession{CommandSupersessionPolicy::Unknown};
     CommandCoalescingPolicy coalescing{CommandCoalescingPolicy::Unknown};
+
     [[nodiscard]] constexpr bool operator==(const CommandOrderingContract&) const noexcept = default;
 };
 
