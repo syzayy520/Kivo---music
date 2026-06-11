@@ -8,9 +8,9 @@
 namespace kivo::core::contract {
 
 struct RecoveryMatrix {
-    ErrorDomain domain = ErrorDomain::Unknown;
-    RecoveryAction primary_action = RecoveryAction::None;
-    RecoveryAction fallback_action = RecoveryAction::None;
+    ErrorDomain domain{ErrorDomain::Unknown};
+    RecoveryAction primary_action{RecoveryAction::None};
+    RecoveryAction fallback_action{RecoveryAction::None};
 
     [[nodiscard]] bool operator==(const RecoveryMatrix&) const noexcept = default;
 };
