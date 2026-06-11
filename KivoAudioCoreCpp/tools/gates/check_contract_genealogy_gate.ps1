@@ -42,7 +42,8 @@ $allowedProductionDirs = @(
     "clock",
     "seek",
     "capability",
-    "output"
+    "output",
+    "realtime"
 )
 
 if (Test-Path $contractRoot) {
@@ -341,7 +342,8 @@ $allowedTestDirs = @(
     "clock",
     "seek",
     "capability",
-    "output"
+    "output",
+    "realtime"
 )
 
 if (Test-Path $testsRoot) {
@@ -566,6 +568,99 @@ if (Test-Path $outputTestDir) {
     }
 } else {
     $violations += "G6d: Missing test family directory: tests/contracts/output/"
+}
+
+# =============================================================================
+# Rule G3g: Realtime family — subdirectory tree with exact allowlists
+# =============================================================================
+$realtimeSubdirAllowlists = @{
+    "path"        = @("realtime_path.hpp", "realtime_path_context.hpp")
+    "prohibition" = @("realtime_allocation_rule.hpp", "realtime_blocking_io_rule.hpp", "realtime_locking_rule.hpp", "realtime_logging_rule.hpp", "realtime_callback_rule.hpp", "realtime_exception_rule.hpp")
+    "ownership"   = @("ownership_transfer_rule.hpp", "ownership_visibility_rule.hpp")
+    "buffer"      = @("preallocated_buffer_rule.hpp", "buffer_ownership_rule.hpp", "buffer_lifetime_rule.hpp")
+    "transport"   = @("bounded_transport_rule.hpp", "spsc_semantics_rule.hpp")
+    "boundary"    = @("realtime_boundary_contract.hpp", "non_realtime_boundary_contract.hpp")
+}
+
+$realtimeDir = Join-Path $contractRoot "realtime"
+if (Test-Path $realtimeDir) {
+    # Root must be empty of .hpp files (all in subdirectories)
+    $rootHpp = Get-ChildItem -Path $realtimeDir -Filter "*.hpp"
+    if ($rootHpp.Count -gt 0) {
+        foreach ($f in $rootHpp) {
+            $violations += "G3g: Production file at realtime/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    # Validate each subdirectory
+    foreach ($subdir in $realtimeSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $realtimeDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.hpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $realtimeSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G3g: Unexpected file in realtime/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G3g: Missing file in realtime/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G3g: Missing realtime subdirectory: realtime/$subdir/"
+        }
+    }
+} else {
+    $violations += "G3g: Missing production family directory: include/kivo/core/contract/realtime/"
+}
+
+# =============================================================================
+# Rule G6e: Realtime test family — subdirectory tree with exact allowlists
+# =============================================================================
+$realtimeTestSubdirAllowlists = @{
+    "path"        = @("realtime_path_contract_tests.cpp")
+    "prohibition" = @("realtime_prohibition_contract_tests.cpp")
+    "ownership"   = @("realtime_ownership_contract_tests.cpp")
+    "buffer"      = @("realtime_buffer_contract_tests.cpp")
+    "transport"   = @("realtime_transport_contract_tests.cpp")
+    "boundary"    = @("realtime_boundary_contract_tests.cpp")
+}
+
+$realtimeTestDir = Join-Path $testsRoot "realtime"
+if (Test-Path $realtimeTestDir) {
+    # Root must be empty of .cpp files (all in subdirectories)
+    $rootCpp = Get-ChildItem -Path $realtimeTestDir -Filter "*.cpp"
+    if ($rootCpp.Count -gt 0) {
+        foreach ($f in $rootCpp) {
+            $violations += "G6e: Test file at realtime/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    foreach ($subdir in $realtimeTestSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $realtimeTestDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.cpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $realtimeTestSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G6e: Unexpected test file in realtime/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G6e: Missing test file in realtime/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G6e: Missing realtime test subdirectory: realtime/$subdir/"
+        }
+    }
+} else {
+    $violations += "G6e: Missing test family directory: tests/contracts/realtime/"
 }
 
 # =============================================================================

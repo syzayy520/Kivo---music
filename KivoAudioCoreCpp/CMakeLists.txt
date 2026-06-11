@@ -90,6 +90,12 @@ add_executable(kivo_contract_tests
     tests/contracts/output/path/output_path_truth_tests.cpp
     tests/contracts/output/decision/output_policy_decision_tests.cpp
     tests/contracts/output/decision/output_policy_explanation_tests.cpp
+    tests/contracts/realtime/path/realtime_path_contract_tests.cpp
+    tests/contracts/realtime/prohibition/realtime_prohibition_contract_tests.cpp
+    tests/contracts/realtime/ownership/realtime_ownership_contract_tests.cpp
+    tests/contracts/realtime/buffer/realtime_buffer_contract_tests.cpp
+    tests/contracts/realtime/transport/realtime_transport_contract_tests.cpp
+    tests/contracts/realtime/boundary/realtime_boundary_contract_tests.cpp
 )
 target_link_libraries(kivo_contract_tests PRIVATE kivo_core_contract)
 target_compile_features(kivo_contract_tests PRIVATE cxx_std_20)

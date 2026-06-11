@@ -56,6 +56,12 @@ void run_host_audio_engine_participation_tests(ContractTestRunner& runner);
 void run_output_path_truth_tests(ContractTestRunner& runner);
 void run_output_policy_decision_tests(ContractTestRunner& runner);
 void run_output_policy_explanation_tests(ContractTestRunner& runner);
+void run_realtime_path_contract_tests(ContractTestRunner& runner);
+void run_realtime_prohibition_contract_tests(ContractTestRunner& runner);
+void run_realtime_ownership_contract_tests(ContractTestRunner& runner);
+void run_realtime_buffer_contract_tests(ContractTestRunner& runner);
+void run_realtime_transport_contract_tests(ContractTestRunner& runner);
+void run_realtime_boundary_contract_tests(ContractTestRunner& runner);
 
 // =============================================================================
 // Main
@@ -110,6 +116,12 @@ int main() {
     run_output_path_truth_tests(runner);
     run_output_policy_decision_tests(runner);
     run_output_policy_explanation_tests(runner);
+    run_realtime_path_contract_tests(runner);
+    run_realtime_prohibition_contract_tests(runner);
+    run_realtime_ownership_contract_tests(runner);
+    run_realtime_buffer_contract_tests(runner);
+    run_realtime_transport_contract_tests(runner);
+    run_realtime_boundary_contract_tests(runner);
 
     std::cout << "=== " << runner.tests_passed << "/" << runner.tests_run << " passed ===\n";
     return runner.exit_code();
