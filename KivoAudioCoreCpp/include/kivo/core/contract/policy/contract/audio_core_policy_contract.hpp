@@ -21,7 +21,7 @@ struct AudioCorePolicyContract {
     BinaryProvenancePolicy binary_provenance{};
     CommercialClaimPolicy commercial_claim{};
 
-    [[nodiscard]] bool operator==(const AudioCorePolicyContract&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const AudioCorePolicyContract&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract::policy
