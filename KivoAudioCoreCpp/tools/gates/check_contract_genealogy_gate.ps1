@@ -51,7 +51,8 @@ $allowedProductionDirs = @(
     "cue",
     "error",
     "state",
-    "command"
+    "command",
+    "observability"
 )
 
 if (Test-Path $contractRoot) {
@@ -359,7 +360,8 @@ $allowedTestDirs = @(
     "cue",
     "error",
     "state",
-    "command"
+    "command",
+    "observability"
 )
 
 if (Test-Path $testsRoot) {
@@ -1272,6 +1274,51 @@ if (Test-Path $commandDir) {
 }
 
 # =============================================================================
+# Rule G3p: Observability family — subdirectory tree with exact allowlists
+# =============================================================================
+$observabilitySubdirAllowlists = @{
+    "event"      = @("observation_event_kind.hpp", "observation_severity.hpp")
+    "metric"     = @("metric_kind.hpp", "metric_unit.hpp", "metric_sample.hpp")
+    "trace"      = @("trace_event_kind.hpp", "trace_record.hpp", "trace_buffer_policy.hpp")
+    "diagnostic" = @("diagnostic_snapshot_kind.hpp", "diagnostic_snapshot.hpp")
+    "contract"   = @("observability_contract.hpp")
+}
+$observabilityDir = Join-Path $contractRoot "observability"
+if (Test-Path $observabilityDir) {
+    # Root must be empty of .hpp files (all in subdirectories)
+    $rootHpp = Get-ChildItem -Path $observabilityDir -Filter "*.hpp"
+    if ($rootHpp.Count -gt 0) {
+        foreach ($f in $rootHpp) {
+            $violations += "G3p: Production file at observability/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    # Validate each subdirectory
+    foreach ($subdir in $observabilitySubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $observabilityDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.hpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $observabilitySubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G3p: Unexpected file in observability/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G3p: Missing file in observability/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G3p: Missing observability subdirectory: observability/$subdir/"
+        }
+    }
+} else {
+    $violations += "G3p: Missing production family directory: include/kivo/core/contract/observability/"
+}
+
+# =============================================================================
 # Rule G6k: Error test family — subdirectory tree with exact allowlists
 # =============================================================================
 $errorTestSubdirAllowlists = @{
@@ -1405,6 +1452,50 @@ if (Test-Path $commandTestDir) {
     }
 } else {
     $violations += "G6m: Missing test family directory: tests/contracts/command/"
+}
+
+# =============================================================================
+# Rule G6n: Observability test family — subdirectory tree with exact allowlists
+# =============================================================================
+$observabilityTestSubdirAllowlists = @{
+    "event"      = @("observability_event_tests.cpp")
+    "metric"     = @("observability_metric_tests.cpp")
+    "trace"      = @("observability_trace_tests.cpp")
+    "diagnostic" = @("observability_diagnostic_tests.cpp")
+    "contract"   = @("observability_contract_tests.cpp")
+}
+$observabilityTestDir = Join-Path $testsRoot "observability"
+if (Test-Path $observabilityTestDir) {
+    # Root must be empty of .cpp files (all in subdirectories)
+    $rootCpp = Get-ChildItem -Path $observabilityTestDir -Filter "*.cpp"
+    if ($rootCpp.Count -gt 0) {
+        foreach ($f in $rootCpp) {
+            $violations += "G6n: Test file at observability/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    foreach ($subdir in $observabilityTestSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $observabilityTestDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.cpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $observabilityTestSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G6n: Unexpected test file in observability/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G6n: Missing test file in observability/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G6n: Missing observability test subdirectory: observability/$subdir/"
+        }
+    }
+} else {
+    $violations += "G6n: Missing test family directory: tests/contracts/observability/"
 }
 
 # =============================================================================

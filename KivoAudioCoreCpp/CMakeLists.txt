@@ -138,6 +138,11 @@ add_executable(kivo_contract_tests
     tests/contracts/command/decision/command_decision_tests.cpp
     tests/contracts/command/scenario/command_scenario_tests.cpp
     tests/contracts/command/contract/command_semantics_contract_tests.cpp
+    tests/contracts/observability/event/observability_event_tests.cpp
+    tests/contracts/observability/metric/observability_metric_tests.cpp
+    tests/contracts/observability/trace/observability_trace_tests.cpp
+    tests/contracts/observability/diagnostic/observability_diagnostic_tests.cpp
+    tests/contracts/observability/contract/observability_contract_tests.cpp
 )
 target_link_libraries(kivo_contract_tests PRIVATE kivo_core_contract)
 target_compile_features(kivo_contract_tests PRIVATE cxx_std_20)

@@ -104,6 +104,13 @@ void run_command_ordering_tests(ContractTestRunner& runner);
 void run_command_decision_tests(ContractTestRunner& runner);
 void run_command_scenario_tests(ContractTestRunner& runner);
 void run_command_semantics_contract_tests(ContractTestRunner& runner);
+void run_observability_event_tests(ContractTestRunner& runner);
+void run_observability_metric_tests(ContractTestRunner& runner);
+void run_observability_trace_tests(ContractTestRunner& runner);
+void run_observability_diagnostic_tests(ContractTestRunner& runner);
+void run_observability_contract_tests(ContractTestRunner& runner);
+
+
 
 // =============================================================================
 // Main
@@ -206,6 +213,13 @@ int main() {
     run_command_decision_tests(runner);
     run_command_scenario_tests(runner);
     run_command_semantics_contract_tests(runner);
+    run_observability_event_tests(runner);
+    run_observability_metric_tests(runner);
+    run_observability_trace_tests(runner);
+    run_observability_diagnostic_tests(runner);
+    run_observability_contract_tests(runner);
+
+
 
     std::cout << "=== " << runner.tests_passed << "/" << runner.tests_run << " passed ===\n";
     return runner.exit_code();
