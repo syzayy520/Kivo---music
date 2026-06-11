@@ -8,7 +8,7 @@ struct PathExposurePolicy {
     uint8_t allow_home_relative{0};
     uint8_t sanitize_separators{0};
 
-    [[nodiscard]] bool operator==(const PathExposurePolicy&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const PathExposurePolicy&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract::policy
