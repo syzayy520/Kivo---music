@@ -49,7 +49,8 @@ $allowedProductionDirs = @(
     "queue",
     "source",
     "cue",
-    "error"
+    "error",
+    "state"
 )
 
 if (Test-Path $contractRoot) {
@@ -355,7 +356,8 @@ $allowedTestDirs = @(
     "queue",
     "source",
     "cue",
-    "error"
+    "error",
+    "state"
 )
 
 if (Test-Path $testsRoot) {
@@ -1174,6 +1176,53 @@ if (Test-Path $errorDir) {
 }
 
 # =============================================================================
+# Rule G3n: State family — subdirectory tree with exact allowlists
+# =============================================================================
+$stateSubdirAllowlists = @{
+    "phase"      = @("core_state.hpp", "state_stability.hpp", "state_terminality.hpp")
+    "transition" = @("state_transition_intent.hpp", "state_transition.hpp", "state_transition_validity.hpp", "state_transition_decision.hpp")
+    "rejection"  = @("state_transition_rejection_reason.hpp", "illegal_transition_rule.hpp")
+    "rule"       = @("reentrant_transition_policy.hpp", "transition_preemption_policy.hpp", "terminal_state_rule.hpp")
+    "scenario"   = @("seeking_reentry_rule.hpp", "recovering_seek_rule.hpp", "draining_pause_rule.hpp", "failed_close_rule.hpp", "closed_mutation_rule.hpp", "device_lost_during_seek_rule.hpp", "shutdown_during_drain_rule.hpp")
+    "contract"   = @("state_machine_contract.hpp")
+}
+
+$stateDir = Join-Path $contractRoot "state"
+if (Test-Path $stateDir) {
+    # Root must be empty of .hpp files (all in subdirectories)
+    $rootHpp = Get-ChildItem -Path $stateDir -Filter "*.hpp"
+    if ($rootHpp.Count -gt 0) {
+        foreach ($f in $rootHpp) {
+            $violations += "G3n: Production file at state/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    # Validate each subdirectory
+    foreach ($subdir in $stateSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $stateDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.hpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $stateSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G3n: Unexpected file in state/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G3n: Missing file in state/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G3n: Missing state subdirectory: state/$subdir/"
+        }
+    }
+} else {
+    $violations += "G3n: Missing production family directory: include/kivo/core/contract/state/"
+}
+
+# =============================================================================
 # Rule G6k: Error test family — subdirectory tree with exact allowlists
 # =============================================================================
 $errorTestSubdirAllowlists = @{
@@ -1215,6 +1264,52 @@ if (Test-Path $errorTestDir) {
     }
 } else {
     $violations += "G6k: Missing test family directory: tests/contracts/error/"
+}
+
+# =============================================================================
+# Rule G6l: State test family — subdirectory tree with exact allowlists
+# =============================================================================
+$stateTestSubdirAllowlists = @{
+    "phase"      = @("state_phase_tests.cpp")
+    "transition" = @("state_transition_tests.cpp")
+    "rejection"  = @("state_rejection_tests.cpp")
+    "rule"       = @("state_rule_tests.cpp")
+    "scenario"   = @("state_scenario_tests.cpp")
+    "contract"   = @("state_machine_contract_tests.cpp")
+}
+
+$stateTestDir = Join-Path $testsRoot "state"
+if (Test-Path $stateTestDir) {
+    # Root must be empty of .cpp files (all in subdirectories)
+    $rootCpp = Get-ChildItem -Path $stateTestDir -Filter "*.cpp"
+    if ($rootCpp.Count -gt 0) {
+        foreach ($f in $rootCpp) {
+            $violations += "G6l: Test file at state/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    foreach ($subdir in $stateTestSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $stateTestDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.cpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $stateTestSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G6l: Unexpected test file in state/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G6l: Missing test file in state/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G6l: Missing state test subdirectory: state/$subdir/"
+        }
+    }
+} else {
+    $violations += "G6l: Missing test family directory: tests/contracts/state/"
 }
 
 # =============================================================================

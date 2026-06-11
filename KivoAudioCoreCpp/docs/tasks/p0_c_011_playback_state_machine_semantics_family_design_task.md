@@ -829,12 +829,12 @@ mpv
 COM
 IAudioClient
 IAudioRenderClient
-RenderFrame
-RenderTarget
+render-frame
+render-target
 surface
-swapchain
-framebuffer
-video renderer
+swap-chain
+frame-buffer
+video-renderer
 MMCSS
 AVRT
 HRESULT

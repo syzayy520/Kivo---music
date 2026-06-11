@@ -92,6 +92,12 @@ void run_error_attributes_tests(ContractTestRunner& runner);
 void run_recovery_action_tests(ContractTestRunner& runner);
 void run_recovery_matrix_tests(ContractTestRunner& runner);
 void run_error_outcome_tests(ContractTestRunner& runner);
+void run_state_phase_tests(ContractTestRunner& runner);
+void run_state_transition_tests(ContractTestRunner& runner);
+void run_state_rejection_tests(ContractTestRunner& runner);
+void run_state_rule_tests(ContractTestRunner& runner);
+void run_state_scenario_tests(ContractTestRunner& runner);
+void run_state_machine_contract_tests(ContractTestRunner& runner);
 
 // =============================================================================
 // Main
@@ -182,6 +188,12 @@ int main() {
     run_recovery_action_tests(runner);
     run_recovery_matrix_tests(runner);
     run_error_outcome_tests(runner);
+    run_state_phase_tests(runner);
+    run_state_transition_tests(runner);
+    run_state_rejection_tests(runner);
+    run_state_rule_tests(runner);
+    run_state_scenario_tests(runner);
+    run_state_machine_contract_tests(runner);
 
     std::cout << "=== " << runner.tests_passed << "/" << runner.tests_run << " passed ===\n";
     return runner.exit_code();

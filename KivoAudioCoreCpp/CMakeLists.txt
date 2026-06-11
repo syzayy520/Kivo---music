@@ -126,6 +126,12 @@ add_executable(kivo_contract_tests
     tests/contracts/error/recovery/recovery_action_tests.cpp
     tests/contracts/error/recovery/recovery_matrix_tests.cpp
     tests/contracts/error/outcome/error_outcome_tests.cpp
+    tests/contracts/state/phase/state_phase_tests.cpp
+    tests/contracts/state/transition/state_transition_tests.cpp
+    tests/contracts/state/rejection/state_rejection_tests.cpp
+    tests/contracts/state/rule/state_rule_tests.cpp
+    tests/contracts/state/scenario/state_scenario_tests.cpp
+    tests/contracts/state/contract/state_machine_contract_tests.cpp
 )
 target_link_libraries(kivo_contract_tests PRIVATE kivo_core_contract)
 target_compile_features(kivo_contract_tests PRIVATE cxx_std_20)
