@@ -33,7 +33,7 @@ try {
 
     Write-Host "Branch: $branch"
     Write-Host "HEAD:   $head"
-    Write-Host "$RemoteRef: $remote"
+    Write-Host ("{0}: {1}" -f $RemoteRef, $remote)
     Write-Host ""
 
     if ($status) {
