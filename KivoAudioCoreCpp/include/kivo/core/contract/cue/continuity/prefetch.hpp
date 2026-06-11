@@ -17,7 +17,7 @@ namespace kivo::core::contract {
 struct Prefetch {
     uint64_t samples{0};
 
-    [[nodiscard]] bool operator==(const Prefetch&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const Prefetch&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
