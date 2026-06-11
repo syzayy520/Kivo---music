@@ -2,8 +2,6 @@
 // KivoAudioCoreCpp — cue_sheet_boundary.hpp
 // Contract: CUE sheet track boundary definition
 // =============================================================================
-//
-
 
 #pragma once
 
