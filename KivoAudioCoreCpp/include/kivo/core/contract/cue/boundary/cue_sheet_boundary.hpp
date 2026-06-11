@@ -20,7 +20,7 @@ struct CueSheetBoundary {
     uint64_t end_offset{0};
     uint64_t pregap_samples{0};
 
-    [[nodiscard]] bool operator==(const CueSheetBoundary&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const CueSheetBoundary&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
