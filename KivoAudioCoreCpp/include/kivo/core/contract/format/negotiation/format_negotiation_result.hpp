@@ -24,9 +24,9 @@ struct FormatNegotiationResult {
     AudioFormatDescriptor core_format;          // internal processing format
     AudioFormatDescriptor render_format;        // format at render boundary
     AudioFormatDescriptor device_format;        // format on device output
-    bool resample_needed = false;
-    bool conversion_needed = false;
-    bool bit_perfect_possible = false;
+    bool resample_needed{false};
+    bool conversion_needed{false};
+    bool bit_perfect_possible{false};
 
     // --- Convenience ---
     [[nodiscard]] bool formats_match() const noexcept {
