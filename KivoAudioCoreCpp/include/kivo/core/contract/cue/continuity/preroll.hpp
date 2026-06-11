@@ -2,8 +2,6 @@
 // KivoAudioCoreCpp — preroll.hpp
 // Contract: Preroll samples for codec initialization
 // =============================================================================
-//
-
 
 #pragma once
 

@@ -2,8 +2,6 @@
 // KivoAudioCoreCpp — prefetch.hpp
 // Contract: Prefetch samples for seamless media
 // =============================================================================
-//
-
 
 #pragma once
 

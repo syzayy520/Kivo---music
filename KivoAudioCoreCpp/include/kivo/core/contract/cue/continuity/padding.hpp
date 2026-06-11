@@ -2,8 +2,6 @@
 // KivoAudioCoreCpp — padding.hpp
 // Contract: Encoder padding in samples
 // =============================================================================
-//
-
 
 #pragma once
 

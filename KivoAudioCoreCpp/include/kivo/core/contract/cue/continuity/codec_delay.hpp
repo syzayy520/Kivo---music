@@ -2,8 +2,6 @@
 // KivoAudioCoreCpp — codec_delay.hpp
 // Contract: Codec delay in samples
 // =============================================================================
-//
-
 
 #pragma once
 

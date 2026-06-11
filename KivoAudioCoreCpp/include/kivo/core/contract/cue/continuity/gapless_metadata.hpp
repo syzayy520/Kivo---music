@@ -2,8 +2,6 @@
 // KivoAudioCoreCpp — gapless_metadata.hpp
 // Contract: Gapless media metadata
 // =============================================================================
-//
-
 
 #pragma once
 

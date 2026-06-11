@@ -2,8 +2,6 @@
 // KivoAudioCoreCpp — cross_track_clock_continuity.hpp
 // Contract: Cross-track clock continuity state
 // =============================================================================
-//
-
 
 #pragma once
 
