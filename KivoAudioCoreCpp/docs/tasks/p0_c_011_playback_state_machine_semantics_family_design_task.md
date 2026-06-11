@@ -5,17 +5,18 @@
 **Repository:** `syzayy520/Kivo---music`  
 **Project root:** `KivoAudioCoreCpp/`  
 **Target phase:** P0-C Core Contract Foundation  
-**Previous sealed task:** P0-C-010 Error Taxonomy / Recovery Matrix  
-**Current safe HEAD at authoring time:** `0ef9fd2515caad9ed51d57f0e9ac10bd93ac2184`  
+**Previous sealed code task:** P0-C-010 Error Taxonomy / Recovery Matrix  
+**P0-C-010 sealed code baseline:** `0ef9fd2515caad9ed51d57f0e9ac10bd93ac2184`  
+**This document:** docs-only handoff for the next P0-C-011 planning pass  
 **Next expected task:** P0-C-011 family-design draft, not implementation
 
 ---
 
 ## 0. Purpose
 
-This taskbook is written into the repository so that the next assistant can see exactly what P0-C-011 is supposed to do before touching code.
+This taskbook is written into the repository so the next assistant can see exactly what P0-C-011 is supposed to do before touching code.
 
-P0-C-011 is **Playback State Machine Semantics**. It must define the core semantic language for playback lifecycle states, transition legality, transition rejection, and documented edge-case state behavior.
+P0-C-011 is **Playback State Machine Semantics**. It must define the core semantic language for lifecycle states, transition legality, transition rejection, and documented edge-case state behavior.
 
 This taskbook is **not** an implementation ticket. The next assistant must first produce a planning draft and wait for Owner approval before creating or modifying production/test files.
 
@@ -38,50 +39,40 @@ P0-C-011: Playback State Machine Semantics
 Location: src/core/contract/state/
 ```
 
-The plan lists required states:
-
-```text
-Idle, Opening, Ready, Playing, Pausing, Paused,
-Seeking, Draining, Recovering, Stopped, Failed, Closed
-```
-
-The plan lists illegal or edge transitions that must be defined:
-
-```text
-Playing -> Opening        FORBIDDEN
-Seeking -> Seeking        merge or queue must be defined
-Recovering -> Seek        reject or queue must be defined
-Draining -> Pause         behavior must be defined
-Failed -> Close           must succeed
-Closed -> any write       must fail
-Device lost during seek   must define
-Host shutdown during drain must define
-```
-
-The enhancement input repeats the same state and transition requirements.
-
-Important path note: older docs may say `src/core/contract/state/`, but current P0-C C++ repository convention is:
+The current C++ repository convention must be used instead of the older `src/core/contract/` wording:
 
 ```text
 include/kivo/core/contract/state/
 tests/contracts/state/
 ```
 
-The next assistant must follow the current C++ repository convention, not create `src/core/contract/state/`.
+Required states from the task plan and enhancement input:
+
+```text
+Idle, Opening, Ready, Playing, Pausing, Paused,
+Seeking, Draining, Recovering, Stopped, Failed, Closed
+```
+
+Required edge/illegal transition semantics to define:
+
+```text
+Playing -> Opening          forbidden
+Seeking -> Seeking          merge or queue must be defined
+Recovering -> Seek          reject or queue must be defined
+Draining -> Pause           behavior must be defined
+Failed -> Close             must succeed
+Closed -> any mutation      must fail
+Device lost during seek     must define
+Host shutdown during drain  must define
+```
 
 ---
 
-## 2. Current Sealed Baseline
+## 2. Baseline Gate for the Next Assistant
 
-The next assistant must start from:
+This taskbook itself is a docs-only commit after the P0-C-010 code commit. Therefore the next assistant must **not** require local HEAD to equal the P0-C-010 code commit exactly. Instead, it must verify that the current master contains the sealed P0-C-010 baseline and is synced.
 
-```text
-0ef9fd2515caad9ed51d57f0e9ac10bd93ac2184
-```
-
-This HEAD is P0-C-010 sealed state. It contains the `error/` contract family and the latest contract genealogy gate additions.
-
-Before any P0-C-011 planning, run:
+Run:
 
 ```powershell
 git remote -v
@@ -89,6 +80,7 @@ git status --short --branch --untracked-files=all
 git branch --show-current
 git rev-parse HEAD
 git ls-remote origin master
+git merge-base --is-ancestor 0ef9fd2515caad9ed51d57f0e9ac10bd93ac2184 HEAD; if ($LASTEXITCODE -ne 0) { exit 1 }
 ```
 
 Required baseline:
@@ -97,9 +89,8 @@ Required baseline:
 origin == https://github.com/syzayy520/Kivo---music.git
 branch == master
 working tree clean
-local HEAD == 0ef9fd2515caad9ed51d57f0e9ac10bd93ac2184
-remote master HEAD == 0ef9fd2515caad9ed51d57f0e9ac10bd93ac2184
 local HEAD == remote master HEAD
+0ef9fd2515caad9ed51d57f0e9ac10bd93ac2184 is an ancestor of HEAD
 ```
 
 If any check fails, STOP.
@@ -108,7 +99,7 @@ If any check fails, STOP.
 
 ## 3. Mandatory Workflow
 
-The correct workflow is:
+The next assistant must follow this order:
 
 ```text
 1. Base Gate
@@ -134,7 +125,6 @@ The next assistant must not create source/test files during the planning-only pa
 P0-C-011 should define contract-only types for:
 
 ```text
-state identity
 state lifecycle phase
 state stability / terminality
 transition description
@@ -142,7 +132,7 @@ transition validity
 transition decision
 transition rejection reason
 edge-case transition rules
-state machine contract summary
+state semantics contract summary
 ```
 
 P0-C-011 should answer:
@@ -151,12 +141,12 @@ P0-C-011 should answer:
 What states exist?
 Which states are stable, transitional, failed, or terminal?
 What is a transition from one state to another?
-Is a transition allowed, forbidden, queued, merged, rejected, or conditional?
+Is a transition allowed, forbidden, queued, merged, rejected, deferred, or conditional?
 Which edge-case rules are explicitly documented?
 How are illegal transitions represented as contract values?
 ```
 
-P0-C-011 must not execute transitions. It must not become a state machine runtime.
+P0-C-011 must not execute transitions. It must not become a runtime state machine engine.
 
 ---
 
@@ -166,7 +156,7 @@ P0-C-011 must not implement:
 
 ```text
 no runtime state machine engine
-no mutable state holder
+no mutable current-state holder
 no command queue
 no cancellation engine
 no retry loop
@@ -198,9 +188,9 @@ P0-C-011 is only the state semantics contract layer.
 
 P0-C-010 defines error taxonomy and recovery matrix contracts.
 
-P0-C-011 may define state values such as `Failed` and `Recovering`, but it must not define error domains, recovery actions, or recovery matrix logic.
+P0-C-011 may define values such as `Failed` and `Recovering`, but it must not define error domains, recovery actions, or recovery matrix logic.
 
-Do not include `include/kivo/core/contract/error/**` from P0-C-011 unless planning proves a strict need. Default is **no direct include**.
+Default rule: no direct include from `include/kivo/core/contract/error/**`.
 
 ### 6.2 Boundary with P0-C-012 Command Ordering / Cancellation / User Race
 
@@ -212,9 +202,9 @@ If a type starts to look like command execution, move it out of P0-C-011.
 
 ### 6.3 Boundary with P0-C-013 Observability / Telemetry / Ring Trace
 
-P0-C-011 may define state transition count as future consumer context only in docs. It must not define metrics, ring trace payloads, or telemetry event IDs.
+P0-C-011 must not define metrics, ring trace payloads, or telemetry event IDs.
 
-### 6.4 Boundary with Runtime Playback Core
+### 6.4 Boundary with Future Runtime Core
 
 P0-C-011 must not define a class that stores current state or applies transitions. It must not implement functions like `apply`, `step`, `dispatch`, `advance`, `handle`, `execute`, or `process`.
 
@@ -343,13 +333,13 @@ tests/contracts/state/
 Recommended file count candidate:
 
 ```text
-Production headers: 19
+Production headers: 20
 Test files: 6
 Modified files: 3
   - CMakeLists.txt
   - tests/contracts/contract_tests_main.cpp
   - tools/gates/check_contract_genealogy_gate.ps1
-Total touched: 28
+Total touched: 29
 ```
 
 The next assistant must validate whether this count is appropriate. It may reduce count if some files are too thin or split further if a file has mixed responsibility.
@@ -358,7 +348,7 @@ The next assistant must validate whether this count is appropriate. It may reduc
 
 ## 10. Candidate Type Plan
 
-### 10.1 phase/core_state.hpp
+### phase/core_state.hpp
 
 Purpose: one enum for required lifecycle states.
 
@@ -384,7 +374,7 @@ enum class CoreState : uint8_t {
 
 Do not name the enum `PlaybackState` unless planning explicitly approves it. `CoreState` is preferred because it avoids coupling the type name to UI or product wording.
 
-### 10.2 phase/state_stability.hpp
+### phase/state_stability.hpp
 
 Purpose: classify whether a state is stable or transitional.
 
@@ -400,7 +390,7 @@ enum class StateStability : uint8_t {
 };
 ```
 
-### 10.3 phase/state_terminality.hpp
+### phase/state_terminality.hpp
 
 Purpose: classify how a state behaves at end-of-life.
 
@@ -416,7 +406,7 @@ enum class StateTerminality : uint8_t {
 };
 ```
 
-### 10.4 transition/state_transition_intent.hpp
+### transition/state_transition_intent.hpp
 
 Purpose: semantic cause of a transition without implementing command ordering.
 
@@ -442,7 +432,7 @@ enum class StateTransitionIntent : uint8_t {
 
 Do not implement command queues or cancellation in this file.
 
-### 10.5 transition/state_transition.hpp
+### transition/state_transition.hpp
 
 Purpose: value object describing a transition.
 
@@ -462,7 +452,7 @@ operator== only
 
 No `is_*`, no `apply`, no `execute`, no state mutation.
 
-### 10.6 transition/state_transition_validity.hpp
+### transition/state_transition_validity.hpp
 
 Purpose: classify transition legality.
 
@@ -481,7 +471,7 @@ enum class StateTransitionValidity : uint8_t {
 };
 ```
 
-### 10.7 transition/state_transition_decision.hpp
+### transition/state_transition_decision.hpp
 
 Purpose: final semantic decision for a requested transition.
 
@@ -501,7 +491,7 @@ enum class StateTransitionDecision : uint8_t {
 
 This is a contract value only, not an executor.
 
-### 10.8 rejection/state_transition_rejection_reason.hpp
+### rejection/state_transition_rejection_reason.hpp
 
 Purpose: explain why a transition is rejected.
 
@@ -522,7 +512,7 @@ enum class StateTransitionRejectionReason : uint8_t {
 };
 ```
 
-### 10.9 rejection/illegal_transition_rule.hpp
+### rejection/illegal_transition_rule.hpp
 
 Purpose: define illegal transition rule classification.
 
@@ -536,7 +526,7 @@ StateTransitionRejectionReason rejection_reason
 
 No logic.
 
-### 10.10 rule/reentrant_transition_policy.hpp
+### rule/reentrant_transition_policy.hpp
 
 Purpose: define behavior for repeated transition requests such as Seeking -> Seeking.
 
@@ -553,7 +543,7 @@ enum class ReentrantTransitionPolicy : uint8_t {
 };
 ```
 
-### 10.11 rule/transition_preemption_policy.hpp
+### rule/transition_preemption_policy.hpp
 
 Purpose: define whether one transition can interrupt another.
 
@@ -570,7 +560,7 @@ enum class TransitionPreemptionPolicy : uint8_t {
 };
 ```
 
-### 10.12 rule/terminal_state_rule.hpp
+### rule/terminal_state_rule.hpp
 
 Purpose: define behavior for terminal states.
 
@@ -586,9 +576,9 @@ enum class TerminalStateRule : uint8_t {
 };
 ```
 
-### 10.13 scenario/seeking_reentry_rule.hpp
+### scenario/seeking_reentry_rule.hpp
 
-Purpose: required rule for `Seeking -> Seeking`.
+Purpose: required rule for Seeking -> Seeking.
 
 Candidate:
 
@@ -602,9 +592,9 @@ enum class SeekingReentryRule : uint8_t {
 };
 ```
 
-### 10.14 scenario/recovering_seek_rule.hpp
+### scenario/recovering_seek_rule.hpp
 
-Purpose: required rule for `Recovering -> Seek`.
+Purpose: required rule for Recovering -> Seek.
 
 Candidate:
 
@@ -618,9 +608,9 @@ enum class RecoveringSeekRule : uint8_t {
 };
 ```
 
-### 10.15 scenario/draining_pause_rule.hpp
+### scenario/draining_pause_rule.hpp
 
-Purpose: required rule for `Draining -> Pause`.
+Purpose: required rule for Draining -> Pause.
 
 Candidate:
 
@@ -634,9 +624,9 @@ enum class DrainingPauseRule : uint8_t {
 };
 ```
 
-### 10.16 scenario/failed_close_rule.hpp
+### scenario/failed_close_rule.hpp
 
-Purpose: required rule for `Failed -> Close`.
+Purpose: required rule for Failed -> Close.
 
 Candidate:
 
@@ -649,9 +639,9 @@ enum class FailedCloseRule : uint8_t {
 };
 ```
 
-### 10.17 scenario/closed_mutation_rule.hpp
+### scenario/closed_mutation_rule.hpp
 
-Purpose: required rule for `Closed -> any mutation`.
+Purpose: required rule for Closed -> any mutation.
 
 Candidate:
 
@@ -666,7 +656,7 @@ enum class ClosedMutationRule : uint8_t {
 
 Do not call this `ClosedWriteRule` unless planning approves. `Mutation` is preferred because it avoids tying this contract to a writer/runtime path.
 
-### 10.18 scenario/device_lost_during_seek_rule.hpp
+### scenario/device_lost_during_seek_rule.hpp
 
 Purpose: required rule for device-loss semantics during seek.
 
@@ -684,9 +674,9 @@ enum class DeviceLostDuringSeekRule : uint8_t {
 
 This is a state semantics rule only. It does not implement device recovery.
 
-### 10.19 scenario/shutdown_during_drain_rule.hpp
+### scenario/shutdown_during_drain_rule.hpp
 
-Purpose: required rule for host shutdown during drain.
+Purpose: required rule for shutdown during drain.
 
 Candidate:
 
@@ -700,7 +690,7 @@ enum class ShutdownDuringDrainRule : uint8_t {
 };
 ```
 
-### 10.20 contract/state_machine_contract.hpp
+### contract/state_machine_contract.hpp
 
 Purpose: aggregate state semantics summary.
 
@@ -747,8 +737,6 @@ No command queue
 ```
 
 Those planning explanations belong in this taskbook, not in source/test files.
-
-Use token-clean names where possible. Avoid type names that create false positives for runtime-oriented scans.
 
 Preferred source terms:
 
@@ -853,7 +841,7 @@ HRESULT
 Win32
 ```
 
-Forbidden implementation-oriented terms in future state files unless the Owner explicitly approves a token-safe exception:
+Forbidden implementation-oriented terms in future state files unless Owner explicitly approves a token-safe exception:
 
 ```text
 runtime engine
@@ -1062,7 +1050,8 @@ It must not claim implementation success.
 Any of these must stop the next assistant:
 
 ```text
-STOP_BASELINE_HEAD_MISMATCH
+STOP_BASELINE_NOT_SYNCED_WITH_REMOTE
+STOP_P0_C_010_BASELINE_NOT_ANCESTOR
 STOP_WORKSPACE_NOT_CLEAN
 STOP_EXISTING_STATE_FAMILY_FOUND
 STOP_EXISTING_COMMAND_FAMILY_FOUND_WHEN_PLANNING_STATE
@@ -1086,7 +1075,7 @@ STOP_IMPLEMENTATION_ATTEMPTED_DURING_PLANNING
 
 After Owner approval, implementation must remain contract-only.
 
-Allowed future modified files are expected to be:
+Expected modified files:
 
 ```text
 KivoAudioCoreCpp/CMakeLists.txt
@@ -1094,7 +1083,7 @@ KivoAudioCoreCpp/tests/contracts/contract_tests_main.cpp
 KivoAudioCoreCpp/tools/gates/check_contract_genealogy_gate.ps1
 ```
 
-Allowed future created roots are expected to be:
+Expected created roots:
 
 ```text
 KivoAudioCoreCpp/include/kivo/core/contract/state/**
@@ -1129,17 +1118,17 @@ Standalone state-family scan should check only future `state/` source and test c
 
 ---
 
-## 20. Review Notes From Authoring Assistant
+## 20. Authoring Assessment
 
-Authoring assessment:
+P0-C-011 is conceptually important and should not be under-designed. The state contract must define edge-case semantics before runtime playback code exists.
+
+The safest design is a value-only state semantics vocabulary:
 
 ```text
-P0-C-011 is conceptually important and should not be under-designed.
-The state contract must define edge-case semantics before runtime playback code exists.
-However, it must not become a runtime state machine engine.
-The safest design is a value-only state semantics vocabulary:
-  states + transition values + legality + scenario rules + aggregate contract.
+states + transition values + legality + scenario rules + aggregate contract
 ```
+
+The risk to avoid is creating a hidden runtime state machine engine. P0-C-011 should provide language, not behavior.
 
 Recommended next action:
 
