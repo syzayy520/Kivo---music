@@ -98,6 +98,12 @@ void run_state_rejection_tests(ContractTestRunner& runner);
 void run_state_rule_tests(ContractTestRunner& runner);
 void run_state_scenario_tests(ContractTestRunner& runner);
 void run_state_machine_contract_tests(ContractTestRunner& runner);
+void run_command_identity_tests(ContractTestRunner& runner);
+void run_command_kind_tests(ContractTestRunner& runner);
+void run_command_ordering_tests(ContractTestRunner& runner);
+void run_command_decision_tests(ContractTestRunner& runner);
+void run_command_scenario_tests(ContractTestRunner& runner);
+void run_command_semantics_contract_tests(ContractTestRunner& runner);
 
 // =============================================================================
 // Main
@@ -194,6 +200,12 @@ int main() {
     run_state_rule_tests(runner);
     run_state_scenario_tests(runner);
     run_state_machine_contract_tests(runner);
+    run_command_identity_tests(runner);
+    run_command_kind_tests(runner);
+    run_command_ordering_tests(runner);
+    run_command_decision_tests(runner);
+    run_command_scenario_tests(runner);
+    run_command_semantics_contract_tests(runner);
 
     std::cout << "=== " << runner.tests_passed << "/" << runner.tests_run << " passed ===\n";
     return runner.exit_code();

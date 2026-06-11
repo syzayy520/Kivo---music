@@ -50,7 +50,8 @@ $allowedProductionDirs = @(
     "source",
     "cue",
     "error",
-    "state"
+    "state",
+    "command"
 )
 
 if (Test-Path $contractRoot) {
@@ -357,7 +358,8 @@ $allowedTestDirs = @(
     "source",
     "cue",
     "error",
-    "state"
+    "state",
+    "command"
 )
 
 if (Test-Path $testsRoot) {
@@ -1223,6 +1225,53 @@ if (Test-Path $stateDir) {
 }
 
 # =============================================================================
+# Rule G3o: Command family — subdirectory tree with exact allowlists
+# =============================================================================
+$commandSubdirAllowlists = @{
+    "identity"   = @("command_id.hpp", "command_generation_ref.hpp")
+    "kind"       = @("command_kind.hpp", "command_origin.hpp", "command_priority.hpp")
+    "ordering"   = @("command_ordering_policy.hpp", "command_supersession_policy.hpp", "command_coalescing_policy.hpp", "command_ordering_contract.hpp")
+    "decision"   = @("command_decision.hpp", "command_rejection_reason.hpp")
+    "scenario"   = @("rapid_seek_rule.hpp", "rapid_track_switch_rule.hpp", "pause_during_track_switch_rule.hpp", "seek_during_recovery_rule.hpp", "close_during_drain_rule.hpp", "shutdown_during_write_rule.hpp", "library_scan_during_media_rule.hpp", "source_disconnect_during_seek_rule.hpp", "device_lost_during_flush_rule.hpp")
+    "contract"   = @("command_semantics_contract.hpp")
+}
+
+$commandDir = Join-Path $contractRoot "command"
+if (Test-Path $commandDir) {
+    # Root must be empty of .hpp files (all in subdirectories)
+    $rootHpp = Get-ChildItem -Path $commandDir -Filter "*.hpp"
+    if ($rootHpp.Count -gt 0) {
+        foreach ($f in $rootHpp) {
+            $violations += "G3o: Production file at command/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    # Validate each subdirectory
+    foreach ($subdir in $commandSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $commandDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.hpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $commandSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G3o: Unexpected file in command/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G3o: Missing file in command/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G3o: Missing command subdirectory: command/$subdir/"
+        }
+    }
+} else {
+    $violations += "G3o: Missing production family directory: include/kivo/core/contract/command/"
+}
+
+# =============================================================================
 # Rule G6k: Error test family — subdirectory tree with exact allowlists
 # =============================================================================
 $errorTestSubdirAllowlists = @{
@@ -1310,6 +1359,52 @@ if (Test-Path $stateTestDir) {
     }
 } else {
     $violations += "G6l: Missing test family directory: tests/contracts/state/"
+}
+
+# =============================================================================
+# Rule G6m: Command test family — subdirectory tree with exact allowlists
+# =============================================================================
+$commandTestSubdirAllowlists = @{
+    "identity"   = @("command_identity_tests.cpp")
+    "kind"       = @("command_kind_tests.cpp")
+    "ordering"   = @("command_ordering_tests.cpp")
+    "decision"   = @("command_decision_tests.cpp")
+    "scenario"   = @("command_scenario_tests.cpp")
+    "contract"   = @("command_semantics_contract_tests.cpp")
+}
+
+$commandTestDir = Join-Path $testsRoot "command"
+if (Test-Path $commandTestDir) {
+    # Root must be empty of .cpp files (all in subdirectories)
+    $rootCpp = Get-ChildItem -Path $commandTestDir -Filter "*.cpp"
+    if ($rootCpp.Count -gt 0) {
+        foreach ($f in $rootCpp) {
+            $violations += "G6m: Test file at command/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    foreach ($subdir in $commandTestSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $commandTestDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.cpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $commandTestSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G6m: Unexpected test file in command/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G6m: Missing test file in command/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G6m: Missing command test subdirectory: command/$subdir/"
+        }
+    }
+} else {
+    $violations += "G6m: Missing test family directory: tests/contracts/command/"
 }
 
 # =============================================================================
