@@ -23,9 +23,12 @@ $violations = @()
 $allowedContractPaths = @(
     "include\kivo\core\contract",
     "include\kivo\core\render",
+    "include\kivo\testing",
     "src\core\contract",
+    "src\testing",
     "tests\contracts",
-    "tests\render_boundary"
+    "tests\render_boundary",
+    "tests\fake_renderer"
 )
 
 $excludedPathPatterns = @("*\docs\*", "*\tools\*", "*\.build\*", "*\build\*", "*\.git\*")
@@ -111,6 +114,9 @@ if (Test-Path $cmakePath) {
         "kivo_core_render",
         "kivo_render_boundary_tests",
         "render_boundary_tests",
+        "kivo_fake_render_backend",
+        "kivo_fake_renderer_tests",
+        "fake_renderer_tests",
         "kivo_public_header_checks"
     )
     foreach ($pattern in @("add_executable", "add_library")) {
@@ -148,8 +154,8 @@ foreach ($dir in $vendorDirs) {
 Write-Host "--- Scan Scope ---"
 Write-Host "Checking: runtime directories, source files, CMake targets, vendor dirs"
 Write-Host "Excluding: docs/, tools/, .build/, build/, .git/"
-Write-Host "Allowed non-runtime paths: core contracts, core render boundary, and their tests"
-Write-Host "Allowed CMake targets: contract, capability, render-boundary, and public-header validation targets"
+Write-Host "Allowed paths: core boundaries, deterministic testing backend, and their tests"
+Write-Host "Allowed CMake targets: contract, render-boundary, fake-renderer, and validation targets"
 Write-Host ""
 
 if ($violations.Count -eq 0) {

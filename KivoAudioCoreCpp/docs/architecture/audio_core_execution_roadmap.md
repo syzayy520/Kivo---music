@@ -5,7 +5,7 @@
 **Effective Date:** 2026-06-12
 **Applies To:** `KivoAudioCoreCpp/`
 **Architecture Basis:** V10.1 FINAL P0-B READY LOCKED PATCHED
-**Current Execution Position:** P0-D/P0-E deterministic fake renderer and fault injection
+**Current Execution Position:** P0-F/P0-H WASAPI adapter shell and generated PCM output
 
 ---
 
@@ -45,7 +45,7 @@ for the remaining audio-core phases.
 decode, product-core coordination, quality, host integration, and release work
 inside `KivoAudioCoreCpp/`.
 
-**Current Phase:** P0-D/P0-E deterministic fake renderer and fault injection.
+**Current Phase:** P0-F/P0-H WASAPI adapter shell and generated PCM output.
 
 **Allowed:** Work that directly satisfies the active milestone, its tests, its
 validation requirements, or a documented correctness, safety, legal, privacy,

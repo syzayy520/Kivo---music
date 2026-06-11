@@ -67,6 +67,39 @@ foreach ($dir in $strictDirs) {
     }
 }
 
+# --- Deterministic Fake Backend Scope ---
+# The fake backend must remain bounded and timing-independent.
+$fakeBackendDirs = @("include\kivo\testing", "src\testing")
+$fakeBackendTokens = @(
+    "Sleep(",
+    "sleep_for",
+    "sleep_until",
+    "std::vector",
+    "std::deque",
+    "std::list",
+    "malloc(",
+    "calloc(",
+    "realloc(",
+    "operator new"
+)
+
+foreach ($dir in $fakeBackendDirs) {
+    $dirPath = Join-Path $ProjectRoot $dir
+    if (Test-Path $dirPath) {
+        $files = Get-ChildItem -Path $dirPath -Recurse -File -Include "*.cpp","*.h","*.hpp" -ErrorAction SilentlyContinue
+        foreach ($file in $files) {
+            $content = Get-Content $file.FullName -Raw -ErrorAction SilentlyContinue
+            if ($content) {
+                foreach ($token in $fakeBackendTokens) {
+                    if ($content -match [regex]::Escape($token)) {
+                        $violations += "FAKE_DETERMINISM_VIOLATION: $($file.Name): $token"
+                    }
+                }
+            }
+        }
+    }
+}
+
 # --- Root Skeleton Scope ---
 # P0-C: CMakeLists.txt may contain contract-only targets
 $rootFiles = @("README.md", "CMakePresets.json")
@@ -118,6 +151,9 @@ if (Test-Path $cmakePath) {
         "kivo_core_render",
         "kivo_render_boundary_tests",
         "render_boundary_tests",
+        "kivo_fake_render_backend",
+        "kivo_fake_renderer_tests",
+        "fake_renderer_tests",
         "kivo_public_header_checks"
     )
     foreach ($line in $cmakeLines) {

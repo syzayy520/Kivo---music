@@ -1,14 +1,14 @@
 # =============================================================================
 # KivoAudioCoreCpp — CMakeLists.txt
-# Phase: P0-E (Platform-Neutral Render Boundary)
+# Phase: P0-D/P0-E (Deterministic Render Proof)
 # =============================================================================
 #
-# P0-E Status: CONTRACTS + PLATFORM-NEUTRAL RENDER BOUNDARY
-# Header-only public boundaries plus isolated validation executables.
-# No runtime implementation. No platform code. No third-party libraries.
+# P0-D/P0-E Status: RENDER BOUNDARY + DETERMINISTIC FAKE BACKEND
+# Platform-neutral public boundaries plus bounded deterministic test runtime.
+# No production device code. No platform API. No third-party libraries.
 #
 # Boundary targets remain platform-neutral and validation-only.
-# Behavioral runtime implementation begins with the deterministic fake backend.
+# Production runtime implementation begins with the WASAPI adapter milestone.
 # =============================================================================
 
 cmake_minimum_required(VERSION 3.24)
@@ -196,6 +196,34 @@ target_compile_options(kivo_render_boundary_tests PRIVATE
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
 )
 
+# Deterministic fake render backend
+add_library(kivo_fake_render_backend STATIC
+    src/testing/time/manual_clock.cpp
+    src/testing/render/fake_renderer.cpp
+)
+target_link_libraries(kivo_fake_render_backend PUBLIC kivo_core_render)
+target_include_directories(kivo_fake_render_backend PUBLIC include/)
+target_compile_features(kivo_fake_render_backend PUBLIC cxx_std_20)
+target_compile_options(kivo_fake_render_backend PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
+
+add_executable(kivo_fake_renderer_tests
+    tests/fake_renderer/fake_renderer_tests_main.cpp
+    tests/fake_renderer/manual_clock_tests.cpp
+    tests/fake_renderer/lifecycle_tests.cpp
+    tests/fake_renderer/write_and_generation_tests.cpp
+    tests/fake_renderer/fault_injection_tests.cpp
+    tests/fake_renderer/observation_history_tests.cpp
+)
+target_link_libraries(kivo_fake_renderer_tests PRIVATE kivo_fake_render_backend)
+target_compile_features(kivo_fake_renderer_tests PRIVATE cxx_std_20)
+target_compile_options(kivo_fake_renderer_tests PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc /wd4127>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
+
 # Public header compile checks
 file(GLOB_RECURSE KIVO_PUBLIC_HEADERS
     CONFIGURE_DEPENDS
@@ -231,9 +259,11 @@ target_compile_options(kivo_public_header_checks PRIVATE
 add_dependencies(kivo_contract_tests kivo_public_header_checks)
 add_dependencies(kivo_capability_tests kivo_public_header_checks)
 add_dependencies(kivo_render_boundary_tests kivo_public_header_checks)
+add_dependencies(kivo_fake_renderer_tests kivo_public_header_checks)
 
 # Register with CTest
 enable_testing()
 add_test(NAME contract_tests COMMAND kivo_contract_tests)
 add_test(NAME capability_tests COMMAND kivo_capability_tests)
 add_test(NAME render_boundary_tests COMMAND kivo_render_boundary_tests)
+add_test(NAME fake_renderer_tests COMMAND kivo_fake_renderer_tests)
