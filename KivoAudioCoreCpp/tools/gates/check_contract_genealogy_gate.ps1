@@ -48,7 +48,8 @@ $allowedProductionDirs = @(
     "buffer",
     "queue",
     "source",
-    "cue"
+    "cue",
+    "error"
 )
 
 if (Test-Path $contractRoot) {
@@ -353,7 +354,8 @@ $allowedTestDirs = @(
     "buffer",
     "queue",
     "source",
-    "cue"
+    "cue",
+    "error"
 )
 
 if (Test-Path $testsRoot) {
@@ -1124,6 +1126,95 @@ if (Test-Path $cueTestDir) {
     }
 } else {
     $violations += "G6j: Missing test family directory: tests/contracts/cue/"
+}
+
+# =============================================================================
+# Rule G3m: Error family — subdirectory tree with exact allowlists
+# =============================================================================
+$errorSubdirAllowlists = @{
+    "domain"   = @("error_domain.hpp", "error_domain_category.hpp")
+    "severity" = @("error_severity.hpp", "safe_cleanup_path.hpp", "error_attributes.hpp")
+    "recovery" = @("recovery_action.hpp", "recovery_matrix.hpp")
+    "outcome"  = @("error_outcome.hpp")
+}
+
+$errorDir = Join-Path $contractRoot "error"
+if (Test-Path $errorDir) {
+    # Root must be empty of .hpp files (all in subdirectories)
+    $rootHpp = Get-ChildItem -Path $errorDir -Filter "*.hpp"
+    if ($rootHpp.Count -gt 0) {
+        foreach ($f in $rootHpp) {
+            $violations += "G3m: Production file at error/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    # Validate each subdirectory
+    foreach ($subdir in $errorSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $errorDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.hpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $errorSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G3m: Unexpected file in error/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G3m: Missing file in error/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G3m: Missing error subdirectory: error/$subdir/"
+        }
+    }
+} else {
+    $violations += "G3m: Missing production family directory: include/kivo/core/contract/error/"
+}
+
+# =============================================================================
+# Rule G6k: Error test family — subdirectory tree with exact allowlists
+# =============================================================================
+$errorTestSubdirAllowlists = @{
+    "domain"   = @("error_domain_tests.cpp", "error_domain_category_tests.cpp")
+    "severity" = @("error_severity_tests.cpp", "error_attributes_tests.cpp")
+    "recovery" = @("recovery_action_tests.cpp", "recovery_matrix_tests.cpp")
+    "outcome"  = @("error_outcome_tests.cpp")
+}
+
+$errorTestDir = Join-Path $testsRoot "error"
+if (Test-Path $errorTestDir) {
+    # Root must be empty of .cpp files (all in subdirectories)
+    $rootCpp = Get-ChildItem -Path $errorTestDir -Filter "*.cpp"
+    if ($rootCpp.Count -gt 0) {
+        foreach ($f in $rootCpp) {
+            $violations += "G6k: Test file at error/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    foreach ($subdir in $errorTestSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $errorTestDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.cpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $errorTestSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G6k: Unexpected test file in error/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G6k: Missing test file in error/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G6k: Missing error test subdirectory: error/$subdir/"
+        }
+    }
+} else {
+    $violations += "G6k: Missing test family directory: tests/contracts/error/"
 }
 
 # =============================================================================

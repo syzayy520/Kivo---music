@@ -85,6 +85,13 @@ void run_source_outcome_tests(ContractTestRunner& runner);
 void run_cue_boundary_tests(ContractTestRunner& runner);
 void run_cue_range_tests(ContractTestRunner& runner);
 void run_cue_continuity_tests(ContractTestRunner& runner);
+void run_error_domain_tests(ContractTestRunner& runner);
+void run_error_domain_category_tests(ContractTestRunner& runner);
+void run_error_severity_tests(ContractTestRunner& runner);
+void run_error_attributes_tests(ContractTestRunner& runner);
+void run_recovery_action_tests(ContractTestRunner& runner);
+void run_recovery_matrix_tests(ContractTestRunner& runner);
+void run_error_outcome_tests(ContractTestRunner& runner);
 
 // =============================================================================
 // Main
@@ -168,6 +175,13 @@ int main() {
     run_cue_boundary_tests(runner);
     run_cue_range_tests(runner);
     run_cue_continuity_tests(runner);
+    run_error_domain_tests(runner);
+    run_error_domain_category_tests(runner);
+    run_error_severity_tests(runner);
+    run_error_attributes_tests(runner);
+    run_recovery_action_tests(runner);
+    run_recovery_matrix_tests(runner);
+    run_error_outcome_tests(runner);
 
     std::cout << "=== " << runner.tests_passed << "/" << runner.tests_run << " passed ===\n";
     return runner.exit_code();

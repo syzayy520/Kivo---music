@@ -119,6 +119,13 @@ add_executable(kivo_contract_tests
     tests/contracts/cue/boundary/cue_boundary_tests.cpp
     tests/contracts/cue/range/cue_range_tests.cpp
     tests/contracts/cue/continuity/cue_continuity_tests.cpp
+    tests/contracts/error/domain/error_domain_tests.cpp
+    tests/contracts/error/domain/error_domain_category_tests.cpp
+    tests/contracts/error/severity/error_severity_tests.cpp
+    tests/contracts/error/severity/error_attributes_tests.cpp
+    tests/contracts/error/recovery/recovery_action_tests.cpp
+    tests/contracts/error/recovery/recovery_matrix_tests.cpp
+    tests/contracts/error/outcome/error_outcome_tests.cpp
 )
 target_link_libraries(kivo_contract_tests PRIVATE kivo_core_contract)
 target_compile_features(kivo_contract_tests PRIVATE cxx_std_20)
