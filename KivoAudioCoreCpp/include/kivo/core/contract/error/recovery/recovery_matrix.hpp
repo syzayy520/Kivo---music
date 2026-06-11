@@ -12,7 +12,7 @@ struct RecoveryMatrix {
     RecoveryAction primary_action{RecoveryAction::None};
     RecoveryAction fallback_action{RecoveryAction::None};
 
-    [[nodiscard]] bool operator==(const RecoveryMatrix&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const RecoveryMatrix&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
