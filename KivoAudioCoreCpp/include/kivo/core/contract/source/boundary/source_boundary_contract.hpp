@@ -16,7 +16,7 @@ struct SourceBoundaryContract {
     SourceReadiness readiness{SourceReadiness::NotSpecified};
     SourceFaultPolicy fault_policy{SourceFaultPolicy::NotSpecified};
 
-    [[nodiscard]] bool operator==(const SourceBoundaryContract&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const SourceBoundaryContract&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
