@@ -19,12 +19,19 @@ Write-Host "PROJECT_ROOT: $ProjectRoot"
 Write-Host ""
 
 $violations = @()
-$excludedPathPatterns = @("*\.git\*", "*\.build\*", "*\build\*")
+$excludedRoots = @(".git", ".build", "build", "out")
+
+function Get-RelativePath {
+    param([string]$FullPath, [string]$Root)
+    $relative = $FullPath.Substring($Root.Length).TrimStart("\", "/")
+    return $relative.Replace("/", "\")
+}
 
 function Test-IsExcludedPath {
-    param([string]$Path)
-    foreach ($pattern in $excludedPathPatterns) {
-        if ($Path -like $pattern) {
+    param([string]$FullPath)
+    $relative = Get-RelativePath -FullPath $FullPath -Root $ProjectRoot
+    foreach ($root in $excludedRoots) {
+        if ($relative -eq $root -or $relative.StartsWith("$root\")) {
             return $true
         }
     }
@@ -43,7 +50,7 @@ $dirs = Get-ChildItem -Path $ProjectRoot -Directory -Recurse -Force |
 
 foreach ($dir in $dirs) {
     if (Test-EmptyDirectory -Path $dir.FullName) {
-        $relativePath = $dir.FullName.Replace($ProjectRoot, "").TrimStart("\", "/")
+        $relativePath = Get-RelativePath -FullPath $dir.FullName -Root $ProjectRoot
         $violations += "EMPTY_DIRECTORY: $relativePath/"
     }
 }
@@ -51,7 +58,7 @@ foreach ($dir in $dirs) {
 $bucketDirs = @("helper", "utils", "common", "misc", "glue", "facade", "types", "defs")
 foreach ($dir in $dirs) {
     if ($dir.Name -in $bucketDirs) {
-        $relativePath = $dir.FullName.Replace($ProjectRoot, "").TrimStart("\", "/")
+        $relativePath = Get-RelativePath -FullPath $dir.FullName -Root $ProjectRoot
         $violations += "BUCKET_DIRECTORY: $relativePath/"
     }
 }
@@ -94,7 +101,7 @@ Write-Host "--- Checks ---"
 Write-Host "1. Empty directories: scanning..."
 Write-Host "2. Bucket directories..."
 Write-Host "3. Policy file required sections..."
-Write-Host "Excluding generated directories: .build/, build/"
+Write-Host "Excluding generated directories: .build/, build/, out/"
 Write-Host ""
 
 if ($violations.Count -eq 0) {
