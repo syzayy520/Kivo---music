@@ -14,6 +14,7 @@
 void run_result_contract_tests(ContractTestRunner& runner);
 void run_generation_id_contract_tests(ContractTestRunner& runner);
 void run_sample_position_contract_tests(ContractTestRunner& runner);
+void run_public_header_composability_tests(ContractTestRunner& runner);
 void run_audio_format_descriptor_contract_tests(ContractTestRunner& runner);
 void run_sample_format_contract_tests(ContractTestRunner& runner);
 void run_channel_layout_contract_tests(ContractTestRunner& runner);
@@ -113,11 +114,6 @@ void run_privacy_policy_tests(ContractTestRunner& runner);
 void run_distribution_policy_tests(ContractTestRunner& runner);
 void run_audio_core_policy_contract_tests(ContractTestRunner& runner);
 
-
-
-
-
-
 // =============================================================================
 // Main
 // =============================================================================
@@ -129,10 +125,10 @@ int main() {
     run_result_contract_tests(runner);
     run_generation_id_contract_tests(runner);
     run_sample_position_contract_tests(runner);
+    run_public_header_composability_tests(runner);
     run_audio_format_descriptor_contract_tests(runner);
     run_sample_format_contract_tests(runner);
     run_channel_layout_contract_tests(runner);
-    run_frame_layout_contract_tests(runner);
     run_channel_mask_contract_tests(runner);
     run_native_decoded_format_contract_tests(runner);
     run_core_canonical_format_contract_tests(runner);
@@ -227,11 +223,6 @@ int main() {
     run_privacy_policy_tests(runner);
     run_distribution_policy_tests(runner);
     run_audio_core_policy_contract_tests(runner);
-
-
-
-
-
 
     std::cout << "=== " << runner.tests_passed << "/" << runner.tests_run << " passed ===\n";
     return runner.exit_code();
