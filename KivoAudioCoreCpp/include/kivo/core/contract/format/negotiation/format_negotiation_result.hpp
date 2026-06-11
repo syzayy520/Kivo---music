@@ -29,7 +29,7 @@ struct FormatNegotiationResult {
     bool bit_perfect_possible{false};
 
     // --- Convenience ---
-    [[nodiscard]] bool formats_match() const noexcept {
+    [[nodiscard]] constexpr bool formats_match() const noexcept {
         return native_format == render_format
             && native_format == device_format;
     }
