@@ -21,7 +21,7 @@ struct ErrorAttributes {
     bool metrics_event{false};
     SafeCleanupPath safe_cleanup_path{SafeCleanupPath::None};
 
-    [[nodiscard]] bool operator==(const ErrorAttributes&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const ErrorAttributes&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
