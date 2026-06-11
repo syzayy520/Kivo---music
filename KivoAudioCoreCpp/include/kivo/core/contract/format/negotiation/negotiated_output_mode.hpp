@@ -42,11 +42,11 @@ struct NegotiatedOutputMode {
     bool conversion_active{false};
 
     // --- Convenience ---
-    [[nodiscard]] bool is_bit_perfect() const noexcept {
+    [[nodiscard]] constexpr bool is_bit_perfect() const noexcept {
         return bit_perfect_active && !resampling_active && !conversion_active;
     }
 
-    [[nodiscard]] bool is_valid() const noexcept {
+    [[nodiscard]] constexpr bool is_valid() const noexcept {
         return mode != OutputMode::Unknown;
     }
 
