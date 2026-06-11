@@ -14,7 +14,7 @@ struct MetricSample {
     double value{0.0};
     uint32_t sample_count{0};
 
-    [[nodiscard]] bool operator==(const MetricSample&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const MetricSample&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract::observability
