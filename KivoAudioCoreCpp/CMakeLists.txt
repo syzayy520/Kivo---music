@@ -96,6 +96,19 @@ add_executable(kivo_contract_tests
     tests/contracts/realtime/buffer/realtime_buffer_contract_tests.cpp
     tests/contracts/realtime/transport/realtime_transport_contract_tests.cpp
     tests/contracts/realtime/boundary/realtime_boundary_contract_tests.cpp
+    tests/contracts/generation/identity/generation_identity_tests.cpp
+    tests/contracts/generation/comparison/generation_comparison_tests.cpp
+    tests/contracts/generation/classification/generation_classification_tests.cpp
+    tests/contracts/generation/advance/generation_advance_tests.cpp
+    tests/contracts/buffer/identity/buffer_identity_tests.cpp
+    tests/contracts/buffer/ownership/buffer_ownership_tests.cpp
+    tests/contracts/buffer/lifetime/buffer_lifetime_tests.cpp
+    tests/contracts/buffer/reference/buffer_reference_tests.cpp
+    tests/contracts/buffer/share/buffer_share_tests.cpp
+    tests/contracts/queue/capacity/queue_capacity_tests.cpp
+    tests/contracts/queue/slot/queue_slot_tests.cpp
+    tests/contracts/queue/staleness/queue_staleness_tests.cpp
+    tests/contracts/queue/boundary/queue_boundary_tests.cpp
 )
 target_link_libraries(kivo_contract_tests PRIVATE kivo_core_contract)
 target_compile_features(kivo_contract_tests PRIVATE cxx_std_20)

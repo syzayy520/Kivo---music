@@ -43,7 +43,10 @@ $allowedProductionDirs = @(
     "seek",
     "capability",
     "output",
-    "realtime"
+    "realtime",
+    "generation",
+    "buffer",
+    "queue"
 )
 
 if (Test-Path $contractRoot) {
@@ -343,7 +346,10 @@ $allowedTestDirs = @(
     "seek",
     "capability",
     "output",
-    "realtime"
+    "realtime",
+    "generation",
+    "buffer",
+    "queue"
 )
 
 if (Test-Path $testsRoot) {
@@ -661,6 +667,277 @@ if (Test-Path $realtimeTestDir) {
     }
 } else {
     $violations += "G6e: Missing test family directory: tests/contracts/realtime/"
+}
+
+# =============================================================================
+# Rule G3h: Generation family — subdirectory tree with exact allowlists
+# =============================================================================
+$generationSubdirAllowlists = @{
+    "identity"       = @("stream_generation.hpp", "seek_generation.hpp", "flush_generation.hpp", "device_generation.hpp")
+    # NOTE: seek_generation.hpp defines SeekGenerationId (not SeekGeneration)
+    # to avoid ODR collision with seek/generation/seek_generation.hpp
+    "comparison"     = @("generation_match_rule.hpp")
+    "classification" = @("stale_generation_classification.hpp")
+    "advance"        = @("generation_reset_reason.hpp", "generation_advance_rule.hpp")
+}
+
+$generationDir = Join-Path $contractRoot "generation"
+if (Test-Path $generationDir) {
+    # Root must be empty of .hpp files (all in subdirectories)
+    $rootHpp = Get-ChildItem -Path $generationDir -Filter "*.hpp"
+    if ($rootHpp.Count -gt 0) {
+        foreach ($f in $rootHpp) {
+            $violations += "G3h: Production file at generation/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    # Validate each subdirectory
+    foreach ($subdir in $generationSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $generationDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.hpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $generationSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G3h: Unexpected file in generation/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G3h: Missing file in generation/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G3h: Missing generation subdirectory: generation/$subdir/"
+        }
+    }
+} else {
+    $violations += "G3h: Missing production family directory: include/kivo/core/contract/generation/"
+}
+
+# =============================================================================
+# Rule G3i: Buffer family — subdirectory tree with exact allowlists
+# =============================================================================
+$bufferSubdirAllowlists = @{
+    "identity"   = @("buffer_id.hpp", "buffer_generation.hpp")
+    "ownership"  = @("buffer_ownership_mode.hpp", "buffer_ownership_transfer.hpp")
+    "lifetime"   = @("buffer_lifetime_proof.hpp", "buffer_reuse_policy.hpp")
+    "reference"  = @("buffer_reference_type.hpp")
+    "share"      = @("buffer_share_semantics.hpp")
+}
+
+$bufferDir = Join-Path $contractRoot "buffer"
+if (Test-Path $bufferDir) {
+    # Root must be empty of .hpp files (all in subdirectories)
+    $rootHpp = Get-ChildItem -Path $bufferDir -Filter "*.hpp"
+    if ($rootHpp.Count -gt 0) {
+        foreach ($f in $rootHpp) {
+            $violations += "G3i: Production file at buffer/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    # Validate each subdirectory
+    foreach ($subdir in $bufferSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $bufferDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.hpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $bufferSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G3i: Unexpected file in buffer/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G3i: Missing file in buffer/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G3i: Missing buffer subdirectory: buffer/$subdir/"
+        }
+    }
+} else {
+    $violations += "G3i: Missing production family directory: include/kivo/core/contract/buffer/"
+}
+
+# =============================================================================
+# Rule G3j: Queue family — subdirectory tree with exact allowlists
+# =============================================================================
+$queueSubdirAllowlists = @{
+    "capacity"   = @("queue_capacity_policy.hpp", "queue_overflow_policy.hpp")
+    "slot"       = @("queue_slot_state.hpp", "queue_slot_generation.hpp")
+    "staleness"  = @("queue_staleness_threshold.hpp", "queue_staleness_policy.hpp")
+    "boundary"   = @("queue_boundary_mode.hpp")
+}
+
+$queueDir = Join-Path $contractRoot "queue"
+if (Test-Path $queueDir) {
+    # Root must be empty of .hpp files (all in subdirectories)
+    $rootHpp = Get-ChildItem -Path $queueDir -Filter "*.hpp"
+    if ($rootHpp.Count -gt 0) {
+        foreach ($f in $rootHpp) {
+            $violations += "G3j: Production file at queue/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    # Validate each subdirectory
+    foreach ($subdir in $queueSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $queueDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.hpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $queueSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G3j: Unexpected file in queue/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G3j: Missing file in queue/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G3j: Missing queue subdirectory: queue/$subdir/"
+        }
+    }
+} else {
+    $violations += "G3j: Missing production family directory: include/kivo/core/contract/queue/"
+}
+
+# =============================================================================
+# Rule G6f: Generation test family — subdirectory tree with exact allowlists
+# =============================================================================
+$generationTestSubdirAllowlists = @{
+    "identity"       = @("generation_identity_tests.cpp")
+    "comparison"     = @("generation_comparison_tests.cpp")
+    "classification" = @("generation_classification_tests.cpp")
+    "advance"        = @("generation_advance_tests.cpp")
+}
+
+$generationTestDir = Join-Path $testsRoot "generation"
+if (Test-Path $generationTestDir) {
+    # Root must be empty of .cpp files (all in subdirectories)
+    $rootCpp = Get-ChildItem -Path $generationTestDir -Filter "*.cpp"
+    if ($rootCpp.Count -gt 0) {
+        foreach ($f in $rootCpp) {
+            $violations += "G6f: Test file at generation/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    foreach ($subdir in $generationTestSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $generationTestDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.cpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $generationTestSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G6f: Unexpected test file in generation/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G6f: Missing test file in generation/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G6f: Missing generation test subdirectory: generation/$subdir/"
+        }
+    }
+} else {
+    $violations += "G6f: Missing test family directory: tests/contracts/generation/"
+}
+
+# =============================================================================
+# Rule G6g: Buffer test family — subdirectory tree with exact allowlists
+# =============================================================================
+$bufferTestSubdirAllowlists = @{
+    "identity"   = @("buffer_identity_tests.cpp")
+    "ownership"  = @("buffer_ownership_tests.cpp")
+    "lifetime"   = @("buffer_lifetime_tests.cpp")
+    "reference"  = @("buffer_reference_tests.cpp")
+    "share"      = @("buffer_share_tests.cpp")
+}
+
+$bufferTestDir = Join-Path $testsRoot "buffer"
+if (Test-Path $bufferTestDir) {
+    # Root must be empty of .cpp files (all in subdirectories)
+    $rootCpp = Get-ChildItem -Path $bufferTestDir -Filter "*.cpp"
+    if ($rootCpp.Count -gt 0) {
+        foreach ($f in $rootCpp) {
+            $violations += "G6g: Test file at buffer/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    foreach ($subdir in $bufferTestSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $bufferTestDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.cpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $bufferTestSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G6g: Unexpected test file in buffer/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G6g: Missing test file in buffer/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G6g: Missing buffer test subdirectory: buffer/$subdir/"
+        }
+    }
+} else {
+    $violations += "G6g: Missing test family directory: tests/contracts/buffer/"
+}
+
+# =============================================================================
+# Rule G6h: Queue test family — subdirectory tree with exact allowlists
+# =============================================================================
+$queueTestSubdirAllowlists = @{
+    "capacity"   = @("queue_capacity_tests.cpp")
+    "slot"       = @("queue_slot_tests.cpp")
+    "staleness"  = @("queue_staleness_tests.cpp")
+    "boundary"   = @("queue_boundary_tests.cpp")
+}
+
+$queueTestDir = Join-Path $testsRoot "queue"
+if (Test-Path $queueTestDir) {
+    # Root must be empty of .cpp files (all in subdirectories)
+    $rootCpp = Get-ChildItem -Path $queueTestDir -Filter "*.cpp"
+    if ($rootCpp.Count -gt 0) {
+        foreach ($f in $rootCpp) {
+            $violations += "G6h: Test file at queue/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    foreach ($subdir in $queueTestSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $queueTestDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.cpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $queueTestSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G6h: Unexpected test file in queue/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G6h: Missing test file in queue/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G6h: Missing queue test subdirectory: queue/$subdir/"
+        }
+    }
+} else {
+    $violations += "G6h: Missing test family directory: tests/contracts/queue/"
 }
 
 # =============================================================================

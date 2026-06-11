@@ -62,6 +62,19 @@ void run_realtime_ownership_contract_tests(ContractTestRunner& runner);
 void run_realtime_buffer_contract_tests(ContractTestRunner& runner);
 void run_realtime_transport_contract_tests(ContractTestRunner& runner);
 void run_realtime_boundary_contract_tests(ContractTestRunner& runner);
+void run_generation_identity_tests(ContractTestRunner& runner);
+void run_generation_comparison_tests(ContractTestRunner& runner);
+void run_generation_classification_tests(ContractTestRunner& runner);
+void run_generation_advance_tests(ContractTestRunner& runner);
+void run_buffer_identity_tests(ContractTestRunner& runner);
+void run_buffer_ownership_tests(ContractTestRunner& runner);
+void run_buffer_lifetime_tests(ContractTestRunner& runner);
+void run_buffer_reference_tests(ContractTestRunner& runner);
+void run_buffer_share_tests(ContractTestRunner& runner);
+void run_queue_capacity_tests(ContractTestRunner& runner);
+void run_queue_slot_tests(ContractTestRunner& runner);
+void run_queue_staleness_tests(ContractTestRunner& runner);
+void run_queue_boundary_tests(ContractTestRunner& runner);
 
 // =============================================================================
 // Main
@@ -122,6 +135,19 @@ int main() {
     run_realtime_buffer_contract_tests(runner);
     run_realtime_transport_contract_tests(runner);
     run_realtime_boundary_contract_tests(runner);
+    run_generation_identity_tests(runner);
+    run_generation_comparison_tests(runner);
+    run_generation_classification_tests(runner);
+    run_generation_advance_tests(runner);
+    run_buffer_identity_tests(runner);
+    run_buffer_ownership_tests(runner);
+    run_buffer_lifetime_tests(runner);
+    run_buffer_reference_tests(runner);
+    run_buffer_share_tests(runner);
+    run_queue_capacity_tests(runner);
+    run_queue_slot_tests(runner);
+    run_queue_staleness_tests(runner);
+    run_queue_boundary_tests(runner);
 
     std::cout << "=== " << runner.tests_passed << "/" << runner.tests_run << " passed ===\n";
     return runner.exit_code();
