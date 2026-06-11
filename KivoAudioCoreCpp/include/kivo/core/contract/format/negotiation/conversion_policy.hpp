@@ -17,10 +17,10 @@ namespace kivo::core::contract {
 // ConversionPolicy — Required format conversions
 // =============================================================================
 struct ConversionPolicy {
-    bool sample_format_convert = false;    // change sample encoding
-    bool sample_rate_convert = false;      // resample to different rate
-    bool channel_remix = false;            // remix channel layout
-    bool bit_depth_convert = false;        // change bit depth
+    bool sample_format_convert{false};    // change sample encoding
+    bool sample_rate_convert{false};      // resample to different rate
+    bool channel_remix{false};            // remix channel layout
+    bool bit_depth_convert{false};        // change bit depth
 
     // --- Convenience ---
     [[nodiscard]] bool any_conversion_needed() const noexcept {
