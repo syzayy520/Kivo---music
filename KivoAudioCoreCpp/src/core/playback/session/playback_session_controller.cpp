@@ -292,7 +292,7 @@ public:
 
     [[nodiscard]] bool complete_recovery(
         uint64_t session_generation,
-        bool succeeded) noexcept {
+        PlaybackRecoveryCompletion completion) noexcept {
         std::scoped_lock lock{mutex};
         if (snapshot.state != contract::CoreState::Recovering
             || session_generation == 0
@@ -300,17 +300,29 @@ public:
             return false;
         }
         snapshot.recovery_action = contract::RecoveryAction::None;
-        if (!succeeded) {
+        if (completion == PlaybackRecoveryCompletion::Failed) {
             snapshot.state = contract::CoreState::Failed;
             saturating_increment(snapshot.recovery_failures);
             return true;
         }
-        snapshot.state =
-            state_before_recovery == contract::CoreState::Playing
-                || state_before_recovery == contract::CoreState::Paused
-                || state_before_recovery == contract::CoreState::Ready
-            ? state_before_recovery
-            : contract::CoreState::Ready;
+        switch (completion) {
+        case PlaybackRecoveryCompletion::Restored:
+            snapshot.state =
+                state_before_recovery == contract::CoreState::Playing
+                    || state_before_recovery == contract::CoreState::Paused
+                    || state_before_recovery == contract::CoreState::Ready
+                ? state_before_recovery
+                : contract::CoreState::Ready;
+            break;
+        case PlaybackRecoveryCompletion::Ready:
+            snapshot.state = contract::CoreState::Ready;
+            break;
+        case PlaybackRecoveryCompletion::Stopped:
+            snapshot.state = contract::CoreState::Stopped;
+            break;
+        case PlaybackRecoveryCompletion::Failed:
+            break;
+        }
         saturating_increment(snapshot.recovery_successes);
         return true;
     }
@@ -404,8 +416,18 @@ PlaybackRecoveryDecision PlaybackSessionController::begin_recovery(
 bool PlaybackSessionController::complete_recovery(
     uint64_t session_generation,
     bool succeeded) noexcept {
+    return complete_recovery(
+        session_generation,
+        succeeded
+            ? PlaybackRecoveryCompletion::Restored
+            : PlaybackRecoveryCompletion::Failed);
+}
+
+bool PlaybackSessionController::complete_recovery(
+    uint64_t session_generation,
+    PlaybackRecoveryCompletion completion) noexcept {
     return impl_
-        && impl_->complete_recovery(session_generation, succeeded);
+        && impl_->complete_recovery(session_generation, completion);
 }
 
 PlaybackSessionSnapshot PlaybackSessionController::snapshot() const noexcept {

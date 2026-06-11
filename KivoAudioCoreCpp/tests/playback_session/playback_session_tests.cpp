@@ -1,9 +1,11 @@
+#include <array>
 #include <iostream>
 #include <iterator>
 #include <stdexcept>
 #include <thread>
 #include <vector>
 
+#include "kivo/core/playback/recovery/playback_recovery_executor.hpp"
 #include "kivo/core/playback/session/playback_session_controller.hpp"
 
 namespace {
@@ -30,6 +32,37 @@ using namespace kivo;
         position
     };
 }
+
+class ScriptedRecoveryOperations final
+    : public core::playback::PlaybackRecoveryOperations {
+public:
+    core::contract::RecoveryAction primary_action{
+        core::contract::RecoveryAction::None};
+    core::playback::PlaybackRecoveryCompletion primary_completion{
+        core::playback::PlaybackRecoveryCompletion::Failed};
+    core::contract::RecoveryAction fallback_action{
+        core::contract::RecoveryAction::None};
+    core::playback::PlaybackRecoveryCompletion fallback_completion{
+        core::playback::PlaybackRecoveryCompletion::Failed};
+    std::array<core::contract::RecoveryAction, 2> observed_actions{};
+    size_t execution_count{0};
+
+    [[nodiscard]] core::playback::PlaybackRecoveryCompletion execute(
+        core::contract::RecoveryAction action,
+        uint64_t session_generation) noexcept override {
+        if (session_generation == 0 || execution_count >= observed_actions.size()) {
+            return core::playback::PlaybackRecoveryCompletion::Failed;
+        }
+        observed_actions[execution_count++] = action;
+        if (action == primary_action) {
+            return primary_completion;
+        }
+        if (action == fallback_action) {
+            return fallback_completion;
+        }
+        return core::playback::PlaybackRecoveryCompletion::Failed;
+    }
+};
 
 void lifecycle_and_pause_freeze() {
     core::playback::PlaybackSessionController session;
@@ -261,6 +294,99 @@ void new_source_clears_previous_error_identity() {
     SESSION_ASSERT(snapshot.recovery_action == RecoveryAction::None);
 }
 
+void recovery_executor_primary_success_restores_playback() {
+    using core::contract::ErrorDomain;
+    using core::contract::RecoveryAction;
+    using core::playback::PlaybackRecoveryCompletion;
+
+    core::playback::PlaybackSessionController session;
+    SESSION_ASSERT(session.submit(command(
+        1, core::contract::CommandKind::OpenSource, 10)).accepted());
+    SESSION_ASSERT(session.submit(command(
+        2, core::contract::CommandKind::Resume, 10)).accepted());
+    ScriptedRecoveryOperations operations;
+    operations.primary_action = RecoveryAction::ReopenDevice;
+    operations.primary_completion = PlaybackRecoveryCompletion::Restored;
+    core::playback::PlaybackRecoveryExecutor executor(session, operations);
+
+    const auto result = executor.recover(10, ErrorDomain::DeviceLost);
+    SESSION_ASSERT(result.accepted);
+    SESSION_ASSERT(result.succeeded);
+    SESSION_ASSERT(!result.fallback_attempted);
+    SESSION_ASSERT(operations.execution_count == 1);
+    SESSION_ASSERT(
+        operations.observed_actions[0] == RecoveryAction::ReopenDevice);
+    SESSION_ASSERT(session.snapshot().state == core::contract::CoreState::Playing);
+}
+
+void recovery_executor_fallback_can_stop_safely() {
+    using core::contract::ErrorDomain;
+    using core::contract::RecoveryAction;
+    using core::playback::PlaybackRecoveryCompletion;
+
+    core::playback::PlaybackSessionController session;
+    SESSION_ASSERT(session.submit(command(
+        1, core::contract::CommandKind::OpenSource, 10)).accepted());
+    SESSION_ASSERT(session.submit(command(
+        2, core::contract::CommandKind::Resume, 10)).accepted());
+    ScriptedRecoveryOperations operations;
+    operations.primary_action = RecoveryAction::RebuildSource;
+    operations.primary_completion = PlaybackRecoveryCompletion::Failed;
+    operations.fallback_action = RecoveryAction::StopMedia;
+    operations.fallback_completion = PlaybackRecoveryCompletion::Stopped;
+    core::playback::PlaybackRecoveryExecutor executor(session, operations);
+
+    const auto result = executor.recover(
+        10,
+        ErrorDomain::SourceUnavailable);
+    SESSION_ASSERT(result.accepted);
+    SESSION_ASSERT(result.succeeded);
+    SESSION_ASSERT(result.fallback_attempted);
+    SESSION_ASSERT(operations.execution_count == 2);
+    SESSION_ASSERT(
+        operations.observed_actions[1] == RecoveryAction::StopMedia);
+    SESSION_ASSERT(session.snapshot().state == core::contract::CoreState::Stopped);
+}
+
+void recovery_executor_double_failure_enters_failed() {
+    using core::contract::ErrorDomain;
+    using core::contract::RecoveryAction;
+    using core::playback::PlaybackRecoveryCompletion;
+
+    core::playback::PlaybackSessionController session;
+    SESSION_ASSERT(session.submit(command(
+        1, core::contract::CommandKind::OpenSource, 10)).accepted());
+    ScriptedRecoveryOperations operations;
+    operations.primary_action = RecoveryAction::ReconfigureFormat;
+    operations.primary_completion = PlaybackRecoveryCompletion::Failed;
+    operations.fallback_action = RecoveryAction::ReopenDevice;
+    operations.fallback_completion = PlaybackRecoveryCompletion::Failed;
+    core::playback::PlaybackRecoveryExecutor executor(session, operations);
+
+    const auto result = executor.recover(10, ErrorDomain::FormatChanged);
+    SESSION_ASSERT(result.accepted);
+    SESSION_ASSERT(!result.succeeded);
+    SESSION_ASSERT(result.fallback_attempted);
+    SESSION_ASSERT(operations.execution_count == 2);
+    SESSION_ASSERT(session.snapshot().state == core::contract::CoreState::Failed);
+}
+
+void recovery_executor_rejections_execute_nothing() {
+    using core::contract::ErrorDomain;
+
+    core::playback::PlaybackSessionController session;
+    SESSION_ASSERT(session.submit(command(
+        1, core::contract::CommandKind::OpenSource, 10)).accepted());
+    ScriptedRecoveryOperations operations;
+    core::playback::PlaybackRecoveryExecutor executor(session, operations);
+
+    SESSION_ASSERT(!executor.recover(9, ErrorDomain::DeviceLost).accepted);
+    SESSION_ASSERT(
+        !executor.recover(10, ErrorDomain::UnsupportedFormat).accepted);
+    SESSION_ASSERT(operations.execution_count == 0);
+    SESSION_ASSERT(session.snapshot().state == core::contract::CoreState::Ready);
+}
+
 } // namespace
 
 int main() {
@@ -287,7 +413,15 @@ int main() {
         {"recovery_interrupts_seek_without_restoring_stale_intent",
          recovery_interrupts_seek_without_restoring_stale_intent},
         {"new_source_clears_previous_error_identity",
-         new_source_clears_previous_error_identity}
+         new_source_clears_previous_error_identity},
+        {"recovery_executor_primary_success_restores_playback",
+         recovery_executor_primary_success_restores_playback},
+        {"recovery_executor_fallback_can_stop_safely",
+         recovery_executor_fallback_can_stop_safely},
+        {"recovery_executor_double_failure_enters_failed",
+         recovery_executor_double_failure_enters_failed},
+        {"recovery_executor_rejections_execute_nothing",
+         recovery_executor_rejections_execute_nothing}
     };
     int passed = 0;
     std::cout << "=== Playback Session Tests ===\n\n";

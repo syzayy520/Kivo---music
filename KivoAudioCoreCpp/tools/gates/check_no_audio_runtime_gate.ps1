@@ -32,6 +32,7 @@ $allowedContractPaths = @(
     "src\core\contract",
     "src\core\render\queue",
     "src\core\render\pump",
+    "src\core\playback\recovery",
     "src\core\playback\session",
     "src\testing",
     "src\source\local",

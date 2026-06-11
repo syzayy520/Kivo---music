@@ -5,6 +5,7 @@
 #include "kivo/core/playback/session/playback_command.hpp"
 #include "kivo/core/playback/session/playback_command_result.hpp"
 #include "kivo/core/playback/session/playback_session_snapshot.hpp"
+#include "kivo/core/playback/recovery/playback_recovery_completion.hpp"
 #include "kivo/core/playback/recovery/playback_recovery_policy.hpp"
 
 namespace kivo::core::playback {
@@ -35,6 +36,9 @@ public:
     [[nodiscard]] bool complete_recovery(
         uint64_t session_generation,
         bool succeeded) noexcept;
+    [[nodiscard]] bool complete_recovery(
+        uint64_t session_generation,
+        PlaybackRecoveryCompletion completion) noexcept;
     [[nodiscard]] PlaybackSessionSnapshot snapshot() const noexcept;
 
 private:
