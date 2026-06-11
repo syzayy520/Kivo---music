@@ -36,10 +36,10 @@ enum class OutputMode : uint8_t {
 // NegotiatedOutputMode — Format negotiation output mode result
 // =============================================================================
 struct NegotiatedOutputMode {
-    OutputMode mode = OutputMode::Unknown;
-    bool bit_perfect_active = false;
-    bool resampling_active = false;
-    bool conversion_active = false;
+    OutputMode mode{OutputMode::Unknown};
+    bool bit_perfect_active{false};
+    bool resampling_active{false};
+    bool conversion_active{false};
 
     // --- Convenience ---
     [[nodiscard]] bool is_bit_perfect() const noexcept {
