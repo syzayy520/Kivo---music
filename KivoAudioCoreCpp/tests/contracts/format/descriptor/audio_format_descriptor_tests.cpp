@@ -40,6 +40,25 @@ static void invalid_zero_bits() {
     ASSERT(!fmt.is_valid());
 }
 
+static void invalid_mismatched_valid_bits() {
+    AudioFormatDescriptor fmt;
+    fmt.sample_format = SampleFormat::Int16;
+    fmt.channel_layout = ChannelLayout::Stereo;
+    fmt.sample_rate = 44100;
+    fmt.bits_per_sample = 24;
+    ASSERT(!fmt.is_valid());
+}
+
+static void invalid_mismatched_container_bits() {
+    AudioFormatDescriptor fmt;
+    fmt.sample_format = SampleFormat::Int24;
+    fmt.channel_layout = ChannelLayout::Stereo;
+    fmt.sample_rate = 48000;
+    fmt.bits_per_sample = 24;
+    fmt.container_bits_per_sample = 24;
+    ASSERT(!fmt.is_valid());
+}
+
 static void channel_count_derived() {
     AudioFormatDescriptor fmt;
     fmt.channel_layout = ChannelLayout::Stereo;
@@ -55,6 +74,31 @@ static void bytes_per_frame_calculation() {
     fmt.channel_layout = ChannelLayout::Stereo;
     fmt.bits_per_sample = 16;
     ASSERT(fmt.bytes_per_frame() == 4); // 2 bytes/sample * 2 channels
+}
+
+static void int24_stereo_uses_32_bit_container() {
+    AudioFormatDescriptor fmt;
+    fmt.sample_format = SampleFormat::Int24;
+    fmt.channel_layout = ChannelLayout::Stereo;
+    fmt.sample_rate = 48000;
+    fmt.bits_per_sample = 24;
+    ASSERT(fmt.is_valid());
+    ASSERT(fmt.valid_bits_per_sample() == 24);
+    ASSERT(fmt.container_bits() == 32);
+    ASSERT(fmt.bytes_per_frame() == 8);
+}
+
+static void explicit_container_bits_normalize_equality() {
+    AudioFormatDescriptor a;
+    a.sample_format = SampleFormat::Int24;
+    a.channel_layout = ChannelLayout::Stereo;
+    a.sample_rate = 48000;
+    a.bits_per_sample = 24;
+
+    AudioFormatDescriptor b = a;
+    b.container_bits_per_sample = 32;
+
+    ASSERT(a == b);
 }
 
 static void equality_same() {
@@ -90,8 +134,12 @@ void run_audio_format_descriptor_contract_tests(ContractTestRunner& runner) {
     runner.run("valid_format", valid_format);
     runner.run("invalid_zero_sample_rate", invalid_zero_sample_rate);
     runner.run("invalid_zero_bits", invalid_zero_bits);
+    runner.run("invalid_mismatched_valid_bits", invalid_mismatched_valid_bits);
+    runner.run("invalid_mismatched_container_bits", invalid_mismatched_container_bits);
     runner.run("channel_count_derived", channel_count_derived);
     runner.run("bytes_per_frame_calculation", bytes_per_frame_calculation);
+    runner.run("int24_stereo_uses_32_bit_container", int24_stereo_uses_32_bit_container);
+    runner.run("explicit_container_bits_normalize_equality", explicit_container_bits_normalize_equality);
     runner.run("equality_same", equality_same);
     runner.run("equality_different", equality_different);
     std::cout << "\n";
