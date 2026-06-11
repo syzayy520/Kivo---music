@@ -18,7 +18,7 @@ struct WholeAlbumFile {
     uint32_t track_count{0};
     bool is_single_file{false};
 
-    [[nodiscard]] bool operator==(const WholeAlbumFile&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const WholeAlbumFile&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
