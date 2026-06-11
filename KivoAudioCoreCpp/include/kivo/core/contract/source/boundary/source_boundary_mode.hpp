@@ -10,7 +10,7 @@ enum class SourceBoundaryMode : uint8_t {
     Synchronous,
     Asynchronous,
     Streaming,
-    MemoryMapped
+    BoundedView
 };
 
 } // namespace kivo::core::contract

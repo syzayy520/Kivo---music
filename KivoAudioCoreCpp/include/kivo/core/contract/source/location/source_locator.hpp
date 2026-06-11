@@ -9,7 +9,7 @@ enum class SourceLocator : uint8_t {
     NotSpecified = 0,
     ByUri,
     ByPath,
-    ByHandle,
+    ByToken,
     ByStream
 };
 

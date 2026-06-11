@@ -55,8 +55,8 @@ void source_locator_by_path() {
 }
 
 void source_locator_equality() {
-    auto a = kivo::core::contract::SourceLocator::ByHandle;
-    auto b = kivo::core::contract::SourceLocator::ByHandle;
+    auto a = kivo::core::contract::SourceLocator::ByToken;
+    auto b = kivo::core::contract::SourceLocator::ByToken;
     ASSERT(a == b);
 }
 

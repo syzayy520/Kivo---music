@@ -11,7 +11,7 @@ enum class SourceRecoveryPolicy : uint8_t {
     RetrySameSource,
     RetryAlternateSource,
     SkipToNext,
-    AbortPipeline
+    StopSource
 };
 
 } // namespace kivo::core::contract
