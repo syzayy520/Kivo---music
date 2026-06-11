@@ -23,7 +23,7 @@ struct RenderFormat {
     AudioFormatDescriptor format{};
 
     // --- Validity ---
-    [[nodiscard]] bool is_valid() const noexcept {
+    [[nodiscard]] constexpr bool is_valid() const noexcept {
         return format.is_valid();
     }
 
