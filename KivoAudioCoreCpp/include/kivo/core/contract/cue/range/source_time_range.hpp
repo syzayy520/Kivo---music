@@ -20,7 +20,7 @@ struct SourceTimeRange {
     uint64_t end_sample{0};
     uint32_t sample_rate{0};
 
-    [[nodiscard]] bool operator==(const SourceTimeRange&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const SourceTimeRange&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
