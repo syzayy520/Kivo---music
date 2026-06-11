@@ -35,7 +35,7 @@ struct FormatNegotiationResult {
     }
 
     // --- Comparison ---
-    [[nodiscard]] bool operator==(const FormatNegotiationResult&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const FormatNegotiationResult&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
