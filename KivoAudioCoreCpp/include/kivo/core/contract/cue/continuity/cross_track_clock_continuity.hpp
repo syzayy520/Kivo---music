@@ -20,7 +20,7 @@ struct CrossTrackClockContinuity {
     uint64_t accumulated_offset_samples{0};
     bool continuity_valid{false};
 
-    [[nodiscard]] bool operator==(const CrossTrackClockContinuity&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const CrossTrackClockContinuity&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
