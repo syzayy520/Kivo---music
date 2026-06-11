@@ -24,7 +24,7 @@ struct GaplessMetadata {
     Preroll preroll{};
     Prefetch prefetch{};
 
-    [[nodiscard]] bool operator==(const GaplessMetadata&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const GaplessMetadata&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
