@@ -51,7 +51,7 @@ struct NegotiatedOutputMode {
     }
 
     // --- Comparison ---
-    [[nodiscard]] bool operator==(const NegotiatedOutputMode&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const NegotiatedOutputMode&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
