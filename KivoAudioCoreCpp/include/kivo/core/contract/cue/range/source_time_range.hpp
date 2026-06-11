@@ -2,8 +2,6 @@
 // KivoAudioCoreCpp — source_time_range.hpp
 // Contract: Source time range in samples
 // =============================================================================
-//
-
 
 #pragma once
 
