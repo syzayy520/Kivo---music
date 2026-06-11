@@ -17,7 +17,7 @@ namespace kivo::core::contract {
 struct CodecDelay {
     uint64_t samples{0};
 
-    [[nodiscard]] bool operator==(const CodecDelay&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const CodecDelay&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
