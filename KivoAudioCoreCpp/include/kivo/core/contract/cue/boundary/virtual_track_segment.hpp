@@ -2,8 +2,6 @@
 // KivoAudioCoreCpp — virtual_track_segment.hpp
 // Contract: Virtual track segment boundary definition
 // =============================================================================
-//
-
 
 #pragma once
 
