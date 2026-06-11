@@ -27,10 +27,10 @@ enum class ResampleReason : uint8_t {
 // ResampleDecision — Whether to resample and why
 // =============================================================================
 struct ResampleDecision {
-    bool resample = false;
-    ResampleReason reason = ResampleReason::NotNeeded;
-    uint32_t source_rate = 0;
-    uint32_t target_rate = 0;
+    bool resample{false};
+    ResampleReason reason{ResampleReason::NotNeeded};
+    uint32_t source_rate{0};
+    uint32_t target_rate{0};
 
     // --- Convenience ---
     [[nodiscard]] bool is_needed() const noexcept {
