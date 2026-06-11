@@ -10,7 +10,7 @@ struct SourceOutcome {
     SourceOutcomeReason reason{SourceOutcomeReason::NotSpecified};
     SourceRecoveryPolicy recovery{SourceRecoveryPolicy::NotSpecified};
 
-    [[nodiscard]] bool operator==(const SourceOutcome&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const SourceOutcome&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
