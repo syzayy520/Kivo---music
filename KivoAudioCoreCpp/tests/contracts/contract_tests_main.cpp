@@ -129,6 +129,7 @@ int main() {
     run_audio_format_descriptor_contract_tests(runner);
     run_sample_format_contract_tests(runner);
     run_channel_layout_contract_tests(runner);
+    run_frame_layout_contract_tests(runner);
     run_channel_mask_contract_tests(runner);
     run_native_decoded_format_contract_tests(runner);
     run_core_canonical_format_contract_tests(runner);
