@@ -6,6 +6,7 @@ namespace kivo::core::contract {
 
 struct CommandId {
     uint64_t value{0};
+
     [[nodiscard]] constexpr bool operator==(const CommandId&) const noexcept = default;
 };
 
