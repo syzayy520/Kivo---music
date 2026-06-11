@@ -38,7 +38,7 @@ struct ResampleDecision {
     }
 
     // --- Comparison ---
-    [[nodiscard]] bool operator==(const ResampleDecision&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const ResampleDecision&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
