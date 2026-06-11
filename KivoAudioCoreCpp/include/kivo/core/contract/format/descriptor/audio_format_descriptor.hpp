@@ -26,17 +26,17 @@ struct AudioFormatDescriptor {
     uint8_t bits_per_sample{0};
 
     // --- Channel count (derived from layout) ---
-    [[nodiscard]] uint8_t channel_count() const noexcept {
+    [[nodiscard]] constexpr uint8_t channel_count() const noexcept {
         return channel_layout_count(channel_layout);
     }
 
     // --- Frame size in bytes ---
-    [[nodiscard]] uint8_t bytes_per_frame() const noexcept {
+    [[nodiscard]] constexpr uint8_t bytes_per_frame() const noexcept {
         return (bits_per_sample / 8u) * channel_count();
     }
 
     // --- Validity check ---
-    [[nodiscard]] bool is_valid() const noexcept {
+    [[nodiscard]] constexpr bool is_valid() const noexcept {
         if (sample_format == SampleFormat::Unknown) return false;
         if (channel_layout == ChannelLayout::Unknown) return false;
         if (sample_rate == 0) return false;
