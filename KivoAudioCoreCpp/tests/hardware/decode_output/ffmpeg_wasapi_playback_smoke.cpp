@@ -291,7 +291,9 @@ struct PendingBlock {
         : decoded_frames;
     const auto duration_ms = format.format.sample_rate == 0
         ? uint64_t{0}
-        : duration_frames * 1000u / format.format.sample_rate;
+        : (duration_frames / format.format.sample_rate) * 1000u
+            + (duration_frames % format.format.sample_rate) * 1000u
+                / format.format.sample_rate;
     const auto timeout = std::chrono::milliseconds{
         static_cast<int64_t>(std::min<uint64_t>(duration_ms + 10000u, 3600000u))};
     if (!worker.join(timeout)) {

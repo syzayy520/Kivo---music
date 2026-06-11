@@ -75,6 +75,15 @@ void FfmpegAudioDecoder::unref_frame() noexcept {
     }
 }
 
+void FfmpegAudioDecoder::flush() noexcept {
+    if (context_ != nullptr) {
+        avcodec_flush_buffers(context_);
+    }
+    unref_packet();
+    unref_frame();
+    failure_ = core::decode::DecodeFailure::None;
+}
+
 AVPacket* FfmpegAudioDecoder::packet() const noexcept {
     return packet_;
 }

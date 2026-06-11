@@ -1,7 +1,7 @@
 # P0-F/H-001 WASAPI Shared-Mode Output
 
 **Task:** KIVO-CPP-AUDIO-CORE-P0-FH-001-WASAPI-SHARED-OUTPUT
-**Status:** IMPLEMENTATION COMPLETE - ENDURANCE VALIDATION IN PROGRESS
+**Status:** COMPLETED
 **Execution Basis:** `docs/architecture/audio_core_execution_roadmap.md`
 **Boundary Basis:** `docs/tasks/p0_e_001_platform_neutral_render_boundary_task.md`
 **Last Updated:** 2026-06-12
@@ -179,4 +179,6 @@ registered as an unconditional CTest.
 - Start/stop/reset cycles are repeatable.
 - Diagnostics truthfully report mode, generation, underrun, invalidation, and
   last platform failure.
+- A 60-minute real-device run submits and accepts 172,800,000 frames with zero
+  worker wait timeouts, underruns, and device invalidations.
 - Full cumulative validation passes.

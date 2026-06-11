@@ -1,5 +1,7 @@
 #include "container/ffmpeg_demux_session.hpp"
 
+#include <limits>
+
 #include "source/ffmpeg_avio_bridge.hpp"
 
 extern "C" {
@@ -76,6 +78,27 @@ int FfmpegDemuxSession::read_audio_packet(AVPacket* packet) noexcept {
         }
         av_packet_unref(packet);
     }
+}
+
+bool FfmpegDemuxSession::seek_to(int64_t stream_timestamp) noexcept {
+    if (context_ == nullptr || audio_stream_index_ < 0) {
+        failure_ = core::decode::DecodeFailure::BoundaryFailure;
+        return false;
+    }
+    const auto result = avformat_seek_file(
+        context_,
+        audio_stream_index_,
+        std::numeric_limits<int64_t>::min(),
+        stream_timestamp,
+        stream_timestamp,
+        AVSEEK_FLAG_BACKWARD);
+    if (result < 0) {
+        failure_ = core::decode::DecodeFailure::SourceSeekFailed;
+        return false;
+    }
+    avformat_flush(context_);
+    failure_ = core::decode::DecodeFailure::None;
+    return true;
 }
 
 AVStream* FfmpegDemuxSession::audio_stream() const noexcept {

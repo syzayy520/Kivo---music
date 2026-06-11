@@ -286,9 +286,48 @@ public:
                     return core::decode::DecodeStepResult::failed(
                         converter.failure());
                 }
-                const auto frame_count = converter.frame_count();
+                auto frame_count = converter.frame_count();
+                auto bytes = converter.bytes();
                 if (frame_count == 0) {
                     continue;
+                }
+                if (seek_pending) {
+                    auto frame_start = seek_target_frame;
+                    if (decoder.frame()->best_effort_timestamp != AV_NOPTS_VALUE) {
+                        const auto* stream = demux.audio_stream();
+                        if (stream != nullptr) {
+                            const auto resolved = av_rescale_q(
+                                decoder.frame()->best_effort_timestamp,
+                                stream->time_base,
+                                AVRational{
+                                    1,
+                                    static_cast<int>(
+                                        target_format.format.sample_rate)});
+                            if (resolved >= 0) {
+                                frame_start = static_cast<
+                                    core::contract::SamplePosition>(resolved);
+                            }
+                        }
+                    }
+                    if (frame_start <= seek_target_frame
+                        && frame_count
+                            <= seek_target_frame - frame_start) {
+                        continue;
+                    }
+                    const auto skip_frames = seek_target_frame > frame_start
+                        ? seek_target_frame - frame_start
+                        : 0;
+                    if (skip_frames >= frame_count) {
+                        continue;
+                    }
+                    const auto skip_bytes = static_cast<size_t>(skip_frames)
+                        * target_format.format.bytes_per_frame();
+                    bytes = bytes.subspan(skip_bytes);
+                    frame_count -= skip_frames;
+                    next_frame_offset = std::max(
+                        seek_target_frame,
+                        frame_start + skip_frames);
+                    seek_pending = false;
                 }
                 if (next_frame_offset
                     > std::numeric_limits<core::contract::SamplePosition>::max()
@@ -297,7 +336,7 @@ public:
                         core::decode::DecodeFailure::BoundaryFailure);
                 }
                 const core::decode::DecodedAudioBlockView block{
-                    converter.bytes(),
+                    bytes,
                     target_format,
                     frame_count,
                     next_frame_offset,
@@ -374,6 +413,60 @@ public:
         }
     }
 
+    [[nodiscard]] core::decode::DecodeControlResult seek(
+        core::contract::SamplePosition target_frame,
+        core::decode::DecodeGeneration generation) noexcept {
+        if (!opened
+            || !current_probe.seekable
+            || target_frame == core::contract::kInvalidSamplePosition
+            || target_frame
+                > static_cast<core::contract::SamplePosition>(
+                    std::numeric_limits<int64_t>::max())
+            || (current_probe.duration_known
+                && target_frame >= current_probe.duration_frames)) {
+            return core::decode::DecodeControlResult::rejected(
+                core::decode::DecodeFailure::InvalidRequest);
+        }
+        if (generation.id <= decode_generation.id) {
+            return core::decode::DecodeControlResult::rejected(
+                core::decode::DecodeFailure::InvalidRequest);
+        }
+        const auto* stream = demux.audio_stream();
+        if (stream == nullptr || target_format.format.sample_rate == 0) {
+            return core::decode::DecodeControlResult::failed(
+                core::decode::DecodeFailure::BoundaryFailure);
+        }
+        const auto timestamp = av_rescale_q(
+            static_cast<int64_t>(target_frame),
+            AVRational{
+                1,
+                static_cast<int>(target_format.format.sample_rate)},
+            stream->time_base);
+        if (!demux.seek_to(timestamp)) {
+            return core::decode::DecodeControlResult::failed(
+                demux.failure());
+        }
+        reset_decode_state(generation);
+        seek_target_frame = target_frame;
+        next_frame_offset = target_frame;
+        seek_pending = true;
+        return core::decode::DecodeControlResult::succeeded();
+    }
+
+    [[nodiscard]] core::decode::DecodeControlResult flush(
+        core::decode::DecodeGeneration generation) noexcept {
+        if (!opened) {
+            return core::decode::DecodeControlResult::rejected(
+                core::decode::DecodeFailure::InvalidRequest);
+        }
+        if (generation.id <= decode_generation.id) {
+            return core::decode::DecodeControlResult::rejected(
+                core::decode::DecodeFailure::InvalidRequest);
+        }
+        reset_decode_state(generation);
+        return core::decode::DecodeControlResult::succeeded();
+    }
+
     core::decode::DecodeControlResult close() noexcept {
         converter.close();
         decoder.close();
@@ -391,9 +484,24 @@ public:
         decoder_drain_sent = false;
         converter_drained = false;
         pending_converted_frame = false;
+        seek_pending = false;
+        seek_target_frame = 0;
         observed_leading_trim = 0;
         observed_trailing_trim = 0;
         return core::decode::DecodeControlResult::succeeded();
+    }
+
+    void reset_decode_state(
+        core::decode::DecodeGeneration generation) noexcept {
+        decoder.flush();
+        converter.close();
+        decode_generation = generation;
+        current_probe.decode_generation = generation;
+        input_eof = false;
+        decoder_drain_sent = false;
+        converter_drained = false;
+        pending_converted_frame = false;
+        seek_pending = false;
     }
 
     std::unique_ptr<core::decode::ByteSourceBoundary> source{};
@@ -412,6 +520,8 @@ public:
     bool decoder_drain_sent{false};
     bool converter_drained{false};
     bool pending_converted_frame{false};
+    bool seek_pending{false};
+    core::contract::SamplePosition seek_target_frame{0};
     uint32_t observed_leading_trim{0};
     uint32_t observed_trailing_trim{0};
 };
@@ -452,16 +562,32 @@ FfmpegAudioDecodeSession::decode_next() noexcept {
 }
 
 core::decode::DecodeControlResult FfmpegAudioDecodeSession::seek(
-    core::contract::SamplePosition,
-    core::decode::DecodeGeneration) noexcept {
-    return core::decode::DecodeControlResult::unsupported(
-        core::decode::DecodeFailure::SeekUnsupported);
+    core::contract::SamplePosition target_frame,
+    core::decode::DecodeGeneration generation) noexcept {
+    if (!impl_) {
+        return core::decode::DecodeControlResult::failed(
+            core::decode::DecodeFailure::BoundaryFailure);
+    }
+    try {
+        return impl_->seek(target_frame, generation);
+    } catch (...) {
+        return core::decode::DecodeControlResult::failed(
+            core::decode::DecodeFailure::BoundaryFailure);
+    }
 }
 
 core::decode::DecodeControlResult FfmpegAudioDecodeSession::flush(
-    core::decode::DecodeGeneration) noexcept {
-    return core::decode::DecodeControlResult::unsupported(
-        core::decode::DecodeFailure::FlushUnsupported);
+    core::decode::DecodeGeneration generation) noexcept {
+    if (!impl_) {
+        return core::decode::DecodeControlResult::failed(
+            core::decode::DecodeFailure::BoundaryFailure);
+    }
+    try {
+        return impl_->flush(generation);
+    } catch (...) {
+        return core::decode::DecodeControlResult::failed(
+            core::decode::DecodeFailure::BoundaryFailure);
+    }
 }
 
 core::decode::DecodeControlResult FfmpegAudioDecodeSession::close() noexcept {

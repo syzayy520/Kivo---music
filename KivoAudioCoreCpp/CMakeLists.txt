@@ -214,6 +214,18 @@ target_compile_options(kivo_render_queue PRIVATE
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
 )
 
+# Serialized product-control session state
+add_library(kivo_playback_session STATIC
+    src/core/playback/session/playback_session_controller.cpp
+)
+target_link_libraries(kivo_playback_session PUBLIC kivo_core_contract)
+target_include_directories(kivo_playback_session PUBLIC include/)
+target_compile_features(kivo_playback_session PUBLIC cxx_std_20)
+target_compile_options(kivo_playback_session PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
+
 # Contract tests
 add_executable(kivo_contract_tests
     tests/contracts/contract_tests_main.cpp
@@ -387,6 +399,16 @@ target_compile_options(kivo_decode_boundary_tests PRIVATE
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
 )
 
+add_executable(kivo_playback_session_tests
+    tests/playback_session/playback_session_tests.cpp
+)
+target_link_libraries(kivo_playback_session_tests PRIVATE kivo_playback_session)
+target_compile_features(kivo_playback_session_tests PRIVATE cxx_std_20)
+target_compile_options(kivo_playback_session_tests PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc /wd4127>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
+
 # Deterministic fake render backend
 add_library(kivo_fake_render_backend STATIC
     src/testing/time/manual_clock.cpp
@@ -546,6 +568,7 @@ add_dependencies(kivo_capability_tests kivo_public_header_checks)
 add_dependencies(kivo_render_boundary_tests kivo_public_header_checks)
 add_dependencies(kivo_render_queue_tests kivo_public_header_checks)
 add_dependencies(kivo_decode_boundary_tests kivo_public_header_checks)
+add_dependencies(kivo_playback_session_tests kivo_public_header_checks)
 add_dependencies(kivo_fake_renderer_tests kivo_public_header_checks)
 if(TARGET kivo_wasapi_tests)
     add_dependencies(kivo_wasapi_tests kivo_public_header_checks)
@@ -567,6 +590,7 @@ add_test(NAME capability_tests COMMAND kivo_capability_tests)
 add_test(NAME render_boundary_tests COMMAND kivo_render_boundary_tests)
 add_test(NAME render_queue_tests COMMAND kivo_render_queue_tests)
 add_test(NAME decode_boundary_tests COMMAND kivo_decode_boundary_tests)
+add_test(NAME playback_session_tests COMMAND kivo_playback_session_tests)
 add_test(NAME fake_renderer_tests COMMAND kivo_fake_renderer_tests)
 if(TARGET kivo_wasapi_tests)
     add_test(NAME wasapi_tests COMMAND kivo_wasapi_tests)

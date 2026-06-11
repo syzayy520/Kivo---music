@@ -212,21 +212,36 @@ void corrupt_input_is_not_reported_as_eos(
         opened.failure() != core::decode::DecodeFailure::EndOfStream);
 }
 
-void seek_and_flush_remain_explicitly_unsupported(
-    const FfmpegDecodeTestContext&) {
-    adapters::ffmpeg::FfmpegAudioDecodeSession session;
-    const auto seek = session.seek(
-        0,
-        {generation(12)});
-    const auto flush = session.flush(
-        {generation(12)});
-    FFMPEG_ASSERT(
-        seek.disposition
-        == core::decode::DecodeControlDisposition::Unsupported);
-    FFMPEG_ASSERT(
-        seek.failure == core::decode::DecodeFailure::SeekUnsupported);
-    FFMPEG_ASSERT(
-        flush.failure == core::decode::DecodeFailure::FlushUnsupported);
+void seek_and_flush_advance_generation(
+    const FfmpegDecodeTestContext& context) {
+    for (const auto* name : {
+            "tone_pcm_s16le.wav",
+            "tone.flac",
+            "tone.mp3"}) {
+        adapters::ffmpeg::FfmpegAudioDecodeSession session;
+        auto source = open_source(context.fixture_directory / name);
+        FFMPEG_ASSERT(source != nullptr);
+        require_opened(session.open(std::move(source), open_request()));
+
+        const auto seek = session.seek(48000, {generation(12)});
+        FFMPEG_ASSERT(seek.is_success());
+        FFMPEG_ASSERT(session.probe().decode_generation.value() == 12);
+        const auto first = session.decode_next();
+        FFMPEG_ASSERT(
+            first.disposition()
+            == core::decode::DecodeStepDisposition::Produced);
+        FFMPEG_ASSERT(first.block().frame_offset == 48000);
+        FFMPEG_ASSERT(first.block().decode_generation.value() == 12);
+
+        const auto stale_seek = session.seek(24000, {generation(12)});
+        FFMPEG_ASSERT(
+            stale_seek.disposition
+            == core::decode::DecodeControlDisposition::Rejected);
+
+        const auto flush = session.flush({generation(13)});
+        FFMPEG_ASSERT(flush.is_success());
+        FFMPEG_ASSERT(session.probe().decode_generation.value() == 13);
+    }
 }
 
 } // namespace
@@ -243,6 +258,6 @@ void run_ffmpeg_session_tests(FfmpegDecodeTestRunner& runner) {
         "corrupt_input_is_not_reported_as_eos",
         corrupt_input_is_not_reported_as_eos);
     runner.run(
-        "seek_and_flush_remain_explicitly_unsupported",
-        seek_and_flush_remain_explicitly_unsupported);
+        "seek_and_flush_advance_generation",
+        seek_and_flush_advance_generation);
 }

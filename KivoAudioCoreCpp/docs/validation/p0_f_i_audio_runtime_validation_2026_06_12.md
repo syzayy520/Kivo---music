@@ -1,11 +1,11 @@
-# P0-F Through P0-I Audio Runtime Validation
+# P0-F Through P0-J Audio Runtime Validation
 
 **Date:** 2026-06-12
 **Platform:** Windows x64
 **Compiler:** MSVC 19.51 / Visual Studio 2026
 **Generator:** Ninja
 **Configuration:** Debug with `/W4 /WX`
-**Result:** PASS, with 60-minute endurance evidence still running separately
+**Result:** PASS
 
 ## Build and Static Structure
 
@@ -21,7 +21,7 @@
 
 ## CTest
 
-All 8 registered groups passed:
+All 9 registered groups passed:
 
 1. Contract tests.
 2. Capability tests.
@@ -31,6 +31,7 @@ All 8 registered groups passed:
 6. Deterministic fake renderer tests.
 7. WASAPI mapping, error, and worker tests.
 8. FFmpeg WAV, FLAC, MP3, corruption, conversion, generation, and EOS tests.
+9. Playback session lifecycle, seek, generation, and recovery tests.
 
 ## Real Generated PCM Output
 
@@ -86,8 +87,21 @@ LocalFileByteSource
 - Worker-accepted frames: 96,000.
 - Underruns / wait timeouts / invalidations: 0 / 0 / 0.
 
-## Remaining Active Evidence
+## 60-Minute Real-Device Endurance
 
-The 60-minute silent real-device WASAPI endurance run is independent of this
-functional closeout. P0-F/H-001 remains endurance-validation-in-progress until
-that process exits successfully and its final diagnostics are recorded.
+The silent stability path completed one uninterrupted 60-minute run through
+the production WASAPI shared event-driven renderer:
+
+- Sample rate: 48,000 Hz stereo.
+- Endpoint buffer: 4,800 frames / 100 ms.
+- Submitted frames: 172,800,000.
+- Worker-accepted frames: 172,800,000.
+- MMCSS `Pro Audio` registration: true.
+- MMCSS high priority: true.
+- Worker wait timeouts: 0.
+- Underruns: 0.
+- Device invalidations: 0.
+- Standard error output: empty.
+
+The process started at 2026-06-12 03:44:01 Asia/Shanghai and completed at
+2026-06-12 04:44:01. This closes the P0-F/H-001 endurance criterion.

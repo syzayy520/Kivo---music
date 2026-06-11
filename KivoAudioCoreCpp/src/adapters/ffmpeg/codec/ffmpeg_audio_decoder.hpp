@@ -23,6 +23,7 @@ public:
     [[nodiscard]] int receive_frame() noexcept;
     void unref_packet() noexcept;
     void unref_frame() noexcept;
+    void flush() noexcept;
 
     [[nodiscard]] AVPacket* packet() const noexcept;
     [[nodiscard]] AVFrame* frame() const noexcept;

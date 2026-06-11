@@ -22,6 +22,7 @@ public:
     void close() noexcept;
 
     [[nodiscard]] int read_audio_packet(AVPacket* packet) noexcept;
+    [[nodiscard]] bool seek_to(int64_t stream_timestamp) noexcept;
     [[nodiscard]] AVStream* audio_stream() const noexcept;
     [[nodiscard]] AVFormatContext* context() const noexcept;
     [[nodiscard]] int audio_stream_index() const noexcept;
