@@ -4,7 +4,7 @@
 
 namespace kivo::core::contract {
 
-enum class BufferLifetimeProof : uint8_t {
+enum class RealtimeBufferLifetimeProof : uint8_t {
     NotSpecified = 0,
     MustBeProvableAcrossBoundary,
     MustBeProvableWithinBoundary,
