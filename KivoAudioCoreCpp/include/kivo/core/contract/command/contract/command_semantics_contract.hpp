@@ -24,7 +24,7 @@ struct CommandSemanticsContract {
     LibraryScanDuringMediaRule library_scan_during_media{LibraryScanDuringMediaRule::Unknown};
     SourceDisconnectDuringSeekRule source_disconnect_during_seek{SourceDisconnectDuringSeekRule::Unknown};
     DeviceLostDuringFlushRule device_lost_during_flush{DeviceLostDuringFlushRule::Unknown};
-    [[nodiscard]] bool operator==(const CommandSemanticsContract&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const CommandSemanticsContract&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
