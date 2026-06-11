@@ -7,9 +7,9 @@
 namespace kivo::core::contract {
 
 struct ErrorOutcome {
-    ErrorDomain domain = ErrorDomain::Unknown;
+    ErrorDomain domain{ErrorDomain::Unknown};
     ErrorAttributes attributes{};
-    RecoveryAction recommended_recovery = RecoveryAction::None;
+    RecoveryAction recommended_recovery{RecoveryAction::None};
 
     [[nodiscard]] bool operator==(const ErrorOutcome&) const noexcept = default;
 };
