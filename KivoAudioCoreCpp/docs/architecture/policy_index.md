@@ -1,8 +1,8 @@
 # Policy Index
 
 **Version:** V10.1 FINAL P0-B READY LOCKED PATCHED  
-**Current Task:** KIVO-AUDIO-CORE-SCOPE-LOCK-001  
-**Last Updated:** 2026-06-11 (Audio Core Scope Lock)  
+**Current Task:** KIVO-CPP-AUDIO-CORE-P0-C-CLOSEOUT-HARDENING
+**Last Updated:** 2026-06-12 (Execution Roadmap Activation)
 
 ## 1. Version Declaration
 
@@ -10,16 +10,27 @@ This policy index is based on V10.1 FINAL P0-B READY LOCKED PATCHED. V10.1 does 
 
 ## 2. Current Task Name
 
-KIVO-AUDIO-CORE-SCOPE-LOCK-001
+KIVO-CPP-AUDIO-CORE-P0-C-CLOSEOUT-HARDENING
+
+## 2.1 Active Execution Authority
+
+**Document:** `docs/architecture/audio_core_execution_roadmap.md`
+**Document ID:** KIVO-CPP-AUDIO-CORE-EXECUTION-ROADMAP-001
+**Status:** ACTIVE EXECUTION BASELINE
+
+V10.1 remains the architecture constitution. The execution roadmap defines
+the implementation order from the current repository state. When an older
+planning document names a different next action, the execution roadmap takes
+precedence unless a safety, legal, privacy, or project-root rule from V10.1
+would be violated.
 
 ## 3. Phase Matrix
 
 | Phase | Summary | Allowed | Forbidden |
 |-------|---------|---------|-----------|
 | P0-B | Skeleton + Governance + Policy | skeleton, policy pack, docs, gates, configure-only CMake | src/, tests/, contracts, fake backends, WASAPI, FFmpeg |
-| P0-C | Core Contract Foundation | core/contract, tests/contracts | WASAPI, FFmpeg, mpv, fake backends, playback |
-| P0-D | Fake Backend Contract Proof | tests/fakes, fake backend family | Real platform, real decode |
-| P0-E | Render Boundary Contract | RenderClientBoundary trait | Real WASAPI |
+| P0-C | Core Contract Foundation | contract correctness, header composition, tests | WASAPI, FFmpeg, mpv, fake backends, playback |
+| P0-D/P0-E | Deterministic Render Proof | minimal render boundary, fake clock/backend, fault injection | Real platform, real decode |
 | P0-F | WASAPI Adapter Shell | platform/wasapi shell | Real audio output |
 | P0-G | Decode Contract + FFmpeg Seam | decode/contract, FFmpeg seam | Real decode |
 | P0-H | Minimum Real WASAPI Output | Real WASAPI, playback thread | FFmpeg, mpv |
@@ -60,7 +71,10 @@ Future blocker registry is maintained in the blocker registry section of the des
 
 ## 7. P0-C Handoff
 
-P0-C first step: extend P0-B configure-only CMake to contract build/test harness. Add contract library target, contract test target. Only compile core contract. Only run tests/contracts.
+P0-C contract targets and tests exist. P0-C remains in closeout hardening until
+public headers compose, audio-format truth is internally consistent, generated
+directories are excluded from gates, and the supported validation path can run
+configure, build, tests, and gates from a clean environment.
 
 ## 8. PROJECT_ROOT Rule
 
@@ -87,3 +101,14 @@ P0-C first step: extend P0-B configure-only CMake to contract build/test harness
 - NAS/WebDAV/cloud drive source boundary
 
 **Go / No-Go:** GO_TO_P0_C_TASK_AUTHORING
+
+## 10. Immediate Execution Order
+
+1. Close P0-C correctness and validation gaps.
+2. Define the minimal platform-neutral render boundary.
+3. Implement deterministic fake clock/backend fault injection.
+4. Implement the WASAPI shell and real generated-PCM output.
+5. Implement the layered FFmpeg seam and local-file playback loop.
+6. Harden state, seek, command races, generations, and recovery.
+7. Continue through stability, gapless, bit-perfect, processing, ABI, and
+   release phases as defined by the active execution roadmap.

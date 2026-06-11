@@ -1,5 +1,17 @@
 # Future Phase Taskbooks
 
+## Execution Authority
+
+Before selecting a taskbook, read:
+
+```text
+docs/architecture/audio_core_execution_roadmap.md
+```
+
+That roadmap defines the active implementation sequence. These taskbooks
+provide phase-local requirements and do not independently authorize skipping,
+reordering, or expanding milestones.
+
 Read these taskbooks before planning future work:
 
 ```text
@@ -24,7 +36,9 @@ P0-P      docs/tasks/p0_p_release_hardening_family_design_task.md
 Rule:
 
 ```text
+active execution roadmap first
 planning draft first
 owner review second
 implementation only after approval
+implementation evidence before additional planning expansion
 ```

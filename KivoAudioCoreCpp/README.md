@@ -4,7 +4,8 @@ Kivo Windows Desktop Commercial Audio Core — C++ Implementation
 
 ## Project Status
 
-**Current Phase:** P0-D (Validation Hardening and Contract Correctness Repair)
+**Current execution position:** P0-C closeout hardening, currently tracked
+under P0-D validation and contract-correctness work.
 
 This project is the standalone C++ audio core for the Kivo Windows desktop music player.
 It replaces the previous Rust audio backend with a fully self-controlled C++ implementation.
@@ -13,8 +14,16 @@ Current state:
 
 - P0-C contract cleanup is ready for closeout.
 - P0-D is hardening validation, public-header composability, and core contract correctness.
+- P0-D fake-backend and P0-E render-boundary implementation have not started.
 - There is still no production audio runtime engine in this repository.
 - FFmpeg decode, WASAPI output, realtime render thread, and end-to-end playback are future implementation phases.
+
+The authoritative implementation order is:
+
+[`docs/architecture/audio_core_execution_roadmap.md`](docs/architecture/audio_core_execution_roadmap.md)
+
+Future work must follow that roadmap unless an explicit, owner-approved
+roadmap amendment is committed.
 
 ## Architecture Direction
 
@@ -30,8 +39,7 @@ Current state:
 | P0-A | Design Planning Lock | DONE |
 | P0-B | Skeleton + Governance + Policy Pack | DONE |
 | P0-C | Core Contract Foundation | CLOSEOUT |
-| P0-D | Validation Hardening + Contract Correctness Repair | IN PROGRESS |
-| P0-E | Minimal Decode / Output Seam Planning | PLANNED |
+| P0-D/P0-E | Validation Closeout + Deterministic Render Proof | CLOSEOUT / NEXT |
 | P0-F | WASAPI Adapter Shell | PLANNED |
 | P0-G | Decode Contract + FFmpeg Seam | PLANNED |
 | P0-H | Minimum Real WASAPI Output | PLANNED |
