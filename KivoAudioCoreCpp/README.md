@@ -4,10 +4,17 @@ Kivo Windows Desktop Commercial Audio Core — C++ Implementation
 
 ## Project Status
 
-**Current Phase:** P0-B (Skeleton Governance, Policy Pack, Configure-Only CMake)
+**Current Phase:** P0-D (Validation Hardening and Contract Correctness Repair)
 
 This project is the standalone C++ audio core for the Kivo Windows desktop music player.
 It replaces the previous Rust audio backend with a fully self-controlled C++ implementation.
+
+Current state:
+
+- P0-C contract cleanup is ready for closeout.
+- P0-D is hardening validation, public-header composability, and core contract correctness.
+- There is still no production audio runtime engine in this repository.
+- FFmpeg decode, WASAPI output, realtime render thread, and end-to-end playback are future implementation phases.
 
 ## Architecture Direction
 
@@ -21,10 +28,10 @@ It replaces the previous Rust audio backend with a fully self-controlled C++ imp
 | Phase | Name | Status |
 |-------|------|--------|
 | P0-A | Design Planning Lock | DONE |
-| P0-B | Skeleton + Governance + Policy Pack | IN PROGRESS |
-| P0-C | Core Contract Foundation | NEXT |
-| P0-D | Fake Backend Contract Proof | PLANNED |
-| P0-E | Render Boundary Contract | PLANNED |
+| P0-B | Skeleton + Governance + Policy Pack | DONE |
+| P0-C | Core Contract Foundation | CLOSEOUT |
+| P0-D | Validation Hardening + Contract Correctness Repair | IN PROGRESS |
+| P0-E | Minimal Decode / Output Seam Planning | PLANNED |
 | P0-F | WASAPI Adapter Shell | PLANNED |
 | P0-G | Decode Contract + FFmpeg Seam | PLANNED |
 | P0-H | Minimum Real WASAPI Output | PLANNED |
@@ -39,12 +46,30 @@ It replaces the previous Rust audio backend with a fully self-controlled C++ imp
 | P0-Q | Hi-Res / DSD / DoP Research | PLANNED |
 | P0-R | mpv/libmpv Reference Research | PLANNED |
 
-## Build
+## Build and Validation
 
-P0-B is configure-only. No build targets, no runtime targets, no test targets.
+P0-D has contract build/test targets and validation tooling.
+
+Lightweight local smoke check:
 
 ```powershell
-cmake --preset p0b-configure-smoke
+powershell -ExecutionPolicy Bypass -File .\tools\validation\git_state_probe.ps1
+powershell -ExecutionPolicy Bypass -File .\tools\validation\environment_probe.ps1
+powershell -ExecutionPolicy Bypass -File .\tools\validation\validation_smoke_entry.ps1
+```
+
+Full local validation requires a Windows C++ toolchain shell, such as:
+
+```text
+x64 Native Tools Command Prompt for VS
+Developer PowerShell for VS
+```
+
+See:
+
+```text
+docs/validation/windows_toolchain_setup.md
+docs/validation/p0_d_validation_tooling_usage.md
 ```
 
 ## Policy
