@@ -20,7 +20,7 @@ namespace kivo::core::contract {
 // DeviceFormat — Audio device accepted format
 // =============================================================================
 struct DeviceFormat {
-    AudioFormatDescriptor format;
+    AudioFormatDescriptor format{};
 
     // --- Validity ---
     [[nodiscard]] bool is_valid() const noexcept {
