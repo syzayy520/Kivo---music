@@ -1,0 +1,112 @@
+# P0-C-032 Format Negotiation Default Initializer Brace Normalization — Taskbook
+
+**Task ID:** `KIVO-AUDIO-CORE-P0-C-032-FORMAT-NEGOTIATION-DEFAULT-INITIALIZER-BRACE-NORMALIZATION-TASKBOOK-001`
+
+Implementation allowed by Owner authorization.
+
+## Goal
+
+Normalize the P0-C format negotiation aggregate result so its `AudioFormatDescriptor` members use explicit brace-form default member initializers, matching the value-contract style now used by the format roles wrappers and descriptor root.
+
+The format negotiation family is already value-only. This task only adds explicit `{}` default member initializers to existing aggregate fields. It must not change field names, field types, include boundaries, file tree, tests, CMake registration, genealogy allowlists, existing convenience methods, or equality declarations.
+
+## Scope
+
+Update only this existing production header:
+
+```text
+include/kivo/core/contract/format/negotiation/format_negotiation_result.hpp
+```
+
+## Non-goals
+
+- No new production headers.
+- No new tests.
+- No CMake changes.
+- No runner changes.
+- No genealogy gate changes.
+- No field name changes.
+- No field type changes.
+- No include path changes.
+- No namespace changes.
+- No operator changes.
+- No convenience method changes.
+- No runtime logic.
+- No decoder, resampler, format negotiator, device format probe, output mode executor, platform API, source reader, output writer, render thread, or output path logic.
+
+## Natural family tree
+
+Existing tree is retained exactly:
+
+```text
+format/
+  descriptor/
+    audio_format_descriptor.hpp
+    sample_format.hpp
+    channel_layout.hpp
+    frame_layout.hpp
+    channel_mask.hpp
+  roles/
+    native_decoded_format.hpp
+    core_canonical_format.hpp
+    render_format.hpp
+    device_format.hpp
+  negotiation/
+    format_negotiation_result.hpp
+    conversion_policy.hpp
+    resample_decision.hpp
+    bit_perfect_eligibility.hpp
+    negotiated_output_mode.hpp
+```
+
+## Required transformation
+
+For `FormatNegotiationResult`, replace implicit `AudioFormatDescriptor` member defaulting:
+
+```cpp
+AudioFormatDescriptor native_format;
+AudioFormatDescriptor core_format;
+AudioFormatDescriptor render_format;
+AudioFormatDescriptor device_format;
+```
+
+with explicit brace-form defaulting:
+
+```cpp
+AudioFormatDescriptor native_format{};
+AudioFormatDescriptor core_format{};
+AudioFormatDescriptor render_format{};
+AudioFormatDescriptor device_format{};
+```
+
+## Invariants
+
+- Format type count remains unchanged.
+- File count remains 1 production header touched.
+- Cross-family direct includes remain unchanged.
+- No field names change.
+- No field types change.
+- No include path changes.
+- No namespace changes.
+- Existing convenience methods remain unchanged.
+- Existing operator declaration remains unchanged.
+- No test source changes.
+
+## Static self-check requirements
+
+After implementation, verify:
+
+```text
+FormatNegotiationResult contains explicit {} defaults for all 4 AudioFormatDescriptor fields
+implicit AudioFormatDescriptor aggregate members removed from FormatNegotiationResult
+cross-family direct includes unchanged
+runtime forbidden tokens = 0
+changed files limited to this taskbook + format_negotiation_result.hpp
+```
+
+## Final classification
+
+```text
+KIVO-AUDIO-CORE-P0-C-032-FORMAT-NEGOTIATION-DEFAULT-INITIALIZER-BRACE-NORMALIZATION
+IMPLEMENTED_STATIC_SELF_CHECK_PASS_READY_FOR_LOCAL_VALIDATION
+```
