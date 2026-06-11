@@ -20,10 +20,10 @@ namespace kivo::core::contract {
 // AudioFormatDescriptor — PCM format metadata
 // =============================================================================
 struct AudioFormatDescriptor {
-    SampleFormat sample_format = SampleFormat::Unknown;
-    ChannelLayout channel_layout = ChannelLayout::Unknown;
-    uint32_t sample_rate = 0;
-    uint8_t bits_per_sample = 0;
+    SampleFormat sample_format{SampleFormat::Unknown};
+    ChannelLayout channel_layout{ChannelLayout::Unknown};
+    uint32_t sample_rate{0};
+    uint8_t bits_per_sample{0};
 
     // --- Channel count (derived from layout) ---
     [[nodiscard]] uint8_t channel_count() const noexcept {
