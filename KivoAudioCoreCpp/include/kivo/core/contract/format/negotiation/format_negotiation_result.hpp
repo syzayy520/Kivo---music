@@ -20,10 +20,10 @@ namespace kivo::core::contract {
 // FormatNegotiationResult — Full negotiation outcome
 // =============================================================================
 struct FormatNegotiationResult {
-    AudioFormatDescriptor native_format;       // source format from decoder
-    AudioFormatDescriptor core_format;          // internal processing format
-    AudioFormatDescriptor render_format;        // format at render boundary
-    AudioFormatDescriptor device_format;        // format on device output
+    AudioFormatDescriptor native_format{};       // source format from decoder
+    AudioFormatDescriptor core_format{};         // internal processing format
+    AudioFormatDescriptor render_format{};       // format at render boundary
+    AudioFormatDescriptor device_format{};       // format on device output
     bool resample_needed{false};
     bool conversion_needed{false};
     bool bit_perfect_possible{false};
