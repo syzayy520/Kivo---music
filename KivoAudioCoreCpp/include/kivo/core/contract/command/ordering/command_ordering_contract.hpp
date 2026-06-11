@@ -10,7 +10,7 @@ struct CommandOrderingContract {
     CommandOrderingPolicy ordering{CommandOrderingPolicy::Unknown};
     CommandSupersessionPolicy supersession{CommandSupersessionPolicy::Unknown};
     CommandCoalescingPolicy coalescing{CommandCoalescingPolicy::Unknown};
-    [[nodiscard]] bool operator==(const CommandOrderingContract&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const CommandOrderingContract&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
