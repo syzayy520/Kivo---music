@@ -21,7 +21,7 @@
 
 ## CTest
 
-All 9 registered groups passed:
+All 10 registered groups passed:
 
 1. Contract tests.
 2. Capability tests.
@@ -32,6 +32,8 @@ All 9 registered groups passed:
 7. WASAPI mapping, error, and worker tests.
 8. FFmpeg WAV, FLAC, MP3, corruption, conversion, generation, and EOS tests.
 9. Playback session lifecycle, seek, generation, and recovery tests.
+10. Decode-to-render queue lookahead, chunking, generation, and backpressure
+    tests.
 
 ## Real Generated PCM Output
 

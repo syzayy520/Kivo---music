@@ -4,11 +4,10 @@
 #include <cstdint>
 #include <filesystem>
 #include <iostream>
-#include <span>
 #include <thread>
-#include <vector>
 
 #include "kivo/adapters/ffmpeg/ffmpeg_audio_decode_session.hpp"
+#include "kivo/core/playback/pipeline/decode_render_queue_producer.hpp"
 #include "kivo/core/render/queue/spsc_audio_block_queue.hpp"
 #include "kivo/platform/windows/wasapi/wasapi_render_worker.hpp"
 #include "kivo/platform/windows/wasapi/wasapi_renderer.hpp"
@@ -39,79 +38,6 @@ using kivo::core::contract::FrameCount;
         32,
         32
     }};
-}
-
-struct PendingBlock {
-    std::vector<std::byte> bytes{};
-    FrameCount frame_count{0};
-    kivo::core::contract::SamplePosition frame_offset{0};
-    kivo::core::contract::SourceGeneration source_generation{};
-    kivo::core::decode::DecodeGeneration decode_generation{};
-
-    [[nodiscard]] bool empty() const noexcept {
-        return frame_count == 0;
-    }
-};
-
-[[nodiscard]] bool submit_pending(
-    PendingBlock& pending,
-    bool end_of_stream,
-    FrameCount maximum_chunk_frames,
-    const kivo::core::contract::RenderFormat& format,
-    const kivo::core::render::RenderGenerationSet& renderer_generations,
-    kivo::core::render::SpscAudioBlockQueue& queue,
-    kivo::platform::windows::wasapi::WasapiRenderWorker& worker,
-    kivo::core::contract::BufferId& buffer_id,
-    FrameCount& queued_frames) noexcept {
-    using namespace kivo;
-    if (pending.empty() || maximum_chunk_frames == 0) {
-        return false;
-    }
-
-    const auto bytes_per_frame = format.format.bytes_per_frame();
-    FrameCount submitted = 0;
-    while (submitted < pending.frame_count) {
-        const auto frames = std::min(
-            maximum_chunk_frames,
-            pending.frame_count - submitted);
-        const auto byte_offset =
-            static_cast<size_t>(submitted) * bytes_per_frame;
-        const auto byte_count = static_cast<size_t>(frames) * bytes_per_frame;
-        auto generations = renderer_generations;
-        generations.stream.id = pending.source_generation.id;
-        const core::render::AudioBlockView block{
-            std::span<const std::byte>{pending.bytes}.subspan(
-                byte_offset,
-                byte_count),
-            format,
-            frames,
-            pending.frame_offset + submitted,
-            buffer_id,
-            {pending.decode_generation.id},
-            generations,
-            end_of_stream && submitted + frames == pending.frame_count
-        };
-
-        for (;;) {
-            const auto result = queue.try_push(block);
-            if (result == core::render::SpscQueuePushResult::Pushed) {
-                break;
-            }
-            if (result != core::render::SpscQueuePushResult::Full) {
-                return false;
-            }
-            if (worker.snapshot().state
-                == platform::windows::wasapi::WasapiRenderWorkerState::Failed) {
-                return false;
-            }
-            std::this_thread::yield();
-        }
-        submitted += frames;
-        queued_frames += frames;
-        buffer_id.value += 1;
-    }
-    pending = {};
-    return true;
 }
 
 [[nodiscard]] int run_playback(const std::filesystem::path& path) {
@@ -187,75 +113,42 @@ struct PendingBlock {
 
     const auto renderer_generations = renderer.snapshot().generations;
     platform::windows::wasapi::WasapiRenderWorker worker(renderer, *queue);
-    PendingBlock pending{};
-    FrameCount decoded_frames = 0;
-    FrameCount queued_frames = 0;
-    core::contract::BufferId buffer_id{1};
-
-    const auto produce_one = [&]() -> int {
-        const auto step = decoder.decode_next();
-        if (step.disposition()
-            == core::decode::DecodeStepDisposition::Failed) {
-            std::cerr << "Decode failed: failure="
-                      << static_cast<int>(step.failure()) << "\n";
-            return -9;
-        }
-        if (step.disposition()
-            == core::decode::DecodeStepDisposition::EndOfStream) {
-            if (!submit_pending(
-                    pending,
-                    true,
-                    maximum_chunk_frames,
-                    format,
-                    renderer_generations,
-                    *queue,
-                    worker,
-                    buffer_id,
-                    queued_frames)) {
-                std::cerr << "Final render block submission failed\n";
-                return -10;
-            }
-            return 1;
-        }
-
-        const auto& block = step.block();
-        if (!pending.empty()
-            && !submit_pending(
-                pending,
-                false,
-                maximum_chunk_frames,
-                format,
-                renderer_generations,
-                *queue,
-                worker,
-                buffer_id,
-                queued_frames)) {
-            std::cerr << "Render block submission failed\n";
-            return -11;
-        }
-        try {
-            pending.bytes.assign(block.bytes.begin(), block.bytes.end());
-        } catch (...) {
-            std::cerr << "Decode producer allocation failed\n";
-            return -12;
-        }
-        pending.frame_count = block.frame_count;
-        pending.frame_offset = block.frame_offset;
-        pending.source_generation = block.source_generation;
-        pending.decode_generation = block.decode_generation;
-        decoded_frames += block.frame_count;
-        return 0;
-    };
+    const auto maximum_decode_block_bytes =
+        static_cast<size_t>(format.format.sample_rate)
+        * format.format.bytes_per_frame();
+    auto producer = core::playback::DecodeRenderQueueProducer::create(
+        decoder,
+        *queue,
+        format,
+        renderer_generations,
+        {maximum_decode_block_bytes, maximum_chunk_frames, {1}});
+    if (!producer) {
+        std::cerr << "Decode/render producer allocation failed\n";
+        static_cast<void>(decoder.close());
+        static_cast<void>(renderer.close());
+        return 9;
+    }
 
     bool reached_eos = false;
-    while (queued_frames < render_open.buffer_frames() && !reached_eos) {
-        const auto production_result = produce_one();
-        if (production_result < 0) {
+    while (queue->snapshot().queued_frames < render_open.buffer_frames()
+        && !reached_eos) {
+        const auto production = producer->step();
+        if (production.disposition
+            == core::playback::DecodeRenderQueueProducerDisposition::Failed) {
+            std::cerr << "Decode/render production failed: failure="
+                      << static_cast<int>(production.decode_failure)
+                      << " queue=" << static_cast<int>(production.queue_result)
+                      << "\n";
             static_cast<void>(decoder.close());
             static_cast<void>(renderer.close());
-            return -production_result;
+            return 10;
         }
-        reached_eos = production_result > 0;
+        if (production.disposition
+            == core::playback::DecodeRenderQueueProducerDisposition::Backpressure) {
+            break;
+        }
+        reached_eos = production.disposition
+            == core::playback::DecodeRenderQueueProducerDisposition::EndOfStream;
     }
 
     const auto start_result = renderer.start();
@@ -274,18 +167,35 @@ struct PendingBlock {
     }
 
     while (!reached_eos) {
-        const auto production_result = produce_one();
-        if (production_result < 0) {
+        const auto production = producer->step();
+        if (production.disposition
+            == core::playback::DecodeRenderQueueProducerDisposition::Failed) {
             worker.request_stop();
             static_cast<void>(worker.join(5s));
             static_cast<void>(decoder.close());
             static_cast<void>(renderer.close());
-            return -production_result;
+            return 11;
         }
-        reached_eos = production_result > 0;
+        if (production.disposition
+            == core::playback::DecodeRenderQueueProducerDisposition::Backpressure) {
+            if (worker.snapshot().state
+                == platform::windows::wasapi::WasapiRenderWorkerState::Failed) {
+                worker.request_stop();
+                static_cast<void>(worker.join(5s));
+                static_cast<void>(decoder.close());
+                static_cast<void>(renderer.close());
+                return 12;
+            }
+            std::this_thread::yield();
+            continue;
+        }
+        reached_eos = production.disposition
+            == core::playback::DecodeRenderQueueProducerDisposition::EndOfStream;
     }
 
-    queue->close_producer();
+    const auto producer_snapshot = producer->snapshot();
+    const auto decoded_frames = producer_snapshot.decoded_frames;
+    const auto queued_frames = producer_snapshot.queued_frames;
     const auto duration_frames = decode_open.probe().duration_known
         ? decode_open.probe().duration_frames
         : decoded_frames;

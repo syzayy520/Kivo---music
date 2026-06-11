@@ -1,0 +1,32 @@
+#pragma once
+
+#include <cstdint>
+
+#include "kivo/core/contract/sample_position.hpp"
+#include "kivo/core/decode/failure/decode_failure.hpp"
+
+namespace kivo::core::playback {
+
+enum class DecodeRenderQueueProducerState : uint8_t {
+    Ready = 0,
+    Running,
+    EndOfStream,
+    Failed
+};
+
+struct DecodeRenderQueueProducerSnapshot {
+    DecodeRenderQueueProducerState state{
+        DecodeRenderQueueProducerState::Ready};
+    decode::DecodeFailure last_decode_failure{
+        decode::DecodeFailure::None};
+    contract::FrameCount decoded_frames{0};
+    contract::FrameCount queued_frames{0};
+    uint64_t decoded_blocks{0};
+    uint64_t queued_blocks{0};
+    uint64_t backpressure_count{0};
+
+    [[nodiscard]] constexpr bool operator==(
+        const DecodeRenderQueueProducerSnapshot&) const noexcept = default;
+};
+
+} // namespace kivo::core::playback
