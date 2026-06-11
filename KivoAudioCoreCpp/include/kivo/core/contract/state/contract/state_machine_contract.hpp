@@ -17,18 +17,18 @@ namespace kivo::core::contract {
 
 struct StateMachineContract {
     // Rule fields (3)
-    ReentrantTransitionPolicy reentrant_transition = ReentrantTransitionPolicy::Unknown;
-    TransitionPreemptionPolicy transition_preemption = TransitionPreemptionPolicy::Unknown;
-    TerminalStateRule terminal_state = TerminalStateRule::Unknown;
+    ReentrantTransitionPolicy reentrant_transition{ReentrantTransitionPolicy::Unknown};
+    TransitionPreemptionPolicy transition_preemption{TransitionPreemptionPolicy::Unknown};
+    TerminalStateRule terminal_state{TerminalStateRule::Unknown};
 
     // Scenario fields (7)
-    SeekingReentryRule seeking_reentry = SeekingReentryRule::Unknown;
-    RecoveringSeekRule recovering_seek = RecoveringSeekRule::Unknown;
-    DrainingPauseRule draining_pause = DrainingPauseRule::Unknown;
-    FailedCloseRule failed_close = FailedCloseRule::Unknown;
-    ClosedMutationRule closed_mutation = ClosedMutationRule::Unknown;
-    DeviceLostDuringSeekRule device_lost_during_seek = DeviceLostDuringSeekRule::Unknown;
-    ShutdownDuringDrainRule shutdown_during_drain = ShutdownDuringDrainRule::Unknown;
+    SeekingReentryRule seeking_reentry{SeekingReentryRule::Unknown};
+    RecoveringSeekRule recovering_seek{RecoveringSeekRule::Unknown};
+    DrainingPauseRule draining_pause{DrainingPauseRule::Unknown};
+    FailedCloseRule failed_close{FailedCloseRule::Unknown};
+    ClosedMutationRule closed_mutation{ClosedMutationRule::Unknown};
+    DeviceLostDuringSeekRule device_lost_during_seek{DeviceLostDuringSeekRule::Unknown};
+    ShutdownDuringDrainRule shutdown_during_drain{ShutdownDuringDrainRule::Unknown};
 
     [[nodiscard]] bool operator==(const StateMachineContract&) const noexcept = default;
 };
