@@ -75,6 +75,13 @@ void run_queue_capacity_tests(ContractTestRunner& runner);
 void run_queue_slot_tests(ContractTestRunner& runner);
 void run_queue_staleness_tests(ContractTestRunner& runner);
 void run_queue_boundary_tests(ContractTestRunner& runner);
+void run_source_identity_tests(ContractTestRunner& runner);
+void run_source_location_tests(ContractTestRunner& runner);
+void run_source_access_tests(ContractTestRunner& runner);
+void run_source_reader_tests(ContractTestRunner& runner);
+void run_source_container_tests(ContractTestRunner& runner);
+void run_source_boundary_tests(ContractTestRunner& runner);
+void run_source_outcome_tests(ContractTestRunner& runner);
 
 // =============================================================================
 // Main
@@ -148,6 +155,13 @@ int main() {
     run_queue_slot_tests(runner);
     run_queue_staleness_tests(runner);
     run_queue_boundary_tests(runner);
+    run_source_identity_tests(runner);
+    run_source_location_tests(runner);
+    run_source_access_tests(runner);
+    run_source_reader_tests(runner);
+    run_source_container_tests(runner);
+    run_source_boundary_tests(runner);
+    run_source_outcome_tests(runner);
 
     std::cout << "=== " << runner.tests_passed << "/" << runner.tests_run << " passed ===\n";
     return runner.exit_code();

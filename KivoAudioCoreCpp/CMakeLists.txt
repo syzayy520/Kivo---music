@@ -109,6 +109,13 @@ add_executable(kivo_contract_tests
     tests/contracts/queue/slot/queue_slot_tests.cpp
     tests/contracts/queue/staleness/queue_staleness_tests.cpp
     tests/contracts/queue/boundary/queue_boundary_tests.cpp
+    tests/contracts/source/identity/source_identity_tests.cpp
+    tests/contracts/source/location/source_location_tests.cpp
+    tests/contracts/source/access/source_access_tests.cpp
+    tests/contracts/source/reader/source_reader_tests.cpp
+    tests/contracts/source/container/source_container_tests.cpp
+    tests/contracts/source/boundary/source_boundary_tests.cpp
+    tests/contracts/source/outcome/source_outcome_tests.cpp
 )
 target_link_libraries(kivo_contract_tests PRIVATE kivo_core_contract)
 target_compile_features(kivo_contract_tests PRIVATE cxx_std_20)

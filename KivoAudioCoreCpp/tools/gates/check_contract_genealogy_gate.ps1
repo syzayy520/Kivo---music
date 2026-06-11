@@ -46,7 +46,8 @@ $allowedProductionDirs = @(
     "realtime",
     "generation",
     "buffer",
-    "queue"
+    "queue",
+    "source"
 )
 
 if (Test-Path $contractRoot) {
@@ -349,7 +350,8 @@ $allowedTestDirs = @(
     "realtime",
     "generation",
     "buffer",
-    "queue"
+    "queue",
+    "source"
 )
 
 if (Test-Path $testsRoot) {
@@ -938,6 +940,101 @@ if (Test-Path $queueTestDir) {
     }
 } else {
     $violations += "G6h: Missing test family directory: tests/contracts/queue/"
+}
+
+# =============================================================================
+# Rule G3k: Source family — subdirectory tree with exact allowlists
+# =============================================================================
+$sourceSubdirAllowlists = @{
+    "identity"  = @("source_identity.hpp", "source_generation.hpp", "source_location_ref.hpp")
+    "location"  = @("source_uri.hpp", "source_path.hpp", "source_locator.hpp")
+    "access"    = @("source_access_type.hpp", "source_readiness.hpp", "source_ownership_policy.hpp", "source_fault_policy.hpp")
+    "reader"    = @("reader_identity.hpp", "reader_capability.hpp", "reader_boundary_contract.hpp", "reader_failure.hpp")
+    "container" = @("container_identity.hpp", "container_boundary_contract.hpp", "container_capability.hpp", "container_failure.hpp")
+    "boundary"  = @("source_boundary_contract.hpp", "source_boundary_mode.hpp")
+    "outcome"   = @("source_outcome.hpp", "source_outcome_reason.hpp", "source_recovery_policy.hpp")
+}
+
+$sourceDir = Join-Path $contractRoot "source"
+if (Test-Path $sourceDir) {
+    # Root must be empty of .hpp files (all in subdirectories)
+    $rootHpp = Get-ChildItem -Path $sourceDir -Filter "*.hpp"
+    if ($rootHpp.Count -gt 0) {
+        foreach ($f in $rootHpp) {
+            $violations += "G3k: Production file at source/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    # Validate each subdirectory
+    foreach ($subdir in $sourceSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $sourceDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.hpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $sourceSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G3k: Unexpected file in source/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G3k: Missing file in source/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G3k: Missing source subdirectory: source/$subdir/"
+        }
+    }
+} else {
+    $violations += "G3k: Missing production family directory: include/kivo/core/contract/source/"
+}
+
+# =============================================================================
+# Rule G6i: Source test family — subdirectory tree with exact allowlists
+# =============================================================================
+$sourceTestSubdirAllowlists = @{
+    "identity"  = @("source_identity_tests.cpp")
+    "location"  = @("source_location_tests.cpp")
+    "access"    = @("source_access_tests.cpp")
+    "reader"    = @("source_reader_tests.cpp")
+    "container" = @("source_container_tests.cpp")
+    "boundary"  = @("source_boundary_tests.cpp")
+    "outcome"   = @("source_outcome_tests.cpp")
+}
+
+$sourceTestDir = Join-Path $testsRoot "source"
+if (Test-Path $sourceTestDir) {
+    # Root must be empty of .cpp files (all in subdirectories)
+    $rootCpp = Get-ChildItem -Path $sourceTestDir -Filter "*.cpp"
+    if ($rootCpp.Count -gt 0) {
+        foreach ($f in $rootCpp) {
+            $violations += "G6i: Test file at source/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    foreach ($subdir in $sourceTestSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $sourceTestDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.cpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $sourceTestSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G6i: Unexpected test file in source/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G6i: Missing test file in source/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G6i: Missing source test subdirectory: source/$subdir/"
+        }
+    }
+} else {
+    $violations += "G6i: Missing test family directory: tests/contracts/source/"
 }
 
 # =============================================================================
