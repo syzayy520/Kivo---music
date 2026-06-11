@@ -28,7 +28,7 @@ struct NativeDecodedFormat {
     }
 
     // --- Comparison ---
-    [[nodiscard]] bool operator==(const NativeDecodedFormat&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const NativeDecodedFormat&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
