@@ -8,66 +8,111 @@ using namespace kivo::core::contract;
 
 namespace {
 
-void state_transition_intent_default_construction(ContractTestRunner& runner) {
-    runner.run("state_transition_intent_default_construction", []() {
-        StateTransitionIntent intent{};
-        ASSERT(intent.from_state == CoreState::Unknown);
-        ASSERT(intent.to_state == CoreState::Unknown);
-        ASSERT(intent.trigger_id == 0);
+void state_transition_intent_default_is_unknown(ContractTestRunner& runner) {
+    runner.run("state_transition_intent_default_is_unknown", []() {
+        StateTransitionIntent i{};
+        ASSERT(i == StateTransitionIntent::Unknown);
     });
 }
 
-void state_transition_intent_field_modification(ContractTestRunner& runner) {
-    runner.run("state_transition_intent_field_modification", []() {
-        StateTransitionIntent intent{};
-        intent.from_state = CoreState::Idle;
-        intent.to_state = CoreState::Playing;
-        intent.trigger_id = 42;
-        ASSERT(intent.from_state == CoreState::Idle);
-        ASSERT(intent.to_state == CoreState::Playing);
-        ASSERT(intent.trigger_id == 42);
+void state_transition_intent_open(ContractTestRunner& runner) {
+    runner.run("state_transition_intent_open", []() {
+        ASSERT(static_cast<uint8_t>(StateTransitionIntent::Open) == 1);
     });
 }
 
-void state_transition_intent_equality(ContractTestRunner& runner) {
-    runner.run("state_transition_intent_equality", []() {
-        StateTransitionIntent a{CoreState::Idle, CoreState::Playing, 1};
-        StateTransitionIntent b{CoreState::Idle, CoreState::Playing, 1};
-        StateTransitionIntent c{CoreState::Idle, CoreState::Paused, 1};
-        ASSERT(a == b);
-        ASSERT(!(a == c));
+void state_transition_intent_prepare(ContractTestRunner& runner) {
+    runner.run("state_transition_intent_prepare", []() {
+        ASSERT(static_cast<uint8_t>(StateTransitionIntent::Prepare) == 2);
+    });
+}
+
+void state_transition_intent_start(ContractTestRunner& runner) {
+    runner.run("state_transition_intent_start", []() {
+        ASSERT(static_cast<uint8_t>(StateTransitionIntent::Start) == 3);
+    });
+}
+
+void state_transition_intent_pause(ContractTestRunner& runner) {
+    runner.run("state_transition_intent_pause", []() {
+        ASSERT(static_cast<uint8_t>(StateTransitionIntent::Pause) == 4);
+    });
+}
+
+void state_transition_intent_resume(ContractTestRunner& runner) {
+    runner.run("state_transition_intent_resume", []() {
+        ASSERT(static_cast<uint8_t>(StateTransitionIntent::Resume) == 5);
+    });
+}
+
+void state_transition_intent_seek(ContractTestRunner& runner) {
+    runner.run("state_transition_intent_seek", []() {
+        ASSERT(static_cast<uint8_t>(StateTransitionIntent::Seek) == 6);
+    });
+}
+
+void state_transition_intent_drain(ContractTestRunner& runner) {
+    runner.run("state_transition_intent_drain", []() {
+        ASSERT(static_cast<uint8_t>(StateTransitionIntent::Drain) == 7);
+    });
+}
+
+void state_transition_intent_recover(ContractTestRunner& runner) {
+    runner.run("state_transition_intent_recover", []() {
+        ASSERT(static_cast<uint8_t>(StateTransitionIntent::Recover) == 8);
+    });
+}
+
+void state_transition_intent_stop(ContractTestRunner& runner) {
+    runner.run("state_transition_intent_stop", []() {
+        ASSERT(static_cast<uint8_t>(StateTransitionIntent::Stop) == 9);
+    });
+}
+
+void state_transition_intent_close(ContractTestRunner& runner) {
+    runner.run("state_transition_intent_close", []() {
+        ASSERT(static_cast<uint8_t>(StateTransitionIntent::Close) == 10);
+    });
+}
+
+void state_transition_intent_fail(ContractTestRunner& runner) {
+    runner.run("state_transition_intent_fail", []() {
+        ASSERT(static_cast<uint8_t>(StateTransitionIntent::Fail) == 11);
+    });
+}
+
+void state_transition_intent_reset(ContractTestRunner& runner) {
+    runner.run("state_transition_intent_reset", []() {
+        ASSERT(static_cast<uint8_t>(StateTransitionIntent::Reset) == 12);
     });
 }
 
 void state_transition_default_construction(ContractTestRunner& runner) {
     runner.run("state_transition_default_construction", []() {
-        StateTransition transition{};
-        ASSERT(transition.from_state == CoreState::Unknown);
-        ASSERT(transition.to_state == CoreState::Unknown);
-        ASSERT(transition.timestamp_ns == 0);
-        ASSERT(transition.generation_id == 0);
+        StateTransition t{};
+        ASSERT(t.from == CoreState::Unknown);
+        ASSERT(t.to == CoreState::Unknown);
+        ASSERT(t.intent == StateTransitionIntent::Unknown);
     });
 }
 
 void state_transition_field_modification(ContractTestRunner& runner) {
     runner.run("state_transition_field_modification", []() {
-        StateTransition transition{};
-        transition.from_state = CoreState::Playing;
-        transition.to_state = CoreState::Paused;
-        transition.timestamp_ns = 1000000;
-        transition.generation_id = 5;
-        ASSERT(transition.from_state == CoreState::Playing);
-        ASSERT(transition.to_state == CoreState::Paused);
-        ASSERT(transition.timestamp_ns == 1000000);
-        ASSERT(transition.generation_id == 5);
+        StateTransition t{};
+        t.from = CoreState::Idle;
+        t.to = CoreState::Playing;
+        t.intent = StateTransitionIntent::Start;
+        ASSERT(t.from == CoreState::Idle);
+        ASSERT(t.to == CoreState::Playing);
+        ASSERT(t.intent == StateTransitionIntent::Start);
     });
 }
 
 void state_transition_equality(ContractTestRunner& runner) {
     runner.run("state_transition_equality", []() {
-        StateTransition a{CoreState::Playing, CoreState::Paused, 1000, 1};
-        StateTransition b{CoreState::Playing, CoreState::Paused, 1000, 1};
-        StateTransition c{CoreState::Playing, CoreState::Paused, 2000, 1};
+        StateTransition a{CoreState::Idle, CoreState::Playing, StateTransitionIntent::Start};
+        StateTransition b{CoreState::Idle, CoreState::Playing, StateTransitionIntent::Start};
+        StateTransition c{CoreState::Idle, CoreState::Paused, StateTransitionIntent::Pause};
         ASSERT(a == b);
         ASSERT(!(a == c));
     });
@@ -80,33 +125,45 @@ void state_transition_validity_default_is_unknown(ContractTestRunner& runner) {
     });
 }
 
-void state_transition_validity_valid(ContractTestRunner& runner) {
-    runner.run("state_transition_validity_valid", []() {
-        ASSERT(static_cast<uint8_t>(StateTransitionValidity::Valid) == 1);
+void state_transition_validity_allowed(ContractTestRunner& runner) {
+    runner.run("state_transition_validity_allowed", []() {
+        ASSERT(static_cast<uint8_t>(StateTransitionValidity::Allowed) == 1);
     });
 }
 
-void state_transition_validity_invalid_from_state(ContractTestRunner& runner) {
-    runner.run("state_transition_validity_invalid_from_state", []() {
-        ASSERT(static_cast<uint8_t>(StateTransitionValidity::InvalidFromState) == 2);
+void state_transition_validity_forbidden(ContractTestRunner& runner) {
+    runner.run("state_transition_validity_forbidden", []() {
+        ASSERT(static_cast<uint8_t>(StateTransitionValidity::Forbidden) == 2);
     });
 }
 
-void state_transition_validity_invalid_to_state(ContractTestRunner& runner) {
-    runner.run("state_transition_validity_invalid_to_state", []() {
-        ASSERT(static_cast<uint8_t>(StateTransitionValidity::InvalidToState) == 3);
+void state_transition_validity_conditional(ContractTestRunner& runner) {
+    runner.run("state_transition_validity_conditional", []() {
+        ASSERT(static_cast<uint8_t>(StateTransitionValidity::Conditional) == 3);
     });
 }
 
-void state_transition_validity_invalid_trigger(ContractTestRunner& runner) {
-    runner.run("state_transition_validity_invalid_trigger", []() {
-        ASSERT(static_cast<uint8_t>(StateTransitionValidity::InvalidTrigger) == 4);
+void state_transition_validity_merge_required(ContractTestRunner& runner) {
+    runner.run("state_transition_validity_merge_required", []() {
+        ASSERT(static_cast<uint8_t>(StateTransitionValidity::MergeRequired) == 4);
     });
 }
 
-void state_transition_validity_invalid_generation(ContractTestRunner& runner) {
-    runner.run("state_transition_validity_invalid_generation", []() {
-        ASSERT(static_cast<uint8_t>(StateTransitionValidity::InvalidGeneration) == 5);
+void state_transition_validity_queue_required(ContractTestRunner& runner) {
+    runner.run("state_transition_validity_queue_required", []() {
+        ASSERT(static_cast<uint8_t>(StateTransitionValidity::QueueRequired) == 5);
+    });
+}
+
+void state_transition_validity_reject_required(ContractTestRunner& runner) {
+    runner.run("state_transition_validity_reject_required", []() {
+        ASSERT(static_cast<uint8_t>(StateTransitionValidity::RejectRequired) == 6);
+    });
+}
+
+void state_transition_validity_complete_current_first(ContractTestRunner& runner) {
+    runner.run("state_transition_validity_complete_current_first", []() {
+        ASSERT(static_cast<uint8_t>(StateTransitionValidity::CompleteCurrentFirst) == 7);
     });
 }
 
@@ -147,32 +204,44 @@ void state_transition_decision_defer(ContractTestRunner& runner) {
     });
 }
 
-void state_transition_decision_conditional(ContractTestRunner& runner) {
-    runner.run("state_transition_decision_conditional", []() {
-        ASSERT(static_cast<uint8_t>(StateTransitionDecision::Conditional) == 6);
+void state_transition_decision_force_close(ContractTestRunner& runner) {
+    runner.run("state_transition_decision_force_close", []() {
+        ASSERT(static_cast<uint8_t>(StateTransitionDecision::ForceClose) == 6);
     });
 }
 
 } // namespace
 
 void run_state_transition_tests(ContractTestRunner& runner) {
-    state_transition_intent_default_construction(runner);
-    state_transition_intent_field_modification(runner);
-    state_transition_intent_equality(runner);
+    state_transition_intent_default_is_unknown(runner);
+    state_transition_intent_open(runner);
+    state_transition_intent_prepare(runner);
+    state_transition_intent_start(runner);
+    state_transition_intent_pause(runner);
+    state_transition_intent_resume(runner);
+    state_transition_intent_seek(runner);
+    state_transition_intent_drain(runner);
+    state_transition_intent_recover(runner);
+    state_transition_intent_stop(runner);
+    state_transition_intent_close(runner);
+    state_transition_intent_fail(runner);
+    state_transition_intent_reset(runner);
     state_transition_default_construction(runner);
     state_transition_field_modification(runner);
     state_transition_equality(runner);
     state_transition_validity_default_is_unknown(runner);
-    state_transition_validity_valid(runner);
-    state_transition_validity_invalid_from_state(runner);
-    state_transition_validity_invalid_to_state(runner);
-    state_transition_validity_invalid_trigger(runner);
-    state_transition_validity_invalid_generation(runner);
+    state_transition_validity_allowed(runner);
+    state_transition_validity_forbidden(runner);
+    state_transition_validity_conditional(runner);
+    state_transition_validity_merge_required(runner);
+    state_transition_validity_queue_required(runner);
+    state_transition_validity_reject_required(runner);
+    state_transition_validity_complete_current_first(runner);
     state_transition_decision_default_is_unknown(runner);
     state_transition_decision_allow(runner);
     state_transition_decision_reject(runner);
     state_transition_decision_queue(runner);
     state_transition_decision_merge(runner);
     state_transition_decision_defer(runner);
-    state_transition_decision_conditional(runner);
+    state_transition_decision_force_close(runner);
 }

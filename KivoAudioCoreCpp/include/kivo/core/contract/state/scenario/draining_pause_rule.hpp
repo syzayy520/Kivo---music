@@ -2,17 +2,14 @@
 
 #include <cstdint>
 
-#include "../phase/core_state.hpp"
-#include "../transition/state_transition_decision.hpp"
-
 namespace kivo::core::contract {
 
-struct DrainingPauseRule {
-    CoreState draining_state = CoreState::Draining;
-    CoreState pause_target = CoreState::Paused;
-    StateTransitionDecision decision = StateTransitionDecision::Defer;
-
-    [[nodiscard]] bool operator==(const DrainingPauseRule&) const noexcept = default;
+enum class DrainingPauseRule : uint8_t {
+    Unknown = 0,
+    RejectPause,
+    QueuePause,
+    CompleteDrainFirst,
+    ConvertToStop
 };
 
 } // namespace kivo::core::contract

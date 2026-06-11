@@ -14,27 +14,33 @@ void reentrant_transition_policy_default_is_unknown(ContractTestRunner& runner) 
     });
 }
 
+void reentrant_transition_policy_forbid(ContractTestRunner& runner) {
+    runner.run("reentrant_transition_policy_forbid", []() {
+        ASSERT(static_cast<uint8_t>(ReentrantTransitionPolicy::Forbid) == 1);
+    });
+}
+
 void reentrant_transition_policy_merge(ContractTestRunner& runner) {
     runner.run("reentrant_transition_policy_merge", []() {
-        ASSERT(static_cast<uint8_t>(ReentrantTransitionPolicy::Merge) == 1);
+        ASSERT(static_cast<uint8_t>(ReentrantTransitionPolicy::Merge) == 2);
     });
 }
 
 void reentrant_transition_policy_queue(ContractTestRunner& runner) {
     runner.run("reentrant_transition_policy_queue", []() {
-        ASSERT(static_cast<uint8_t>(ReentrantTransitionPolicy::Queue) == 2);
+        ASSERT(static_cast<uint8_t>(ReentrantTransitionPolicy::Queue) == 3);
     });
 }
 
-void reentrant_transition_policy_reject(ContractTestRunner& runner) {
-    runner.run("reentrant_transition_policy_reject", []() {
-        ASSERT(static_cast<uint8_t>(ReentrantTransitionPolicy::Reject) == 3);
+void reentrant_transition_policy_replace_pending(ContractTestRunner& runner) {
+    runner.run("reentrant_transition_policy_replace_pending", []() {
+        ASSERT(static_cast<uint8_t>(ReentrantTransitionPolicy::ReplacePending) == 4);
     });
 }
 
-void reentrant_transition_policy_cancel(ContractTestRunner& runner) {
-    runner.run("reentrant_transition_policy_cancel", []() {
-        ASSERT(static_cast<uint8_t>(ReentrantTransitionPolicy::Cancel) == 4);
+void reentrant_transition_policy_keep_latest(ContractTestRunner& runner) {
+    runner.run("reentrant_transition_policy_keep_latest", []() {
+        ASSERT(static_cast<uint8_t>(ReentrantTransitionPolicy::KeepLatest) == 5);
     });
 }
 
@@ -45,55 +51,64 @@ void transition_preemption_policy_default_is_unknown(ContractTestRunner& runner)
     });
 }
 
-void transition_preemption_policy_allow_preemption(ContractTestRunner& runner) {
-    runner.run("transition_preemption_policy_allow_preemption", []() {
-        ASSERT(static_cast<uint8_t>(TransitionPreemptionPolicy::AllowPreemption) == 1);
+void transition_preemption_policy_never_preempt(ContractTestRunner& runner) {
+    runner.run("transition_preemption_policy_never_preempt", []() {
+        ASSERT(static_cast<uint8_t>(TransitionPreemptionPolicy::NeverPreempt) == 1);
     });
 }
 
-void transition_preemption_policy_reject_preemption(ContractTestRunner& runner) {
-    runner.run("transition_preemption_policy_reject_preemption", []() {
-        ASSERT(static_cast<uint8_t>(TransitionPreemptionPolicy::RejectPreemption) == 2);
+void transition_preemption_policy_allow_safe_preempt(ContractTestRunner& runner) {
+    runner.run("transition_preemption_policy_allow_safe_preempt", []() {
+        ASSERT(static_cast<uint8_t>(TransitionPreemptionPolicy::AllowSafePreempt) == 2);
     });
 }
 
-void transition_preemption_policy_queue_behind(ContractTestRunner& runner) {
-    runner.run("transition_preemption_policy_queue_behind", []() {
-        ASSERT(static_cast<uint8_t>(TransitionPreemptionPolicy::QueueBehind) == 3);
+void transition_preemption_policy_queue_until_current_completes(ContractTestRunner& runner) {
+    runner.run("transition_preemption_policy_queue_until_current_completes", []() {
+        ASSERT(static_cast<uint8_t>(TransitionPreemptionPolicy::QueueUntilCurrentCompletes) == 3);
     });
 }
 
-void transition_preemption_policy_cancel_current(ContractTestRunner& runner) {
-    runner.run("transition_preemption_policy_cancel_current", []() {
-        ASSERT(static_cast<uint8_t>(TransitionPreemptionPolicy::CancelCurrent) == 4);
+void transition_preemption_policy_reject_until_current_completes(ContractTestRunner& runner) {
+    runner.run("transition_preemption_policy_reject_until_current_completes", []() {
+        ASSERT(static_cast<uint8_t>(TransitionPreemptionPolicy::RejectUntilCurrentCompletes) == 4);
     });
 }
 
-void terminal_state_rule_default_construction(ContractTestRunner& runner) {
-    runner.run("terminal_state_rule_default_construction", []() {
-        TerminalStateRule rule{};
-        ASSERT(rule.terminal_state == CoreState::Unknown);
-        ASSERT(rule.decision == StateTransitionDecision::Reject);
+void transition_preemption_policy_force_close_only(ContractTestRunner& runner) {
+    runner.run("transition_preemption_policy_force_close_only", []() {
+        ASSERT(static_cast<uint8_t>(TransitionPreemptionPolicy::ForceCloseOnly) == 5);
     });
 }
 
-void terminal_state_rule_field_modification(ContractTestRunner& runner) {
-    runner.run("terminal_state_rule_field_modification", []() {
-        TerminalStateRule rule{};
-        rule.terminal_state = CoreState::Closed;
-        rule.decision = StateTransitionDecision::Reject;
-        ASSERT(rule.terminal_state == CoreState::Closed);
-        ASSERT(rule.decision == StateTransitionDecision::Reject);
+void terminal_state_rule_default_is_unknown(ContractTestRunner& runner) {
+    runner.run("terminal_state_rule_default_is_unknown", []() {
+        TerminalStateRule r{};
+        ASSERT(r == TerminalStateRule::Unknown);
     });
 }
 
-void terminal_state_rule_equality(ContractTestRunner& runner) {
-    runner.run("terminal_state_rule_equality", []() {
-        TerminalStateRule a{CoreState::Closed, StateTransitionDecision::Reject};
-        TerminalStateRule b{CoreState::Closed, StateTransitionDecision::Reject};
-        TerminalStateRule c{CoreState::Closed, StateTransitionDecision::Allow};
-        ASSERT(a == b);
-        ASSERT(!(a == c));
+void terminal_state_rule_reject_all_mutations(ContractTestRunner& runner) {
+    runner.run("terminal_state_rule_reject_all_mutations", []() {
+        ASSERT(static_cast<uint8_t>(TerminalStateRule::RejectAllMutations) == 1);
+    });
+}
+
+void terminal_state_rule_allow_close_only(ContractTestRunner& runner) {
+    runner.run("terminal_state_rule_allow_close_only", []() {
+        ASSERT(static_cast<uint8_t>(TerminalStateRule::AllowCloseOnly) == 2);
+    });
+}
+
+void terminal_state_rule_allow_inspect_only(ContractTestRunner& runner) {
+    runner.run("terminal_state_rule_allow_inspect_only", []() {
+        ASSERT(static_cast<uint8_t>(TerminalStateRule::AllowInspectOnly) == 3);
+    });
+}
+
+void terminal_state_rule_already_closed_is_idempotent(ContractTestRunner& runner) {
+    runner.run("terminal_state_rule_already_closed_is_idempotent", []() {
+        ASSERT(static_cast<uint8_t>(TerminalStateRule::AlreadyClosedIsIdempotent) == 4);
     });
 }
 
@@ -101,16 +116,20 @@ void terminal_state_rule_equality(ContractTestRunner& runner) {
 
 void run_state_rule_tests(ContractTestRunner& runner) {
     reentrant_transition_policy_default_is_unknown(runner);
+    reentrant_transition_policy_forbid(runner);
     reentrant_transition_policy_merge(runner);
     reentrant_transition_policy_queue(runner);
-    reentrant_transition_policy_reject(runner);
-    reentrant_transition_policy_cancel(runner);
+    reentrant_transition_policy_replace_pending(runner);
+    reentrant_transition_policy_keep_latest(runner);
     transition_preemption_policy_default_is_unknown(runner);
-    transition_preemption_policy_allow_preemption(runner);
-    transition_preemption_policy_reject_preemption(runner);
-    transition_preemption_policy_queue_behind(runner);
-    transition_preemption_policy_cancel_current(runner);
-    terminal_state_rule_default_construction(runner);
-    terminal_state_rule_field_modification(runner);
-    terminal_state_rule_equality(runner);
+    transition_preemption_policy_never_preempt(runner);
+    transition_preemption_policy_allow_safe_preempt(runner);
+    transition_preemption_policy_queue_until_current_completes(runner);
+    transition_preemption_policy_reject_until_current_completes(runner);
+    transition_preemption_policy_force_close_only(runner);
+    terminal_state_rule_default_is_unknown(runner);
+    terminal_state_rule_reject_all_mutations(runner);
+    terminal_state_rule_allow_close_only(runner);
+    terminal_state_rule_allow_inspect_only(runner);
+    terminal_state_rule_already_closed_is_idempotent(runner);
 }

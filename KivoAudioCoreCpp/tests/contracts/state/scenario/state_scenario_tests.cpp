@@ -11,239 +11,245 @@ using namespace kivo::core::contract;
 
 namespace {
 
-void seeking_reentry_rule_default_construction(ContractTestRunner& runner) {
-    runner.run("seeking_reentry_rule_default_construction", []() {
-        SeekingReentryRule rule{};
-        ASSERT(rule.active_state == CoreState::Seeking);
-        ASSERT(rule.policy == ReentrantTransitionPolicy::Merge);
+void seeking_reentry_rule_default_is_unknown(ContractTestRunner& runner) {
+    runner.run("seeking_reentry_rule_default_is_unknown", []() {
+        SeekingReentryRule r{};
+        ASSERT(r == SeekingReentryRule::Unknown);
     });
 }
 
-void seeking_reentry_rule_field_modification(ContractTestRunner& runner) {
-    runner.run("seeking_reentry_rule_field_modification", []() {
-        SeekingReentryRule rule{};
-        rule.active_state = CoreState::Seeking;
-        rule.policy = ReentrantTransitionPolicy::Queue;
-        ASSERT(rule.active_state == CoreState::Seeking);
-        ASSERT(rule.policy == ReentrantTransitionPolicy::Queue);
+void seeking_reentry_rule_merge_seek(ContractTestRunner& runner) {
+    runner.run("seeking_reentry_rule_merge_seek", []() {
+        ASSERT(static_cast<uint8_t>(SeekingReentryRule::MergeSeek) == 1);
     });
 }
 
-void seeking_reentry_rule_equality(ContractTestRunner& runner) {
-    runner.run("seeking_reentry_rule_equality", []() {
-        SeekingReentryRule a{CoreState::Seeking, ReentrantTransitionPolicy::Merge};
-        SeekingReentryRule b{CoreState::Seeking, ReentrantTransitionPolicy::Merge};
-        SeekingReentryRule c{CoreState::Seeking, ReentrantTransitionPolicy::Queue};
-        ASSERT(a == b);
-        ASSERT(!(a == c));
+void seeking_reentry_rule_queue_seek(ContractTestRunner& runner) {
+    runner.run("seeking_reentry_rule_queue_seek", []() {
+        ASSERT(static_cast<uint8_t>(SeekingReentryRule::QueueSeek) == 2);
     });
 }
 
-void recovering_seek_rule_default_construction(ContractTestRunner& runner) {
-    runner.run("recovering_seek_rule_default_construction", []() {
-        RecoveringSeekRule rule{};
-        ASSERT(rule.recovering_state == CoreState::Recovering);
-        ASSERT(rule.seek_target == CoreState::Seeking);
-        ASSERT(rule.decision == StateTransitionDecision::Reject);
+void seeking_reentry_rule_replace_with_latest_seek(ContractTestRunner& runner) {
+    runner.run("seeking_reentry_rule_replace_with_latest_seek", []() {
+        ASSERT(static_cast<uint8_t>(SeekingReentryRule::ReplaceWithLatestSeek) == 3);
     });
 }
 
-void recovering_seek_rule_field_modification(ContractTestRunner& runner) {
-    runner.run("recovering_seek_rule_field_modification", []() {
-        RecoveringSeekRule rule{};
-        rule.recovering_state = CoreState::Recovering;
-        rule.seek_target = CoreState::Seeking;
-        rule.decision = StateTransitionDecision::Queue;
-        ASSERT(rule.recovering_state == CoreState::Recovering);
-        ASSERT(rule.seek_target == CoreState::Seeking);
-        ASSERT(rule.decision == StateTransitionDecision::Queue);
+void seeking_reentry_rule_reject_new_seek(ContractTestRunner& runner) {
+    runner.run("seeking_reentry_rule_reject_new_seek", []() {
+        ASSERT(static_cast<uint8_t>(SeekingReentryRule::RejectNewSeek) == 4);
     });
 }
 
-void recovering_seek_rule_equality(ContractTestRunner& runner) {
-    runner.run("recovering_seek_rule_equality", []() {
-        RecoveringSeekRule a{CoreState::Recovering, CoreState::Seeking, StateTransitionDecision::Reject};
-        RecoveringSeekRule b{CoreState::Recovering, CoreState::Seeking, StateTransitionDecision::Reject};
-        RecoveringSeekRule c{CoreState::Recovering, CoreState::Seeking, StateTransitionDecision::Queue};
-        ASSERT(a == b);
-        ASSERT(!(a == c));
+void recovering_seek_rule_default_is_unknown(ContractTestRunner& runner) {
+    runner.run("recovering_seek_rule_default_is_unknown", []() {
+        RecoveringSeekRule r{};
+        ASSERT(r == RecoveringSeekRule::Unknown);
     });
 }
 
-void draining_pause_rule_default_construction(ContractTestRunner& runner) {
-    runner.run("draining_pause_rule_default_construction", []() {
-        DrainingPauseRule rule{};
-        ASSERT(rule.draining_state == CoreState::Draining);
-        ASSERT(rule.pause_target == CoreState::Paused);
-        ASSERT(rule.decision == StateTransitionDecision::Defer);
+void recovering_seek_rule_reject_seek(ContractTestRunner& runner) {
+    runner.run("recovering_seek_rule_reject_seek", []() {
+        ASSERT(static_cast<uint8_t>(RecoveringSeekRule::RejectSeek) == 1);
     });
 }
 
-void draining_pause_rule_field_modification(ContractTestRunner& runner) {
-    runner.run("draining_pause_rule_field_modification", []() {
-        DrainingPauseRule rule{};
-        rule.draining_state = CoreState::Draining;
-        rule.pause_target = CoreState::Paused;
-        rule.decision = StateTransitionDecision::Reject;
-        ASSERT(rule.draining_state == CoreState::Draining);
-        ASSERT(rule.pause_target == CoreState::Paused);
-        ASSERT(rule.decision == StateTransitionDecision::Reject);
+void recovering_seek_rule_queue_seek(ContractTestRunner& runner) {
+    runner.run("recovering_seek_rule_queue_seek", []() {
+        ASSERT(static_cast<uint8_t>(RecoveringSeekRule::QueueSeek) == 2);
     });
 }
 
-void draining_pause_rule_equality(ContractTestRunner& runner) {
-    runner.run("draining_pause_rule_equality", []() {
-        DrainingPauseRule a{CoreState::Draining, CoreState::Paused, StateTransitionDecision::Defer};
-        DrainingPauseRule b{CoreState::Draining, CoreState::Paused, StateTransitionDecision::Defer};
-        DrainingPauseRule c{CoreState::Draining, CoreState::Paused, StateTransitionDecision::Reject};
-        ASSERT(a == b);
-        ASSERT(!(a == c));
+void recovering_seek_rule_defer_until_recovered(ContractTestRunner& runner) {
+    runner.run("recovering_seek_rule_defer_until_recovered", []() {
+        ASSERT(static_cast<uint8_t>(RecoveringSeekRule::DeferUntilRecovered) == 3);
     });
 }
 
-void failed_close_rule_default_construction(ContractTestRunner& runner) {
-    runner.run("failed_close_rule_default_construction", []() {
-        FailedCloseRule rule{};
-        ASSERT(rule.failed_state == CoreState::Failed);
-        ASSERT(rule.close_target == CoreState::Closed);
-        ASSERT(rule.decision == StateTransitionDecision::Allow);
+void recovering_seek_rule_fail_if_recovery_required(ContractTestRunner& runner) {
+    runner.run("recovering_seek_rule_fail_if_recovery_required", []() {
+        ASSERT(static_cast<uint8_t>(RecoveringSeekRule::FailIfRecoveryRequired) == 4);
     });
 }
 
-void failed_close_rule_field_modification(ContractTestRunner& runner) {
-    runner.run("failed_close_rule_field_modification", []() {
-        FailedCloseRule rule{};
-        rule.failed_state = CoreState::Failed;
-        rule.close_target = CoreState::Closed;
-        rule.decision = StateTransitionDecision::Allow;
-        ASSERT(rule.failed_state == CoreState::Failed);
-        ASSERT(rule.close_target == CoreState::Closed);
-        ASSERT(rule.decision == StateTransitionDecision::Allow);
+void draining_pause_rule_default_is_unknown(ContractTestRunner& runner) {
+    runner.run("draining_pause_rule_default_is_unknown", []() {
+        DrainingPauseRule r{};
+        ASSERT(r == DrainingPauseRule::Unknown);
     });
 }
 
-void failed_close_rule_equality(ContractTestRunner& runner) {
-    runner.run("failed_close_rule_equality", []() {
-        FailedCloseRule a{CoreState::Failed, CoreState::Closed, StateTransitionDecision::Allow};
-        FailedCloseRule b{CoreState::Failed, CoreState::Closed, StateTransitionDecision::Allow};
-        FailedCloseRule c{CoreState::Failed, CoreState::Closed, StateTransitionDecision::Reject};
-        ASSERT(a == b);
-        ASSERT(!(a == c));
+void draining_pause_rule_reject_pause(ContractTestRunner& runner) {
+    runner.run("draining_pause_rule_reject_pause", []() {
+        ASSERT(static_cast<uint8_t>(DrainingPauseRule::RejectPause) == 1);
     });
 }
 
-void closed_mutation_rule_default_construction(ContractTestRunner& runner) {
-    runner.run("closed_mutation_rule_default_construction", []() {
-        ClosedMutationRule rule{};
-        ASSERT(rule.closed_state == CoreState::Closed);
-        ASSERT(rule.decision == StateTransitionDecision::Reject);
+void draining_pause_rule_queue_pause(ContractTestRunner& runner) {
+    runner.run("draining_pause_rule_queue_pause", []() {
+        ASSERT(static_cast<uint8_t>(DrainingPauseRule::QueuePause) == 2);
     });
 }
 
-void closed_mutation_rule_field_modification(ContractTestRunner& runner) {
-    runner.run("closed_mutation_rule_field_modification", []() {
-        ClosedMutationRule rule{};
-        rule.closed_state = CoreState::Closed;
-        rule.decision = StateTransitionDecision::Reject;
-        ASSERT(rule.closed_state == CoreState::Closed);
-        ASSERT(rule.decision == StateTransitionDecision::Reject);
+void draining_pause_rule_complete_drain_first(ContractTestRunner& runner) {
+    runner.run("draining_pause_rule_complete_drain_first", []() {
+        ASSERT(static_cast<uint8_t>(DrainingPauseRule::CompleteDrainFirst) == 3);
     });
 }
 
-void closed_mutation_rule_equality(ContractTestRunner& runner) {
-    runner.run("closed_mutation_rule_equality", []() {
-        ClosedMutationRule a{CoreState::Closed, StateTransitionDecision::Reject};
-        ClosedMutationRule b{CoreState::Closed, StateTransitionDecision::Reject};
-        ClosedMutationRule c{CoreState::Closed, StateTransitionDecision::Allow};
-        ASSERT(a == b);
-        ASSERT(!(a == c));
+void draining_pause_rule_convert_to_stop(ContractTestRunner& runner) {
+    runner.run("draining_pause_rule_convert_to_stop", []() {
+        ASSERT(static_cast<uint8_t>(DrainingPauseRule::ConvertToStop) == 4);
     });
 }
 
-void device_lost_during_seek_rule_default_construction(ContractTestRunner& runner) {
-    runner.run("device_lost_during_seek_rule_default_construction", []() {
-        DeviceLostDuringSeekRule rule{};
-        ASSERT(rule.seeking_state == CoreState::Seeking);
-        ASSERT(rule.failed_target == CoreState::Failed);
-        ASSERT(rule.decision == StateTransitionDecision::Allow);
+void failed_close_rule_default_is_unknown(ContractTestRunner& runner) {
+    runner.run("failed_close_rule_default_is_unknown", []() {
+        FailedCloseRule r{};
+        ASSERT(r == FailedCloseRule::Unknown);
     });
 }
 
-void device_lost_during_seek_rule_field_modification(ContractTestRunner& runner) {
-    runner.run("device_lost_during_seek_rule_field_modification", []() {
-        DeviceLostDuringSeekRule rule{};
-        rule.seeking_state = CoreState::Seeking;
-        rule.failed_target = CoreState::Failed;
-        rule.decision = StateTransitionDecision::Allow;
-        ASSERT(rule.seeking_state == CoreState::Seeking);
-        ASSERT(rule.failed_target == CoreState::Failed);
-        ASSERT(rule.decision == StateTransitionDecision::Allow);
+void failed_close_rule_close_must_succeed(ContractTestRunner& runner) {
+    runner.run("failed_close_rule_close_must_succeed", []() {
+        ASSERT(static_cast<uint8_t>(FailedCloseRule::CloseMustSucceed) == 1);
     });
 }
 
-void device_lost_during_seek_rule_equality(ContractTestRunner& runner) {
-    runner.run("device_lost_during_seek_rule_equality", []() {
-        DeviceLostDuringSeekRule a{CoreState::Seeking, CoreState::Failed, StateTransitionDecision::Allow};
-        DeviceLostDuringSeekRule b{CoreState::Seeking, CoreState::Failed, StateTransitionDecision::Allow};
-        DeviceLostDuringSeekRule c{CoreState::Seeking, CoreState::Failed, StateTransitionDecision::Reject};
-        ASSERT(a == b);
-        ASSERT(!(a == c));
+void failed_close_rule_close_is_idempotent(ContractTestRunner& runner) {
+    runner.run("failed_close_rule_close_is_idempotent", []() {
+        ASSERT(static_cast<uint8_t>(FailedCloseRule::CloseIsIdempotent) == 2);
     });
 }
 
-void shutdown_during_drain_rule_default_construction(ContractTestRunner& runner) {
-    runner.run("shutdown_during_drain_rule_default_construction", []() {
-        ShutdownDuringDrainRule rule{};
-        ASSERT(rule.draining_state == CoreState::Draining);
-        ASSERT(rule.closed_target == CoreState::Closed);
-        ASSERT(rule.decision == StateTransitionDecision::Allow);
+void failed_close_rule_cleanup_then_close(ContractTestRunner& runner) {
+    runner.run("failed_close_rule_cleanup_then_close", []() {
+        ASSERT(static_cast<uint8_t>(FailedCloseRule::CleanupThenClose) == 3);
     });
 }
 
-void shutdown_during_drain_rule_field_modification(ContractTestRunner& runner) {
-    runner.run("shutdown_during_drain_rule_field_modification", []() {
-        ShutdownDuringDrainRule rule{};
-        rule.draining_state = CoreState::Draining;
-        rule.closed_target = CoreState::Closed;
-        rule.decision = StateTransitionDecision::Allow;
-        ASSERT(rule.draining_state == CoreState::Draining);
-        ASSERT(rule.closed_target == CoreState::Closed);
-        ASSERT(rule.decision == StateTransitionDecision::Allow);
+void closed_mutation_rule_default_is_unknown(ContractTestRunner& runner) {
+    runner.run("closed_mutation_rule_default_is_unknown", []() {
+        ClosedMutationRule r{};
+        ASSERT(r == ClosedMutationRule::Unknown);
     });
 }
 
-void shutdown_during_drain_rule_equality(ContractTestRunner& runner) {
-    runner.run("shutdown_during_drain_rule_equality", []() {
-        ShutdownDuringDrainRule a{CoreState::Draining, CoreState::Closed, StateTransitionDecision::Allow};
-        ShutdownDuringDrainRule b{CoreState::Draining, CoreState::Closed, StateTransitionDecision::Allow};
-        ShutdownDuringDrainRule c{CoreState::Draining, CoreState::Closed, StateTransitionDecision::Reject};
-        ASSERT(a == b);
-        ASSERT(!(a == c));
+void closed_mutation_rule_reject_mutation(ContractTestRunner& runner) {
+    runner.run("closed_mutation_rule_reject_mutation", []() {
+        ASSERT(static_cast<uint8_t>(ClosedMutationRule::RejectMutation) == 1);
+    });
+}
+
+void closed_mutation_rule_return_already_closed(ContractTestRunner& runner) {
+    runner.run("closed_mutation_rule_return_already_closed", []() {
+        ASSERT(static_cast<uint8_t>(ClosedMutationRule::ReturnAlreadyClosed) == 2);
+    });
+}
+
+void closed_mutation_rule_inspect_only(ContractTestRunner& runner) {
+    runner.run("closed_mutation_rule_inspect_only", []() {
+        ASSERT(static_cast<uint8_t>(ClosedMutationRule::InspectOnly) == 3);
+    });
+}
+
+void device_lost_during_seek_rule_default_is_unknown(ContractTestRunner& runner) {
+    runner.run("device_lost_during_seek_rule_default_is_unknown", []() {
+        DeviceLostDuringSeekRule r{};
+        ASSERT(r == DeviceLostDuringSeekRule::Unknown);
+    });
+}
+
+void device_lost_during_seek_rule_enter_recovering(ContractTestRunner& runner) {
+    runner.run("device_lost_during_seek_rule_enter_recovering", []() {
+        ASSERT(static_cast<uint8_t>(DeviceLostDuringSeekRule::EnterRecovering) == 1);
+    });
+}
+
+void device_lost_during_seek_rule_fail_seek(ContractTestRunner& runner) {
+    runner.run("device_lost_during_seek_rule_fail_seek", []() {
+        ASSERT(static_cast<uint8_t>(DeviceLostDuringSeekRule::FailSeek) == 2);
+    });
+}
+
+void device_lost_during_seek_rule_preserve_seek_target(ContractTestRunner& runner) {
+    runner.run("device_lost_during_seek_rule_preserve_seek_target", []() {
+        ASSERT(static_cast<uint8_t>(DeviceLostDuringSeekRule::PreserveSeekTarget) == 3);
+    });
+}
+
+void device_lost_during_seek_rule_require_recovery_then_seek(ContractTestRunner& runner) {
+    runner.run("device_lost_during_seek_rule_require_recovery_then_seek", []() {
+        ASSERT(static_cast<uint8_t>(DeviceLostDuringSeekRule::RequireRecoveryThenSeek) == 4);
+    });
+}
+
+void shutdown_during_drain_rule_default_is_unknown(ContractTestRunner& runner) {
+    runner.run("shutdown_during_drain_rule_default_is_unknown", []() {
+        ShutdownDuringDrainRule r{};
+        ASSERT(r == ShutdownDuringDrainRule::Unknown);
+    });
+}
+
+void shutdown_during_drain_rule_complete_drain_then_close(ContractTestRunner& runner) {
+    runner.run("shutdown_during_drain_rule_complete_drain_then_close", []() {
+        ASSERT(static_cast<uint8_t>(ShutdownDuringDrainRule::CompleteDrainThenClose) == 1);
+    });
+}
+
+void shutdown_during_drain_rule_abort_drain_then_close(ContractTestRunner& runner) {
+    runner.run("shutdown_during_drain_rule_abort_drain_then_close", []() {
+        ASSERT(static_cast<uint8_t>(ShutdownDuringDrainRule::AbortDrainThenClose) == 2);
+    });
+}
+
+void shutdown_during_drain_rule_force_close(ContractTestRunner& runner) {
+    runner.run("shutdown_during_drain_rule_force_close", []() {
+        ASSERT(static_cast<uint8_t>(ShutdownDuringDrainRule::ForceClose) == 3);
+    });
+}
+
+void shutdown_during_drain_rule_mark_closed_idempotent(ContractTestRunner& runner) {
+    runner.run("shutdown_during_drain_rule_mark_closed_idempotent", []() {
+        ASSERT(static_cast<uint8_t>(ShutdownDuringDrainRule::MarkClosedIdempotent) == 4);
     });
 }
 
 } // namespace
 
 void run_state_scenario_tests(ContractTestRunner& runner) {
-    seeking_reentry_rule_default_construction(runner);
-    seeking_reentry_rule_field_modification(runner);
-    seeking_reentry_rule_equality(runner);
-    recovering_seek_rule_default_construction(runner);
-    recovering_seek_rule_field_modification(runner);
-    recovering_seek_rule_equality(runner);
-    draining_pause_rule_default_construction(runner);
-    draining_pause_rule_field_modification(runner);
-    draining_pause_rule_equality(runner);
-    failed_close_rule_default_construction(runner);
-    failed_close_rule_field_modification(runner);
-    failed_close_rule_equality(runner);
-    closed_mutation_rule_default_construction(runner);
-    closed_mutation_rule_field_modification(runner);
-    closed_mutation_rule_equality(runner);
-    device_lost_during_seek_rule_default_construction(runner);
-    device_lost_during_seek_rule_field_modification(runner);
-    device_lost_during_seek_rule_equality(runner);
-    shutdown_during_drain_rule_default_construction(runner);
-    shutdown_during_drain_rule_field_modification(runner);
-    shutdown_during_drain_rule_equality(runner);
+    seeking_reentry_rule_default_is_unknown(runner);
+    seeking_reentry_rule_merge_seek(runner);
+    seeking_reentry_rule_queue_seek(runner);
+    seeking_reentry_rule_replace_with_latest_seek(runner);
+    seeking_reentry_rule_reject_new_seek(runner);
+    recovering_seek_rule_default_is_unknown(runner);
+    recovering_seek_rule_reject_seek(runner);
+    recovering_seek_rule_queue_seek(runner);
+    recovering_seek_rule_defer_until_recovered(runner);
+    recovering_seek_rule_fail_if_recovery_required(runner);
+    draining_pause_rule_default_is_unknown(runner);
+    draining_pause_rule_reject_pause(runner);
+    draining_pause_rule_queue_pause(runner);
+    draining_pause_rule_complete_drain_first(runner);
+    draining_pause_rule_convert_to_stop(runner);
+    failed_close_rule_default_is_unknown(runner);
+    failed_close_rule_close_must_succeed(runner);
+    failed_close_rule_close_is_idempotent(runner);
+    failed_close_rule_cleanup_then_close(runner);
+    closed_mutation_rule_default_is_unknown(runner);
+    closed_mutation_rule_reject_mutation(runner);
+    closed_mutation_rule_return_already_closed(runner);
+    closed_mutation_rule_inspect_only(runner);
+    device_lost_during_seek_rule_default_is_unknown(runner);
+    device_lost_during_seek_rule_enter_recovering(runner);
+    device_lost_during_seek_rule_fail_seek(runner);
+    device_lost_during_seek_rule_preserve_seek_target(runner);
+    device_lost_during_seek_rule_require_recovery_then_seek(runner);
+    shutdown_during_drain_rule_default_is_unknown(runner);
+    shutdown_during_drain_rule_complete_drain_then_close(runner);
+    shutdown_during_drain_rule_abort_drain_then_close(runner);
+    shutdown_during_drain_rule_force_close(runner);
+    shutdown_during_drain_rule_mark_closed_idempotent(runner);
 }

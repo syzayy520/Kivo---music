@@ -7,59 +7,44 @@ namespace {
 
 void state_machine_contract_default_construction(ContractTestRunner& runner) {
     runner.run("state_machine_contract_default_construction", []() {
-        StateMachineContract contract{};
-        ASSERT(contract.reentrant_policy == ReentrantTransitionPolicy::Unknown);
-        ASSERT(contract.preemption_policy == TransitionPreemptionPolicy::Unknown);
-        ASSERT(contract.terminal_rule.terminal_state == CoreState::Unknown);
-        ASSERT(contract.terminal_rule.decision == StateTransitionDecision::Reject);
-        ASSERT(contract.seeking_reentry_rule.active_state == CoreState::Seeking);
-        ASSERT(contract.seeking_reentry_rule.policy == ReentrantTransitionPolicy::Merge);
-        ASSERT(contract.recovering_seek_rule.recovering_state == CoreState::Recovering);
-        ASSERT(contract.recovering_seek_rule.seek_target == CoreState::Seeking);
-        ASSERT(contract.recovering_seek_rule.decision == StateTransitionDecision::Reject);
-        ASSERT(contract.draining_pause_rule.draining_state == CoreState::Draining);
-        ASSERT(contract.draining_pause_rule.pause_target == CoreState::Paused);
-        ASSERT(contract.draining_pause_rule.decision == StateTransitionDecision::Defer);
-        ASSERT(contract.failed_close_rule.failed_state == CoreState::Failed);
-        ASSERT(contract.failed_close_rule.close_target == CoreState::Closed);
-        ASSERT(contract.failed_close_rule.decision == StateTransitionDecision::Allow);
-        ASSERT(contract.closed_mutation_rule.closed_state == CoreState::Closed);
-        ASSERT(contract.closed_mutation_rule.decision == StateTransitionDecision::Reject);
-        ASSERT(contract.device_lost_during_seek_rule.seeking_state == CoreState::Seeking);
-        ASSERT(contract.device_lost_during_seek_rule.failed_target == CoreState::Failed);
-        ASSERT(contract.device_lost_during_seek_rule.decision == StateTransitionDecision::Allow);
-        ASSERT(contract.shutdown_during_drain_rule.draining_state == CoreState::Draining);
-        ASSERT(contract.shutdown_during_drain_rule.closed_target == CoreState::Closed);
-        ASSERT(contract.shutdown_during_drain_rule.decision == StateTransitionDecision::Allow);
+        StateMachineContract c{};
+        ASSERT(c.reentrant_transition == ReentrantTransitionPolicy::Unknown);
+        ASSERT(c.transition_preemption == TransitionPreemptionPolicy::Unknown);
+        ASSERT(c.terminal_state == TerminalStateRule::Unknown);
+        ASSERT(c.seeking_reentry == SeekingReentryRule::Unknown);
+        ASSERT(c.recovering_seek == RecoveringSeekRule::Unknown);
+        ASSERT(c.draining_pause == DrainingPauseRule::Unknown);
+        ASSERT(c.failed_close == FailedCloseRule::Unknown);
+        ASSERT(c.closed_mutation == ClosedMutationRule::Unknown);
+        ASSERT(c.device_lost_during_seek == DeviceLostDuringSeekRule::Unknown);
+        ASSERT(c.shutdown_during_drain == ShutdownDuringDrainRule::Unknown);
     });
 }
 
 void state_machine_contract_field_modification(ContractTestRunner& runner) {
     runner.run("state_machine_contract_field_modification", []() {
-        StateMachineContract contract{};
-        contract.reentrant_policy = ReentrantTransitionPolicy::Merge;
-        contract.preemption_policy = TransitionPreemptionPolicy::AllowPreemption;
-        contract.terminal_rule.terminal_state = CoreState::Closed;
-        contract.terminal_rule.decision = StateTransitionDecision::Reject;
-        contract.seeking_reentry_rule.policy = ReentrantTransitionPolicy::Queue;
-        contract.recovering_seek_rule.decision = StateTransitionDecision::Queue;
-        contract.draining_pause_rule.decision = StateTransitionDecision::Reject;
-        contract.failed_close_rule.decision = StateTransitionDecision::Allow;
-        contract.closed_mutation_rule.decision = StateTransitionDecision::Reject;
-        contract.device_lost_during_seek_rule.decision = StateTransitionDecision::Allow;
-        contract.shutdown_during_drain_rule.decision = StateTransitionDecision::Allow;
+        StateMachineContract c{};
+        c.reentrant_transition = ReentrantTransitionPolicy::Merge;
+        c.transition_preemption = TransitionPreemptionPolicy::NeverPreempt;
+        c.terminal_state = TerminalStateRule::AllowCloseOnly;
+        c.seeking_reentry = SeekingReentryRule::QueueSeek;
+        c.recovering_seek = RecoveringSeekRule::DeferUntilRecovered;
+        c.draining_pause = DrainingPauseRule::CompleteDrainFirst;
+        c.failed_close = FailedCloseRule::CleanupThenClose;
+        c.closed_mutation = ClosedMutationRule::RejectMutation;
+        c.device_lost_during_seek = DeviceLostDuringSeekRule::EnterRecovering;
+        c.shutdown_during_drain = ShutdownDuringDrainRule::ForceClose;
 
-        ASSERT(contract.reentrant_policy == ReentrantTransitionPolicy::Merge);
-        ASSERT(contract.preemption_policy == TransitionPreemptionPolicy::AllowPreemption);
-        ASSERT(contract.terminal_rule.terminal_state == CoreState::Closed);
-        ASSERT(contract.terminal_rule.decision == StateTransitionDecision::Reject);
-        ASSERT(contract.seeking_reentry_rule.policy == ReentrantTransitionPolicy::Queue);
-        ASSERT(contract.recovering_seek_rule.decision == StateTransitionDecision::Queue);
-        ASSERT(contract.draining_pause_rule.decision == StateTransitionDecision::Reject);
-        ASSERT(contract.failed_close_rule.decision == StateTransitionDecision::Allow);
-        ASSERT(contract.closed_mutation_rule.decision == StateTransitionDecision::Reject);
-        ASSERT(contract.device_lost_during_seek_rule.decision == StateTransitionDecision::Allow);
-        ASSERT(contract.shutdown_during_drain_rule.decision == StateTransitionDecision::Allow);
+        ASSERT(c.reentrant_transition == ReentrantTransitionPolicy::Merge);
+        ASSERT(c.transition_preemption == TransitionPreemptionPolicy::NeverPreempt);
+        ASSERT(c.terminal_state == TerminalStateRule::AllowCloseOnly);
+        ASSERT(c.seeking_reentry == SeekingReentryRule::QueueSeek);
+        ASSERT(c.recovering_seek == RecoveringSeekRule::DeferUntilRecovered);
+        ASSERT(c.draining_pause == DrainingPauseRule::CompleteDrainFirst);
+        ASSERT(c.failed_close == FailedCloseRule::CleanupThenClose);
+        ASSERT(c.closed_mutation == ClosedMutationRule::RejectMutation);
+        ASSERT(c.device_lost_during_seek == DeviceLostDuringSeekRule::EnterRecovering);
+        ASSERT(c.shutdown_during_drain == ShutdownDuringDrainRule::ForceClose);
     });
 }
 
@@ -70,27 +55,27 @@ void state_machine_contract_equality(ContractTestRunner& runner) {
         ASSERT(a == b);
 
         StateMachineContract c{};
-        c.reentrant_policy = ReentrantTransitionPolicy::Merge;
+        c.reentrant_transition = ReentrantTransitionPolicy::Merge;
         ASSERT(!(a == c));
     });
 }
 
 void state_machine_contract_has_all_required_fields(ContractTestRunner& runner) {
     runner.run("state_machine_contract_has_all_required_fields", []() {
-        StateMachineContract contract{};
+        StateMachineContract c{};
         // Rule fields (3)
-        (void)contract.reentrant_policy;
-        (void)contract.preemption_policy;
-        (void)contract.terminal_rule;
+        (void)c.reentrant_transition;
+        (void)c.transition_preemption;
+        (void)c.terminal_state;
         // Scenario fields (7)
-        (void)contract.seeking_reentry_rule;
-        (void)contract.recovering_seek_rule;
-        (void)contract.draining_pause_rule;
-        (void)contract.failed_close_rule;
-        (void)contract.closed_mutation_rule;
-        (void)contract.device_lost_during_seek_rule;
-        (void)contract.shutdown_during_drain_rule;
-        ASSERT(true); // Compilation success means all fields exist
+        (void)c.seeking_reentry;
+        (void)c.recovering_seek;
+        (void)c.draining_pause;
+        (void)c.failed_close;
+        (void)c.closed_mutation;
+        (void)c.device_lost_during_seek;
+        (void)c.shutdown_during_drain;
+        ASSERT(true);
     });
 }
 

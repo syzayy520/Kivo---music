@@ -20,9 +20,9 @@ void core_state_idle(ContractTestRunner& runner) {
     });
 }
 
-void core_state_preparing(ContractTestRunner& runner) {
-    runner.run("core_state_preparing", []() {
-        ASSERT(static_cast<uint8_t>(CoreState::Preparing) == 2);
+void core_state_opening(ContractTestRunner& runner) {
+    runner.run("core_state_opening", []() {
+        ASSERT(static_cast<uint8_t>(CoreState::Opening) == 2);
     });
 }
 
@@ -38,39 +38,39 @@ void core_state_playing(ContractTestRunner& runner) {
     });
 }
 
+void core_state_pausing(ContractTestRunner& runner) {
+    runner.run("core_state_pausing", []() {
+        ASSERT(static_cast<uint8_t>(CoreState::Pausing) == 5);
+    });
+}
+
 void core_state_paused(ContractTestRunner& runner) {
     runner.run("core_state_paused", []() {
-        ASSERT(static_cast<uint8_t>(CoreState::Paused) == 5);
+        ASSERT(static_cast<uint8_t>(CoreState::Paused) == 6);
     });
 }
 
 void core_state_seeking(ContractTestRunner& runner) {
     runner.run("core_state_seeking", []() {
-        ASSERT(static_cast<uint8_t>(CoreState::Seeking) == 6);
+        ASSERT(static_cast<uint8_t>(CoreState::Seeking) == 7);
     });
 }
 
 void core_state_draining(ContractTestRunner& runner) {
     runner.run("core_state_draining", []() {
-        ASSERT(static_cast<uint8_t>(CoreState::Draining) == 7);
+        ASSERT(static_cast<uint8_t>(CoreState::Draining) == 8);
     });
 }
 
-void core_state_flushing(ContractTestRunner& runner) {
-    runner.run("core_state_flushing", []() {
-        ASSERT(static_cast<uint8_t>(CoreState::Flushing) == 8);
+void core_state_recovering(ContractTestRunner& runner) {
+    runner.run("core_state_recovering", []() {
+        ASSERT(static_cast<uint8_t>(CoreState::Recovering) == 9);
     });
 }
 
-void core_state_closing(ContractTestRunner& runner) {
-    runner.run("core_state_closing", []() {
-        ASSERT(static_cast<uint8_t>(CoreState::Closing) == 9);
-    });
-}
-
-void core_state_closed(ContractTestRunner& runner) {
-    runner.run("core_state_closed", []() {
-        ASSERT(static_cast<uint8_t>(CoreState::Closed) == 10);
+void core_state_stopped(ContractTestRunner& runner) {
+    runner.run("core_state_stopped", []() {
+        ASSERT(static_cast<uint8_t>(CoreState::Stopped) == 10);
     });
 }
 
@@ -80,9 +80,9 @@ void core_state_failed(ContractTestRunner& runner) {
     });
 }
 
-void core_state_recovering(ContractTestRunner& runner) {
-    runner.run("core_state_recovering", []() {
-        ASSERT(static_cast<uint8_t>(CoreState::Recovering) == 12);
+void core_state_closed(ContractTestRunner& runner) {
+    runner.run("core_state_closed", []() {
+        ASSERT(static_cast<uint8_t>(CoreState::Closed) == 12);
     });
 }
 
@@ -142,17 +142,17 @@ void state_terminality_terminal(ContractTestRunner& runner) {
 void run_state_phase_tests(ContractTestRunner& runner) {
     core_state_default_is_unknown(runner);
     core_state_idle(runner);
-    core_state_preparing(runner);
+    core_state_opening(runner);
     core_state_ready(runner);
     core_state_playing(runner);
+    core_state_pausing(runner);
     core_state_paused(runner);
     core_state_seeking(runner);
     core_state_draining(runner);
-    core_state_flushing(runner);
-    core_state_closing(runner);
-    core_state_closed(runner);
-    core_state_failed(runner);
     core_state_recovering(runner);
+    core_state_stopped(runner);
+    core_state_failed(runner);
+    core_state_closed(runner);
     core_state_equality(runner);
     state_stability_default_is_unknown(runner);
     state_stability_stable(runner);

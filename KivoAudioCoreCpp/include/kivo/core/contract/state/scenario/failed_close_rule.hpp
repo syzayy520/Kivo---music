@@ -2,17 +2,13 @@
 
 #include <cstdint>
 
-#include "../phase/core_state.hpp"
-#include "../transition/state_transition_decision.hpp"
-
 namespace kivo::core::contract {
 
-struct FailedCloseRule {
-    CoreState failed_state = CoreState::Failed;
-    CoreState close_target = CoreState::Closed;
-    StateTransitionDecision decision = StateTransitionDecision::Allow;
-
-    [[nodiscard]] bool operator==(const FailedCloseRule&) const noexcept = default;
+enum class FailedCloseRule : uint8_t {
+    Unknown = 0,
+    CloseMustSucceed,
+    CloseIsIdempotent,
+    CleanupThenClose
 };
 
 } // namespace kivo::core::contract

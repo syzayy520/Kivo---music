@@ -2,16 +2,14 @@
 
 #include <cstdint>
 
-#include "../phase/core_state.hpp"
-#include "../transition/state_transition_decision.hpp"
-
 namespace kivo::core::contract {
 
-struct TerminalStateRule {
-    CoreState terminal_state = CoreState::Unknown;
-    StateTransitionDecision decision = StateTransitionDecision::Reject;
-
-    [[nodiscard]] bool operator==(const TerminalStateRule&) const noexcept = default;
+enum class TerminalStateRule : uint8_t {
+    Unknown = 0,
+    RejectAllMutations,
+    AllowCloseOnly,
+    AllowInspectOnly,
+    AlreadyClosedIsIdempotent
 };
 
 } // namespace kivo::core::contract

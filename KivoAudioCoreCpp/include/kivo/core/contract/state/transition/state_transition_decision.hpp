@@ -11,7 +11,7 @@ enum class StateTransitionDecision : uint8_t {
     Queue,
     Merge,
     Defer,
-    Conditional
+    ForceClose
 };
 
 } // namespace kivo::core::contract

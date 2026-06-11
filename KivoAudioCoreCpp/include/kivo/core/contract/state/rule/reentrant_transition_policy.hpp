@@ -6,10 +6,11 @@ namespace kivo::core::contract {
 
 enum class ReentrantTransitionPolicy : uint8_t {
     Unknown = 0,
+    Forbid,
     Merge,
     Queue,
-    Reject,
-    Cancel
+    ReplacePending,
+    KeepLatest
 };
 
 } // namespace kivo::core::contract

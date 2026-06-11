@@ -3,14 +3,14 @@
 #include <cstdint>
 
 #include "../phase/core_state.hpp"
+#include "state_transition_intent.hpp"
 
 namespace kivo::core::contract {
 
 struct StateTransition {
-    CoreState from_state = CoreState::Unknown;
-    CoreState to_state = CoreState::Unknown;
-    uint64_t timestamp_ns = 0;
-    uint32_t generation_id = 0;
+    CoreState from{CoreState::Unknown};
+    CoreState to{CoreState::Unknown};
+    StateTransitionIntent intent{StateTransitionIntent::Unknown};
 
     [[nodiscard]] bool operator==(const StateTransition&) const noexcept = default;
 };

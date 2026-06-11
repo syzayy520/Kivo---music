@@ -17,18 +17,18 @@ namespace kivo::core::contract {
 
 struct StateMachineContract {
     // Rule fields (3)
-    ReentrantTransitionPolicy reentrant_policy = ReentrantTransitionPolicy::Unknown;
-    TransitionPreemptionPolicy preemption_policy = TransitionPreemptionPolicy::Unknown;
-    TerminalStateRule terminal_rule{};
+    ReentrantTransitionPolicy reentrant_transition = ReentrantTransitionPolicy::Unknown;
+    TransitionPreemptionPolicy transition_preemption = TransitionPreemptionPolicy::Unknown;
+    TerminalStateRule terminal_state = TerminalStateRule::Unknown;
 
     // Scenario fields (7)
-    SeekingReentryRule seeking_reentry_rule{};
-    RecoveringSeekRule recovering_seek_rule{};
-    DrainingPauseRule draining_pause_rule{};
-    FailedCloseRule failed_close_rule{};
-    ClosedMutationRule closed_mutation_rule{};
-    DeviceLostDuringSeekRule device_lost_during_seek_rule{};
-    ShutdownDuringDrainRule shutdown_during_drain_rule{};
+    SeekingReentryRule seeking_reentry = SeekingReentryRule::Unknown;
+    RecoveringSeekRule recovering_seek = RecoveringSeekRule::Unknown;
+    DrainingPauseRule draining_pause = DrainingPauseRule::Unknown;
+    FailedCloseRule failed_close = FailedCloseRule::Unknown;
+    ClosedMutationRule closed_mutation = ClosedMutationRule::Unknown;
+    DeviceLostDuringSeekRule device_lost_during_seek = DeviceLostDuringSeekRule::Unknown;
+    ShutdownDuringDrainRule shutdown_during_drain = ShutdownDuringDrainRule::Unknown;
 
     [[nodiscard]] bool operator==(const StateMachineContract&) const noexcept = default;
 };

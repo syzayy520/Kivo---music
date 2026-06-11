@@ -2,15 +2,16 @@
 
 #include <cstdint>
 
-#include "../phase/core_state.hpp"
-#include "../transition/state_transition_decision.hpp"
+#include "../transition/state_transition.hpp"
+#include "../transition/state_transition_validity.hpp"
+#include "state_transition_rejection_reason.hpp"
 
 namespace kivo::core::contract {
 
 struct IllegalTransitionRule {
-    CoreState from_state = CoreState::Unknown;
-    CoreState to_state = CoreState::Unknown;
-    StateTransitionDecision decision = StateTransitionDecision::Reject;
+    StateTransition transition{};
+    StateTransitionValidity validity = StateTransitionValidity::Unknown;
+    StateTransitionRejectionReason rejection_reason = StateTransitionRejectionReason::Unknown;
 
     [[nodiscard]] bool operator==(const IllegalTransitionRule&) const noexcept = default;
 };

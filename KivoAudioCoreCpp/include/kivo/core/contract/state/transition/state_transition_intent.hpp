@@ -2,16 +2,22 @@
 
 #include <cstdint>
 
-#include "../phase/core_state.hpp"
-
 namespace kivo::core::contract {
 
-struct StateTransitionIntent {
-    CoreState from_state = CoreState::Unknown;
-    CoreState to_state = CoreState::Unknown;
-    uint32_t trigger_id = 0;
-
-    [[nodiscard]] bool operator==(const StateTransitionIntent&) const noexcept = default;
+enum class StateTransitionIntent : uint8_t {
+    Unknown = 0,
+    Open,
+    Prepare,
+    Start,
+    Pause,
+    Resume,
+    Seek,
+    Drain,
+    Recover,
+    Stop,
+    Close,
+    Fail,
+    Reset
 };
 
 } // namespace kivo::core::contract

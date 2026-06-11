@@ -6,11 +6,13 @@ namespace kivo::core::contract {
 
 enum class StateTransitionValidity : uint8_t {
     Unknown = 0,
-    Valid,
-    InvalidFromState,
-    InvalidToState,
-    InvalidTrigger,
-    InvalidGeneration
+    Allowed,
+    Forbidden,
+    Conditional,
+    MergeRequired,
+    QueueRequired,
+    RejectRequired,
+    CompleteCurrentFirst
 };
 
 } // namespace kivo::core::contract

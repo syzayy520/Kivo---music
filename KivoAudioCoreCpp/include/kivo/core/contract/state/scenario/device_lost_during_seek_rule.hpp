@@ -2,17 +2,14 @@
 
 #include <cstdint>
 
-#include "../phase/core_state.hpp"
-#include "../transition/state_transition_decision.hpp"
-
 namespace kivo::core::contract {
 
-struct DeviceLostDuringSeekRule {
-    CoreState seeking_state = CoreState::Seeking;
-    CoreState failed_target = CoreState::Failed;
-    StateTransitionDecision decision = StateTransitionDecision::Allow;
-
-    [[nodiscard]] bool operator==(const DeviceLostDuringSeekRule&) const noexcept = default;
+enum class DeviceLostDuringSeekRule : uint8_t {
+    Unknown = 0,
+    EnterRecovering,
+    FailSeek,
+    PreserveSeekTarget,
+    RequireRecoveryThenSeek
 };
 
 } // namespace kivo::core::contract

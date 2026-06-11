@@ -7,17 +7,17 @@ namespace kivo::core::contract {
 enum class CoreState : uint8_t {
     Unknown = 0,
     Idle,
-    Preparing,
+    Opening,
     Ready,
     Playing,
+    Pausing,
     Paused,
     Seeking,
     Draining,
-    Flushing,
-    Closing,
-    Closed,
+    Recovering,
+    Stopped,
     Failed,
-    Recovering
+    Closed
 };
 
 } // namespace kivo::core::contract
