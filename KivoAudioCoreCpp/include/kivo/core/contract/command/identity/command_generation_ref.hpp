@@ -9,6 +9,7 @@ namespace kivo::core::contract {
 struct CommandGenerationRef {
     uint64_t generation{0};
     CommandOrigin origin{CommandOrigin::Unknown};
+
     [[nodiscard]] constexpr bool operator==(const CommandGenerationRef&) const noexcept = default;
 };
 
