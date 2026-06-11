@@ -11,7 +11,7 @@ struct ErrorOutcome {
     ErrorAttributes attributes{};
     RecoveryAction recommended_recovery{RecoveryAction::None};
 
-    [[nodiscard]] bool operator==(const ErrorOutcome&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const ErrorOutcome&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
