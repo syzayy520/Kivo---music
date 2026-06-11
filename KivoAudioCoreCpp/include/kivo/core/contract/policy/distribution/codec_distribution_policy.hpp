@@ -8,7 +8,7 @@ struct CodecDistributionPolicy {
     uint8_t allow_dynamic_linking{0};
     uint8_t allow_redistribution{0};
 
-    friend bool operator==(const CodecDistributionPolicy&, const CodecDistributionPolicy&) noexcept = default;
+    [[nodiscard]] bool operator==(const CodecDistributionPolicy&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract::policy
