@@ -8,7 +8,7 @@ struct SourceIdentitySanitization {
     uint8_t strip_hostname{0};
     uint8_t strip_device_serial{0};
 
-    [[nodiscard]] bool operator==(const SourceIdentitySanitization&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const SourceIdentitySanitization&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract::policy
