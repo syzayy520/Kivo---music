@@ -30,10 +30,10 @@ enum class BitPerfectStatus : uint8_t {
 // BitPerfectEligibility — Full bit-perfect eligibility report
 // =============================================================================
 struct BitPerfectEligibility {
-    BitPerfectStatus status = BitPerfectStatus::Unknown;
-    bool formats_match = false;       // source format == device format
-    bool no_conversion_needed = false; // no sample rate/format conversion
-    bool no_mixing_needed = false;    // no channel remixing
+    BitPerfectStatus status{BitPerfectStatus::Unknown};
+    bool formats_match{false};       // source format == device format
+    bool no_conversion_needed{false}; // no sample rate/format conversion
+    bool no_mixing_needed{false};    // no channel remixing
 
     // --- Convenience ---
     [[nodiscard]] bool is_eligible() const noexcept {
