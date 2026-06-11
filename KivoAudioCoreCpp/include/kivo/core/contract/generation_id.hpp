@@ -41,7 +41,7 @@ public:
 private:
     constexpr explicit GenerationId(uint64_t id) noexcept : id_(id) {}
 
-    uint64_t id_ = 0;
+    uint64_t id_{0};
 };
 
 } // namespace kivo::core::contract
