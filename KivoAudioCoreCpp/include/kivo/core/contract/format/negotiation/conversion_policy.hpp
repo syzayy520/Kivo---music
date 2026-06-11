@@ -35,7 +35,7 @@ struct ConversionPolicy {
     }
 
     // --- Comparison ---
-    [[nodiscard]] bool operator==(const ConversionPolicy&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const ConversionPolicy&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
