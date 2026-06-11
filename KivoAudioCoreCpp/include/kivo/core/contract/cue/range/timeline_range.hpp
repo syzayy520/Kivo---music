@@ -2,8 +2,6 @@
 // KivoAudioCoreCpp — timeline_range.hpp
 // Contract: Timeline range in samples
 // =============================================================================
-//
-
 
 #pragma once
 
