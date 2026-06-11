@@ -41,7 +41,7 @@ struct BitPerfectEligibility {
     }
 
     // --- Comparison ---
-    [[nodiscard]] bool operator==(const BitPerfectEligibility&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const BitPerfectEligibility&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
