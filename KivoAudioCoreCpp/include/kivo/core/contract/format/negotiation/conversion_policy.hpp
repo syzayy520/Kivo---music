@@ -23,14 +23,14 @@ struct ConversionPolicy {
     bool bit_depth_convert{false};        // change bit depth
 
     // --- Convenience ---
-    [[nodiscard]] bool any_conversion_needed() const noexcept {
+    [[nodiscard]] constexpr bool any_conversion_needed() const noexcept {
         return sample_format_convert
             || sample_rate_convert
             || channel_remix
             || bit_depth_convert;
     }
 
-    [[nodiscard]] bool is_passthrough() const noexcept {
+    [[nodiscard]] constexpr bool is_passthrough() const noexcept {
         return !any_conversion_needed();
     }
 
