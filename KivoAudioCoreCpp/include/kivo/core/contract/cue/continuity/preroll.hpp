@@ -17,7 +17,7 @@ namespace kivo::core::contract {
 struct Preroll {
     uint64_t samples{0};
 
-    [[nodiscard]] bool operator==(const Preroll&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const Preroll&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
