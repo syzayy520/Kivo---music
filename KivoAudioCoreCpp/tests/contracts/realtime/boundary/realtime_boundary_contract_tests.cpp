@@ -18,6 +18,10 @@ void run_realtime_boundary_contract_tests(ContractTestRunner& runner) {
         ASSERT(c.preallocation == PreallocationRequirement::NotSpecified);
         ASSERT(c.transport == BoundedTransport::NotSpecified);
         ASSERT(c.spsc == SpscSemantics::NotSpecified);
+        ASSERT(c.ownership_transfer == OwnershipTransfer::NotSpecified);
+        ASSERT(c.ownership_visibility == OwnershipVisibility::NotSpecified);
+        ASSERT(c.buffer_ownership == BufferOwnership::NotSpecified);
+        ASSERT(c.buffer_lifetime == BufferLifetimeProof::NotSpecified);
     });
     
     runner.run("realtime_boundary_contract_is_valid_requires_path", []() {
@@ -61,6 +65,10 @@ void run_realtime_boundary_contract_tests(ContractTestRunner& runner) {
         c.preallocation = PreallocationRequirement::Required;
         c.transport = BoundedTransport::Required;
         c.spsc = SpscSemantics::Declared;
+        c.ownership_transfer = OwnershipTransfer::ExplicitTransferRequired;
+        c.ownership_visibility = OwnershipVisibility::MustBeProvable;
+        c.buffer_ownership = BufferOwnership::ExplicitRequired;
+        c.buffer_lifetime = BufferLifetimeProof::MustBeProvableAcrossBoundary;
         
         ASSERT(c.path == RealtimePath::Realtime);
         ASSERT(c.path_context == RealtimePathContext::RenderSide);
@@ -73,6 +81,10 @@ void run_realtime_boundary_contract_tests(ContractTestRunner& runner) {
         ASSERT(c.preallocation == PreallocationRequirement::Required);
         ASSERT(c.transport == BoundedTransport::Required);
         ASSERT(c.spsc == SpscSemantics::Declared);
+        ASSERT(c.ownership_transfer == OwnershipTransfer::ExplicitTransferRequired);
+        ASSERT(c.ownership_visibility == OwnershipVisibility::MustBeProvable);
+        ASSERT(c.buffer_ownership == BufferOwnership::ExplicitRequired);
+        ASSERT(c.buffer_lifetime == BufferLifetimeProof::MustBeProvableAcrossBoundary);
     });
     
     runner.run("realtime_boundary_contract_equality", []() {
@@ -80,6 +92,9 @@ void run_realtime_boundary_contract_tests(ContractTestRunner& runner) {
         RealtimeBoundaryContract b;
         ASSERT(a == b);
         a.path = RealtimePath::Realtime;
+        ASSERT(!(a == b));
+        a = RealtimeBoundaryContract{};
+        a.ownership_transfer = OwnershipTransfer::ExplicitTransferRequired;
         ASSERT(!(a == b));
     });
     
@@ -96,6 +111,10 @@ void run_realtime_boundary_contract_tests(ContractTestRunner& runner) {
         (void)c.preallocation;
         (void)c.transport;
         (void)c.spsc;
+        (void)c.ownership_transfer;
+        (void)c.ownership_visibility;
+        (void)c.buffer_ownership;
+        (void)c.buffer_lifetime;
         ASSERT(true);
     });
     

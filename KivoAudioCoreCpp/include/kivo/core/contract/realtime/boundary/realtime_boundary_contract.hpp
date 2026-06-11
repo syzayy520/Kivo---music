@@ -9,6 +9,10 @@
 #include "../prohibition/realtime_callback_rule.hpp"
 #include "../prohibition/realtime_exception_rule.hpp"
 #include "../buffer/preallocated_buffer_rule.hpp"
+#include "../buffer/buffer_ownership_rule.hpp"
+#include "../buffer/buffer_lifetime_rule.hpp"
+#include "../ownership/ownership_transfer_rule.hpp"
+#include "../ownership/ownership_visibility_rule.hpp"
 #include "../transport/bounded_transport_rule.hpp"
 #include "../transport/spsc_semantics_rule.hpp"
 
@@ -51,6 +55,18 @@ struct RealtimeBoundaryContract {
     
     /// SPSC semantics declaration.
     SpscSemantics spsc{SpscSemantics::NotSpecified};
+    
+    /// Ownership transfer constraints.
+    OwnershipTransfer ownership_transfer{OwnershipTransfer::NotSpecified};
+    
+    /// Ownership visibility requirements.
+    OwnershipVisibility ownership_visibility{OwnershipVisibility::NotSpecified};
+    
+    /// Buffer ownership constraints.
+    BufferOwnership buffer_ownership{BufferOwnership::NotSpecified};
+    
+    /// Buffer lifetime proof requirements.
+    BufferLifetimeProof buffer_lifetime{BufferLifetimeProof::NotSpecified};
     
     [[nodiscard]] bool operator==(const RealtimeBoundaryContract&) const noexcept = default;
     
