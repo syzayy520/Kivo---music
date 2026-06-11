@@ -10,9 +10,9 @@ namespace kivo::core::contract {
 struct SourceGeneration {
     GenerationId id{GenerationId::initial()};
 
-    [[nodiscard]] constexpr bool operator==(const SourceGeneration&) const noexcept = default;
-
     [[nodiscard]] constexpr uint64_t value() const noexcept { return id.value(); }
+
+    [[nodiscard]] constexpr bool operator==(const SourceGeneration&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
