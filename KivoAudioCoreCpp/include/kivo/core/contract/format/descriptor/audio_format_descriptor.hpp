@@ -45,7 +45,7 @@ struct AudioFormatDescriptor {
     }
 
     // --- Comparison ---
-    [[nodiscard]] bool operator==(const AudioFormatDescriptor&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const AudioFormatDescriptor&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
