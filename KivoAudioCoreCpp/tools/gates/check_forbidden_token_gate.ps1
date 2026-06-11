@@ -27,7 +27,34 @@ Write-Host "PROJECT_ROOT: $ProjectRoot"
 Write-Host ""
 
 # --- Strict Implementation Scope ---
-$strictDirs = @("src", "core", "platform", "decode", "playback", "tests", "examples", "demo", "sample_player")
+$strictDirs = @("include", "src", "core", "platform", "decode", "playback", "tests", "examples", "demo", "sample_player")
+$windowsPlatformTokens = @(
+    "#include <Windows.h>",
+    "#include <windows.h>",
+    "#include <audioclient.h>",
+    "#include <mmdeviceapi.h>",
+    "#include <endpointvolume.h>",
+    "IAudioClient",
+    "IAudioRenderClient",
+    "GetBuffer",
+    "ReleaseBuffer"
+)
+$ffmpegImplementationTokens = @(
+    "#include <avcodec.h>",
+    "#include <avformat.h>",
+    "#include <avutil.h>",
+    "#include <swresample.h>",
+    "#include <libavcodec/",
+    "#include <libavformat/",
+    "#include <libavutil/",
+    "#include <libswresample/",
+    "AVCodecContext",
+    "AVFormatContext",
+    "AVIOContext",
+    "AVFrame",
+    "AVPacket",
+    "SwrContext"
+)
 $implementationTokens = @(
     "#include <Windows.h>",
     "#include <windows.h>",
@@ -38,10 +65,18 @@ $implementationTokens = @(
     "#include <avformat.h>",
     "#include <avutil.h>",
     "#include <swresample.h>",
+    "#include <libavcodec/",
+    "#include <libavformat/",
+    "#include <libavutil/",
+    "#include <libswresample/",
     "IAudioClient",
     "IAudioRenderClient",
+    "AVCodecContext",
+    "AVFormatContext",
+    "AVIOContext",
     "AVFrame",
     "AVPacket",
+    "SwrContext",
     "mpv_handle",
     "GetBuffer",
     "ReleaseBuffer"
@@ -57,9 +92,22 @@ foreach ($dir in $strictDirs) {
         foreach ($file in $files) {
             $content = Get-Content $file.FullName -Raw -ErrorAction SilentlyContinue
             if ($content) {
+                $relativePath = $file.FullName.Substring($ProjectRoot.Length).TrimStart("\", "/").Replace("/", "\")
+                $authorizedWindowsPath =
+                    $relativePath.StartsWith("src\platform\windows\wasapi\", [System.StringComparison]::OrdinalIgnoreCase) -or
+                    $relativePath.StartsWith("tests\platform_windows\wasapi\", [System.StringComparison]::OrdinalIgnoreCase) -or
+                    $relativePath.StartsWith("tests\hardware\wasapi\", [System.StringComparison]::OrdinalIgnoreCase)
+                $authorizedFfmpegPath =
+                    $relativePath.StartsWith("src\adapters\ffmpeg\", [System.StringComparison]::OrdinalIgnoreCase)
                 foreach ($token in $implementationTokens) {
+                    if ($authorizedWindowsPath -and $token -in $windowsPlatformTokens) {
+                        continue
+                    }
+                    if ($authorizedFfmpegPath -and $token -in $ffmpegImplementationTokens) {
+                        continue
+                    }
                     if ($content -match [regex]::Escape($token)) {
-                        $violations += "STRICT_VIOLATION: $($file.Name): $token"
+                        $violations += "STRICT_VIOLATION: ${relativePath}: $token"
                     }
                 }
             }
@@ -149,11 +197,30 @@ if (Test-Path $cmakePath) {
         "contract_tests",
         "kivo_capability_tests",
         "kivo_core_render",
+        "kivo_render_queue",
+        "kivo_decode_boundary",
+        "kivo_decode_boundary_tests",
+        "decode_boundary_tests",
+        "kivo_ffmpeg_avcodec",
+        "kivo_ffmpeg_avformat",
+        "kivo_ffmpeg_avutil",
+        "kivo_ffmpeg_swresample",
+        "kivo_ffmpeg_decode_adapter",
+        "kivo_ffmpeg_test_fixtures",
+        "kivo_ffmpeg_decode_tests",
+        "ffmpeg_decode_tests",
+        "kivo_ffmpeg_wasapi_playback_smoke",
+        "kivo_render_queue_tests",
+        "render_queue_tests",
         "kivo_render_boundary_tests",
         "render_boundary_tests",
         "kivo_fake_render_backend",
         "kivo_fake_renderer_tests",
         "fake_renderer_tests",
+        "kivo_wasapi_renderer",
+        "kivo_wasapi_tests",
+        "wasapi_tests",
+        "kivo_wasapi_tone_smoke",
         "kivo_public_header_checks"
     )
     foreach ($line in $cmakeLines) {

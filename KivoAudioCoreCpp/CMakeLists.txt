@@ -47,6 +47,173 @@ target_include_directories(kivo_core_render INTERFACE include/)
 target_compile_features(kivo_core_render INTERFACE cxx_std_20)
 target_link_libraries(kivo_core_render INTERFACE kivo_core_contract)
 
+# Platform-neutral decode boundary and local byte source
+add_library(kivo_decode_boundary STATIC
+    src/source/local/local_file_byte_source.cpp
+)
+target_link_libraries(kivo_decode_boundary PUBLIC kivo_core_contract)
+target_include_directories(kivo_decode_boundary PUBLIC include/)
+target_compile_features(kivo_decode_boundary PUBLIC cxx_std_20)
+target_compile_options(kivo_decode_boundary PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
+
+# Optional FFmpeg adapter. The SDK is external, validated, LGPL shared, and
+# never downloaded by configure or build.
+set(KIVO_FFMPEG_ROOT "$ENV{KIVO_FFMPEG_ROOT}" CACHE PATH
+    "Root of the approved FFmpeg 7.1 LGPL shared SDK")
+
+if(KIVO_FFMPEG_ROOT)
+    if(NOT WIN32)
+        message(FATAL_ERROR "The approved KIVO_FFMPEG_ROOT baseline is Windows x64.")
+    endif()
+
+    set(KIVO_FFMPEG_INCLUDE_DIR "${KIVO_FFMPEG_ROOT}/include")
+    set(KIVO_FFMPEG_LIBRARY_DIR "${KIVO_FFMPEG_ROOT}/lib")
+    set(KIVO_FFMPEG_BINARY_DIR "${KIVO_FFMPEG_ROOT}/bin")
+    set(KIVO_FFMPEG_REQUIRED_FILES
+        "${KIVO_FFMPEG_INCLUDE_DIR}/libavcodec/avcodec.h"
+        "${KIVO_FFMPEG_INCLUDE_DIR}/libavformat/avformat.h"
+        "${KIVO_FFMPEG_INCLUDE_DIR}/libavutil/avutil.h"
+        "${KIVO_FFMPEG_INCLUDE_DIR}/libswresample/swresample.h"
+        "${KIVO_FFMPEG_LIBRARY_DIR}/avcodec.lib"
+        "${KIVO_FFMPEG_LIBRARY_DIR}/avformat.lib"
+        "${KIVO_FFMPEG_LIBRARY_DIR}/avutil.lib"
+        "${KIVO_FFMPEG_LIBRARY_DIR}/swresample.lib"
+        "${KIVO_FFMPEG_BINARY_DIR}/avcodec-61.dll"
+        "${KIVO_FFMPEG_BINARY_DIR}/avformat-61.dll"
+        "${KIVO_FFMPEG_BINARY_DIR}/avutil-59.dll"
+        "${KIVO_FFMPEG_BINARY_DIR}/swresample-5.dll"
+        "${KIVO_FFMPEG_BINARY_DIR}/ffmpeg.exe"
+    )
+    foreach(required_file IN LISTS KIVO_FFMPEG_REQUIRED_FILES)
+        if(NOT EXISTS "${required_file}")
+            message(FATAL_ERROR
+                "KIVO_FFMPEG_ROOT is incomplete or has the wrong ABI: ${required_file}")
+        endif()
+    endforeach()
+
+    function(kivo_import_ffmpeg_library target_name import_library runtime_dll)
+        add_library(${target_name} SHARED IMPORTED GLOBAL)
+        set_target_properties(${target_name} PROPERTIES
+            IMPORTED_IMPLIB "${KIVO_FFMPEG_LIBRARY_DIR}/${import_library}"
+            IMPORTED_LOCATION "${KIVO_FFMPEG_BINARY_DIR}/${runtime_dll}"
+            INTERFACE_INCLUDE_DIRECTORIES "${KIVO_FFMPEG_INCLUDE_DIR}"
+        )
+    endfunction()
+
+    kivo_import_ffmpeg_library(
+        kivo_ffmpeg_avcodec avcodec.lib avcodec-61.dll)
+    kivo_import_ffmpeg_library(
+        kivo_ffmpeg_avformat avformat.lib avformat-61.dll)
+    kivo_import_ffmpeg_library(
+        kivo_ffmpeg_avutil avutil.lib avutil-59.dll)
+    kivo_import_ffmpeg_library(
+        kivo_ffmpeg_swresample swresample.lib swresample-5.dll)
+
+    add_library(kivo_ffmpeg_decode_adapter STATIC
+        src/adapters/ffmpeg/source/ffmpeg_avio_bridge.cpp
+        src/adapters/ffmpeg/container/ffmpeg_demux_session.cpp
+        src/adapters/ffmpeg/codec/ffmpeg_audio_decoder.cpp
+        src/adapters/ffmpeg/conversion/ffmpeg_audio_converter.cpp
+        src/adapters/ffmpeg/mapping/ffmpeg_audio_format.cpp
+        src/adapters/ffmpeg/ffmpeg_audio_decode_session.cpp
+    )
+    target_link_libraries(kivo_ffmpeg_decode_adapter
+        PUBLIC kivo_decode_boundary
+        PRIVATE
+            kivo_ffmpeg_avformat
+            kivo_ffmpeg_avcodec
+            kivo_ffmpeg_swresample
+            kivo_ffmpeg_avutil
+    )
+    target_include_directories(kivo_ffmpeg_decode_adapter
+        PUBLIC include/
+        PRIVATE src/adapters/ffmpeg
+    )
+    target_compile_features(kivo_ffmpeg_decode_adapter PUBLIC cxx_std_20)
+    target_compile_options(kivo_ffmpeg_decode_adapter PRIVATE
+        $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc>
+        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+    )
+
+    set(KIVO_FFMPEG_FIXTURE_DIR
+        "${CMAKE_CURRENT_BINARY_DIR}/fixtures/ffmpeg")
+    set(KIVO_FFMPEG_WAVE_FIXTURE
+        "${KIVO_FFMPEG_FIXTURE_DIR}/tone_pcm_s16le.wav")
+    set(KIVO_FFMPEG_FLAC_FIXTURE
+        "${KIVO_FFMPEG_FIXTURE_DIR}/tone.flac")
+    set(KIVO_FFMPEG_MP3_FIXTURE
+        "${KIVO_FFMPEG_FIXTURE_DIR}/tone.mp3")
+    add_custom_command(
+        OUTPUT
+            "${KIVO_FFMPEG_WAVE_FIXTURE}"
+            "${KIVO_FFMPEG_FLAC_FIXTURE}"
+            "${KIVO_FFMPEG_MP3_FIXTURE}"
+        COMMAND "${CMAKE_COMMAND}" -E make_directory
+            "${KIVO_FFMPEG_FIXTURE_DIR}"
+        COMMAND "${KIVO_FFMPEG_BINARY_DIR}/ffmpeg.exe"
+            -nostdin -hide_banner -loglevel error -y
+            -f lavfi -i "sine=frequency=523.25:duration=2:sample_rate=44100"
+            -ac 2 -c:a pcm_s16le "${KIVO_FFMPEG_WAVE_FIXTURE}"
+        COMMAND "${KIVO_FFMPEG_BINARY_DIR}/ffmpeg.exe"
+            -nostdin -hide_banner -loglevel error -y
+            -f lavfi -i "sine=frequency=659.25:duration=2:sample_rate=44100"
+            -ac 2 -c:a flac "${KIVO_FFMPEG_FLAC_FIXTURE}"
+        COMMAND "${KIVO_FFMPEG_BINARY_DIR}/ffmpeg.exe"
+            -nostdin -hide_banner -loglevel error -y
+            -f lavfi -i "sine=frequency=783.99:duration=2:sample_rate=44100"
+            -ac 2 -c:a libmp3lame -b:a 192k "${KIVO_FFMPEG_MP3_FIXTURE}"
+        VERBATIM
+    )
+    add_custom_target(kivo_ffmpeg_test_fixtures
+        DEPENDS
+            "${KIVO_FFMPEG_WAVE_FIXTURE}"
+            "${KIVO_FFMPEG_FLAC_FIXTURE}"
+            "${KIVO_FFMPEG_MP3_FIXTURE}"
+    )
+
+    add_executable(kivo_ffmpeg_decode_tests
+        tests/ffmpeg_decode/ffmpeg_decode_tests_main.cpp
+        tests/ffmpeg_decode/ffmpeg_session_tests.cpp
+    )
+    target_link_libraries(kivo_ffmpeg_decode_tests
+        PRIVATE kivo_ffmpeg_decode_adapter)
+    target_compile_features(kivo_ffmpeg_decode_tests PRIVATE cxx_std_20)
+    target_compile_options(kivo_ffmpeg_decode_tests PRIVATE
+        $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc /wd4127>
+        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+    )
+    add_dependencies(kivo_ffmpeg_decode_tests kivo_ffmpeg_test_fixtures)
+
+    foreach(ffmpeg_dll
+        avcodec-61.dll
+        avformat-61.dll
+        avutil-59.dll
+        swresample-5.dll)
+        add_custom_command(TARGET kivo_ffmpeg_decode_tests POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                "${KIVO_FFMPEG_BINARY_DIR}/${ffmpeg_dll}"
+                "$<TARGET_FILE_DIR:kivo_ffmpeg_decode_tests>"
+            VERBATIM
+        )
+    endforeach()
+endif()
+
+# Bounded SPSC render transport
+add_library(kivo_render_queue STATIC
+    src/core/render/queue/spsc_audio_block_queue.cpp
+    src/core/render/pump/render_pump.cpp
+)
+target_link_libraries(kivo_render_queue PUBLIC kivo_core_render)
+target_include_directories(kivo_render_queue PUBLIC include/)
+target_compile_features(kivo_render_queue PUBLIC cxx_std_20)
+target_compile_options(kivo_render_queue PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
+
 # Contract tests
 add_executable(kivo_contract_tests
     tests/contracts/contract_tests_main.cpp
@@ -196,6 +363,30 @@ target_compile_options(kivo_render_boundary_tests PRIVATE
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
 )
 
+add_executable(kivo_render_queue_tests
+    tests/render_queue/render_queue_tests_main.cpp
+    tests/render_queue/spsc_audio_block_queue_tests.cpp
+    tests/render_queue/render_pump_tests.cpp
+)
+target_link_libraries(kivo_render_queue_tests PRIVATE kivo_render_queue)
+target_compile_features(kivo_render_queue_tests PRIVATE cxx_std_20)
+target_compile_options(kivo_render_queue_tests PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc /wd4127>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
+
+add_executable(kivo_decode_boundary_tests
+    tests/decode_boundary/decode_boundary_tests_main.cpp
+    tests/decode_boundary/decode_contract_tests.cpp
+    tests/decode_boundary/local_file_byte_source_tests.cpp
+)
+target_link_libraries(kivo_decode_boundary_tests PRIVATE kivo_decode_boundary)
+target_compile_features(kivo_decode_boundary_tests PRIVATE cxx_std_20)
+target_compile_options(kivo_decode_boundary_tests PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc /wd4127>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
+
 # Deterministic fake render backend
 add_library(kivo_fake_render_backend STATIC
     src/testing/time/manual_clock.cpp
@@ -223,6 +414,100 @@ target_compile_options(kivo_fake_renderer_tests PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc /wd4127>
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
 )
+
+# Windows WASAPI renderer
+if(WIN32)
+    add_library(kivo_wasapi_renderer STATIC
+        src/platform/windows/wasapi/com_apartment.cpp
+        src/platform/windows/wasapi/wasapi_error.cpp
+        src/platform/windows/wasapi/wasapi_format.cpp
+        src/platform/windows/wasapi/wasapi_render_worker.cpp
+        src/platform/windows/wasapi/wasapi_renderer.cpp
+    )
+    target_link_libraries(kivo_wasapi_renderer
+        PUBLIC kivo_core_render kivo_render_queue
+        PRIVATE ole32 uuid avrt
+    )
+    target_include_directories(kivo_wasapi_renderer
+        PUBLIC include/
+        PRIVATE src/platform/windows/wasapi
+    )
+    target_compile_features(kivo_wasapi_renderer PUBLIC cxx_std_20)
+    target_compile_definitions(kivo_wasapi_renderer PRIVATE
+        WIN32_LEAN_AND_MEAN
+        NOMINMAX
+        _WIN32_WINNT=0x0A00
+    )
+    target_compile_options(kivo_wasapi_renderer PRIVATE
+        $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc>
+        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+    )
+
+    add_executable(kivo_wasapi_tests
+        tests/platform_windows/wasapi/wasapi_tests_main.cpp
+        tests/platform_windows/wasapi/format_mapping_tests.cpp
+        tests/platform_windows/wasapi/error_mapping_tests.cpp
+        tests/platform_windows/wasapi/render_worker_tests.cpp
+    )
+    target_link_libraries(kivo_wasapi_tests PRIVATE kivo_wasapi_renderer)
+    target_include_directories(kivo_wasapi_tests PRIVATE
+        src/platform/windows/wasapi
+    )
+    target_compile_features(kivo_wasapi_tests PRIVATE cxx_std_20)
+    target_compile_definitions(kivo_wasapi_tests PRIVATE
+        WIN32_LEAN_AND_MEAN
+        NOMINMAX
+        _WIN32_WINNT=0x0A00
+    )
+    target_compile_options(kivo_wasapi_tests PRIVATE
+        $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc /wd4127>
+        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+    )
+
+    add_executable(kivo_wasapi_tone_smoke
+        tests/hardware/wasapi/wasapi_tone_smoke.cpp
+    )
+    target_link_libraries(kivo_wasapi_tone_smoke PRIVATE kivo_wasapi_renderer)
+    target_compile_features(kivo_wasapi_tone_smoke PRIVATE cxx_std_20)
+    target_compile_options(kivo_wasapi_tone_smoke PRIVATE
+        $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc>
+        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+    )
+
+    if(TARGET kivo_ffmpeg_decode_adapter)
+        add_executable(kivo_ffmpeg_wasapi_playback_smoke
+            tests/hardware/decode_output/ffmpeg_wasapi_playback_smoke.cpp
+        )
+        target_link_libraries(kivo_ffmpeg_wasapi_playback_smoke
+            PRIVATE
+                kivo_ffmpeg_decode_adapter
+                kivo_wasapi_renderer
+        )
+        target_compile_features(
+            kivo_ffmpeg_wasapi_playback_smoke PRIVATE cxx_std_20)
+        target_compile_options(kivo_ffmpeg_wasapi_playback_smoke PRIVATE
+            $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc>
+            $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+        )
+        add_dependencies(
+            kivo_ffmpeg_wasapi_playback_smoke
+            kivo_ffmpeg_test_fixtures
+        )
+        foreach(ffmpeg_dll
+            avcodec-61.dll
+            avformat-61.dll
+            avutil-59.dll
+            swresample-5.dll)
+            add_custom_command(
+                TARGET kivo_ffmpeg_wasapi_playback_smoke POST_BUILD
+                COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                    "${KIVO_FFMPEG_BINARY_DIR}/${ffmpeg_dll}"
+                    "$<TARGET_FILE_DIR:kivo_ffmpeg_wasapi_playback_smoke>"
+                VERBATIM
+            )
+        endforeach()
+    endif()
+endif()
 
 # Public header compile checks
 file(GLOB_RECURSE KIVO_PUBLIC_HEADERS
@@ -259,11 +544,35 @@ target_compile_options(kivo_public_header_checks PRIVATE
 add_dependencies(kivo_contract_tests kivo_public_header_checks)
 add_dependencies(kivo_capability_tests kivo_public_header_checks)
 add_dependencies(kivo_render_boundary_tests kivo_public_header_checks)
+add_dependencies(kivo_render_queue_tests kivo_public_header_checks)
+add_dependencies(kivo_decode_boundary_tests kivo_public_header_checks)
 add_dependencies(kivo_fake_renderer_tests kivo_public_header_checks)
+if(TARGET kivo_wasapi_tests)
+    add_dependencies(kivo_wasapi_tests kivo_public_header_checks)
+    add_dependencies(kivo_wasapi_tone_smoke kivo_public_header_checks)
+endif()
+if(TARGET kivo_ffmpeg_decode_tests)
+    add_dependencies(kivo_ffmpeg_decode_tests kivo_public_header_checks)
+endif()
+if(TARGET kivo_ffmpeg_wasapi_playback_smoke)
+    add_dependencies(
+        kivo_ffmpeg_wasapi_playback_smoke
+        kivo_public_header_checks)
+endif()
 
 # Register with CTest
 enable_testing()
 add_test(NAME contract_tests COMMAND kivo_contract_tests)
 add_test(NAME capability_tests COMMAND kivo_capability_tests)
 add_test(NAME render_boundary_tests COMMAND kivo_render_boundary_tests)
+add_test(NAME render_queue_tests COMMAND kivo_render_queue_tests)
+add_test(NAME decode_boundary_tests COMMAND kivo_decode_boundary_tests)
 add_test(NAME fake_renderer_tests COMMAND kivo_fake_renderer_tests)
+if(TARGET kivo_wasapi_tests)
+    add_test(NAME wasapi_tests COMMAND kivo_wasapi_tests)
+endif()
+if(TARGET kivo_ffmpeg_decode_tests)
+    add_test(
+        NAME ffmpeg_decode_tests
+        COMMAND kivo_ffmpeg_decode_tests "${KIVO_FFMPEG_FIXTURE_DIR}")
+endif()
