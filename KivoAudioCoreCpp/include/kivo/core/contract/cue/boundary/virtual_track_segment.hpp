@@ -20,7 +20,7 @@ struct VirtualTrackSegment {
     uint64_t end_sample{0};
     uint32_t parent_track_count{0};
 
-    [[nodiscard]] bool operator==(const VirtualTrackSegment&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const VirtualTrackSegment&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
