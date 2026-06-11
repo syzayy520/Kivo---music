@@ -1,14 +1,14 @@
 # =============================================================================
 # KivoAudioCoreCpp — CMakeLists.txt
-# Phase: P0-C (Contract Harness and Foundational Types)
+# Phase: P0-D (Validation Hardening and Contract Correctness Repair)
 # =============================================================================
 #
-# P0-C Status: CONTRACT BUILD/TEST
+# P0-D Status: CONTRACT BUILD/TEST + VALIDATION HARDENING
 # Header-only contract library + contract test executable.
 # No runtime dependencies. No platform code. No third-party libraries.
 #
-# Iron Rule 6: P0-C CMake targets contract types only.
-# Iron Rule 7: Contract tests validate type semantics, not runtime behavior.
+# Iron Rule 6: P0-D CMake targets contract types and validation-only tests.
+# Iron Rule 7: Contract tests validate type semantics and public header composability, not runtime behavior.
 # =============================================================================
 
 cmake_minimum_required(VERSION 3.24)
@@ -31,11 +31,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 #   - Windows x64 target architecture
 #   - /W4 warning baseline
 #   - _WIN32_WINNT >= 0x0A00 (Windows 10+)
-# These are documented in docs/architecture/toolchain_and_build_policy.md
-# but NOT enforced here in P0-B (configure-only).
+# These are documented in docs/architecture/toolchain_and_build_policy.md.
 
 # =============================================================================
-# P0-C: Contract Build/Test Harness
+# P0-D: Contract Build/Test Harness
 # =============================================================================
 # Header-only contract library
 add_library(kivo_core_contract INTERFACE)
@@ -48,6 +47,7 @@ add_executable(kivo_contract_tests
     tests/contracts/foundation/result_tests.cpp
     tests/contracts/foundation/generation_id_tests.cpp
     tests/contracts/foundation/sample_position_tests.cpp
+    tests/contracts/composability/public_header_composability_tests.cpp
     tests/contracts/format/descriptor/audio_format_descriptor_tests.cpp
     tests/contracts/format/descriptor/sample_format_tests.cpp
     tests/contracts/format/descriptor/channel_layout_tests.cpp
