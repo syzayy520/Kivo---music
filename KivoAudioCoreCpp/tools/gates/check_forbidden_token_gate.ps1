@@ -115,7 +115,10 @@ if (Test-Path $cmakePath) {
         "kivo_contract_tests",
         "contract_tests",
         "kivo_capability_tests",
-        "kivo_contract_header_checks"
+        "kivo_core_render",
+        "kivo_render_boundary_tests",
+        "render_boundary_tests",
+        "kivo_public_header_checks"
     )
     foreach ($line in $cmakeLines) {
         if ($line -match "^\s*add_executable\((\w+)" -or $line -match "^\s*add_library\((\w+)") {

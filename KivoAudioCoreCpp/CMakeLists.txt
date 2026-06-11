@@ -1,14 +1,14 @@
 # =============================================================================
 # KivoAudioCoreCpp — CMakeLists.txt
-# Phase: P0-D (Validation Hardening and Contract Correctness Repair)
+# Phase: P0-E (Platform-Neutral Render Boundary)
 # =============================================================================
 #
-# P0-D Status: CONTRACT BUILD/TEST + VALIDATION HARDENING
-# Header-only contract library + contract test executable.
-# No runtime dependencies. No platform code. No third-party libraries.
+# P0-E Status: CONTRACTS + PLATFORM-NEUTRAL RENDER BOUNDARY
+# Header-only public boundaries plus isolated validation executables.
+# No runtime implementation. No platform code. No third-party libraries.
 #
-# Iron Rule 6: P0-D CMake targets contract types and validation-only tests.
-# Iron Rule 7: Contract tests validate type semantics and public header composability, not runtime behavior.
+# Boundary targets remain platform-neutral and validation-only.
+# Behavioral runtime implementation begins with the deterministic fake backend.
 # =============================================================================
 
 cmake_minimum_required(VERSION 3.24)
@@ -40,6 +40,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_library(kivo_core_contract INTERFACE)
 target_include_directories(kivo_core_contract INTERFACE include/)
 target_compile_features(kivo_core_contract INTERFACE cxx_std_20)
+
+# Platform-neutral render boundary
+add_library(kivo_core_render INTERFACE)
+target_include_directories(kivo_core_render INTERFACE include/)
+target_compile_features(kivo_core_render INTERFACE cxx_std_20)
+target_link_libraries(kivo_core_render INTERFACE kivo_core_contract)
 
 # Contract tests
 add_executable(kivo_contract_tests
@@ -174,11 +180,27 @@ target_compile_options(kivo_capability_tests PRIVATE
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
 )
 
+# Platform-neutral render boundary tests
+add_executable(kivo_render_boundary_tests
+    tests/render_boundary/render_boundary_tests_main.cpp
+    tests/render_boundary/identity_capability_tests.cpp
+    tests/render_boundary/format_lifecycle_tests.cpp
+    tests/render_boundary/audio_block_view_tests.cpp
+    tests/render_boundary/render_write_result_tests.cpp
+    tests/render_boundary/boundary_interface_tests.cpp
+)
+target_link_libraries(kivo_render_boundary_tests PRIVATE kivo_core_render)
+target_compile_features(kivo_render_boundary_tests PRIVATE cxx_std_20)
+target_compile_options(kivo_render_boundary_tests PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc /wd4127>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
+
 # Public header compile checks
-file(GLOB_RECURSE KIVO_PUBLIC_CONTRACT_HEADERS
+file(GLOB_RECURSE KIVO_PUBLIC_HEADERS
     CONFIGURE_DEPENDS
     RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/include"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/kivo/core/contract/*.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/kivo/*.hpp"
 )
 
 set(KIVO_HEADER_CHECK_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated/header_checks")
@@ -187,7 +209,7 @@ set(KIVO_HEADER_CHECK_SOURCES)
 set(KIVO_ALL_HEADERS_SOURCE "${KIVO_HEADER_CHECK_DIR}/all_public_headers.cpp")
 file(WRITE "${KIVO_ALL_HEADERS_SOURCE}" "")
 
-foreach(header IN LISTS KIVO_PUBLIC_CONTRACT_HEADERS)
+foreach(header IN LISTS KIVO_PUBLIC_HEADERS)
     string(REPLACE "/" "_" header_source_name "${header}")
     string(REPLACE "." "_" header_source_name "${header_source_name}")
     set(header_source "${KIVO_HEADER_CHECK_DIR}/${header_source_name}.cpp")
@@ -198,18 +220,20 @@ endforeach()
 
 list(APPEND KIVO_HEADER_CHECK_SOURCES "${KIVO_ALL_HEADERS_SOURCE}")
 
-add_library(kivo_contract_header_checks OBJECT ${KIVO_HEADER_CHECK_SOURCES})
-target_link_libraries(kivo_contract_header_checks PRIVATE kivo_core_contract)
-target_compile_features(kivo_contract_header_checks PRIVATE cxx_std_20)
-target_compile_options(kivo_contract_header_checks PRIVATE
+add_library(kivo_public_header_checks OBJECT ${KIVO_HEADER_CHECK_SOURCES})
+target_link_libraries(kivo_public_header_checks PRIVATE kivo_core_render)
+target_compile_features(kivo_public_header_checks PRIVATE cxx_std_20)
+target_compile_options(kivo_public_header_checks PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc>
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
 )
 
-add_dependencies(kivo_contract_tests kivo_contract_header_checks)
-add_dependencies(kivo_capability_tests kivo_contract_header_checks)
+add_dependencies(kivo_contract_tests kivo_public_header_checks)
+add_dependencies(kivo_capability_tests kivo_public_header_checks)
+add_dependencies(kivo_render_boundary_tests kivo_public_header_checks)
 
 # Register with CTest
 enable_testing()
 add_test(NAME contract_tests COMMAND kivo_contract_tests)
 add_test(NAME capability_tests COMMAND kivo_capability_tests)
+add_test(NAME render_boundary_tests COMMAND kivo_render_boundary_tests)

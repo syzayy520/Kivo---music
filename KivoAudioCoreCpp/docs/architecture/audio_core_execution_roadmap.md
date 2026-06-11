@@ -5,7 +5,7 @@
 **Effective Date:** 2026-06-12
 **Applies To:** `KivoAudioCoreCpp/`
 **Architecture Basis:** V10.1 FINAL P0-B READY LOCKED PATCHED
-**Current Execution Position:** P0-C closeout hardening before P0-D/P0-E implementation
+**Current Execution Position:** P0-D/P0-E deterministic fake renderer and fault injection
 
 ---
 
@@ -45,7 +45,7 @@ for the remaining audio-core phases.
 decode, product-core coordination, quality, host integration, and release work
 inside `KivoAudioCoreCpp/`.
 
-**Current Phase:** P0-C closeout hardening before P0-D/P0-E implementation.
+**Current Phase:** P0-D/P0-E deterministic fake renderer and fault injection.
 
 **Allowed:** Work that directly satisfies the active milestone, its tests, its
 validation requirements, or a documented correctness, safety, legal, privacy,
