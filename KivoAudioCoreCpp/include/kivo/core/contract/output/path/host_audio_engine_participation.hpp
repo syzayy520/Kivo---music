@@ -4,7 +4,7 @@
 // =============================================================================
 //
 // Expresses whether the platform's audio engine is in the output signal path.
-// Naming is Host (platform-neutral), NOT Windows/WASAPI.
+// Naming is Host to keep the contract platform-neutral.
 // Belongs to path/ truth family (engine participation is a path property).
 // Platform-neutral. No runtime engine interaction.
 // =============================================================================
