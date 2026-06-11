@@ -47,26 +47,26 @@ void run_realtime_buffer_contract_tests(ContractTestRunner& runner) {
         ASSERT(static_cast<uint8_t>(BufferOwnership::ImplicitAllowed) == 2);
     });
     
-    runner.run("buffer_lifetime_proof_not_specified", []() {
-        ASSERT(BufferLifetimeProof{BufferLifetimeProof::NotSpecified} == BufferLifetimeProof::NotSpecified);
+    runner.run("realtime_buffer_lifetime_proof_not_specified", []() {
+        ASSERT(RealtimeBufferLifetimeProof{RealtimeBufferLifetimeProof::NotSpecified} == RealtimeBufferLifetimeProof::NotSpecified);
     });
     
-    runner.run("buffer_lifetime_proof_across_boundary", []() {
-        ASSERT(BufferLifetimeProof{BufferLifetimeProof::MustBeProvableAcrossBoundary} == BufferLifetimeProof::MustBeProvableAcrossBoundary);
+    runner.run("realtime_buffer_lifetime_proof_across_boundary", []() {
+        ASSERT(RealtimeBufferLifetimeProof{RealtimeBufferLifetimeProof::MustBeProvableAcrossBoundary} == RealtimeBufferLifetimeProof::MustBeProvableAcrossBoundary);
     });
     
-    runner.run("buffer_lifetime_proof_within_boundary", []() {
-        ASSERT(BufferLifetimeProof{BufferLifetimeProof::MustBeProvableWithinBoundary} == BufferLifetimeProof::MustBeProvableWithinBoundary);
+    runner.run("realtime_buffer_lifetime_proof_within_boundary", []() {
+        ASSERT(RealtimeBufferLifetimeProof{RealtimeBufferLifetimeProof::MustBeProvableWithinBoundary} == RealtimeBufferLifetimeProof::MustBeProvableWithinBoundary);
     });
     
-    runner.run("buffer_lifetime_proof_no_requirement", []() {
-        ASSERT(BufferLifetimeProof{BufferLifetimeProof::NoRequirement} == BufferLifetimeProof::NoRequirement);
+    runner.run("realtime_buffer_lifetime_proof_no_requirement", []() {
+        ASSERT(RealtimeBufferLifetimeProof{RealtimeBufferLifetimeProof::NoRequirement} == RealtimeBufferLifetimeProof::NoRequirement);
     });
     
-    runner.run("buffer_lifetime_proof_enum_values", []() {
-        ASSERT(static_cast<uint8_t>(BufferLifetimeProof::NotSpecified) == 0);
-        ASSERT(static_cast<uint8_t>(BufferLifetimeProof::MustBeProvableAcrossBoundary) == 1);
-        ASSERT(static_cast<uint8_t>(BufferLifetimeProof::MustBeProvableWithinBoundary) == 2);
-        ASSERT(static_cast<uint8_t>(BufferLifetimeProof::NoRequirement) == 3);
+    runner.run("realtime_buffer_lifetime_proof_enum_values", []() {
+        ASSERT(static_cast<uint8_t>(RealtimeBufferLifetimeProof::NotSpecified) == 0);
+        ASSERT(static_cast<uint8_t>(RealtimeBufferLifetimeProof::MustBeProvableAcrossBoundary) == 1);
+        ASSERT(static_cast<uint8_t>(RealtimeBufferLifetimeProof::MustBeProvableWithinBoundary) == 2);
+        ASSERT(static_cast<uint8_t>(RealtimeBufferLifetimeProof::NoRequirement) == 3);
     });
 }
