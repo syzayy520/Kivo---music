@@ -1,11 +1,9 @@
 // =============================================================================
 // KivoAudioCoreCpp — codec_delay.hpp
-// Contract: Codec decoder delay in samples
+// Contract: Codec delay in samples
 // =============================================================================
 //
-// Platform-neutral codec delay reservation.
-// No real decoder, no parser, no demuxer.
-// =============================================================================
+
 
 #pragma once
 
@@ -14,7 +12,7 @@
 namespace kivo::core::contract {
 
 // =============================================================================
-// CodecDelay — Decoder delay in samples
+// CodecDelay — Codec delay in samples
 // =============================================================================
 struct CodecDelay {
     uint64_t samples{0};

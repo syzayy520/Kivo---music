@@ -3,10 +3,7 @@
 // Contract: Source time range in samples
 // =============================================================================
 //
-// Platform-neutral source time range reservation.
-// No P0-C-008 source include, no real demuxer.
-// source_ref is an opaque numeric reference.
-// =============================================================================
+
 
 #pragma once
 

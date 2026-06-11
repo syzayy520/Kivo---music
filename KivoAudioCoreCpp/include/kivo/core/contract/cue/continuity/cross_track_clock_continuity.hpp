@@ -3,10 +3,7 @@
 // Contract: Cross-track clock continuity state
 // =============================================================================
 //
-// Platform-neutral cross-track clock continuity reservation.
-// No P0-C-002 clock include, no real playback, no crossfade.
-// All fields are opaque numeric values.
-// =============================================================================
+
 
 #pragma once
 

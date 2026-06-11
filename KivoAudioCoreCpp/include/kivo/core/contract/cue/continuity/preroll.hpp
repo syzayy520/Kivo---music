@@ -3,9 +3,7 @@
 // Contract: Preroll samples for codec initialization
 // =============================================================================
 //
-// Platform-neutral preroll reservation.
-// No real decoder, no parser, no demuxer.
-// =============================================================================
+
 
 #pragma once
 

@@ -3,9 +3,7 @@
 // Contract: Track segment range combining source and timeline ranges
 // =============================================================================
 //
-// P0-C-009 internal helper type. Not a media library track model.
-// No real demuxer, no track model.
-// =============================================================================
+
 
 #pragma once
 

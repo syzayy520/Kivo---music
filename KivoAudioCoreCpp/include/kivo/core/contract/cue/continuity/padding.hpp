@@ -3,9 +3,7 @@
 // Contract: Encoder padding in samples
 // =============================================================================
 //
-// Platform-neutral encoder padding reservation.
-// No real decoder, no parser, no demuxer.
-// =============================================================================
+
 
 #pragma once
 

@@ -2,10 +2,7 @@
 // KivoAudioCoreCpp — whole_album_file.hpp
 // Contract: Whole album file boundary definition
 // =============================================================================
-//
-// Platform-neutral whole album file reservation.
-// No file API, no real demuxer.
-// =============================================================================
+
 
 #pragma once
 

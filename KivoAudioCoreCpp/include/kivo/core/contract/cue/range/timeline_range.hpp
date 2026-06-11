@@ -3,9 +3,7 @@
 // Contract: Timeline range in samples
 // =============================================================================
 //
-// Platform-neutral timeline range reservation.
-// No real playback, no clock.
-// =============================================================================
+
 
 #pragma once
 

@@ -3,9 +3,7 @@
 // Contract: CUE sheet track boundary definition
 // =============================================================================
 //
-// Platform-neutral CUE sheet boundary reservation.
-// No CUE parser, no real demuxer.
-// =============================================================================
+
 
 #pragma once
 

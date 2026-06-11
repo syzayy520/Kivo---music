@@ -1,11 +1,9 @@
 // =============================================================================
 // KivoAudioCoreCpp — prefetch.hpp
-// Contract: Prefetch samples for seamless playback
+// Contract: Prefetch samples for seamless media
 // =============================================================================
 //
-// Platform-neutral prefetch reservation.
-// No real playback, no buffer management.
-// =============================================================================
+
 
 #pragma once
 
@@ -14,7 +12,7 @@
 namespace kivo::core::contract {
 
 // =============================================================================
-// Prefetch — Prefetch samples for seamless playback
+// Prefetch — Prefetch samples for seamless media
 // =============================================================================
 struct Prefetch {
     uint64_t samples{0};

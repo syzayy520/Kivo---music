@@ -3,9 +3,7 @@
 // Contract: Virtual track segment boundary definition
 // =============================================================================
 //
-// Platform-neutral virtual track segment reservation.
-// No real demuxer, no track model.
-// =============================================================================
+
 
 #pragma once
 

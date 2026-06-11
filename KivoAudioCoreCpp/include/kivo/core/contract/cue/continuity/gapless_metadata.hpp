@@ -1,11 +1,9 @@
 // =============================================================================
 // KivoAudioCoreCpp — gapless_metadata.hpp
-// Contract: Gapless playback metadata
+// Contract: Gapless media metadata
 // =============================================================================
 //
-// Platform-neutral gapless metadata reservation.
-// No real gapless playback, no P0-L implementation.
-// =============================================================================
+
 
 #pragma once
 
@@ -18,7 +16,7 @@
 namespace kivo::core::contract {
 
 // =============================================================================
-// GaplessMetadata — Gapless playback metadata
+// GaplessMetadata — Gapless media metadata
 // =============================================================================
 struct GaplessMetadata {
     CodecDelay codec_delay{};
