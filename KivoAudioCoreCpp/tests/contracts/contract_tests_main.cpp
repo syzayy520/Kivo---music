@@ -109,6 +109,12 @@ void run_observability_metric_tests(ContractTestRunner& runner);
 void run_observability_trace_tests(ContractTestRunner& runner);
 void run_observability_diagnostic_tests(ContractTestRunner& runner);
 void run_observability_contract_tests(ContractTestRunner& runner);
+void run_privacy_policy_tests(ContractTestRunner& runner);
+void run_distribution_policy_tests(ContractTestRunner& runner);
+void run_audio_core_policy_contract_tests(ContractTestRunner& runner);
+
+
+
 
 
 
@@ -218,6 +224,12 @@ int main() {
     run_observability_trace_tests(runner);
     run_observability_diagnostic_tests(runner);
     run_observability_contract_tests(runner);
+    run_privacy_policy_tests(runner);
+    run_distribution_policy_tests(runner);
+    run_audio_core_policy_contract_tests(runner);
+
+
+
 
 
 

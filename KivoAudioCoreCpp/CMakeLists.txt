@@ -143,6 +143,9 @@ add_executable(kivo_contract_tests
     tests/contracts/observability/trace/observability_trace_tests.cpp
     tests/contracts/observability/diagnostic/observability_diagnostic_tests.cpp
     tests/contracts/observability/contract/observability_contract_tests.cpp
+    tests/contracts/policy/privacy/privacy_policy_tests.cpp
+    tests/contracts/policy/distribution/distribution_policy_tests.cpp
+    tests/contracts/policy/contract/audio_core_policy_contract_tests.cpp
 )
 target_link_libraries(kivo_contract_tests PRIVATE kivo_core_contract)
 target_compile_features(kivo_contract_tests PRIVATE cxx_std_20)

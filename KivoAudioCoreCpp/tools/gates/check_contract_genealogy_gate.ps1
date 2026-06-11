@@ -52,7 +52,8 @@ $allowedProductionDirs = @(
     "error",
     "state",
     "command",
-    "observability"
+    "observability",
+    "policy"
 )
 
 if (Test-Path $contractRoot) {
@@ -361,7 +362,8 @@ $allowedTestDirs = @(
     "error",
     "state",
     "command",
-    "observability"
+    "observability",
+    "policy"
 )
 
 if (Test-Path $testsRoot) {
@@ -1319,6 +1321,50 @@ if (Test-Path $observabilityDir) {
 }
 
 # =============================================================================
+# Rule G3q: Policy family — subdirectory tree with exact allowlists
+# =============================================================================
+$policySubdirAllowlists = @{
+    "privacy"      = @("privacy_boundary_rule.hpp", "path_exposure_policy.hpp", "source_identity_sanitization.hpp", "observation_control_policy.hpp")
+    "distribution" = @("third_party_notice_policy.hpp", "codec_distribution_policy.hpp", "binary_provenance_policy.hpp", "commercial_claim_policy.hpp")
+    "contract"     = @("audio_core_policy_contract.hpp")
+}
+
+$policyDir = Join-Path $contractRoot "policy"
+if (Test-Path $policyDir) {
+    # Root must be empty of .hpp files (all in subdirectories)
+    $rootHpp = Get-ChildItem -Path $policyDir -Filter "*.hpp"
+    if ($rootHpp.Count -gt 0) {
+        foreach ($f in $rootHpp) {
+            $violations += "G3q: Production file at policy/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    # Validate each subdirectory
+    foreach ($subdir in $policySubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $policyDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.hpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $policySubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G3q: Unexpected file in policy/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G3q: Missing file in policy/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G3q: Missing policy subdirectory: policy/$subdir/"
+        }
+    }
+} else {
+    $violations += "G3q: Missing production family directory: include/kivo/core/contract/policy/"
+}
+
+# =============================================================================
 # Rule G6k: Error test family — subdirectory tree with exact allowlists
 # =============================================================================
 $errorTestSubdirAllowlists = @{
@@ -1496,6 +1542,49 @@ if (Test-Path $observabilityTestDir) {
     }
 } else {
     $violations += "G6n: Missing test family directory: tests/contracts/observability/"
+}
+
+# =============================================================================
+# Rule G6o: Policy test family — subdirectory tree with exact allowlists
+# =============================================================================
+$policyTestSubdirAllowlists = @{
+    "privacy"      = @("privacy_policy_tests.cpp")
+    "distribution" = @("distribution_policy_tests.cpp")
+    "contract"     = @("audio_core_policy_contract_tests.cpp")
+}
+
+$policyTestDir = Join-Path $testsRoot "policy"
+if (Test-Path $policyTestDir) {
+    # Root must be empty of .cpp files (all in subdirectories)
+    $rootCpp = Get-ChildItem -Path $policyTestDir -Filter "*.cpp"
+    if ($rootCpp.Count -gt 0) {
+        foreach ($f in $rootCpp) {
+            $violations += "G6o: Test file at policy/ root (should be in subdirectory): $($f.Name)"
+        }
+    }
+
+    foreach ($subdir in $policyTestSubdirAllowlists.Keys) {
+        $subdirPath = Join-Path $policyTestDir $subdir
+        if (Test-Path $subdirPath) {
+            $actualFiles = Get-ChildItem -Path $subdirPath -Filter "*.cpp" | ForEach-Object { $_.Name }
+            $expectedFiles = $policyTestSubdirAllowlists[$subdir]
+
+            foreach ($f in $actualFiles) {
+                if ($f -notin $expectedFiles) {
+                    $violations += "G6o: Unexpected test file in policy/$subdir/: $f"
+                }
+            }
+            foreach ($f in $expectedFiles) {
+                if ($f -notin $actualFiles) {
+                    $violations += "G6o: Missing test file in policy/$subdir/: $f"
+                }
+            }
+        } else {
+            $violations += "G6o: Missing policy test subdirectory: policy/$subdir/"
+        }
+    }
+} else {
+    $violations += "G6o: Missing test family directory: tests/contracts/policy/"
 }
 
 # =============================================================================
