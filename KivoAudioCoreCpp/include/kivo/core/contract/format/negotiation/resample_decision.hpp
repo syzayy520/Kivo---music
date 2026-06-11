@@ -33,7 +33,7 @@ struct ResampleDecision {
     uint32_t target_rate{0};
 
     // --- Convenience ---
-    [[nodiscard]] bool is_needed() const noexcept {
+    [[nodiscard]] constexpr bool is_needed() const noexcept {
         return resample;
     }
 
