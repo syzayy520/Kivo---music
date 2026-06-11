@@ -12,7 +12,7 @@ struct ReaderBoundaryContract {
     ReaderCapability capability{};
     SourceOwnershipPolicy ownership{SourceOwnershipPolicy::NotSpecified};
 
-    [[nodiscard]] bool operator==(const ReaderBoundaryContract&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const ReaderBoundaryContract&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
