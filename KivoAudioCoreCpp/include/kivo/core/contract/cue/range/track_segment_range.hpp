@@ -2,8 +2,6 @@
 // KivoAudioCoreCpp — track_segment_range.hpp
 // Contract: Track segment range combining source and timeline ranges
 // =============================================================================
-//
-
 
 #pragma once
 
