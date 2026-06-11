@@ -17,7 +17,7 @@ namespace kivo::core::contract {
 struct Padding {
     uint64_t samples{0};
 
-    [[nodiscard]] bool operator==(const Padding&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const Padding&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
