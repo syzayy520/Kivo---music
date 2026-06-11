@@ -17,7 +17,7 @@ struct ObservabilityContract {
     uint32_t max_trace_records{0};
     uint32_t max_diagnostic_snapshots{0};
 
-    bool operator==(const ObservabilityContract&) const noexcept = default;
+    [[nodiscard]] bool operator==(const ObservabilityContract&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract::observability
