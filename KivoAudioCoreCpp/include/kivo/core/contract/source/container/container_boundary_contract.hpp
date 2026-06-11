@@ -12,7 +12,7 @@ struct ContainerBoundaryContract {
     ContainerCapability capability{};
     SourceOwnershipPolicy ownership{SourceOwnershipPolicy::NotSpecified};
 
-    [[nodiscard]] bool operator==(const ContainerBoundaryContract&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const ContainerBoundaryContract&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
