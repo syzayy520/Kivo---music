@@ -36,7 +36,7 @@ struct BitPerfectEligibility {
     bool no_mixing_needed{false};    // no channel remixing
 
     // --- Convenience ---
-    [[nodiscard]] bool is_eligible() const noexcept {
+    [[nodiscard]] constexpr bool is_eligible() const noexcept {
         return status == BitPerfectStatus::Eligible;
     }
 
