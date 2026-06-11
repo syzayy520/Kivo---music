@@ -20,7 +20,7 @@ namespace kivo::core::contract {
 // NativeDecodedFormat — Format after decode, before any pipeline conversions
 // =============================================================================
 struct NativeDecodedFormat {
-    AudioFormatDescriptor format;
+    AudioFormatDescriptor format{};
 
     // --- Validity ---
     [[nodiscard]] bool is_valid() const noexcept {
