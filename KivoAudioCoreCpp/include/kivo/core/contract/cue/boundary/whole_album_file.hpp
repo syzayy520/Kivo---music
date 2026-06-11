@@ -3,7 +3,6 @@
 // Contract: Whole album file boundary definition
 // =============================================================================
 
-
 #pragma once
 
 #include <cstdint>
