@@ -18,7 +18,7 @@ struct TimelineRange {
     uint64_t start_sample{0};
     uint64_t end_sample{0};
 
-    [[nodiscard]] bool operator==(const TimelineRange&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const TimelineRange&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
