@@ -110,7 +110,13 @@ if (Test-Path $cmakePath) {
     }
     # Check for non-contract targets
     $cmakeLines = $cmakeContent -split "`n"
-    $allowedTargets = @("kivo_core_contract", "kivo_contract_tests", "contract_tests", "kivo_capability_tests")
+    $allowedTargets = @(
+        "kivo_core_contract",
+        "kivo_contract_tests",
+        "contract_tests",
+        "kivo_capability_tests",
+        "kivo_contract_header_checks"
+    )
     foreach ($line in $cmakeLines) {
         if ($line -match "^\s*add_executable\((\w+)" -or $line -match "^\s*add_library\((\w+)") {
             $targetName = $Matches[1]

@@ -174,6 +174,41 @@ target_compile_options(kivo_capability_tests PRIVATE
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
 )
 
+# Public header compile checks
+file(GLOB_RECURSE KIVO_PUBLIC_CONTRACT_HEADERS
+    CONFIGURE_DEPENDS
+    RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/kivo/core/contract/*.hpp"
+)
+
+set(KIVO_HEADER_CHECK_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated/header_checks")
+file(MAKE_DIRECTORY "${KIVO_HEADER_CHECK_DIR}")
+set(KIVO_HEADER_CHECK_SOURCES)
+set(KIVO_ALL_HEADERS_SOURCE "${KIVO_HEADER_CHECK_DIR}/all_public_headers.cpp")
+file(WRITE "${KIVO_ALL_HEADERS_SOURCE}" "")
+
+foreach(header IN LISTS KIVO_PUBLIC_CONTRACT_HEADERS)
+    string(REPLACE "/" "_" header_source_name "${header}")
+    string(REPLACE "." "_" header_source_name "${header_source_name}")
+    set(header_source "${KIVO_HEADER_CHECK_DIR}/${header_source_name}.cpp")
+    file(WRITE "${header_source}" "#include \"${header}\"\n")
+    file(APPEND "${KIVO_ALL_HEADERS_SOURCE}" "#include \"${header}\"\n")
+    list(APPEND KIVO_HEADER_CHECK_SOURCES "${header_source}")
+endforeach()
+
+list(APPEND KIVO_HEADER_CHECK_SOURCES "${KIVO_ALL_HEADERS_SOURCE}")
+
+add_library(kivo_contract_header_checks OBJECT ${KIVO_HEADER_CHECK_SOURCES})
+target_link_libraries(kivo_contract_header_checks PRIVATE kivo_core_contract)
+target_compile_features(kivo_contract_header_checks PRIVATE cxx_std_20)
+target_compile_options(kivo_contract_header_checks PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
+
+add_dependencies(kivo_contract_tests kivo_contract_header_checks)
+add_dependencies(kivo_capability_tests kivo_contract_header_checks)
+
 # Register with CTest
 enable_testing()
 add_test(NAME contract_tests COMMAND kivo_contract_tests)

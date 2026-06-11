@@ -5,7 +5,7 @@
 
 param(
     [string]$ProjectRoot,
-    [string]$RemoteRef = "origin/master"
+    [string]$RemoteRef
 )
 
 $ErrorActionPreference = "Stop"
@@ -26,8 +26,15 @@ try {
     Write-Host "============================================================================="
     Write-Host ""
 
-    $status = git status --short
     $branch = git branch --show-current
+    if (-not $RemoteRef) {
+        $RemoteRef = git rev-parse --abbrev-ref --symbolic-full-name "@{upstream}" 2>$null
+        if (-not $RemoteRef) {
+            $RemoteRef = "origin/master"
+        }
+    }
+
+    $status = git status --short
     $head = git rev-parse HEAD
     $remote = git rev-parse $RemoteRef
 

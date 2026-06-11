@@ -101,7 +101,13 @@ $cmakePath = Join-Path $ProjectRoot "CMakeLists.txt"
 if (Test-Path $cmakePath) {
     $cmakeContent = Get-Content $cmakePath -Raw
     $lines = $cmakeContent -split "`n"
-    $allowedTargetNames = @("kivo_core_contract", "kivo_contract_tests", "contract_tests", "kivo_capability_tests")
+    $allowedTargetNames = @(
+        "kivo_core_contract",
+        "kivo_contract_tests",
+        "contract_tests",
+        "kivo_capability_tests",
+        "kivo_contract_header_checks"
+    )
     foreach ($pattern in @("add_executable", "add_library")) {
         foreach ($line in $lines) {
             if ($line -match $pattern -and $line -notmatch "^\s*#") {
@@ -138,7 +144,7 @@ Write-Host "--- Scan Scope ---"
 Write-Host "Checking: runtime directories, source files, CMake targets, vendor dirs"
 Write-Host "Excluding: docs/, tools/, .build/, build/, .git/"
 Write-Host "Allowed contract paths: include/kivo/core/contract/, src/core/contract/, tests/contracts/"
-Write-Host "Allowed CMake targets: kivo_core_contract, kivo_contract_tests, kivo_capability_tests"
+Write-Host "Allowed CMake targets: kivo_core_contract, kivo_contract_tests, kivo_capability_tests, kivo_contract_header_checks"
 Write-Host ""
 
 if ($violations.Count -eq 0) {

@@ -14,6 +14,9 @@ if (-not $ProjectRoot) {
 }
 $ProjectRoot = (Resolve-Path $ProjectRoot).Path
 
+. (Join-Path $PSScriptRoot "import_msvc_environment.ps1")
+$msvcEnvironmentImported = Import-KivoMsvcEnvironment
+
 function Test-CommandAvailable {
     param([Parameter(Mandatory = $true)][string]$Name)
     return $null -ne (Get-Command $Name -ErrorAction SilentlyContinue)
@@ -48,8 +51,9 @@ Write-Host ("  {0,-12} {1}" -f "ninja", $(if ($hasNinja) { "FOUND" } else { "MIS
 Write-Host ""
 
 if ($hasCl) {
-    Write-Host "Current shell already exposes MSVC cl."
-    Write-Host "CLASSIFICATION: PASS_TOOLCHAIN_SHELL_READY"
+    Write-Host "MSVC cl is available in this validation process."
+    Write-Host ("Environment imported automatically: {0}" -f $msvcEnvironmentImported)
+    Write-Host "CLASSIFICATION: PASS_TOOLCHAIN_READY"
     exit 0
 }
 

@@ -59,7 +59,7 @@ struct ChannelMask {
     }
 
     // --- Comparison ---
-    [[nodiscard]] bool operator==(const ChannelMask&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const ChannelMask&) const noexcept = default;
 };
 
 // =============================================================================

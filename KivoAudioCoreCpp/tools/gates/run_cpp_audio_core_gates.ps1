@@ -13,6 +13,9 @@ param(
 
 $ErrorActionPreference = "Continue"
 
+# Keep gate output and child-process diagnostics stable on localized Windows.
+chcp 65001 | Out-Null
+
 # Resolve PROJECT_ROOT — always resolve to absolute path
 if (-not $ProjectRoot) {
     $ProjectRoot = Join-Path $PSScriptRoot "..\.."
