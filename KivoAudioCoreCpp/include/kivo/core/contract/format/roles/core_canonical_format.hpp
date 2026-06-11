@@ -28,7 +28,7 @@ struct CoreCanonicalFormat {
     }
 
     // --- Comparison ---
-    [[nodiscard]] bool operator==(const CoreCanonicalFormat&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const CoreCanonicalFormat&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
