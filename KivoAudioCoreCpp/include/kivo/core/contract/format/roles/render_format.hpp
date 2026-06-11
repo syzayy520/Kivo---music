@@ -28,7 +28,7 @@ struct RenderFormat {
     }
 
     // --- Comparison ---
-    [[nodiscard]] bool operator==(const RenderFormat&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const RenderFormat&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
