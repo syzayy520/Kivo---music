@@ -21,7 +21,7 @@ struct TrackSegmentRange {
     SourceTimeRange source_range{};
     TimelineRange timeline_range{};
 
-    [[nodiscard]] bool operator==(const TrackSegmentRange&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const TrackSegmentRange&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
