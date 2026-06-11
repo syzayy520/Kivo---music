@@ -28,7 +28,7 @@ struct DeviceFormat {
     }
 
     // --- Comparison ---
-    [[nodiscard]] bool operator==(const DeviceFormat&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const DeviceFormat&) const noexcept = default;
 };
 
 } // namespace kivo::core::contract
