@@ -10,6 +10,7 @@ namespace kivo::core::playback {
 enum class DecodeRenderQueueProducerState : uint8_t {
     Ready = 0,
     Running,
+    PrefetchedEndOfStream,
     EndOfStream,
     Failed
 };

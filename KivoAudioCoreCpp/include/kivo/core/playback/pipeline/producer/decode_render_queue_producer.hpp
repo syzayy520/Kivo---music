@@ -30,6 +30,7 @@ public:
     DecodeRenderQueueProducer& operator=(DecodeRenderQueueProducer&&) = delete;
 
     [[nodiscard]] DecodeRenderQueueProducerResult step() noexcept;
+    [[nodiscard]] DecodeRenderQueueProducerResult prefetch() noexcept;
     [[nodiscard]] DecodeRenderQueueProducerSnapshot snapshot() const noexcept;
 
 private:

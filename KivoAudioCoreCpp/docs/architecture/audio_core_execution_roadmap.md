@@ -5,7 +5,7 @@
 **Effective Date:** 2026-06-12
 **Applies To:** `KivoAudioCoreCpp/`
 **Architecture Basis:** V10.1 FINAL P0-B READY LOCKED PATCHED
-**Current Execution Position:** P0-L gapless and timeline accuracy
+**Current Execution Position:** P0-M exclusive and bit-perfect truth
 
 ---
 
@@ -45,7 +45,7 @@ for the remaining audio-core phases.
 decode, product-core coordination, quality, host integration, and release work
 inside `KivoAudioCoreCpp/`.
 
-**Current Phase:** P0-F/P0-H WASAPI adapter shell and generated PCM output.
+**Current Phase:** P0-M exclusive output and bit-perfect truth proof.
 
 **Allowed:** Work that directly satisfies the active milestone, its tests, its
 validation requirements, or a documented correctness, safety, legal, privacy,

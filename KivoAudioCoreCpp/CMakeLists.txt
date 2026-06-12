@@ -304,6 +304,22 @@ target_compile_options(kivo_playback_pipeline PRIVATE
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
 )
 
+add_library(kivo_playback_gapless STATIC
+    src/core/playback/gapless/coordinator/gapless_transition_coordinator_facade.cpp
+    src/core/playback/gapless/coordinator/gapless_transition_coordinator_prepare.cpp
+    src/core/playback/gapless/coordinator/gapless_transition_coordinator_step.cpp
+    src/core/playback/gapless/position/gapless_position_estimator.cpp
+    src/core/playback/gapless/segment/whole_file_segment_plan.cpp
+    src/core/playback/gapless/transition/gapless_transition_evaluator.cpp
+)
+target_link_libraries(kivo_playback_gapless PUBLIC kivo_playback_pipeline)
+target_include_directories(kivo_playback_gapless PUBLIC include/)
+target_compile_features(kivo_playback_gapless PUBLIC cxx_std_20)
+target_compile_options(kivo_playback_gapless PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
+
 add_library(kivo_playback_runtime STATIC
     src/core/playback/runtime/coordinator/playback_runtime_coordinator.cpp
     src/core/playback/runtime/command/playback_runtime_command_dispatch.cpp
@@ -533,6 +549,21 @@ add_executable(kivo_playback_pipeline_tests
 target_link_libraries(kivo_playback_pipeline_tests PRIVATE kivo_playback_pipeline)
 target_compile_features(kivo_playback_pipeline_tests PRIVATE cxx_std_20)
 target_compile_options(kivo_playback_pipeline_tests PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc /wd4127>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
+
+add_executable(kivo_playback_gapless_tests
+    tests/playback_gapless/runner/playback_gapless_tests_main.cpp
+    tests/playback_gapless/scenario/compatibility/transition_compatibility_tests.cpp
+    tests/playback_gapless/scenario/continuity/queue_continuity_tests.cpp
+    tests/playback_gapless/scenario/continuity/transition_coordinator_tests.cpp
+    tests/playback_gapless/scenario/position/position_estimator_tests.cpp
+    tests/playback_gapless/scenario/segment/whole_file_segment_tests.cpp
+)
+target_link_libraries(kivo_playback_gapless_tests PRIVATE kivo_playback_gapless)
+target_compile_features(kivo_playback_gapless_tests PRIVATE cxx_std_20)
+target_compile_options(kivo_playback_gapless_tests PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc /wd4127>
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
 )
@@ -803,6 +834,7 @@ add_dependencies(kivo_render_queue_tests kivo_public_header_checks)
 add_dependencies(kivo_decode_boundary_tests kivo_public_header_checks)
 add_dependencies(kivo_playback_session_tests kivo_public_header_checks)
 add_dependencies(kivo_playback_pipeline_tests kivo_public_header_checks)
+add_dependencies(kivo_playback_gapless_tests kivo_public_header_checks)
 add_dependencies(kivo_playback_runtime_tests kivo_public_header_checks)
 add_dependencies(kivo_fake_renderer_tests kivo_public_header_checks)
 if(TARGET kivo_stability_tests)
@@ -831,6 +863,7 @@ add_test(NAME render_queue_tests COMMAND kivo_render_queue_tests)
 add_test(NAME decode_boundary_tests COMMAND kivo_decode_boundary_tests)
 add_test(NAME playback_session_tests COMMAND kivo_playback_session_tests)
 add_test(NAME playback_pipeline_tests COMMAND kivo_playback_pipeline_tests)
+add_test(NAME playback_gapless_tests COMMAND kivo_playback_gapless_tests)
 add_test(NAME playback_runtime_tests COMMAND kivo_playback_runtime_tests)
 add_test(NAME fake_renderer_tests COMMAND kivo_fake_renderer_tests)
 if(TARGET kivo_stability_tests)

@@ -20,6 +20,7 @@ public:
 
     [[nodiscard]] bool allocate() noexcept;
     [[nodiscard]] DecodeRenderQueueProducerResult step() noexcept;
+    [[nodiscard]] DecodeRenderQueueProducerResult prefetch() noexcept;
     [[nodiscard]] DecodeRenderQueueProducerSnapshot snapshot() const noexcept;
 
 private:
@@ -29,6 +30,7 @@ private:
     [[nodiscard]] DecodeRenderQueueProducerResult enqueue_active() noexcept;
     [[nodiscard]] DecodeRenderQueueProducerResult failed(
         decode::DecodeFailure failure) noexcept;
+    [[nodiscard]] DecodeRenderQueueProducerResult finish() noexcept;
     static void saturating_increment(uint64_t& value) noexcept;
     static void saturating_add(
         contract::FrameCount& value,

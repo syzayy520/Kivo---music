@@ -72,4 +72,59 @@ void chunking_preserves_offsets_and_terminal_tail() {
     PIPELINE_ASSERT(snapshot.queued_blocks == 3);
 }
 
+void non_final_track_keeps_queue_open_and_maps_timeline() {
+    using namespace kivo;
+    const std::array<std::byte, 32> bytes{};
+    ScriptedDecoder decoder;
+    decoder.blocks[0] = decoded_block(bytes, 4, 0, 2, 3);
+    decoder.block_count = 1;
+    auto queue = core::render::SpscAudioBlockQueue::create({2, 32});
+    PIPELINE_ASSERT(queue);
+    auto pipeline = producer(
+        decoder,
+        *queue,
+        32,
+        4,
+        400,
+        core::playback::QueueEndOfStreamPolicy::KeepOpen);
+    PIPELINE_ASSERT(pipeline);
+
+    PIPELINE_ASSERT(
+        pipeline->step().disposition
+        == core::playback::DecodeRenderQueueProducerDisposition::Primed);
+    PIPELINE_ASSERT(
+        pipeline->step().disposition
+        == core::playback::DecodeRenderQueueProducerDisposition::EndOfStream);
+    const auto front = queue->try_peek();
+    PIPELINE_ASSERT(front);
+    PIPELINE_ASSERT(front->frame_offset == 400);
+    PIPELINE_ASSERT(!front->end_of_stream);
+    PIPELINE_ASSERT(!queue->producer_closed());
+}
+
+void timeline_offset_overflow_fails_before_queue_mutation() {
+    using namespace kivo;
+    const std::array<std::byte, 32> bytes{};
+    ScriptedDecoder decoder;
+    decoder.blocks[0] = decoded_block(bytes, 4, 1, 2, 3);
+    decoder.block_count = 1;
+    auto queue = core::render::SpscAudioBlockQueue::create({2, 32});
+    PIPELINE_ASSERT(queue);
+    auto pipeline = producer(
+        decoder,
+        *queue,
+        32,
+        4,
+        core::contract::kInvalidSamplePosition - 2);
+    PIPELINE_ASSERT(pipeline);
+
+    const auto result = pipeline->step();
+    PIPELINE_ASSERT(
+        result.disposition
+        == core::playback::DecodeRenderQueueProducerDisposition::Failed);
+    PIPELINE_ASSERT(
+        result.decode_failure == core::decode::DecodeFailure::InvalidBuffer);
+    PIPELINE_ASSERT(queue->empty());
+}
+
 } // namespace playback_pipeline_test

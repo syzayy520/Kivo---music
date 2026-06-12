@@ -34,6 +34,19 @@ DecodeRenderQueueProducer::Impl::store_decoded(
         snapshot_.state = DecodeRenderQueueProducerState::Failed;
         return pipeline_buffer::StoreResult::Failed;
     }
+    const auto maximum =
+        std::numeric_limits<contract::SamplePosition>::max();
+    if (block.frame_offset
+            > maximum - configuration_.timeline_origin_frames
+        || block.frame_count
+            > maximum
+                - configuration_.timeline_origin_frames
+                - block.frame_offset) {
+        snapshot_.last_decode_failure =
+            decode::DecodeFailure::InvalidBuffer;
+        snapshot_.state = DecodeRenderQueueProducerState::Failed;
+        return pipeline_buffer::StoreResult::Failed;
+    }
     const size_t index = held_index_ ? 1u - *held_index_ : 0u;
     auto& stored = blocks_[index];
     std::memcpy(
@@ -84,11 +97,16 @@ DecodeRenderQueueProducer::Impl::enqueue_active() noexcept {
             block.byte_count}.subspan(byte_offset, byte_count),
         format_,
         frames,
-        block.frame_offset + active_cursor_,
+        configuration_.timeline_origin_frames
+            + block.frame_offset
+            + active_cursor_,
         next_buffer_id_,
         {block.decode_generation.id},
         generations,
-        active_is_terminal_ && frames == remaining
+        configuration_.end_of_stream_policy
+                == QueueEndOfStreamPolicy::CloseAndMarkFinal
+            && active_is_terminal_
+            && frames == remaining
     };
     const auto push = queue_.try_push(view);
     if (push == render::SpscQueuePushResult::Full) {
@@ -124,7 +142,10 @@ DecodeRenderQueueProducer::Impl::enqueue_active() noexcept {
         active_cursor_ = 0;
         active_is_terminal_ = false;
         if (terminal) {
-            queue_.close_producer();
+            if (configuration_.end_of_stream_policy
+                == QueueEndOfStreamPolicy::CloseAndMarkFinal) {
+                queue_.close_producer();
+            }
             snapshot_.state =
                 DecodeRenderQueueProducerState::EndOfStream;
             return {

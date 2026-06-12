@@ -80,6 +80,13 @@ DecodeRenderQueueProducerResult DecodeRenderQueueProducer::step() noexcept {
         : DecodeRenderQueueProducerResult{};
 }
 
+DecodeRenderQueueProducerResult
+DecodeRenderQueueProducer::prefetch() noexcept {
+    return impl_
+        ? impl_->prefetch()
+        : DecodeRenderQueueProducerResult{};
+}
+
 DecodeRenderQueueProducerSnapshot
 DecodeRenderQueueProducer::snapshot() const noexcept {
     return impl_

@@ -55,7 +55,12 @@ template <size_t Size>
     ScriptedDecoder& decoder,
     kivo::core::render::SpscAudioBlockQueue& queue,
     size_t maximum_bytes,
-    kivo::core::contract::FrameCount chunk_frames) {
+    kivo::core::contract::FrameCount chunk_frames,
+    kivo::core::contract::SamplePosition timeline_origin = 0,
+    kivo::core::playback::QueueEndOfStreamPolicy end_policy =
+        kivo::core::playback::QueueEndOfStreamPolicy::
+            CloseAndMarkFinal,
+    kivo::core::contract::BufferId first_buffer_id = {1}) {
     kivo::core::render::RenderGenerationSet generations{};
     generations.stream.id = generation(2);
     generations.seek.id = generation(5);
@@ -67,7 +72,13 @@ template <size_t Size>
         format(),
         generations,
         {generation(3)},
-        {maximum_bytes, chunk_frames, {1}});
+        {
+            maximum_bytes,
+            chunk_frames,
+            first_buffer_id,
+            timeline_origin,
+            end_policy
+        });
 }
 
 } // namespace playback_pipeline_test

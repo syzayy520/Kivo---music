@@ -293,6 +293,42 @@ $runtimeFamilyRules = @(
         )
     },
     @{
+        Path = "include\kivo\core\playback\gapless"
+        AllowedDirectories = @(
+            "coordinator",
+            "plan",
+            "position",
+            "segment",
+            "transition"
+        )
+    },
+    @{
+        Path = "src\core\playback\gapless"
+        AllowedDirectories = @(
+            "coordinator",
+            "position",
+            "segment",
+            "transition"
+        )
+    },
+    @{
+        Path = "tests\playback_gapless"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
+        Path = "tests\playback_gapless\scenario"
+        AllowedDirectories = @(
+            "compatibility",
+            "continuity",
+            "position",
+            "segment"
+        )
+    },
+    @{
         Path = "include\kivo\core\playback\recovery"
         AllowedDirectories = @(
             "classification",
@@ -418,10 +454,13 @@ $runtimeSourceRoots = @(
     "include\kivo\core\playback\session",
     "include\kivo\core\playback\runtime",
     "src\core\playback\pipeline",
+    "include\kivo\core\playback\gapless",
+    "src\core\playback\gapless",
     "src\core\playback\recovery",
     "src\core\playback\session",
     "src\core\playback\runtime",
     "tests\playback_pipeline",
+    "tests\playback_gapless",
     "tests\playback_session",
     "tests\playback_runtime"
 )

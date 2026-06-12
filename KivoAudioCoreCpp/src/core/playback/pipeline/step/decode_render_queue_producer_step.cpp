@@ -15,6 +15,18 @@ DecodeRenderQueueProducer::Impl::step() noexcept {
             0
         };
     }
+    if (snapshot_.state
+        == DecodeRenderQueueProducerState::PrefetchedEndOfStream) {
+        return finish();
+    }
+    if (snapshot_.state == DecodeRenderQueueProducerState::Ready) {
+        const auto result = prefetch();
+        if (snapshot_.state
+            != DecodeRenderQueueProducerState::PrefetchedEndOfStream) {
+            return result;
+        }
+        return finish();
+    }
     snapshot_.state = DecodeRenderQueueProducerState::Running;
 
     if (active_index_) {
@@ -63,19 +75,89 @@ DecodeRenderQueueProducer::Impl::step() noexcept {
             activate_held(true);
             return enqueue_active();
         }
-        queue_.close_producer();
-        snapshot_.state = DecodeRenderQueueProducerState::EndOfStream;
-        return {
-            DecodeRenderQueueProducerDisposition::EndOfStream,
-            decode::DecodeFailure::None,
-            render::SpscQueuePushResult::Closed,
-            0
-        };
+        return finish();
 
     case decode::DecodeStepDisposition::Failed:
         return failed(decoded.failure());
     }
     return failed(decode::DecodeFailure::BoundaryFailure);
+}
+
+DecodeRenderQueueProducerResult
+DecodeRenderQueueProducer::Impl::prefetch() noexcept {
+    if (snapshot_.state == DecodeRenderQueueProducerState::Failed) {
+        return failed(snapshot_.last_decode_failure);
+    }
+    if (snapshot_.state == DecodeRenderQueueProducerState::EndOfStream
+        || snapshot_.state
+            == DecodeRenderQueueProducerState::PrefetchedEndOfStream) {
+        return {
+            DecodeRenderQueueProducerDisposition::EndOfStream,
+            decode::DecodeFailure::None,
+            render::SpscQueuePushResult::Pushed,
+            0
+        };
+    }
+    if (snapshot_.state != DecodeRenderQueueProducerState::Ready) {
+        return {
+            DecodeRenderQueueProducerDisposition::Primed,
+            decode::DecodeFailure::None,
+            render::SpscQueuePushResult::Pushed,
+            0
+        };
+    }
+
+    const auto decoded = decoder_.decode_next();
+    if (decoded.disposition() == decode::DecodeStepDisposition::Failed) {
+        return failed(decoded.failure());
+    }
+    if (decoded.disposition() == decode::DecodeStepDisposition::EndOfStream) {
+        snapshot_.state =
+            DecodeRenderQueueProducerState::PrefetchedEndOfStream;
+        return {
+            DecodeRenderQueueProducerDisposition::EndOfStream,
+            decode::DecodeFailure::None,
+            render::SpscQueuePushResult::Pushed,
+            0
+        };
+    }
+    if (store_decoded(decoded.block())
+        != pipeline_buffer::StoreResult::Stored) {
+        return snapshot_.state == DecodeRenderQueueProducerState::Failed
+            ? failed(snapshot_.last_decode_failure)
+            : DecodeRenderQueueProducerResult{
+                DecodeRenderQueueProducerDisposition::DiscardedStale,
+                snapshot_.last_decode_failure,
+                render::SpscQueuePushResult::Pushed,
+                0};
+    }
+    held_index_ = stored_index_;
+    held_is_terminal_ = decoded.block().end_of_stream;
+    snapshot_.state = DecodeRenderQueueProducerState::Running;
+    return {
+        DecodeRenderQueueProducerDisposition::Primed,
+        decode::DecodeFailure::None,
+        render::SpscQueuePushResult::Pushed,
+        0
+    };
+}
+
+DecodeRenderQueueProducerResult
+DecodeRenderQueueProducer::Impl::finish() noexcept {
+    if (configuration_.end_of_stream_policy
+        == QueueEndOfStreamPolicy::CloseAndMarkFinal) {
+        queue_.close_producer();
+    }
+    snapshot_.state = DecodeRenderQueueProducerState::EndOfStream;
+    return {
+        DecodeRenderQueueProducerDisposition::EndOfStream,
+        decode::DecodeFailure::None,
+        configuration_.end_of_stream_policy
+                == QueueEndOfStreamPolicy::CloseAndMarkFinal
+            ? render::SpscQueuePushResult::Closed
+            : render::SpscQueuePushResult::Pushed,
+        0
+    };
 }
 
 DecodeRenderQueueProducerSnapshot
