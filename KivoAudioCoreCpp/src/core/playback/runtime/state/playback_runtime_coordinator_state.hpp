@@ -3,7 +3,7 @@
 #include <memory>
 #include <mutex>
 
-#include "kivo/core/playback/pipeline/decode_render_queue_producer.hpp"
+#include "kivo/core/playback/pipeline/producer/decode_render_queue_producer.hpp"
 #include "kivo/core/playback/runtime/coordinator/playback_runtime_coordinator.hpp"
 #include "kivo/core/render/queue/spsc_audio_block_queue.hpp"
 

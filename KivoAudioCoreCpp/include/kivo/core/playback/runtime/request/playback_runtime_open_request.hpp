@@ -1,7 +1,7 @@
 #pragma once
 
 #include "kivo/core/decode/generation/decode_generation.hpp"
-#include "kivo/core/playback/pipeline/decode_render_queue_producer_configuration.hpp"
+#include "kivo/core/playback/pipeline/configuration/decode_render_queue_producer_configuration.hpp"
 #include "kivo/core/render/format/render_open_request.hpp"
 #include "kivo/core/render/lifecycle/render_control_request.hpp"
 #include "kivo/core/render/queue/spsc_audio_block_queue_configuration.hpp"

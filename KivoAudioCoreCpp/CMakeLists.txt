@@ -235,7 +235,9 @@ target_compile_options(kivo_playback_session PRIVATE
 )
 
 add_library(kivo_playback_pipeline STATIC
-    src/core/playback/pipeline/decode_render_queue_producer.cpp
+    src/core/playback/pipeline/producer/decode_render_queue_producer.cpp
+    src/core/playback/pipeline/step/decode_render_queue_producer_step.cpp
+    src/core/playback/pipeline/transfer/decode_render_queue_producer_transfer.cpp
 )
 target_link_libraries(kivo_playback_pipeline
     PUBLIC kivo_decode_boundary kivo_render_queue)
@@ -465,7 +467,11 @@ target_compile_options(kivo_playback_session_tests PRIVATE
 )
 
 add_executable(kivo_playback_pipeline_tests
-    tests/playback_pipeline/decode_render_queue_producer_tests.cpp
+    tests/playback_pipeline/runner/playback_pipeline_tests_main.cpp
+    tests/playback_pipeline/scenario/backpressure_tests.cpp
+    tests/playback_pipeline/scenario/eos_chunking_tests.cpp
+    tests/playback_pipeline/scenario/generation_tests.cpp
+    tests/playback_pipeline/scenario/validation_tests.cpp
 )
 target_link_libraries(kivo_playback_pipeline_tests PRIVATE kivo_playback_pipeline)
 target_compile_features(kivo_playback_pipeline_tests PRIVATE cxx_std_20)

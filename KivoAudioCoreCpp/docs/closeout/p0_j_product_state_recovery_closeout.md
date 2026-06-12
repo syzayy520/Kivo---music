@@ -1,7 +1,7 @@
 # P0-J Product State and Recovery Closeout
 
 **Milestone:** P0-J Product State and Recovery
-**Status:** STRUCTURAL GATE PENDING
+**Status:** CLOSED
 **Closeout Date:** 2026-06-12
 **Branch:** `codex/audio-core-execution-roadmap`
 
@@ -38,15 +38,11 @@
 - FakeRenderer scenarios pass 25/25.
 - CTest passes 11/11 executables.
 - Cumulative audio-core gates pass 9/9.
-- Runtime, Session, and Recovery governed roots contain zero flat files.
-- Runtime, Session, Recovery, and related test files remain below 260 lines.
-
-## Remaining Structural Gate
-
-- `src/core/playback/pipeline/decode_render_queue_producer.cpp` remains 370
-  lines and must be divided into natural Pipeline subfamilies.
-- Pipeline public/source/test roots must be added to the genealogy and
-  responsibility-size gate before this closeout may be marked `CLOSED`.
+- Pipeline, Runtime, Session, and Recovery governed roots contain zero flat
+  files.
+- Governed production and test files remain below 260 lines.
+- Pipeline production was split from 370 lines into buffer, producer, state,
+  step, and transfer responsibilities; the largest is 161 lines.
 
 ## Deferred to P0-K and Later
 

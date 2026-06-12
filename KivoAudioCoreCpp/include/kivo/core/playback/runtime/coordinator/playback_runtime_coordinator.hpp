@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "kivo/core/decode/boundary/audio_decode_boundary.hpp"
-#include "kivo/core/playback/pipeline/decode_render_queue_producer_result.hpp"
+#include "kivo/core/playback/pipeline/result/decode_render_queue_producer_result.hpp"
 #include "kivo/core/playback/runtime/request/playback_runtime_open_request.hpp"
 #include "kivo/core/playback/runtime/result/playback_runtime_result.hpp"
 #include "kivo/core/playback/runtime/snapshot/playback_runtime_snapshot.hpp"

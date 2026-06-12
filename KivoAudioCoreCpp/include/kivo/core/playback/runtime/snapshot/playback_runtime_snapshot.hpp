@@ -6,7 +6,7 @@
 #include "kivo/core/contract/format/roles/render_format.hpp"
 #include "kivo/core/decode/failure/decode_failure.hpp"
 #include "kivo/core/decode/generation/decode_generation.hpp"
-#include "kivo/core/playback/pipeline/decode_render_queue_producer_snapshot.hpp"
+#include "kivo/core/playback/pipeline/snapshot/decode_render_queue_producer_snapshot.hpp"
 #include "kivo/core/playback/session/snapshot/playback_session_snapshot.hpp"
 #include "kivo/core/render/generation/render_generation_set.hpp"
 #include "kivo/core/render/queue/spsc_audio_block_queue_snapshot.hpp"
