@@ -193,11 +193,16 @@ $runtimeFamilyRules = @(
         Path = "src\platform\windows\wasapi"
         AllowedDirectories = @(
             "apartment",
+            "device",
             "error",
             "format",
             "renderer",
             "worker"
         )
+    },
+    @{
+        Path = "src\platform\windows\wasapi\device"
+        AllowedDirectories = @("notification")
     },
     @{
         Path = "tests\platform_windows\wasapi"

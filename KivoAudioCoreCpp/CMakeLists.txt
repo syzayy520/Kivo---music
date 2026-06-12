@@ -631,12 +631,14 @@ endif()
 if(WIN32)
     add_library(kivo_wasapi_renderer STATIC
         src/platform/windows/wasapi/apartment/com_apartment.cpp
+        src/platform/windows/wasapi/device/notification/default_render_endpoint_observer.cpp
         src/platform/windows/wasapi/error/wasapi_error.cpp
         src/platform/windows/wasapi/format/wasapi_format.cpp
         src/platform/windows/wasapi/renderer/wasapi_renderer_control.cpp
         src/platform/windows/wasapi/renderer/wasapi_renderer_drain.cpp
         src/platform/windows/wasapi/renderer/wasapi_renderer_facade.cpp
         src/platform/windows/wasapi/renderer/wasapi_renderer_failure.cpp
+        src/platform/windows/wasapi/renderer/wasapi_renderer_notification.cpp
         src/platform/windows/wasapi/renderer/wasapi_renderer_open.cpp
         src/platform/windows/wasapi/renderer/wasapi_renderer_query.cpp
         src/platform/windows/wasapi/renderer/wasapi_renderer_write.cpp
@@ -667,6 +669,7 @@ if(WIN32)
         tests/platform_windows/wasapi/runner/wasapi_tests_main.cpp
         tests/platform_windows/wasapi/scenario/format_mapping_tests.cpp
         tests/platform_windows/wasapi/scenario/error_mapping_tests.cpp
+        tests/platform_windows/wasapi/scenario/endpoint_notification_tests.cpp
         tests/platform_windows/wasapi/scenario/render_worker_tests.cpp
     )
     target_link_libraries(kivo_wasapi_tests PRIVATE kivo_wasapi_renderer)

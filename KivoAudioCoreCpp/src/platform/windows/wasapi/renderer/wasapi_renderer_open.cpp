@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <limits>
+#include <new>
 
 #include "platform/windows/wasapi/format/wasapi_format.hpp"
 
@@ -92,6 +93,19 @@ core::render::RenderOpenResult WasapiRendererState::open(
         return fail_open(result);
     }
     const auto endpoint_identity = stable_endpoint_hash(endpoint_id);
+    endpoint_observer_.Attach(
+        new (std::nothrow) DefaultRenderEndpointObserver(endpoint_id));
+    if (endpoint_observer_ == nullptr || !endpoint_observer_->is_valid()) {
+        CoTaskMemFree(endpoint_id);
+        return fail_open(E_OUTOFMEMORY);
+    }
+    result = enumerator_->RegisterEndpointNotificationCallback(
+        endpoint_observer_.Get());
+    if (FAILED(result)) {
+        CoTaskMemFree(endpoint_id);
+        return fail_open(result);
+    }
+    endpoint_observer_registered_ = true;
     CoTaskMemFree(endpoint_id);
 
     result = device_->Activate(

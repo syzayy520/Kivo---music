@@ -7,6 +7,7 @@
 
 #include "kivo/platform/windows/wasapi/renderer/wasapi_renderer.hpp"
 #include "platform/windows/wasapi/apartment/com_apartment.hpp"
+#include "platform/windows/wasapi/device/notification/default_render_endpoint_observer.hpp"
 
 namespace kivo::platform::windows::wasapi::detail {
 
@@ -39,6 +40,7 @@ private:
     [[nodiscard]] core::render::RenderControlResult wrong_thread_result() noexcept;
     [[nodiscard]] core::render::RenderFailure stale_generation(
         const core::render::RenderGenerationSet& generations) const noexcept;
+    [[nodiscard]] bool detect_endpoint_change() noexcept;
     [[nodiscard]] core::render::RenderOpenResult fail_open(HRESULT result) noexcept;
     [[nodiscard]] core::render::RenderControlResult fail_control(HRESULT result) noexcept;
     [[nodiscard]] core::render::RenderWriteResult fail_write(
@@ -48,6 +50,7 @@ private:
 
     ComApartment apartment_;
     Microsoft::WRL::ComPtr<IMMDeviceEnumerator> enumerator_;
+    Microsoft::WRL::ComPtr<DefaultRenderEndpointObserver> endpoint_observer_;
     Microsoft::WRL::ComPtr<IMMDevice> device_;
     Microsoft::WRL::ComPtr<IAudioClient> audio_client_;
     Microsoft::WRL::ComPtr<IAudioRenderClient> render_client_;
@@ -55,6 +58,7 @@ private:
     DWORD control_thread_id_{0};
     core::contract::DeviceGeneration device_generation_{};
     bool opened_before_{false};
+    bool endpoint_observer_registered_{false};
     bool has_submitted_since_start_{false};
     core::render::RendererCapabilitySnapshot capabilities_{};
     core::render::RenderSnapshot snapshot_{};

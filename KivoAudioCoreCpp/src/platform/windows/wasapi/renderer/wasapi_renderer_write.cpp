@@ -24,6 +24,11 @@ core::render::RenderWriteResult WasapiRendererState::write(
     using core::render::RenderLifecycleState;
     using core::render::RenderWriteResult;
 
+    if (detect_endpoint_change()) {
+        return RenderWriteResult::Failed(
+            block.frame_count,
+            RenderFailure::DeviceLost);
+    }
     if (snapshot_.state != RenderLifecycleState::Started) {
         return RenderWriteResult::Rejected(block.frame_count, RenderFailure::InvalidState);
     }

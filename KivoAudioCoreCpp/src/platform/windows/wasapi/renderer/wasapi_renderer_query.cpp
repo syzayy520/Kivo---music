@@ -40,6 +40,9 @@ core::render::RenderSnapshot WasapiRendererState::snapshot() const noexcept {
 
 WasapiWaitResult WasapiRendererState::wait_until_writable(
     std::chrono::milliseconds timeout) noexcept {
+    if (detect_endpoint_change()) {
+        return WasapiWaitResult::DeviceLost;
+    }
     if (event_handle_ == nullptr
         || snapshot_.state == core::render::RenderLifecycleState::Closed) {
         return WasapiWaitResult::Closed;

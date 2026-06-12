@@ -87,6 +87,12 @@ void WasapiRendererState::close_stream() noexcept {
     if (audio_client_ != nullptr) {
         static_cast<void>(audio_client_->Stop());
     }
+    if (endpoint_observer_registered_ && enumerator_ != nullptr) {
+        static_cast<void>(enumerator_->UnregisterEndpointNotificationCallback(
+            endpoint_observer_.Get()));
+    }
+    endpoint_observer_registered_ = false;
+    endpoint_observer_.Reset();
     render_client_.Reset();
     audio_client_.Reset();
     device_.Reset();

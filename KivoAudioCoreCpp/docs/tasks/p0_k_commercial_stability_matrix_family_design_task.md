@@ -22,6 +22,8 @@
 - One-hour real-device endurance evidence.
 - Executable active-render-endpoint inventory with default-role, mix-format,
   shared/exclusive support, form-factor, and device-period evidence.
+- Default-console endpoint change and current-endpoint loss notifications are
+  converted into one-shot device-loss recovery signals.
 
 ## Natural Validation Families
 

@@ -10,6 +10,9 @@ RenderControlResult WasapiRendererState::start() noexcept {
     if (!on_control_thread()) {
         return wrong_thread_result();
     }
+    if (detect_endpoint_change()) {
+        return RenderControlResult::Failed(RenderFailure::DeviceLost);
+    }
     if (snapshot_.state == RenderLifecycleState::Started) {
         return RenderControlResult::NoOp(snapshot_.state);
     }
@@ -31,6 +34,9 @@ RenderControlResult WasapiRendererState::flush(
     const core::render::RenderFlushRequest& request) noexcept {
     if (!on_control_thread()) {
         return wrong_thread_result();
+    }
+    if (detect_endpoint_change()) {
+        return RenderControlResult::Failed(RenderFailure::DeviceLost);
     }
     if (snapshot_.state == RenderLifecycleState::Closed
         || snapshot_.state == RenderLifecycleState::Failed) {
@@ -70,6 +76,9 @@ RenderControlResult WasapiRendererState::reset(
     if (!on_control_thread()) {
         return wrong_thread_result();
     }
+    if (detect_endpoint_change()) {
+        return RenderControlResult::Failed(RenderFailure::DeviceLost);
+    }
     if (snapshot_.state == RenderLifecycleState::Closed) {
         return RenderControlResult::Rejected(RenderFailure::InvalidState, snapshot_.state);
     }
@@ -95,6 +104,9 @@ RenderControlResult WasapiRendererState::reset(
 RenderControlResult WasapiRendererState::stop() noexcept {
     if (!on_control_thread()) {
         return wrong_thread_result();
+    }
+    if (detect_endpoint_change()) {
+        return RenderControlResult::Failed(RenderFailure::DeviceLost);
     }
     if (snapshot_.state == RenderLifecycleState::Stopped) {
         return RenderControlResult::NoOp(snapshot_.state);
