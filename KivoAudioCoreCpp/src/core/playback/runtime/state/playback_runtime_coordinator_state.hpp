@@ -1,10 +1,12 @@
 #pragma once
 
+#include <array>
 #include <memory>
 #include <mutex>
 
 #include "kivo/core/playback/pipeline/producer/decode_render_queue_producer.hpp"
 #include "kivo/core/playback/runtime/coordinator/playback_runtime_coordinator.hpp"
+#include "kivo/core/observability/category/decode_failure_category.hpp"
 #include "kivo/core/render/queue/spsc_audio_block_queue.hpp"
 
 namespace kivo::core::playback {
@@ -61,6 +63,14 @@ private:
     void handle_decode_failure(
         decode::DecodeFailure failure,
         uint64_t session_generation) noexcept;
+    void record_decode_failure(
+        decode::DecodeFailure failure) noexcept;
+    void record_format_negotiation_attempt(
+        bool renegotiation) noexcept;
+    void record_format_negotiation_success(
+        bool renegotiation) noexcept;
+    void record_format_negotiation_failure(
+        bool renegotiation) noexcept;
 
     [[nodiscard]] PlaybackRuntimeResult reject_command(
         const PlaybackCommand& command) noexcept;
@@ -120,6 +130,14 @@ private:
     uint64_t recoverable_decode_failures_{0};
     uint64_t decode_fallback_stops_{0};
     uint64_t failed_decode_recoveries_{0};
+    uint64_t format_negotiation_attempts_{0};
+    uint64_t format_negotiation_successes_{0};
+    uint64_t format_negotiation_failures_{0};
+    uint64_t format_renegotiation_attempts_{0};
+    uint64_t format_renegotiation_successes_{0};
+    uint64_t format_renegotiation_failures_{0};
+    std::array<uint64_t, observability::kDecodeFailureCategoryCount>
+        decode_failures_by_category_{};
     decode::DecodeFailure last_decode_failure_{
         decode::DecodeFailure::None};
     contract::ErrorDomain last_decode_error_domain_{

@@ -99,6 +99,7 @@ int run_wasapi_tone(const ToneOptions& options) {
               << totals.mmcss_high_priority << "\n"
               << "  worker_wait_timeouts=" << totals.wait_timeouts << "\n"
               << "  underrun_count=" << diagnostics.underrun_count << "\n"
+              << "  overrun_count=" << diagnostics.overrun_count << "\n"
               << "  device_invalidations=" << diagnostics.device_invalidation_count << "\n"
               << "  device_generation=" << diagnostics.device_generation.value() << "\n";
     return renderer.close().is_success() ? 0 : 13;

@@ -32,7 +32,8 @@ public:
         const kivo_audio_pump_request_v1& request,
         kivo_audio_pump_result_v1& result) noexcept;
     [[nodiscard]] kivo_audio_result snapshot(
-        kivo_audio_snapshot_v1& snapshot) noexcept;
+        void* snapshot,
+        uint32_t snapshot_size) noexcept;
     void shutdown_for_destroy() noexcept;
 
 private:

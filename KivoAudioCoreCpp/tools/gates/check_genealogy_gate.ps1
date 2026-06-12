@@ -120,6 +120,7 @@ $runtimeFamilyRules = @(
         Path = "src\host\abi"
         AllowedDirectories = @(
             "api",
+            "diagnostic",
             "engine",
             "export",
             "handle",
@@ -136,6 +137,7 @@ $runtimeFamilyRules = @(
             "build",
             "compliance",
             "foundation",
+            "installer",
             "manifest",
             "runner",
             "signing",
@@ -220,7 +222,30 @@ $runtimeFamilyRules = @(
             "fixture",
             "platform",
             "runner",
+            "scenario",
+            "serialization"
+        )
+    },
+    @{
+        Path = "include\kivo\core\observability"
+        AllowedDirectories = @(
+            "category",
+            "snapshot"
+        )
+    },
+    @{
+        Path = "tests\observability"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
             "scenario"
+        )
+    },
+    @{
+        Path = "tests\observability\scenario"
+        AllowedDirectories = @(
+            "category",
+            "snapshot"
         )
     },
     @{
@@ -674,6 +699,8 @@ $runtimeSourceRoots = @(
     "tests\hires_pcm",
     "tests\playback_session",
     "tests\playback_runtime",
+    "include\kivo\core\observability",
+    "tests\observability",
     "include\kivo\host\abi",
     "src\host\abi",
     "tests\host_abi",

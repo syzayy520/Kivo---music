@@ -47,6 +47,11 @@ void source_failure_stops_media_with_classified_domain() {
     RUNTIME_ASSERT(
         failed.last_decode_failure
         == core::decode::DecodeFailure::SourceReadFailed);
+    RUNTIME_ASSERT(
+        failed.decode_failures_by_category[
+            core::observability::decode_failure_category_index(
+                core::observability::DecodeFailureCategory::Source)]
+        == 1);
 
     RUNTIME_ASSERT(runtime.execute(
         command(3, core::contract::CommandKind::CloseSource, 7)).succeeded());
@@ -91,6 +96,11 @@ void codec_failure_is_truthful_and_remains_closable() {
     RUNTIME_ASSERT(failed.recoverable_decode_failures == 1);
     RUNTIME_ASSERT(failed.decode_fallback_stops == 0);
     RUNTIME_ASSERT(failed.failed_decode_recoveries == 1);
+    RUNTIME_ASSERT(
+        failed.decode_failures_by_category[
+            core::observability::decode_failure_category_index(
+                core::observability::DecodeFailureCategory::Codec)]
+        == 1);
 
     RUNTIME_ASSERT(runtime.execute(
         command(3, core::contract::CommandKind::CloseSource, 11)).succeeded());

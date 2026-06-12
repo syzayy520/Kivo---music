@@ -39,6 +39,20 @@ PlaybackRuntimeCoordinator::Impl::snapshot() const noexcept {
     result.decode_fallback_stops = decode_fallback_stops_;
     result.failed_decode_recoveries =
         failed_decode_recoveries_;
+    result.format_negotiation_attempts =
+        format_negotiation_attempts_;
+    result.format_negotiation_successes =
+        format_negotiation_successes_;
+    result.format_negotiation_failures =
+        format_negotiation_failures_;
+    result.format_renegotiation_attempts =
+        format_renegotiation_attempts_;
+    result.format_renegotiation_successes =
+        format_renegotiation_successes_;
+    result.format_renegotiation_failures =
+        format_renegotiation_failures_;
+    result.decode_failures_by_category =
+        decode_failures_by_category_;
     result.last_decode_failure = last_decode_failure_;
     result.last_decode_error_domain =
         last_decode_error_domain_;

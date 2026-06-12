@@ -232,6 +232,8 @@ if (Test-Path $cmakePath) {
         "kivo_playback_runtime",
         "kivo_playback_runtime_tests",
         "playback_runtime_tests",
+        "kivo_observability_tests",
+        "observability_tests",
         "kivo_render_queue_tests",
         "render_queue_tests",
         "kivo_render_boundary_tests",

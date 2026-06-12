@@ -1,11 +1,13 @@
 #pragma once
 
+#include <array>
 #include <cstdint>
 
 #include "kivo/core/contract/error/domain/error_domain.hpp"
 #include "kivo/core/contract/format/roles/render_format.hpp"
 #include "kivo/core/decode/failure/decode_failure.hpp"
 #include "kivo/core/decode/generation/decode_generation.hpp"
+#include "kivo/core/observability/category/decode_failure_category.hpp"
 #include "kivo/core/playback/pipeline/snapshot/decode_render_queue_producer_snapshot.hpp"
 #include "kivo/core/playback/session/snapshot/playback_session_snapshot.hpp"
 #include "kivo/core/render/generation/render_generation_set.hpp"
@@ -41,6 +43,14 @@ struct PlaybackRuntimeSnapshot {
     uint64_t recoverable_decode_failures{0};
     uint64_t decode_fallback_stops{0};
     uint64_t failed_decode_recoveries{0};
+    uint64_t format_negotiation_attempts{0};
+    uint64_t format_negotiation_successes{0};
+    uint64_t format_negotiation_failures{0};
+    uint64_t format_renegotiation_attempts{0};
+    uint64_t format_renegotiation_successes{0};
+    uint64_t format_renegotiation_failures{0};
+    std::array<uint64_t, observability::kDecodeFailureCategoryCount>
+        decode_failures_by_category{};
     decode::DecodeFailure last_decode_failure{
         decode::DecodeFailure::None};
     contract::ErrorDomain last_decode_error_domain{

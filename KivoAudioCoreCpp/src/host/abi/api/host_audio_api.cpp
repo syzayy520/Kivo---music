@@ -158,12 +158,15 @@ kivo_audio_result KIVO_AUDIO_CALL kivo_audio_pump(
 kivo_audio_result KIVO_AUDIO_CALL kivo_audio_get_snapshot(
     kivo_audio_handle handle,
     kivo_audio_snapshot_v1* snapshot) {
-    if (!kivo::host::abi::valid_output_structure(snapshot)) {
+    if (!kivo::host::abi::valid_output_structure_prefix(
+            snapshot,
+            KIVO_AUDIO_SNAPSHOT_V1_BASE_SIZE)) {
         return KIVO_AUDIO_RESULT_INVALID_STRUCT;
     }
+    const auto snapshot_size = snapshot->struct_size;
     auto engine = engine_for(handle);
     return engine
-        ? engine->snapshot(*snapshot)
+        ? engine->snapshot(snapshot, snapshot_size)
         : KIVO_AUDIO_RESULT_INVALID_HANDLE;
 }
 

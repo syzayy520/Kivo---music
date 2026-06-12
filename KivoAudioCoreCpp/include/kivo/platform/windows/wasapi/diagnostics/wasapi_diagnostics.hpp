@@ -32,6 +32,7 @@ struct WasapiDiagnostics {
     std::chrono::nanoseconds minimum_device_period{0};
     std::chrono::nanoseconds buffer_duration{0};
     uint64_t underrun_count{0};
+    uint64_t overrun_count{0};
     uint64_t device_invalidation_count{0};
     uint64_t power_transition_count{0};
     int64_t last_platform_code{0};

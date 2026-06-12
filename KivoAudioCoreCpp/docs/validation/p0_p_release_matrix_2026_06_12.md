@@ -2,7 +2,7 @@
 
 | Area | Evidence | Status |
 |---|---|---|
-| Release build | Clean MSVC x64 Release build and CTest 16/16 | PASS |
+| Release build | Clean MSVC x64 Release build and CTest 18/18 | PASS |
 | Repository gates | Aggregated gate suite 9/9 | PASS |
 | ABI exports | Exactly seven locked C exports | PASS |
 | PE hardening | ASLR, NX, CFG, CET | PASS |
@@ -12,6 +12,11 @@
 | Dependency record | FFmpeg version, config, hashes, license | PASS |
 | SBOM | CycloneDX 1.6 | PASS |
 | Manifest privacy | No checkout or Windows user path | PASS |
+| Production diagnostics | Versioned additive ABI snapshot and old-prefix guard | PASS |
+| Installer payload verifier | Clean/upgrade/rollback and tamper self-test | PASS |
+| Device evidence schema | UTF-8 inventory and required physical row validator | PASS |
+| Endurance evidence tooling | Resource sampling and runtime counter classification | PASS |
+| Commercial regression gate | Privacy-safe intake and closure validator | PASS |
 | Authenticode | Kivo DLL and product installer signatures | BLOCKED: CERTIFICATE/PRODUCT |
 | Corresponding source | Exact FFmpeg source and build-script archive | BLOCKED: EXTERNAL RECORD |
 | Legal approval | LGPL, codecs, target markets | BLOCKED: LEGAL REVIEW |

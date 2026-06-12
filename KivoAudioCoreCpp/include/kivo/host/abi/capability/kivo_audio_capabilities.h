@@ -13,7 +13,8 @@ typedef enum kivo_audio_capability_flag {
     KIVO_AUDIO_CAPABILITY_REPLAY_GAIN = 1ull << 4u,
     KIVO_AUDIO_CAPABILITY_SOFTWARE_VOLUME = 1ull << 5u,
     KIVO_AUDIO_CAPABILITY_DITHER = 1ull << 6u,
-    KIVO_AUDIO_CAPABILITY_SANITIZED_DIAGNOSTICS = 1ull << 7u
+    KIVO_AUDIO_CAPABILITY_SANITIZED_DIAGNOSTICS = 1ull << 7u,
+    KIVO_AUDIO_CAPABILITY_EXTENDED_DIAGNOSTIC_SNAPSHOT = 1ull << 8u
 } kivo_audio_capability_flag;
 
 typedef enum kivo_audio_thread_rule_flag {

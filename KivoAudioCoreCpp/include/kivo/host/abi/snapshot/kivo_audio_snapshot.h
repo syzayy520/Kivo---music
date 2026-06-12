@@ -1,6 +1,7 @@
 #ifndef KIVO_HOST_ABI_SNAPSHOT_KIVO_AUDIO_SNAPSHOT_H
 #define KIVO_HOST_ABI_SNAPSHOT_KIVO_AUDIO_SNAPSHOT_H
 
+#include <stddef.h>
 #include <stdint.h>
 
 #include "kivo/host/abi/result/kivo_audio_result.h"
@@ -20,6 +21,18 @@ typedef enum kivo_audio_state {
     KIVO_AUDIO_STATE_CLOSED = 10
 } kivo_audio_state;
 
+typedef enum kivo_audio_decode_failure_category {
+    KIVO_AUDIO_DECODE_FAILURE_SOURCE = 0,
+    KIVO_AUDIO_DECODE_FAILURE_CONTAINER = 1,
+    KIVO_AUDIO_DECODE_FAILURE_CODEC = 2,
+    KIVO_AUDIO_DECODE_FAILURE_MEDIA_DATA = 3,
+    KIVO_AUDIO_DECODE_FAILURE_CONVERSION = 4,
+    KIVO_AUDIO_DECODE_FAILURE_PROCESSING = 5,
+    KIVO_AUDIO_DECODE_FAILURE_GENERATION = 6,
+    KIVO_AUDIO_DECODE_FAILURE_BOUNDARY = 7,
+    KIVO_AUDIO_DECODE_FAILURE_CATEGORY_COUNT = 8
+} kivo_audio_decode_failure_category;
+
 typedef struct kivo_audio_snapshot_v1 {
     uint32_t struct_size;
     uint32_t struct_version;
@@ -38,6 +51,36 @@ typedef struct kivo_audio_snapshot_v1 {
     uint64_t decode_failure_events;
     kivo_audio_result last_result;
     uint32_t reserved;
+    uint64_t render_underrun_events;
+    uint64_t render_protocol_overrun_events;
+    uint64_t queue_full_rejections;
+    uint64_t queue_oversized_rejections;
+    uint64_t producer_backpressure_events;
+    uint64_t device_invalidation_events;
+    uint64_t device_reopen_attempts;
+    uint64_t device_reopen_successes;
+    uint64_t device_reopen_failures;
+    uint64_t format_negotiation_attempts;
+    uint64_t format_negotiation_successes;
+    uint64_t format_negotiation_failures;
+    uint64_t format_renegotiation_attempts;
+    uint64_t format_renegotiation_successes;
+    uint64_t format_renegotiation_failures;
+    uint64_t decode_failures_by_category[
+        KIVO_AUDIO_DECODE_FAILURE_CATEGORY_COUNT];
+    uint64_t recovery_attempts;
+    uint64_t recovery_successes;
+    uint64_t recovery_failures;
+    uint64_t recovery_fallback_stops;
+    uint64_t drain_attempts;
+    uint64_t successful_drains;
+    uint64_t failed_drains;
+    uint64_t drain_timeouts;
+    uint64_t stale_commands_rejected;
+    uint64_t source_replacements;
 } kivo_audio_snapshot_v1;
+
+#define KIVO_AUDIO_SNAPSHOT_V1_BASE_SIZE \
+    ((uint32_t)offsetof(kivo_audio_snapshot_v1, render_underrun_events))
 
 #endif

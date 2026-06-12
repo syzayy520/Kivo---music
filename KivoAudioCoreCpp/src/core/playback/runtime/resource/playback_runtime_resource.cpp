@@ -48,6 +48,30 @@ void PlaybackRuntimeCoordinator::Impl::rollback_open(
     }
 }
 
+void PlaybackRuntimeCoordinator::Impl::record_format_negotiation_attempt(
+    bool renegotiation) noexcept {
+    saturating_increment(format_negotiation_attempts_);
+    if (renegotiation) {
+        saturating_increment(format_renegotiation_attempts_);
+    }
+}
+
+void PlaybackRuntimeCoordinator::Impl::record_format_negotiation_success(
+    bool renegotiation) noexcept {
+    saturating_increment(format_negotiation_successes_);
+    if (renegotiation) {
+        saturating_increment(format_renegotiation_successes_);
+    }
+}
+
+void PlaybackRuntimeCoordinator::Impl::record_format_negotiation_failure(
+    bool renegotiation) noexcept {
+    saturating_increment(format_negotiation_failures_);
+    if (renegotiation) {
+        saturating_increment(format_renegotiation_failures_);
+    }
+}
+
 bool PlaybackRuntimeCoordinator::Impl::release_runtime() noexcept {
     if (!active_) {
         return true;

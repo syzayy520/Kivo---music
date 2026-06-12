@@ -42,6 +42,9 @@ core::render::RenderOpenResult WasapiRendererState::fail_open(
     HRESULT result) noexcept {
     const auto failure = map_wasapi_error(result);
     diagnostics_.last_platform_code = result;
+    if (failure == core::render::RenderFailure::Overrun) {
+        ++diagnostics_.overrun_count;
+    }
     if (is_device_invalidation(result)) {
         ++diagnostics_.device_invalidation_count;
         diagnostics_.reopen_required = true;
@@ -55,6 +58,9 @@ core::render::RenderControlResult WasapiRendererState::fail_control(
     const auto failure = map_wasapi_error(result);
     diagnostics_.last_platform_code = result;
     snapshot_.last_failure = failure;
+    if (failure == core::render::RenderFailure::Overrun) {
+        ++diagnostics_.overrun_count;
+    }
     if (is_device_invalidation(result)) {
         ++diagnostics_.device_invalidation_count;
         diagnostics_.reopen_required = true;
@@ -72,6 +78,9 @@ core::render::RenderWriteResult WasapiRendererState::fail_write(
     const auto failure = map_wasapi_error(result);
     diagnostics_.last_platform_code = result;
     snapshot_.last_failure = failure;
+    if (failure == core::render::RenderFailure::Overrun) {
+        ++diagnostics_.overrun_count;
+    }
     if (is_device_invalidation(result)) {
         ++diagnostics_.device_invalidation_count;
         diagnostics_.reopen_required = true;

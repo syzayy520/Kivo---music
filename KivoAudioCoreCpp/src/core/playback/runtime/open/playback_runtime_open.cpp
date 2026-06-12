@@ -49,8 +49,10 @@ PlaybackRuntimeResult PlaybackRuntimeCoordinator::Impl::open(
 
     auto render_request = request.render_request;
     render_request.generations.stream.id = source->generation().id;
+    record_format_negotiation_attempt(replacing);
     const auto render_open = renderer_.open(render_request);
     if (!render_open.is_accepted()) {
+        record_format_negotiation_failure(replacing);
         rollback_open(replacing, replaced_generation);
         return runtime_result::failed(
             PlaybackRuntimeFailure::RenderOpenFailed,
@@ -58,6 +60,7 @@ PlaybackRuntimeResult PlaybackRuntimeCoordinator::Impl::open(
             decode::DecodeFailure::None,
             render_open.failure());
     }
+    record_format_negotiation_success(replacing);
 
     const decode::DecodeOpenRequest decode_request{
         render_open.accepted_format(),
@@ -70,6 +73,7 @@ PlaybackRuntimeResult PlaybackRuntimeCoordinator::Impl::open(
         std::move(source),
         decode_request);
     if (!decode_open.is_accepted()) {
+        record_decode_failure(decode_open.failure());
         static_cast<void>(decoder_.close());
         static_cast<void>(renderer_.close());
         rollback_open(
@@ -100,6 +104,7 @@ PlaybackRuntimeResult PlaybackRuntimeCoordinator::Impl::open(
                 : stale_decode
                     ? decode::DecodeFailure::StaleDecodeGeneration
                     : decode::DecodeFailure::BoundaryFailure;
+        record_decode_failure(decode_failure);
         rollback_open(
             replacing,
             replaced_generation,

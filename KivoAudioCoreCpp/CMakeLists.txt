@@ -695,6 +695,18 @@ target_compile_options(kivo_playback_runtime_tests PRIVATE
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
 )
 
+add_executable(kivo_observability_tests
+    tests/observability/runner/observability_tests_main.cpp
+    tests/observability/scenario/category/decode_failure_category_tests.cpp
+    tests/observability/scenario/snapshot/audio_diagnostic_snapshot_tests.cpp
+)
+target_include_directories(kivo_observability_tests PRIVATE include/)
+target_compile_features(kivo_observability_tests PRIVATE cxx_std_20)
+target_compile_options(kivo_observability_tests PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
+
 # Deterministic fake render backend
 add_library(kivo_fake_render_backend STATIC
     src/testing/time/manual_clock.cpp
@@ -856,6 +868,7 @@ if(WIN32)
         tests/hardware/device_matrix/runner/wasapi_device_matrix_main.cpp
         tests/hardware/device_matrix/scenario/device_matrix_report.cpp
         tests/hardware/device_matrix/scenario/device_matrix_validation.cpp
+        tests/hardware/device_matrix/serialization/device_matrix_json_report.cpp
     )
     target_link_libraries(kivo_wasapi_device_matrix
         PRIVATE ole32 setupapi)
@@ -919,6 +932,7 @@ if(WIN32
         "${KIVO_HOST_VERSION_RESOURCE}"
         src/host/abi/export/kivo_audio_core.def
         src/host/abi/api/host_audio_api.cpp
+        src/host/abi/diagnostic/host_diagnostic_snapshot.cpp
         src/host/abi/engine/host_audio_engine_command.cpp
         src/host/abi/engine/host_audio_engine_configuration.cpp
         src/host/abi/engine/host_audio_engine_lifecycle.cpp
@@ -1104,6 +1118,7 @@ add_dependencies(kivo_playback_session_tests kivo_public_header_checks)
 add_dependencies(kivo_playback_pipeline_tests kivo_public_header_checks)
 add_dependencies(kivo_playback_gapless_tests kivo_public_header_checks)
 add_dependencies(kivo_playback_runtime_tests kivo_public_header_checks)
+add_dependencies(kivo_observability_tests kivo_public_header_checks)
 add_dependencies(kivo_fake_renderer_tests kivo_public_header_checks)
 if(TARGET kivo_stability_tests)
     add_dependencies(kivo_stability_tests kivo_public_header_checks)
@@ -1148,6 +1163,7 @@ add_test(NAME playback_session_tests COMMAND kivo_playback_session_tests)
 add_test(NAME playback_pipeline_tests COMMAND kivo_playback_pipeline_tests)
 add_test(NAME playback_gapless_tests COMMAND kivo_playback_gapless_tests)
 add_test(NAME playback_runtime_tests COMMAND kivo_playback_runtime_tests)
+add_test(NAME observability_tests COMMAND kivo_observability_tests)
 add_test(NAME fake_renderer_tests COMMAND kivo_fake_renderer_tests)
 if(TARGET kivo_stability_tests)
     add_test(

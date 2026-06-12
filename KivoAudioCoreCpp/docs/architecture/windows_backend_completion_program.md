@@ -11,8 +11,9 @@ Windows commercial backend closeout.
 
 ## Current Phase
 
-P0-C through P0-P engineering RC is committed. P0-Q/P0-R truth repair and the
-post-R completion workstreams are active.
+P0-C through P0-R repository work is committed. Post-R observability,
+installer handoff, device evidence, endurance evidence and commercial
+regression workstreams are active.
 
 ## Objective
 
@@ -35,6 +36,16 @@ code, tests, artifacts and external evidence.
   DSD-to-PCM, DoP or native DSD playback.
 - P0-R has only an external executable probe. No pinned mpv binary, libmpv
   integration or compatibility mode exists.
+- The host ABI has an additive extended diagnostic snapshot while retaining
+  the original v1 prefix size for older hosts.
+- AudioCore has full-payload clean/upgrade/rollback verification, but no
+  product installer or clean-VM transaction evidence.
+- The device probe emits UTF-8 JSON and creates the required physical test
+  rows, but all unexecuted rows remain `not_run`.
+- Endurance tooling samples process resources and runtime failure counters,
+  but no ten-hour physical release run has been completed.
+- Commercial regression intake and closure records are machine validated, but
+  no real user-feedback campaign can be manufactured in this repository.
 - Commercial release remains blocked by certificate, source/legal custody,
   product installer, physical hardware, endurance and user-feedback evidence.
 
@@ -73,16 +84,18 @@ Repository controlled:
 
 ```text
 include/kivo/core/observability/
-  counter/
+  category/
   snapshot/
-  event/
-src/core/observability/
-  aggregation/
-  export/
+src/core/playback/runtime/
+  recovery/
+  resource/
+  snapshot/
+src/host/abi/
+  diagnostic/
+  engine/
 tests/observability/
-  counter/
-  aggregation/
-  privacy/
+  scenario/category/
+  scenario/snapshot/
 ```
 
 Required monotonic counters:
@@ -156,6 +169,15 @@ Product-repository owned, AudioCore provides payload contract:
 - post-install hash/signature/startup smoke verification
 - uninstall and user-data preservation policy
 
+AudioCore verifier:
+
+```text
+tools/release/installer/
+  foundation/
+  verification/
+  testing/
+```
+
 Exit: clean install, upgrade and rollback each have machine-readable manifests
 and logs from clean virtual machines. AudioCore alone cannot mark this passed.
 
@@ -176,6 +198,17 @@ Each row records OS build, device/driver identity, requested/accepted format,
 mode, duration, underruns, invalidations, reopen result and evidence hash.
 Absent hardware is `NOT PRESENT`, never `PASS`.
 
+Repository tooling:
+
+```text
+tests/hardware/device_matrix/
+  fixture/
+  platform/windows/
+  serialization/
+  scenario/
+tools/validation/device_matrix/
+```
+
 ### S7 - Ten-Hour Endurance
 
 Repository tooling plus physical machine:
@@ -190,6 +223,11 @@ Repository tooling plus physical machine:
 Exit: no unbounded resource growth, crash, deadlock, audible-stall-class event
 or unexplained counter increase. A shorter run is development evidence only.
 
+The v2 evidence records private bytes, working set, handles, threads, GDI/USER
+objects, CPU time, underruns, overruns, device invalidations and worker wait
+timeouts. Ten hours without a matching device evidence hash remains review
+incomplete.
+
 ### S8 - Commercial Feedback Regression
 
 Product and support owned:
@@ -203,6 +241,15 @@ issue -> privacy-safe reproduction -> stable failure classification
 Required fields: affected release, OS/device class, sanitized diagnostic
 snapshot, reproducibility, severity, owner, test id, fix commit and released
 version. User media and personal paths are not attached by default.
+
+Repository tooling:
+
+```text
+tools/validation/regression/
+  foundation/
+  new_commercial_regression_record.ps1
+  validate_commercial_regression_record.ps1
+```
 
 Exit: every confirmed commercial defect has a durable regression proof or a
 documented reason why only physical-lab evidence is possible.
@@ -243,12 +290,12 @@ audio families.
 
 ## Execution Order
 
-1. Finish S0 and S1 truth repair.
-2. Implement S2 production observability.
-3. Implement repository portions of S3, S4, S6 and S7 tooling.
-4. Hand S5 installer contract to the product repository.
-5. Run external certificate, legal, VM and hardware evidence.
-6. Establish S8 feedback workflow before commercial rollout.
+1. Keep S0/S1 closed under accumulated regression validation.
+2. Complete S2 full-build and ABI validation.
+3. Finish repository portions of S3/S4 and preserve blocked truth.
+4. Hand the implemented S5 verifier to the product installer repository.
+5. Run external certificate, legal, VM, hardware and endurance evidence.
+6. Use the implemented S8 record gate during commercial rollout.
 7. Optimize and expand formats only from measured evidence.
 8. Start mobile and LyricsCore as separate projects with their own gates.
 
