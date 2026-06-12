@@ -3,6 +3,8 @@
 namespace playback_runtime_test {
 
 void open_failure_rolls_back_every_boundary();
+void source_failure_stops_media_with_classified_domain();
+void codec_failure_is_truthful_and_remains_closable();
 void eos_drains_buffer_and_stops_session();
 void drain_timeout_fails_and_close_releases_boundaries();
 void device_loss_reopens_pipeline_and_resumes();

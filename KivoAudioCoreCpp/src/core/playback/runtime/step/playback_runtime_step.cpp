@@ -23,8 +23,9 @@ PlaybackRuntimeCoordinator::Impl::produce_step() noexcept {
     }
     if (result.disposition
         == DecodeRenderQueueProducerDisposition::Failed) {
-        static_cast<void>(session_.report_failure(
-            session_.snapshot().session_generation));
+        handle_decode_failure(
+            result.decode_failure,
+            session_.snapshot().session_generation);
         saturating_increment(failed_operations_);
     }
     return result;

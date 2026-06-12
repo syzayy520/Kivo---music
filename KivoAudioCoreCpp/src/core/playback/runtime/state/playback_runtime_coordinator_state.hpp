@@ -58,6 +58,9 @@ private:
         uint64_t session_generation) noexcept;
     [[nodiscard]] bool request_device_recovery(
         uint64_t session_generation) noexcept;
+    void handle_decode_failure(
+        decode::DecodeFailure failure,
+        uint64_t session_generation) noexcept;
 
     [[nodiscard]] PlaybackRuntimeResult reject_command(
         const PlaybackCommand& command) noexcept;
@@ -72,7 +75,9 @@ private:
             render::RenderFailure::None) noexcept;
     void rollback_open(
         bool replacing,
-        uint64_t replaced_generation) noexcept;
+        uint64_t replaced_generation,
+        contract::ErrorDomain domain =
+            contract::ErrorDomain::Unknown) noexcept;
 
     [[nodiscard]] bool release_runtime() noexcept;
     [[nodiscard]] std::unique_ptr<DecodeRenderQueueProducer>
@@ -111,6 +116,14 @@ private:
     uint64_t device_recovery_attempts_{0};
     uint64_t successful_device_recoveries_{0};
     uint64_t failed_device_recoveries_{0};
+    uint64_t decode_failure_events_{0};
+    uint64_t recoverable_decode_failures_{0};
+    uint64_t decode_fallback_stops_{0};
+    uint64_t failed_decode_recoveries_{0};
+    decode::DecodeFailure last_decode_failure_{
+        decode::DecodeFailure::None};
+    contract::ErrorDomain last_decode_error_domain_{
+        contract::ErrorDomain::Unknown};
 };
 
 } // namespace kivo::core::playback

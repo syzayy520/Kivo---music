@@ -14,7 +14,8 @@ public:
         contract::SamplePosition position,
         uint64_t session_generation) noexcept;
     [[nodiscard]] bool report_failure(
-        uint64_t session_generation) noexcept;
+        uint64_t session_generation,
+        contract::ErrorDomain domain) noexcept;
     [[nodiscard]] bool complete_seek(
         uint64_t session_generation,
         bool succeeded) noexcept;

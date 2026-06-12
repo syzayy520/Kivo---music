@@ -1,6 +1,8 @@
 #include "../result/playback_runtime_result_factory.hpp"
 #include "../state/playback_runtime_coordinator_state.hpp"
 
+#include "kivo/core/playback/recovery/classification/decode_failure_domain.hpp"
+
 #include <limits>
 #include <utility>
 
@@ -49,6 +51,11 @@ PlaybackRuntimeResult PlaybackRuntimeCoordinator::Impl::recover() noexcept {
                 generation,
                 PlaybackRecoveryCompletion::Failed)) {
             static_cast<void>(session_.report_failure(generation));
+        }
+        if (decode_failure != decode::DecodeFailure::None) {
+            static_cast<void>(session_.report_failure(
+                generation,
+                classify_decode_failure(decode_failure)));
         }
         saturating_increment(failed_operations_);
         saturating_increment(failed_device_recoveries_);

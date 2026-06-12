@@ -27,6 +27,9 @@ void failed_seek_can_be_closed_and_shutdown_is_terminal() {
     RUNTIME_ASSERT(!seek_result.succeeded());
     RUNTIME_ASSERT(
         session.snapshot().state == core::contract::CoreState::Failed);
+    RUNTIME_ASSERT(
+        session.snapshot().last_error_domain
+        == core::contract::ErrorDomain::SourceUnavailable);
     RUNTIME_ASSERT(runtime.execute(
         command(3, core::contract::CommandKind::CloseSource, 3)).succeeded());
     RUNTIME_ASSERT(runtime.execute(

@@ -14,6 +14,8 @@ public:
     bool fail_open{false};
     bool fail_seek{false};
     bool emit_stale_after_seek{false};
+    kivo::core::decode::DecodeFailure terminal_failure{
+        kivo::core::decode::DecodeFailure::None};
     uint64_t close_count{0};
     uint64_t seek_count{0};
     kivo::core::contract::SamplePosition last_seek_target{0};
@@ -58,7 +60,11 @@ public:
             return kivo::core::decode::DecodeStepResult::produced(
                 make_block(decode_generation_));
         }
-        return kivo::core::decode::DecodeStepResult::end_of_stream();
+        return terminal_failure
+                == kivo::core::decode::DecodeFailure::None
+            ? kivo::core::decode::DecodeStepResult::end_of_stream()
+            : kivo::core::decode::DecodeStepResult::failed(
+                terminal_failure);
     }
 
     [[nodiscard]] kivo::core::decode::DecodeControlResult seek(

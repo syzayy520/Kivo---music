@@ -95,6 +95,7 @@ $runtimeFamilyRules = @(
     @{
         Path = "include\kivo\core\playback\recovery"
         AllowedDirectories = @(
+            "classification",
             "completion",
             "execution",
             "executor",

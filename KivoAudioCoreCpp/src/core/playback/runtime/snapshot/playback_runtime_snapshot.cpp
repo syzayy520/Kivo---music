@@ -33,6 +33,15 @@ PlaybackRuntimeCoordinator::Impl::snapshot() const noexcept {
     result.successful_device_recoveries =
         successful_device_recoveries_;
     result.failed_device_recoveries = failed_device_recoveries_;
+    result.decode_failure_events = decode_failure_events_;
+    result.recoverable_decode_failures =
+        recoverable_decode_failures_;
+    result.decode_fallback_stops = decode_fallback_stops_;
+    result.failed_decode_recoveries =
+        failed_decode_recoveries_;
+    result.last_decode_failure = last_decode_failure_;
+    result.last_decode_error_domain =
+        last_decode_error_domain_;
     return result;
 }
 

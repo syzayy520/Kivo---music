@@ -20,6 +20,8 @@ int main() {
          failed_session_can_close_and_shutdown},
         {"concurrent_intake_remains_serialized",
          concurrent_intake_remains_serialized},
+        {"decode_failures_map_to_stable_error_domains",
+         decode_failures_map_to_stable_error_domains},
         {"drain_completion_is_generation_safe",
          drain_completion_is_generation_safe},
         {"drain_failure_enters_failed_state",

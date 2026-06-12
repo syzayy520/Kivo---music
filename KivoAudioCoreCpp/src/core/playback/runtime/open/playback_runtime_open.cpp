@@ -1,6 +1,8 @@
 #include "../result/playback_runtime_result_factory.hpp"
 #include "../state/playback_runtime_coordinator_state.hpp"
 
+#include "kivo/core/playback/recovery/classification/decode_failure_domain.hpp"
+
 #include <utility>
 
 namespace kivo::core::playback {
@@ -68,7 +70,10 @@ PlaybackRuntimeResult PlaybackRuntimeCoordinator::Impl::open(
     if (!decode_open.is_accepted()) {
         static_cast<void>(decoder_.close());
         static_cast<void>(renderer_.close());
-        rollback_open(replacing, replaced_generation);
+        rollback_open(
+            replacing,
+            replaced_generation,
+            classify_decode_failure(decode_open.failure()));
         return runtime_result::failed(
             PlaybackRuntimeFailure::DecodeOpenFailed,
             {},
@@ -87,15 +92,20 @@ PlaybackRuntimeResult PlaybackRuntimeCoordinator::Impl::open(
     if (stale_source || stale_decode || wrong_format) {
         static_cast<void>(decoder_.close());
         static_cast<void>(renderer_.close());
-        rollback_open(replacing, replaced_generation);
-        return runtime_result::failed(
-            PlaybackRuntimeFailure::DecodeOpenFailed,
-            {},
+        const auto decode_failure =
             stale_source
                 ? decode::DecodeFailure::StaleSourceGeneration
                 : stale_decode
                     ? decode::DecodeFailure::StaleDecodeGeneration
-                    : decode::DecodeFailure::BoundaryFailure);
+                    : decode::DecodeFailure::BoundaryFailure;
+        rollback_open(
+            replacing,
+            replaced_generation,
+            classify_decode_failure(decode_failure));
+        return runtime_result::failed(
+            PlaybackRuntimeFailure::DecodeOpenFailed,
+            {},
+            decode_failure);
     }
 
     const auto generations = renderer_.snapshot().generations;
@@ -109,7 +119,10 @@ PlaybackRuntimeResult PlaybackRuntimeCoordinator::Impl::open(
     if (!staged_producer) {
         static_cast<void>(decoder_.close());
         static_cast<void>(renderer_.close());
-        rollback_open(replacing, replaced_generation);
+        rollback_open(
+            replacing,
+            replaced_generation,
+            contract::ErrorDomain::InternalBug);
         return runtime_result::failed(
             PlaybackRuntimeFailure::ProducerCreationFailed);
     }

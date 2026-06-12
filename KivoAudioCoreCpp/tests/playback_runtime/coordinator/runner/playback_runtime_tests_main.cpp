@@ -10,6 +10,10 @@ int main() {
         void (*run)();
     };
     const Test tests[] = {
+        {"source_failure_stops_media_with_classified_domain",
+         source_failure_stops_media_with_classified_domain},
+        {"codec_failure_is_truthful_and_remains_closable",
+         codec_failure_is_truthful_and_remains_closable},
         {"open_failure_rolls_back_every_boundary",
          open_failure_rolls_back_every_boundary},
         {"eos_drains_buffer_and_stops_session",

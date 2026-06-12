@@ -1,6 +1,8 @@
 #include "../result/playback_runtime_result_factory.hpp"
 #include "../state/playback_runtime_coordinator_state.hpp"
 
+#include "kivo/core/playback/recovery/classification/decode_failure_domain.hpp"
+
 namespace kivo::core::playback {
 
 PlaybackRuntimeResult PlaybackRuntimeCoordinator::Impl::seek(
@@ -44,6 +46,11 @@ PlaybackRuntimeResult PlaybackRuntimeCoordinator::Impl::seek(
         static_cast<void>(session_.complete_seek(
             before.session_generation,
             false));
+        if (!decode_result.is_success()) {
+            static_cast<void>(session_.report_failure(
+                before.session_generation,
+                classify_decode_failure(decode_result.failure)));
+        }
         saturating_increment(failed_operations_);
         return runtime_result::failed(
             !decode_result.is_success()

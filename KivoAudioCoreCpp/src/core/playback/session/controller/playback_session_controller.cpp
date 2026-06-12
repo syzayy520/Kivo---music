@@ -27,7 +27,17 @@ bool PlaybackSessionController::report_rendered_position(
 
 bool PlaybackSessionController::report_failure(
     uint64_t session_generation) noexcept {
-    return impl_ && impl_->report_failure(session_generation);
+    return report_failure(
+        session_generation,
+        contract::ErrorDomain::Unknown);
+}
+
+bool PlaybackSessionController::report_failure(
+    uint64_t session_generation,
+    contract::ErrorDomain domain) noexcept {
+    return impl_ && impl_->report_failure(
+        session_generation,
+        domain);
 }
 
 bool PlaybackSessionController::complete_seek(

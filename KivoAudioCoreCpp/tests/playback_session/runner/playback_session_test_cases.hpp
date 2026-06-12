@@ -7,6 +7,7 @@ void replacement_rejects_old_session_commands();
 void command_ids_are_globally_monotonic();
 void failed_session_can_close_and_shutdown();
 void concurrent_intake_remains_serialized();
+void decode_failures_map_to_stable_error_domains();
 void drain_completion_is_generation_safe();
 void drain_failure_enters_failed_state();
 void drain_command_races_are_deterministic();

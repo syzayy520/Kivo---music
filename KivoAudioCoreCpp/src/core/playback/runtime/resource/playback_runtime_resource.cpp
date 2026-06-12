@@ -1,6 +1,8 @@
 #include "../result/playback_runtime_result_factory.hpp"
 #include "../state/playback_runtime_coordinator_state.hpp"
 
+#include "kivo/core/playback/recovery/classification/decode_failure_domain.hpp"
+
 #include <limits>
 
 namespace kivo::core::playback {
@@ -22,7 +24,9 @@ PlaybackRuntimeResult PlaybackRuntimeCoordinator::Impl::fail_active(
     render::RenderFailure render_failure) noexcept {
     const auto generation = session_.snapshot().session_generation;
     if (generation != 0) {
-        static_cast<void>(session_.report_failure(generation));
+        static_cast<void>(session_.report_failure(
+            generation,
+            classify_decode_failure(decode_failure)));
     }
     saturating_increment(failed_operations_);
     return runtime_result::failed(
@@ -34,10 +38,13 @@ PlaybackRuntimeResult PlaybackRuntimeCoordinator::Impl::fail_active(
 
 void PlaybackRuntimeCoordinator::Impl::rollback_open(
     bool replacing,
-    uint64_t replaced_generation) noexcept {
+    uint64_t replaced_generation,
+    contract::ErrorDomain domain) noexcept {
     saturating_increment(rolled_back_opens_);
     if (replacing && replaced_generation != 0) {
-        static_cast<void>(session_.report_failure(replaced_generation));
+        static_cast<void>(session_.report_failure(
+            replaced_generation,
+            domain));
     }
 }
 

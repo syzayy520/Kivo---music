@@ -18,7 +18,8 @@ bool PlaybackSessionController::Impl::report_rendered_position(
 }
 
 bool PlaybackSessionController::Impl::report_failure(
-    uint64_t session_generation) noexcept {
+    uint64_t session_generation,
+    contract::ErrorDomain domain) noexcept {
     std::scoped_lock lock{mutex_};
     if (session_generation == 0
         || session_generation != snapshot_.session_generation
@@ -28,6 +29,8 @@ bool PlaybackSessionController::Impl::report_failure(
     snapshot_.state = contract::CoreState::Failed;
     snapshot_.pending_seek_target =
         contract::kInvalidSamplePosition;
+    snapshot_.last_error_domain = domain;
+    snapshot_.recovery_action = contract::RecoveryAction::None;
     return true;
 }
 

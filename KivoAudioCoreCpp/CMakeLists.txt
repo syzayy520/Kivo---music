@@ -254,6 +254,7 @@ add_library(kivo_playback_runtime STATIC
     src/core/playback/runtime/flush/playback_runtime_flush.cpp
     src/core/playback/runtime/lifecycle/playback_runtime_lifecycle.cpp
     src/core/playback/runtime/open/playback_runtime_open.cpp
+    src/core/playback/runtime/recovery/playback_runtime_decode_failure.cpp
     src/core/playback/runtime/recovery/playback_runtime_device_recovery.cpp
     src/core/playback/runtime/resource/playback_runtime_resource.cpp
     src/core/playback/runtime/seek/playback_runtime_seek.cpp
@@ -450,6 +451,7 @@ target_compile_options(kivo_decode_boundary_tests PRIVATE
 add_executable(kivo_playback_session_tests
     tests/playback_session/runner/playback_session_tests_main.cpp
     tests/playback_session/scenario/command_lifecycle_tests.cpp
+    tests/playback_session/scenario/decode_failure_classification_tests.cpp
     tests/playback_session/scenario/drain_lifecycle_tests.cpp
     tests/playback_session/scenario/recovery_executor_tests.cpp
     tests/playback_session/scenario/recovery_state_tests.cpp
@@ -475,6 +477,7 @@ target_compile_options(kivo_playback_pipeline_tests PRIVATE
 add_executable(kivo_playback_runtime_tests
     tests/playback_runtime/coordinator/runner/playback_runtime_tests_main.cpp
     tests/playback_runtime/coordinator/scenario/command_isolation_tests.cpp
+    tests/playback_runtime/coordinator/scenario/decode_failure_recovery_tests.cpp
     tests/playback_runtime/coordinator/scenario/eos_drain_tests.cpp
     tests/playback_runtime/coordinator/scenario/device_recovery_tests.cpp
     tests/playback_runtime/coordinator/scenario/lifecycle_tests.cpp

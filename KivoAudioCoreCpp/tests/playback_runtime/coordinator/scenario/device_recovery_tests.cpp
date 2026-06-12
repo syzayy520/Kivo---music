@@ -115,6 +115,9 @@ void failed_device_recovery_remains_closable() {
         == core::decode::DecodeFailure::SourceSeekFailed);
     RUNTIME_ASSERT(
         failed.session.state == core::contract::CoreState::Failed);
+    RUNTIME_ASSERT(
+        failed.session.last_error_domain
+        == core::contract::ErrorDomain::SourceUnavailable);
     RUNTIME_ASSERT(!failed.device_recovery_pending);
     RUNTIME_ASSERT(failed.failed_device_recoveries == 1);
     RUNTIME_ASSERT(
