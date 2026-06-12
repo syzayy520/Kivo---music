@@ -43,6 +43,13 @@ core::render::RenderOpenResult FakeRenderer::open(
         return core::render::RenderOpenResult::Rejected(
             RenderFailure::StaleDeviceGeneration);
     }
+    if (request.output_mode == core::render::RenderOutputMode::Exclusive
+        && !configuration_.capabilities.supports(
+            core::render::RenderFeature::ExclusiveMode)) {
+        record(RenderObservationOperation::Open, RenderFailure::UnsupportedFormat);
+        return core::render::RenderOpenResult::Rejected(
+            RenderFailure::UnsupportedFormat);
+    }
 
     auto accepted_format = request.requested_format;
     if (request.requested_format != configuration_.supported_format) {

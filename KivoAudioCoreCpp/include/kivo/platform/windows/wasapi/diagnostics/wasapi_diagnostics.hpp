@@ -15,8 +15,9 @@ enum class WasapiOutputMode : uint8_t {
 
 struct WasapiModeCapabilities {
     bool shared_mode{true};
-    bool exclusive_mode{false};
+    bool exclusive_mode{true};
     bool event_driven_shared_mode{true};
+    bool event_driven_exclusive_mode{true};
 
     [[nodiscard]] constexpr bool operator==(
         const WasapiModeCapabilities&) const noexcept = default;

@@ -79,6 +79,24 @@ void stale_device_generation_is_rejected_during_open() {
     FAKE_ASSERT(result.failure() == core::render::RenderFailure::StaleDeviceGeneration);
 }
 
+void exclusive_mode_requires_declared_capability() {
+    testing::time::ManualClock clock;
+    auto config = fake_renderer_test::configuration();
+    testing::render::FakeRenderer renderer(config, clock);
+
+    auto request = fake_renderer_test::open_request(config);
+    request.output_mode = core::render::RenderOutputMode::Exclusive;
+    auto result = renderer.open(request);
+    FAKE_ASSERT(!result.is_accepted());
+    FAKE_ASSERT(result.failure() == core::render::RenderFailure::UnsupportedFormat);
+
+    config.capabilities.feature_bits |= core::render::render_feature_bit(
+        core::render::RenderFeature::ExclusiveMode);
+    testing::render::FakeRenderer capable_renderer(config, clock);
+    result = capable_renderer.open(request);
+    FAKE_ASSERT(result.is_accepted());
+}
+
 } // namespace
 
 void run_fake_renderer_lifecycle_tests(FakeRendererTestRunner& runner) {
@@ -93,4 +111,7 @@ void run_fake_renderer_lifecycle_tests(FakeRendererTestRunner& runner) {
     runner.run(
         "stale_device_generation_is_rejected_during_open",
         stale_device_generation_is_rejected_during_open);
+    runner.run(
+        "exclusive_mode_requires_declared_capability",
+        exclusive_mode_requires_declared_capability);
 }

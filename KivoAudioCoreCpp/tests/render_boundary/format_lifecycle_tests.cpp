@@ -42,6 +42,10 @@ void open_request_requires_format_and_capacity() {
     request.requested_format = stereo_float_format();
     request.requested_buffer_frames = 1024;
     request.format_policy = render::FormatAcceptancePolicy::Exact;
+    RENDER_ASSERT(request.output_mode == render::RenderOutputMode::Shared);
+    RENDER_ASSERT(request.is_valid());
+
+    request.output_mode = render::RenderOutputMode::Exclusive;
     RENDER_ASSERT(request.is_valid());
 }
 

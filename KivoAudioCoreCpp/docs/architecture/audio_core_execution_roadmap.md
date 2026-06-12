@@ -5,7 +5,7 @@
 **Effective Date:** 2026-06-12
 **Applies To:** `KivoAudioCoreCpp/`
 **Architecture Basis:** V10.1 FINAL P0-B READY LOCKED PATCHED
-**Current Execution Position:** P0-M exclusive and bit-perfect truth
+**Current Execution Position:** P0-N processing boundary
 
 ---
 
@@ -45,7 +45,7 @@ for the remaining audio-core phases.
 decode, product-core coordination, quality, host integration, and release work
 inside `KivoAudioCoreCpp/`.
 
-**Current Phase:** P0-M exclusive output and bit-perfect truth proof.
+**Current Phase:** P0-N processing boundary and strict bypass proof.
 
 **Allowed:** Work that directly satisfies the active milestone, its tests, its
 validation requirements, or a documented correctness, safety, legal, privacy,
@@ -844,23 +844,13 @@ The following are not sufficient reasons to change the sequence:
 
 Execute these items in order:
 
-1. Repair duplicate public contract type definitions.
-2. Repair PCM valid-bit/container-bit/frame-size semantics.
-3. Add public-header standalone and all-header composition targets.
-4. Make validation initialize the discovered MSVC environment.
-5. Repair generated-directory exclusions in all repository gates.
-6. Run a clean full validation and close P0-C.
-7. Define the minimal platform-neutral render boundary.
-8. Implement deterministic fake clock and fake renderer.
-9. Implement the six mandatory first fault scenarios.
-10. Implement the WASAPI adapter shell.
-11. Produce audible generated PCM through WASAPI shared mode.
-12. Implement the layered FFmpeg seam.
-13. Play a real local file through the end-to-end loop.
-14. Harden commands, seek, flush, generations, and recovery.
-
-Do not insert additional planning-only phases between items 6 and 13 unless a
-real correctness, safety, legal, or architecture blocker is found.
+1. Lock the P0-N processing family and strict-bypass ownership.
+2. Implement software volume and ReplayGain without hidden activation.
+3. Implement explicit resampling and channel-remix boundaries.
+4. Implement processor participation, latency, tail, and dither truth.
+5. Prove byte-preserving bypass and bit-perfect incompatibility.
+6. Implement the versioned P0-O host ABI.
+7. Complete P0-P release, dependency, privacy, and commercial hardening.
 
 ---
 

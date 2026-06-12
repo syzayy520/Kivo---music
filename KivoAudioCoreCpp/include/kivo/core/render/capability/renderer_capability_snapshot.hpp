@@ -16,7 +16,8 @@ enum class RenderFeature : uint32_t {
     DelayReport = 1u << 1u,
     Flush = 1u << 2u,
     Drain = 1u << 3u,
-    Reset = 1u << 4u
+    Reset = 1u << 4u,
+    ExclusiveMode = 1u << 5u
 };
 
 [[nodiscard]] constexpr uint32_t render_feature_bit(RenderFeature feature) noexcept {

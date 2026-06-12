@@ -12,6 +12,8 @@
 
 namespace kivo::platform::windows::wasapi::detail {
 
+struct WasapiStreamOpenResult;
+
 class WasapiRendererState final {
 public:
     ~WasapiRendererState();
@@ -42,6 +44,25 @@ private:
     [[nodiscard]] core::render::RenderFailure stale_generation(
         const core::render::RenderGenerationSet& generations) const noexcept;
     [[nodiscard]] bool detect_render_environment_change() noexcept;
+    [[nodiscard]] HRESULT prepare_open_environment(
+        uint64_t& endpoint_identity,
+        REFERENCE_TIME& default_device_period,
+        REFERENCE_TIME& minimum_device_period) noexcept;
+    [[nodiscard]] HRESULT initialize_shared_stream(
+        const core::render::RenderOpenRequest& request,
+        core::contract::RenderFormat& accepted_format) noexcept;
+    [[nodiscard]] HRESULT initialize_exclusive_stream(
+        const core::render::RenderOpenRequest& request,
+        REFERENCE_TIME minimum_device_period,
+        core::contract::RenderFormat& accepted_format) noexcept;
+    [[nodiscard]] HRESULT acquire_render_service(
+        core::contract::FrameCount& buffer_frames) noexcept;
+    [[nodiscard]] core::render::RenderOpenResult complete_open(
+        const core::render::RenderOpenRequest& request,
+        const WasapiStreamOpenResult& stream,
+        uint64_t endpoint_identity,
+        REFERENCE_TIME default_device_period,
+        REFERENCE_TIME minimum_device_period) noexcept;
     [[nodiscard]] core::render::RenderOpenResult fail_open(HRESULT result) noexcept;
     [[nodiscard]] core::render::RenderControlResult fail_control(HRESULT result) noexcept;
     [[nodiscard]] core::render::RenderWriteResult fail_write(

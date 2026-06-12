@@ -16,7 +16,12 @@ int run_wasapi_tone(const ToneOptions& options) {
     core::render::RenderOpenRequest request{};
     request.requested_format = preferred_tone_format();
     request.requested_buffer_frames = 4800;
-    request.format_policy = core::render::FormatAcceptancePolicy::AllowCompatible;
+    request.output_mode = options.exclusive_mode
+        ? core::render::RenderOutputMode::Exclusive
+        : core::render::RenderOutputMode::Shared;
+    request.format_policy = options.exclusive_mode
+        ? core::render::FormatAcceptancePolicy::Exact
+        : core::render::FormatAcceptancePolicy::AllowCompatible;
 
     const auto open_result = renderer.open(request);
     if (!open_result.is_accepted()) {
@@ -43,7 +48,9 @@ int run_wasapi_tone(const ToneOptions& options) {
     }
     platform::windows::wasapi::WasapiRenderWorker worker(renderer, *queue);
 
-    std::cout << "WASAPI shared event-driven output\n"
+    std::cout << "WASAPI "
+              << (options.exclusive_mode ? "exclusive" : "shared")
+              << " event-driven output\n"
               << "  sample_rate=" << format.format.sample_rate << "\n"
               << "  channels=" << static_cast<int>(format.format.channel_count()) << "\n"
               << "  sample_format="

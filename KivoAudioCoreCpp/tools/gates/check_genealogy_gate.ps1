@@ -329,6 +329,30 @@ $runtimeFamilyRules = @(
         )
     },
     @{
+        Path = "include\kivo\core\output\truth"
+        AllowedDirectories = @(
+            "evaluation",
+            "evidence",
+            "result"
+        )
+    },
+    @{
+        Path = "src\core\output\truth"
+        AllowedDirectories = @("evaluation")
+    },
+    @{
+        Path = "tests\output_truth"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
+        Path = "tests\output_truth\scenario"
+        AllowedDirectories = @("evaluation")
+    },
+    @{
         Path = "include\kivo\core\playback\recovery"
         AllowedDirectories = @(
             "classification",
@@ -456,11 +480,14 @@ $runtimeSourceRoots = @(
     "src\core\playback\pipeline",
     "include\kivo\core\playback\gapless",
     "src\core\playback\gapless",
+    "include\kivo\core\output\truth",
+    "src\core\output\truth",
     "src\core\playback\recovery",
     "src\core\playback\session",
     "src\core\playback\runtime",
     "tests\playback_pipeline",
     "tests\playback_gapless",
+    "tests\output_truth",
     "tests\playback_session",
     "tests\playback_runtime"
 )

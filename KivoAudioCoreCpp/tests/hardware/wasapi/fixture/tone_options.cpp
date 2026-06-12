@@ -19,6 +19,9 @@ ToneOptions parse_tone_options(int argc, char** argv) {
         } else if (name == "--cycles") {
             options.cycles = static_cast<uint32_t>(
                 std::strtoul(argv[index + 1], nullptr, 10));
+        } else if (name == "--mode") {
+            options.exclusive_mode =
+                std::string_view{argv[index + 1]} == "exclusive";
         }
     }
     options.duration_seconds = std::clamp(options.duration_seconds, 0.1, 3600.0);

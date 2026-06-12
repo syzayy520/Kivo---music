@@ -121,4 +121,45 @@ bool map_wave_format(
     return true;
 }
 
+bool make_wave_format(
+    const core::contract::RenderFormat& render_format,
+    WAVEFORMATEXTENSIBLE& wave_format) noexcept {
+    wave_format = {};
+    const auto& descriptor = render_format.format;
+    if (!descriptor.is_valid()
+        || descriptor.frame_layout != core::contract::FrameLayout::Interleaved) {
+        return false;
+    }
+
+    const auto channels = descriptor.channel_count();
+    const auto container_bits = descriptor.container_bits();
+    const auto block_alignment =
+        static_cast<uint32_t>(channels) * (container_bits / 8u);
+    const auto average_bytes =
+        static_cast<uint64_t>(descriptor.sample_rate) * block_alignment;
+    if (channels == 0
+        || block_alignment > std::numeric_limits<uint16_t>::max()
+        || average_bytes > std::numeric_limits<uint32_t>::max()) {
+        return false;
+    }
+
+    wave_format.Format.wFormatTag = WAVE_FORMAT_EXTENSIBLE;
+    wave_format.Format.nChannels = channels;
+    wave_format.Format.nSamplesPerSec = descriptor.sample_rate;
+    wave_format.Format.nAvgBytesPerSec =
+        static_cast<uint32_t>(average_bytes);
+    wave_format.Format.nBlockAlign = static_cast<uint16_t>(block_alignment);
+    wave_format.Format.wBitsPerSample = container_bits;
+    wave_format.Format.cbSize =
+        sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
+    wave_format.Samples.wValidBitsPerSample =
+        descriptor.valid_bits_per_sample();
+    wave_format.dwChannelMask = descriptor.effective_channel_mask().value;
+    wave_format.SubFormat =
+        core::contract::sample_format_is_float(descriptor.sample_format)
+        ? KSDATAFORMAT_SUBTYPE_IEEE_FLOAT
+        : KSDATAFORMAT_SUBTYPE_PCM;
+    return true;
+}
+
 } // namespace kivo::platform::windows::wasapi::detail

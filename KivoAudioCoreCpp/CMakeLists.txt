@@ -45,6 +45,17 @@ target_compile_features(kivo_core_contract INTERFACE cxx_std_20)
 add_library(kivo_core_render INTERFACE)
 target_include_directories(kivo_core_render INTERFACE include/)
 target_compile_features(kivo_core_render INTERFACE cxx_std_20)
+
+add_library(kivo_output_truth STATIC
+    src/core/output/truth/evaluation/bit_perfect_truth_evaluator.cpp
+)
+target_link_libraries(kivo_output_truth PUBLIC kivo_core_render)
+target_include_directories(kivo_output_truth PUBLIC include/)
+target_compile_features(kivo_output_truth PUBLIC cxx_std_20)
+target_compile_options(kivo_output_truth PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
 target_link_libraries(kivo_core_render INTERFACE kivo_core_contract)
 
 # Platform-neutral decode boundary and local byte source
@@ -491,6 +502,19 @@ add_executable(kivo_render_boundary_tests
     tests/render_boundary/render_write_result_tests.cpp
     tests/render_boundary/boundary_interface_tests.cpp
 )
+
+add_executable(kivo_output_truth_tests
+    tests/output_truth/runner/output_truth_tests_main.cpp
+    tests/output_truth/scenario/evaluation/format_evaluation_tests.cpp
+    tests/output_truth/scenario/evaluation/mode_evaluation_tests.cpp
+    tests/output_truth/scenario/evaluation/mutation_evaluation_tests.cpp
+)
+target_link_libraries(kivo_output_truth_tests PRIVATE kivo_output_truth)
+target_compile_features(kivo_output_truth_tests PRIVATE cxx_std_20)
+target_compile_options(kivo_output_truth_tests PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc /wd4127>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
 target_link_libraries(kivo_render_boundary_tests PRIVATE kivo_core_render)
 target_compile_features(kivo_render_boundary_tests PRIVATE cxx_std_20)
 target_compile_options(kivo_render_boundary_tests PRIVATE
@@ -676,7 +700,12 @@ if(WIN32)
         src/platform/windows/wasapi/renderer/wasapi_renderer_failure.cpp
         src/platform/windows/wasapi/renderer/wasapi_renderer_notification.cpp
         src/platform/windows/wasapi/renderer/wasapi_renderer_open.cpp
+        src/platform/windows/wasapi/renderer/wasapi_renderer_open_complete.cpp
+        src/platform/windows/wasapi/renderer/wasapi_renderer_open_environment.cpp
+        src/platform/windows/wasapi/renderer/wasapi_renderer_open_service.cpp
         src/platform/windows/wasapi/renderer/wasapi_renderer_query.cpp
+        src/platform/windows/wasapi/renderer/wasapi_renderer_exclusive_open.cpp
+        src/platform/windows/wasapi/renderer/wasapi_renderer_shared_open.cpp
         src/platform/windows/wasapi/renderer/wasapi_renderer_write.cpp
         src/platform/windows/wasapi/worker/wasapi_render_worker_facade.cpp
         src/platform/windows/wasapi/worker/wasapi_render_worker_lifecycle.cpp
@@ -830,6 +859,7 @@ target_compile_options(kivo_public_header_checks PRIVATE
 add_dependencies(kivo_contract_tests kivo_public_header_checks)
 add_dependencies(kivo_capability_tests kivo_public_header_checks)
 add_dependencies(kivo_render_boundary_tests kivo_public_header_checks)
+add_dependencies(kivo_output_truth_tests kivo_public_header_checks)
 add_dependencies(kivo_render_queue_tests kivo_public_header_checks)
 add_dependencies(kivo_decode_boundary_tests kivo_public_header_checks)
 add_dependencies(kivo_playback_session_tests kivo_public_header_checks)
@@ -859,6 +889,7 @@ enable_testing()
 add_test(NAME contract_tests COMMAND kivo_contract_tests)
 add_test(NAME capability_tests COMMAND kivo_capability_tests)
 add_test(NAME render_boundary_tests COMMAND kivo_render_boundary_tests)
+add_test(NAME output_truth_tests COMMAND kivo_output_truth_tests)
 add_test(NAME render_queue_tests COMMAND kivo_render_queue_tests)
 add_test(NAME decode_boundary_tests COMMAND kivo_decode_boundary_tests)
 add_test(NAME playback_session_tests COMMAND kivo_playback_session_tests)

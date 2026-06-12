@@ -111,14 +111,60 @@ void inconsistent_average_byte_rate_is_rejected() {
     WASAPI_ASSERT(!platform::windows::wasapi::detail::map_wave_format(&wave, format));
 }
 
+core::contract::RenderFormat format(
+    core::contract::SampleFormat sample_format,
+    uint32_t sample_rate = 48000) {
+    return {{
+        sample_format,
+        core::contract::ChannelLayout::Stereo,
+        core::contract::FrameLayout::Interleaved,
+        {},
+        sample_rate,
+        core::contract::sample_format_valid_bits(sample_format),
+        core::contract::sample_format_container_bits(sample_format)
+    }};
+}
+
+void core_formats_round_trip_through_extensible_wave_format() {
+    const core::contract::SampleFormat sample_formats[] = {
+        core::contract::SampleFormat::Float32,
+        core::contract::SampleFormat::Int16,
+        core::contract::SampleFormat::Int24,
+        core::contract::SampleFormat::Int32
+    };
+    for (const auto sample_format : sample_formats) {
+        const auto original = format(sample_format, 96000);
+        WAVEFORMATEXTENSIBLE wave{};
+        WASAPI_ASSERT(platform::windows::wasapi::detail::make_wave_format(
+            original,
+            wave));
+        WASAPI_ASSERT(wave.Format.wFormatTag == WAVE_FORMAT_EXTENSIBLE);
+        WASAPI_ASSERT(wave.dwChannelMask == KSAUDIO_SPEAKER_STEREO);
+
+        core::contract::RenderFormat mapped{};
+        WASAPI_ASSERT(platform::windows::wasapi::detail::map_wave_format(
+            &wave.Format,
+            mapped));
+        WASAPI_ASSERT(mapped == original);
+    }
+}
+
+void invalid_core_format_cannot_be_encoded() {
+    WAVEFORMATEXTENSIBLE wave{};
+    WASAPI_ASSERT(!platform::windows::wasapi::detail::make_wave_format(
+        {},
+        wave));
+}
+
 void adapter_mode_capabilities_are_truthful() {
     constexpr auto modes =
         platform::windows::wasapi::WasapiRenderer::supported_modes();
     static_assert(modes.shared_mode);
-    static_assert(!modes.exclusive_mode);
+    static_assert(modes.exclusive_mode);
     static_assert(modes.event_driven_shared_mode);
+    static_assert(modes.event_driven_exclusive_mode);
     WASAPI_ASSERT(modes.shared_mode);
-    WASAPI_ASSERT(!modes.exclusive_mode);
+    WASAPI_ASSERT(modes.exclusive_mode);
 }
 
 } // namespace
@@ -138,6 +184,12 @@ void run_wasapi_format_mapping_tests(WasapiTestRunner& runner) {
     runner.run(
         "inconsistent_average_byte_rate_is_rejected",
         inconsistent_average_byte_rate_is_rejected);
+    runner.run(
+        "core_formats_round_trip_through_extensible_wave_format",
+        core_formats_round_trip_through_extensible_wave_format);
+    runner.run(
+        "invalid_core_format_cannot_be_encoded",
+        invalid_core_format_cannot_be_encoded);
     runner.run(
         "adapter_mode_capabilities_are_truthful",
         adapter_mode_capabilities_are_truthful);

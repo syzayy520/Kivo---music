@@ -4,19 +4,21 @@ Kivo Windows Desktop Commercial Audio Core — C++ Implementation
 
 ## Project Status
 
-**Current execution position:** P0-C closeout hardening, currently tracked
-under P0-D validation and contract-correctness work.
+**Current execution position:** P0-N processing boundary.
 
 This project is the standalone C++ audio core for the Kivo Windows desktop music player.
 It replaces the previous Rust audio backend with a fully self-controlled C++ implementation.
 
 Current state:
 
-- P0-C contract cleanup is ready for closeout.
-- P0-D is hardening validation, public-header composability, and core contract correctness.
-- P0-D fake-backend and P0-E render-boundary implementation have not started.
-- There is still no production audio runtime engine in this repository.
-- FFmpeg decode, WASAPI output, realtime render thread, and end-to-end playback are future implementation phases.
+- Public contracts and deterministic render/failure boundaries are complete.
+- Event-driven WASAPI shared output is implemented and hardware-verified.
+- FFmpeg local-file decode, bounded queue transfer, playback control, seek,
+  recovery, hostile-media handling, and gapless timeline behavior are present.
+- WASAPI exclusive negotiation is implemented without shared fallback.
+- Bit-perfect is reported only from complete mode, format, engine, conversion,
+  and processing evidence.
+- P0-N processing implementation is the active phase.
 
 The authoritative implementation order is:
 
@@ -38,17 +40,17 @@ roadmap amendment is committed.
 |-------|------|--------|
 | P0-A | Design Planning Lock | DONE |
 | P0-B | Skeleton + Governance + Policy Pack | DONE |
-| P0-C | Core Contract Foundation | CLOSEOUT |
-| P0-D/P0-E | Validation Closeout + Deterministic Render Proof | CLOSEOUT / NEXT |
-| P0-F | WASAPI Adapter Shell | PLANNED |
-| P0-G | Decode Contract + FFmpeg Seam | PLANNED |
-| P0-H | Minimum Real WASAPI Output | PLANNED |
-| P0-I | Minimum FFmpeg Decode -> WASAPI Loop | PLANNED |
-| P0-J | State Machine Hardening | PLANNED |
-| P0-K | Commercial Stability / Device Matrix | PLANNED |
-| P0-L | Gapless Playback / Timeline Accuracy | PLANNED |
-| P0-M | Exclusive Mode / Bit-Perfect | PLANNED |
-| P0-N | ReplayGain / Volume / DSP | PLANNED |
+| P0-C | Core Contract Foundation | DONE |
+| P0-D/P0-E | Validation + Deterministic Render Proof | DONE |
+| P0-F | WASAPI Adapter Shell | DONE |
+| P0-G | Decode Contract + FFmpeg Seam | DONE |
+| P0-H | Minimum Real WASAPI Output | DONE |
+| P0-I | Minimum FFmpeg Decode -> WASAPI Loop | DONE |
+| P0-J | State Machine Hardening | DONE |
+| P0-K | Commercial Stability / Device Matrix | DONE |
+| P0-L | Gapless Playback / Timeline Accuracy | DONE |
+| P0-M | Exclusive Mode / Bit-Perfect | DONE |
+| P0-N | ReplayGain / Volume / DSP | ACTIVE |
 | P0-O | Host ABI / Tauri Integration | PLANNED |
 | P0-P | Commercial Release Hardening | PLANNED |
 | P0-Q | Hi-Res / DSD / DoP Research | PLANNED |
