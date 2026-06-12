@@ -118,7 +118,10 @@ if(KIVO_FFMPEG_ROOT)
         src/adapters/ffmpeg/codec/ffmpeg_audio_decoder.cpp
         src/adapters/ffmpeg/conversion/ffmpeg_audio_converter.cpp
         src/adapters/ffmpeg/mapping/ffmpeg_audio_format.cpp
-        src/adapters/ffmpeg/ffmpeg_audio_decode_session.cpp
+        src/adapters/ffmpeg/session/ffmpeg_audio_decode_control.cpp
+        src/adapters/ffmpeg/session/ffmpeg_audio_decode_facade.cpp
+        src/adapters/ffmpeg/session/ffmpeg_audio_decode_open.cpp
+        src/adapters/ffmpeg/session/ffmpeg_audio_decode_step.cpp
     )
     target_link_libraries(kivo_ffmpeg_decode_adapter
         PUBLIC kivo_decode_boundary
@@ -130,7 +133,7 @@ if(KIVO_FFMPEG_ROOT)
     )
     target_include_directories(kivo_ffmpeg_decode_adapter
         PUBLIC include/
-        PRIVATE src/adapters/ffmpeg
+        PRIVATE src
     )
     target_compile_features(kivo_ffmpeg_decode_adapter PUBLIC cxx_std_20)
     target_compile_options(kivo_ffmpeg_decode_adapter PRIVATE
@@ -175,8 +178,10 @@ if(KIVO_FFMPEG_ROOT)
     )
 
     add_executable(kivo_ffmpeg_decode_tests
-        tests/ffmpeg_decode/ffmpeg_decode_tests_main.cpp
-        tests/ffmpeg_decode/ffmpeg_session_tests.cpp
+        tests/ffmpeg_decode/runner/ffmpeg_decode_tests_main.cpp
+        tests/ffmpeg_decode/scenario/decode_fixture_tests.cpp
+        tests/ffmpeg_decode/scenario/policy_and_corruption_tests.cpp
+        tests/ffmpeg_decode/scenario/seek_flush_tests.cpp
     )
     target_link_libraries(kivo_ffmpeg_decode_tests
         PRIVATE kivo_ffmpeg_decode_adapter)

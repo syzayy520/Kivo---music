@@ -1,4 +1,4 @@
-#include "codec/ffmpeg_audio_decoder.hpp"
+#include "adapters/ffmpeg/codec/ffmpeg_audio_decoder.hpp"
 
 namespace kivo::adapters::ffmpeg::detail {
 

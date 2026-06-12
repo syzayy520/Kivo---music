@@ -93,6 +93,29 @@ if (Test-Path $toolsPath) {
 
 $runtimeFamilyRules = @(
     @{
+        Path = "include\kivo\adapters\ffmpeg"
+        AllowedDirectories = @("session")
+    },
+    @{
+        Path = "src\adapters\ffmpeg"
+        AllowedDirectories = @(
+            "codec",
+            "container",
+            "conversion",
+            "mapping",
+            "session",
+            "source"
+        )
+    },
+    @{
+        Path = "tests\ffmpeg_decode"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
         Path = "include\kivo\platform\windows\wasapi"
         AllowedDirectories = @(
             "diagnostics",
@@ -282,6 +305,9 @@ foreach ($rule in $runtimeFamilyRules) {
 }
 
 $runtimeSourceRoots = @(
+    "include\kivo\adapters\ffmpeg",
+    "src\adapters\ffmpeg",
+    "tests\ffmpeg_decode",
     "include\kivo\platform\windows\wasapi",
     "src\platform\windows\wasapi",
     "tests\platform_windows\wasapi",

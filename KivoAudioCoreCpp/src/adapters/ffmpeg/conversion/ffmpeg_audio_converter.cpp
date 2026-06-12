@@ -1,4 +1,4 @@
-#include "conversion/ffmpeg_audio_converter.hpp"
+#include "adapters/ffmpeg/conversion/ffmpeg_audio_converter.hpp"
 
 #include <cstdint>
 #include <limits>

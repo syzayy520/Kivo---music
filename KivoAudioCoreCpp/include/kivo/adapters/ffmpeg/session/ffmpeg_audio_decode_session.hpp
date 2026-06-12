@@ -6,6 +6,10 @@
 
 namespace kivo::adapters::ffmpeg {
 
+namespace detail {
+class FfmpegAudioDecodeRuntime;
+}
+
 class FfmpegAudioDecodeSession final
     : public core::decode::AudioDecodeBoundary {
 public:
@@ -30,8 +34,7 @@ public:
     [[nodiscard]] core::decode::MediaProbe probe() const noexcept override;
 
 private:
-    class Impl;
-    std::unique_ptr<Impl> impl_;
+    std::unique_ptr<detail::FfmpegAudioDecodeRuntime> impl_;
 };
 
 } // namespace kivo::adapters::ffmpeg

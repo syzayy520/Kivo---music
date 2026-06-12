@@ -1,8 +1,8 @@
-#include "container/ffmpeg_demux_session.hpp"
+#include "adapters/ffmpeg/container/ffmpeg_demux_session.hpp"
 
 #include <limits>
 
-#include "source/ffmpeg_avio_bridge.hpp"
+#include "adapters/ffmpeg/source/ffmpeg_avio_bridge.hpp"
 
 extern "C" {
 #include <libavutil/error.h>

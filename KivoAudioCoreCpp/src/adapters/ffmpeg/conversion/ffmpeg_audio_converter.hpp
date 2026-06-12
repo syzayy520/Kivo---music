@@ -13,7 +13,7 @@ extern "C" {
 #include "kivo/core/contract/format/roles/render_format.hpp"
 #include "kivo/core/contract/sample_position.hpp"
 #include "kivo/core/decode/failure/decode_failure.hpp"
-#include "mapping/ffmpeg_audio_format.hpp"
+#include "adapters/ffmpeg/mapping/ffmpeg_audio_format.hpp"
 
 namespace kivo::adapters::ffmpeg::detail {
 

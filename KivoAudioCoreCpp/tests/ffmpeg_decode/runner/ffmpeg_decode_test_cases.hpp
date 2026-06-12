@@ -1,0 +1,7 @@
+#pragma once
+
+struct FfmpegDecodeTestRunner;
+
+void run_ffmpeg_decode_fixture_tests(FfmpegDecodeTestRunner& runner);
+void run_ffmpeg_policy_and_corruption_tests(FfmpegDecodeTestRunner& runner);
+void run_ffmpeg_seek_flush_tests(FfmpegDecodeTestRunner& runner);

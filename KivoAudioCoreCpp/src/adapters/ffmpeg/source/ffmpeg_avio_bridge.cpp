@@ -1,4 +1,4 @@
-#include "source/ffmpeg_avio_bridge.hpp"
+#include "adapters/ffmpeg/source/ffmpeg_avio_bridge.hpp"
 
 #include <algorithm>
 #include <cstddef>

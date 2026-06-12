@@ -1,6 +1,5 @@
-#include "ffmpeg_decode_tests_main.hpp"
-
-void run_ffmpeg_session_tests(FfmpegDecodeTestRunner& runner);
+#include "../fixture/ffmpeg_decode_test_runner.hpp"
+#include "ffmpeg_decode_test_cases.hpp"
 
 int main(int argc, char** argv) {
     std::cout << "=== FFmpeg Decode Adapter Tests ===\n\n";
@@ -10,7 +9,9 @@ int main(int argc, char** argv) {
     }
 
     FfmpegDecodeTestRunner runner{{argv[1]}};
-    run_ffmpeg_session_tests(runner);
+    run_ffmpeg_decode_fixture_tests(runner);
+    run_ffmpeg_policy_and_corruption_tests(runner);
+    run_ffmpeg_seek_flush_tests(runner);
 
     std::cout << "\n=== " << runner.tests_passed << "/" << runner.tests_run
               << " passed ===\n";

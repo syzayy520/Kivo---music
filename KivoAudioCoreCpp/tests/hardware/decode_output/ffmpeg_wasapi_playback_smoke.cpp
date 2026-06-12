@@ -6,7 +6,7 @@
 #include <iostream>
 #include <thread>
 
-#include "kivo/adapters/ffmpeg/ffmpeg_audio_decode_session.hpp"
+#include "kivo/adapters/ffmpeg/session/ffmpeg_audio_decode_session.hpp"
 #include "kivo/core/playback/pipeline/producer/decode_render_queue_producer.hpp"
 #include "kivo/core/render/queue/spsc_audio_block_queue.hpp"
 #include "kivo/platform/windows/wasapi/renderer/wasapi_renderer.hpp"

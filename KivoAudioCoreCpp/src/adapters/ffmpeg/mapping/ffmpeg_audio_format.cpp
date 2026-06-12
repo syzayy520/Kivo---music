@@ -1,4 +1,4 @@
-#include "mapping/ffmpeg_audio_format.hpp"
+#include "adapters/ffmpeg/mapping/ffmpeg_audio_format.hpp"
 
 #include <cstring>
 #include <limits>
