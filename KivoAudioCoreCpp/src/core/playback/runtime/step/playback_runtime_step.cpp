@@ -45,14 +45,31 @@ PlaybackRuntimeCoordinator::Impl::render_step() noexcept {
     const auto front = queue_->try_peek();
     render::RenderPump pump{*queue_, renderer_};
     const auto result = pump.step();
+    bool position_reported = true;
     if (front
         && result.accepted_frames != 0
         && (result.disposition == render::RenderPumpDisposition::Progress
             || result.disposition
                 == render::RenderPumpDisposition::EndOfStream)) {
-        static_cast<void>(session_.report_rendered_position(
+        position_reported = session_.report_rendered_position(
             front->frame_offset + result.accepted_frames,
-            session_snapshot.session_generation));
+            session_snapshot.session_generation);
+    }
+    if (result.disposition == render::RenderPumpDisposition::EndOfStream) {
+        if (!front || !position_reported) {
+            static_cast<void>(session_.report_failure(
+                session_snapshot.session_generation));
+            saturating_increment(failed_operations_);
+            return {
+                render::RenderPumpDisposition::Failed,
+                render::RenderFailure::BoundaryFailure,
+                result.submitted_frames,
+                result.accepted_frames
+            };
+        }
+        return complete_end_of_stream(
+            result,
+            session_snapshot.session_generation);
     }
     if (result.disposition == render::RenderPumpDisposition::Failed
         || result.disposition == render::RenderPumpDisposition::Rejected) {

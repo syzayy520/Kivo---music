@@ -52,6 +52,9 @@ private:
         const PlaybackCommand& command) noexcept;
     [[nodiscard]] PlaybackRuntimeResult shutdown(
         const PlaybackCommand& command) noexcept;
+    [[nodiscard]] render::RenderPumpResult complete_end_of_stream(
+        render::RenderPumpResult result,
+        uint64_t session_generation) noexcept;
 
     [[nodiscard]] PlaybackRuntimeResult reject_command(
         const PlaybackCommand& command) noexcept;
@@ -86,6 +89,8 @@ private:
     decode::DecodeGeneration decode_generation_{};
     render::SpscAudioBlockQueueConfiguration queue_configuration_{};
     DecodeRenderQueueProducerConfiguration producer_configuration_{};
+    render::RenderDrainRequest drain_request_{
+        std::chrono::seconds{2}};
     bool active_{false};
     bool closed_{false};
     uint64_t successful_opens_{0};
@@ -93,6 +98,10 @@ private:
     uint64_t successful_seeks_{0};
     uint64_t failed_operations_{0};
     uint64_t stale_blocks_rejected_{0};
+    uint64_t drain_attempts_{0};
+    uint64_t successful_drains_{0};
+    uint64_t failed_drains_{0};
+    uint64_t drain_timeouts_{0};
 };
 
 } // namespace kivo::core::playback

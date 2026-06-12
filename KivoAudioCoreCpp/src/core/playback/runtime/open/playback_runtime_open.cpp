@@ -131,6 +131,7 @@ PlaybackRuntimeResult PlaybackRuntimeCoordinator::Impl::open(
     decode_generation_ = request.decode_generation;
     queue_configuration_ = request.queue_configuration;
     producer_configuration_ = request.producer_configuration;
+    drain_request_ = request.drain_request;
     active_ = true;
     saturating_increment(successful_opens_);
     return runtime_result::succeeded(command_result);

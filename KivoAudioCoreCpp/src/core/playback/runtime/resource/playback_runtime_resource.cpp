@@ -53,6 +53,7 @@ bool PlaybackRuntimeCoordinator::Impl::release_runtime() noexcept {
     format_ = {};
     generations_ = {};
     decode_generation_ = {};
+    drain_request_ = {};
     return decode_result.is_success() && render_result.is_success();
 }
 

@@ -250,6 +250,7 @@ add_library(kivo_playback_runtime STATIC
     src/core/playback/runtime/coordinator/playback_runtime_coordinator.cpp
     src/core/playback/runtime/command/playback_runtime_command_dispatch.cpp
     src/core/playback/runtime/command/playback_runtime_command_validation.cpp
+    src/core/playback/runtime/drain/playback_runtime_drain.cpp
     src/core/playback/runtime/flush/playback_runtime_flush.cpp
     src/core/playback/runtime/lifecycle/playback_runtime_lifecycle.cpp
     src/core/playback/runtime/open/playback_runtime_open.cpp
@@ -473,6 +474,7 @@ target_compile_options(kivo_playback_pipeline_tests PRIVATE
 add_executable(kivo_playback_runtime_tests
     tests/playback_runtime/coordinator/runner/playback_runtime_tests_main.cpp
     tests/playback_runtime/coordinator/scenario/command_isolation_tests.cpp
+    tests/playback_runtime/coordinator/scenario/eos_drain_tests.cpp
     tests/playback_runtime/coordinator/scenario/lifecycle_tests.cpp
     tests/playback_runtime/coordinator/scenario/open_transaction_tests.cpp
     tests/playback_runtime/coordinator/scenario/seek_generation_tests.cpp

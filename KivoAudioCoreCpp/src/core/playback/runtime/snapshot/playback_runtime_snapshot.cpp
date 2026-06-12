@@ -23,6 +23,10 @@ PlaybackRuntimeCoordinator::Impl::snapshot() const noexcept {
     result.successful_seeks = successful_seeks_;
     result.failed_operations = failed_operations_;
     result.stale_blocks_rejected = stale_blocks_rejected_;
+    result.drain_attempts = drain_attempts_;
+    result.successful_drains = successful_drains_;
+    result.failed_drains = failed_drains_;
+    result.drain_timeouts = drain_timeouts_;
     return result;
 }
 

@@ -12,6 +12,10 @@ int main() {
     const Test tests[] = {
         {"open_failure_rolls_back_every_boundary",
          open_failure_rolls_back_every_boundary},
+        {"eos_drains_buffer_and_stops_session",
+         eos_drains_buffer_and_stops_session},
+        {"drain_timeout_fails_and_close_releases_boundaries",
+         drain_timeout_fails_and_close_releases_boundaries},
         {"seek_resets_all_scopes_and_discards_old_audio",
          seek_resets_all_scopes_and_discards_old_audio},
         {"stale_command_cannot_mutate_renderer",

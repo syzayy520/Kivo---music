@@ -26,6 +26,10 @@ struct PlaybackRuntimeSnapshot {
     uint64_t successful_seeks{0};
     uint64_t failed_operations{0};
     uint64_t stale_blocks_rejected{0};
+    uint64_t drain_attempts{0};
+    uint64_t successful_drains{0};
+    uint64_t failed_drains{0};
+    uint64_t drain_timeouts{0};
 
     [[nodiscard]] constexpr bool operator==(
         const PlaybackRuntimeSnapshot&) const noexcept = default;

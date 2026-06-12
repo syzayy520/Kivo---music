@@ -24,20 +24,9 @@ void seek_resets_all_scopes_and_discards_old_audio() {
         open_request(configuration, 3)).succeeded());
     RUNTIME_ASSERT(runtime.execute(
         command(2, core::contract::CommandKind::Resume, 1)).succeeded());
-    RUNTIME_ASSERT(
-        runtime.produce_step().disposition
-        == core::playback::DecodeRenderQueueProducerDisposition::Primed);
-    RUNTIME_ASSERT(
-        runtime.produce_step().disposition
-        == core::playback::DecodeRenderQueueProducerDisposition::EndOfStream);
-    RUNTIME_ASSERT(
-        runtime.render_step().disposition
-        == core::render::RenderPumpDisposition::EndOfStream);
-    RUNTIME_ASSERT(session.snapshot().rendered_position == 4);
-
     RUNTIME_ASSERT(runtime.execute(
         command(3, core::contract::CommandKind::Pause, 1)).succeeded());
-    RUNTIME_ASSERT(session.snapshot().paused_position == 4);
+    RUNTIME_ASSERT(session.snapshot().paused_position == 0);
     RUNTIME_ASSERT(runtime.seek(
         command(4, core::contract::CommandKind::Seek, 1, 100)).succeeded());
 
@@ -77,6 +66,8 @@ void seek_resets_all_scopes_and_discards_old_audio() {
         runtime.render_step().disposition
         == core::render::RenderPumpDisposition::EndOfStream);
     RUNTIME_ASSERT(session.snapshot().rendered_position == 104);
+    RUNTIME_ASSERT(
+        session.snapshot().state == core::contract::CoreState::Stopped);
 }
 
 } // namespace playback_runtime_test

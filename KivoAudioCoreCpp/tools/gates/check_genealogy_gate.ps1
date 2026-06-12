@@ -138,6 +138,7 @@ $runtimeFamilyRules = @(
         AllowedDirectories = @(
             "command",
             "coordinator",
+            "drain",
             "flush",
             "lifecycle",
             "open",
