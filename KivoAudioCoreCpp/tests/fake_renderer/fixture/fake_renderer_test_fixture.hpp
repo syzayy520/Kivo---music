@@ -4,7 +4,7 @@
 #include <span>
 
 #include "kivo/core/contract/generation_id.hpp"
-#include "kivo/testing/render/fake_renderer.hpp"
+#include "kivo/testing/render/renderer/fake_renderer.hpp"
 
 namespace fake_renderer_test {
 

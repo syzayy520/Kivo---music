@@ -1,6 +1,6 @@
 #pragma once
 
-#include "kivo/testing/render/fake_renderer.hpp"
+#include "kivo/testing/render/renderer/fake_renderer.hpp"
 
 #include "runtime_test_call_gate.hpp"
 

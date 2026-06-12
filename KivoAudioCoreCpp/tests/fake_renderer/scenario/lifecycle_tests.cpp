@@ -1,7 +1,7 @@
-#include "fake_renderer_tests_main.hpp"
-#include "fake_renderer_test_fixture.hpp"
+#include "../fixture/fake_renderer_test_runner.hpp"
+#include "../fixture/fake_renderer_test_fixture.hpp"
 
-#include "kivo/testing/render/fake_renderer.hpp"
+#include "kivo/testing/render/renderer/fake_renderer.hpp"
 
 namespace {
 

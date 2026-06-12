@@ -1,4 +1,4 @@
-#include "fake_renderer_tests_main.hpp"
+#include "../fixture/fake_renderer_test_runner.hpp"
 
 #include <chrono>
 #include <limits>

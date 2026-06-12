@@ -507,7 +507,12 @@ target_compile_options(kivo_playback_runtime_tests PRIVATE
 # Deterministic fake render backend
 add_library(kivo_fake_render_backend STATIC
     src/testing/time/manual_clock.cpp
-    src/testing/render/fake_renderer.cpp
+    src/testing/render/consumption/fake_renderer_consume.cpp
+    src/testing/render/fault/fake_renderer_fault.cpp
+    src/testing/render/lifecycle/fake_renderer_control.cpp
+    src/testing/render/lifecycle/fake_renderer_open.cpp
+    src/testing/render/observation/fake_renderer_observation.cpp
+    src/testing/render/write/fake_renderer_write.cpp
 )
 target_link_libraries(kivo_fake_render_backend PUBLIC kivo_core_render)
 target_include_directories(kivo_fake_render_backend PUBLIC include/)
@@ -518,13 +523,13 @@ target_compile_options(kivo_fake_render_backend PRIVATE
 )
 
 add_executable(kivo_fake_renderer_tests
-    tests/fake_renderer/fake_renderer_tests_main.cpp
-    tests/fake_renderer/manual_clock_tests.cpp
-    tests/fake_renderer/lifecycle_tests.cpp
-    tests/fake_renderer/write_and_generation_tests.cpp
-    tests/fake_renderer/fault_injection_tests.cpp
+    tests/fake_renderer/runner/fake_renderer_tests_main.cpp
+    tests/fake_renderer/scenario/manual_clock_tests.cpp
+    tests/fake_renderer/scenario/lifecycle_tests.cpp
+    tests/fake_renderer/scenario/write_and_generation_tests.cpp
+    tests/fake_renderer/scenario/fault_injection_tests.cpp
     tests/fake_renderer/scenario/device_lifecycle_fault_tests.cpp
-    tests/fake_renderer/observation_history_tests.cpp
+    tests/fake_renderer/scenario/observation_history_tests.cpp
 )
 target_link_libraries(kivo_fake_renderer_tests PRIVATE kivo_fake_render_backend)
 target_compile_features(kivo_fake_renderer_tests PRIVATE cxx_std_20)

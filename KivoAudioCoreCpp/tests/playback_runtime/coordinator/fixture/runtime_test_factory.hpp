@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "kivo/core/playback/runtime/coordinator/playback_runtime_coordinator.hpp"
-#include "kivo/testing/render/fake_renderer.hpp"
+#include "kivo/testing/render/renderer/fake_renderer.hpp"
 
 #include "runtime_test_byte_source.hpp"
 

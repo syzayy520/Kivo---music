@@ -93,6 +93,33 @@ if (Test-Path $toolsPath) {
 
 $runtimeFamilyRules = @(
     @{
+        Path = "include\kivo\testing\render"
+        AllowedDirectories = @(
+            "configuration",
+            "fault",
+            "observation",
+            "renderer"
+        )
+    },
+    @{
+        Path = "src\testing\render"
+        AllowedDirectories = @(
+            "consumption",
+            "fault",
+            "lifecycle",
+            "observation",
+            "write"
+        )
+    },
+    @{
+        Path = "tests\fake_renderer"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
         Path = "include\kivo\core\playback\pipeline"
         AllowedDirectories = @(
             "configuration",
@@ -228,6 +255,9 @@ foreach ($rule in $runtimeFamilyRules) {
 }
 
 $runtimeSourceRoots = @(
+    "include\kivo\testing\render",
+    "src\testing\render",
+    "tests\fake_renderer",
     "include\kivo\core\playback\pipeline",
     "include\kivo\core\playback\recovery",
     "include\kivo\core\playback\session",
