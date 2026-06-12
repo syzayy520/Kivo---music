@@ -31,7 +31,8 @@ $allowedTopLevel = @(
     "src",
     "tests",
     ".build",
-    "build"
+    "build",
+    "out"
 )
 
 $blockedTopLevelDirs = @(
@@ -85,7 +86,7 @@ $toolsPath = Join-Path $ProjectRoot "tools"
 if (Test-Path $toolsPath) {
     $toolsItems = Get-ChildItem -Path $toolsPath -Directory
     foreach ($item in $toolsItems) {
-        if ($item.Name -notin @("gates", "validation")) {
+        if ($item.Name -notin @("gates", "release", "validation")) {
             $violations += "UNAUTHORIZED_TOOLS_DIR: tools/$($item.Name)/"
         }
     }
@@ -120,10 +121,25 @@ $runtimeFamilyRules = @(
         AllowedDirectories = @(
             "api",
             "engine",
+            "export",
             "handle",
             "mapping",
+            "resource",
             "source",
             "validation"
+        )
+    },
+    @{
+        Path = "tools\release"
+        AllowedDirectories = @(
+            "artifact",
+            "build",
+            "compliance",
+            "foundation",
+            "manifest",
+            "runner",
+            "signing",
+            "verification"
         )
     },
     @{
@@ -606,7 +622,8 @@ $runtimeSourceRoots = @(
     "tests\playback_runtime",
     "include\kivo\host\abi",
     "src\host\abi",
-    "tests\host_abi"
+    "tests\host_abi",
+    "tools\release"
 )
 $runtimeMaximumLines = 260
 foreach ($relativeRoot in $runtimeSourceRoots) {
@@ -615,7 +632,9 @@ foreach ($relativeRoot in $runtimeSourceRoots) {
         continue
     }
     $runtimeFiles = Get-ChildItem -Path $runtimeRoot -Recurse -File |
-        Where-Object { $_.Extension -in @(".h", ".hpp", ".c", ".cpp") }
+        Where-Object {
+            $_.Extension -in @(".h", ".hpp", ".c", ".cpp", ".ps1")
+        }
     foreach ($file in $runtimeFiles) {
         $lineCount = (Get-Content $file.FullName).Count
         if ($lineCount -gt $runtimeMaximumLines) {

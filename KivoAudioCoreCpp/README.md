@@ -62,7 +62,8 @@ roadmap amendment is committed.
 
 ## Build and Validation
 
-P0-D has contract build/test targets and validation tooling.
+The repository contains full contract, runtime, adapter, ABI, and release
+validation tooling.
 
 Lightweight local smoke check:
 
@@ -72,12 +73,21 @@ powershell -ExecutionPolicy Bypass -File .\tools\validation\environment_probe.ps
 powershell -ExecutionPolicy Bypass -File .\tools\validation\validation_smoke_entry.ps1
 ```
 
-Full local validation requires a Windows C++ toolchain shell, such as:
+Full local validation automatically discovers the supported Visual Studio
+toolchain when it is installed. The release-candidate pipeline performs two
+clean Release builds, runs CTest, checks binary and archive reproducibility,
+stages notices and SBOM, separates symbols, and verifies the package:
 
-```text
-x64 Native Tools Command Prompt for VS
-Developer PowerShell for VS
+```powershell
+powershell -ExecutionPolicy Bypass -File `
+  .\tools\release\runner\run_release_candidate.ps1 `
+  -AllowUnsigned
 ```
+
+`-AllowUnsigned` produces an engineering release candidate and records code
+signing as a commercial blocker. Commercial distribution requires a valid
+certificate thumbprint plus the external legal, installer, source-archive,
+device, and endurance evidence listed in the P0-P release matrix.
 
 See:
 

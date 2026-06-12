@@ -68,7 +68,14 @@ $allowedContractPaths = @(
     "tests\host_abi"
 )
 
-$excludedPathPatterns = @("*\docs\*", "*\tools\*", "*\.build\*", "*\build\*", "*\.git\*")
+$excludedPathPatterns = @(
+    "*\docs\*",
+    "*\tools\*",
+    "*\.build\*",
+    "*\build\*",
+    "*\out\*",
+    "*\.git\*"
+)
 
 function Get-RelativePath {
     param([string]$FullPath, [string]$Root)
@@ -241,7 +248,7 @@ foreach ($dir in $vendorDirs) {
 
 Write-Host "--- Scan Scope ---"
 Write-Host "Checking: runtime directories, source files, CMake targets, vendor dirs"
-Write-Host "Excluding: docs/, tools/, .build/, build/, .git/"
+Write-Host "Excluding: docs/, tools/, .build/, build/, out/, .git/"
 Write-Host "Allowed paths: core boundaries, deterministic backend, quarantined FFmpeg/WASAPI adapters, and tests"
 Write-Host "Allowed CMake targets: contract, render, FFmpeg, WASAPI, and validation targets"
 Write-Host ""

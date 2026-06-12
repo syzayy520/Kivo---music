@@ -14,7 +14,7 @@
 cmake_minimum_required(VERSION 3.24)
 
 project(KivoAudioCoreCpp
-    VERSION 0.0.0
+    VERSION 1.0.0
     LANGUAGES C CXX
     DESCRIPTION "Kivo Audio Core — C++ Windows Desktop Audio Engine"
 )
@@ -29,6 +29,16 @@ set(CMAKE_C_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+if(MSVC)
+    add_compile_options(
+        $<$<CONFIG:Release>:/Brepro>
+        $<$<CONFIG:Release>:/ZH:SHA_256>
+    )
+    add_link_options(
+        $<$<CONFIG:Release>:/Brepro>
+    )
+endif()
 
 # --- MSVC / Windows x64 Policy ---
 # Future phases will enforce:
@@ -872,7 +882,17 @@ endif()
 if(WIN32
     AND TARGET kivo_ffmpeg_decode_adapter
     AND TARGET kivo_wasapi_renderer)
+    enable_language(RC)
+    set(KIVO_HOST_VERSION_RESOURCE
+        "${CMAKE_CURRENT_BINARY_DIR}/generated/resource/kivo_audio_core_version.rc")
+    configure_file(
+        src/host/abi/resource/kivo_audio_core_version.rc.in
+        "${KIVO_HOST_VERSION_RESOURCE}"
+        @ONLY
+    )
     add_library(kivo_host_abi SHARED
+        "${KIVO_HOST_VERSION_RESOURCE}"
+        src/host/abi/export/kivo_audio_core.def
         src/host/abi/api/host_audio_api.cpp
         src/host/abi/engine/host_audio_engine_command.cpp
         src/host/abi/engine/host_audio_engine_configuration.cpp
@@ -902,11 +922,33 @@ if(WIN32
         _WIN32_WINNT=0x0A00
     )
     target_compile_options(kivo_host_abi PRIVATE
-        $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc>
-        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+        $<$<CXX_COMPILER_ID:MSVC>:/W4>
+        $<$<CXX_COMPILER_ID:MSVC>:/WX>
+        $<$<CXX_COMPILER_ID:MSVC>:/utf-8>
+        $<$<CXX_COMPILER_ID:MSVC>:/EHsc>
+        $<$<CXX_COMPILER_ID:MSVC>:/guard:cf>
+        $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:Release>>:/Zi>
+        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall>
+        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wextra>
+        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wpedantic>
+        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Werror>
+    )
+    target_link_options(kivo_host_abi PRIVATE
+        $<$<CXX_COMPILER_ID:MSVC>:/guard:cf>
+        $<$<CXX_COMPILER_ID:MSVC>:/DYNAMICBASE>
+        $<$<CXX_COMPILER_ID:MSVC>:/NXCOMPAT>
+        $<$<CXX_COMPILER_ID:MSVC>:/CETCOMPAT>
+        $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:Release>>:/DEBUG:FULL>
+        $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:Release>>:/OPT:REF>
+        $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:Release>>:/OPT:ICF>
+        $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:Release>>:/PDBALTPATH:kivo_audio_core.pdb>
     )
     set_target_properties(kivo_host_abi PROPERTIES
         OUTPUT_NAME "kivo_audio_core"
+        PDB_NAME "kivo_audio_core"
+        PDB_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+        MSVC_RUNTIME_LIBRARY
+            "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
     )
 
     add_executable(kivo_host_abi_tests
