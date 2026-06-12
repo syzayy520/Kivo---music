@@ -104,7 +104,28 @@ $runtimeFamilyRules = @(
         Path = "tests\hardware"
         AllowedDirectories = @(
             "decode_output",
+            "device_matrix",
             "wasapi"
+        )
+    },
+    @{
+        Path = "tests\hardware\device_matrix"
+        AllowedDirectories = @(
+            "fixture",
+            "platform",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
+        Path = "tests\hardware\device_matrix\platform"
+        AllowedDirectories = @("windows")
+    },
+    @{
+        Path = "tests\hardware\device_matrix\platform\windows"
+        AllowedDirectories = @(
+            "apartment",
+            "endpoint"
         )
     },
     @{

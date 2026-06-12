@@ -20,6 +20,8 @@
 - Real generated PCM WASAPI output.
 - Real FFmpeg-to-SPSC-to-MMCSS-to-WASAPI playback.
 - One-hour real-device endurance evidence.
+- Executable active-render-endpoint inventory with default-role, mix-format,
+  shared/exclusive support, form-factor, and device-period evidence.
 
 ## Natural Validation Families
 
@@ -34,6 +36,14 @@ tests/
     runner/
     scenario/
   hardware/
+    device_matrix/
+      fixture/
+      platform/
+        windows/
+          apartment/
+          endpoint/
+      runner/
+      scenario/
     decode_output/
       fixture/
       runner/
@@ -52,7 +62,9 @@ tests/
 
 ## Remaining P0-K Evidence
 
-- Physical device matrix: onboard, USB DAC, Bluetooth, and HDMI/DisplayPort.
+- Physical device matrix still missing USB DAC, Bluetooth, and active
+  HDMI/DisplayPort evidence. The current onboard endpoint is inventoried and
+  covered by real playback plus one-hour endurance evidence.
 - Default-device change and unplug/replug on applicable hardware.
 - Sleep/resume on the release candidate build.
 - Ten-hour release-candidate endurance run.

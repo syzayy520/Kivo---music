@@ -698,6 +698,21 @@ if(WIN32)
         $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
     )
 
+    add_executable(kivo_wasapi_device_matrix
+        tests/hardware/device_matrix/platform/windows/apartment/com_apartment.cpp
+        tests/hardware/device_matrix/platform/windows/endpoint/endpoint_inventory.cpp
+        tests/hardware/device_matrix/platform/windows/endpoint/endpoint_probe.cpp
+        tests/hardware/device_matrix/runner/wasapi_device_matrix_main.cpp
+        tests/hardware/device_matrix/scenario/device_matrix_report.cpp
+        tests/hardware/device_matrix/scenario/device_matrix_validation.cpp
+    )
+    target_link_libraries(kivo_wasapi_device_matrix PRIVATE ole32)
+    target_compile_features(kivo_wasapi_device_matrix PRIVATE cxx_std_20)
+    target_compile_options(kivo_wasapi_device_matrix PRIVATE
+        $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc>
+        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+    )
+
     if(TARGET kivo_ffmpeg_decode_adapter)
         add_executable(kivo_ffmpeg_wasapi_playback_smoke
             tests/hardware/decode_output/runner/ffmpeg_wasapi_playback_smoke_main.cpp
@@ -784,6 +799,7 @@ endif()
 if(TARGET kivo_wasapi_tests)
     add_dependencies(kivo_wasapi_tests kivo_public_header_checks)
     add_dependencies(kivo_wasapi_tone_smoke kivo_public_header_checks)
+    add_dependencies(kivo_wasapi_device_matrix kivo_public_header_checks)
 endif()
 if(TARGET kivo_ffmpeg_decode_tests)
     add_dependencies(kivo_ffmpeg_decode_tests kivo_public_header_checks)

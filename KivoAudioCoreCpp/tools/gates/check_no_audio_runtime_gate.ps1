@@ -51,6 +51,7 @@ $allowedContractPaths = @(
     "tests\fake_renderer",
     "tests\stability",
     "tests\platform_windows\wasapi",
+    "tests\hardware\device_matrix",
     "tests\hardware\wasapi",
     "tests\hardware\decode_output"
 )
@@ -172,6 +173,7 @@ if (Test-Path $cmakePath) {
         "kivo_wasapi_tests",
         "wasapi_tests",
         "kivo_wasapi_tone_smoke",
+        "kivo_wasapi_device_matrix",
         "kivo_stability_tests",
         "stability_tests",
         "kivo_public_header_checks"
