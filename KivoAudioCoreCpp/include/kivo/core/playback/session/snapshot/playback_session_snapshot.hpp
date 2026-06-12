@@ -21,6 +21,11 @@ struct PlaybackSessionSnapshot {
         contract::kInvalidSamplePosition};
     uint64_t seek_generation{0};
     uint64_t flush_generation{0};
+    uint64_t drain_generation{0};
+    uint64_t drain_attempts{0};
+    uint64_t drain_successes{0};
+    uint64_t drain_failures{0};
+    uint64_t drain_cancellations{0};
     uint64_t accepted_commands{0};
     uint64_t rejected_commands{0};
     uint64_t stale_commands{0};

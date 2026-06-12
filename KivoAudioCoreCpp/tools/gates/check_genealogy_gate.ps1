@@ -97,6 +97,7 @@ $runtimeFamilyRules = @(
         AllowedDirectories = @(
             "command",
             "controller",
+            "drain",
             "snapshot"
         )
     },
@@ -105,6 +106,7 @@ $runtimeFamilyRules = @(
         AllowedDirectories = @(
             "command",
             "controller",
+            "drain",
             "position",
             "recovery",
             "result",

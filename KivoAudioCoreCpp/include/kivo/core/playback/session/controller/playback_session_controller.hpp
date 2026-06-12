@@ -4,6 +4,8 @@
 
 #include "kivo/core/playback/session/command/playback_command.hpp"
 #include "kivo/core/playback/session/command/playback_command_result.hpp"
+#include "kivo/core/playback/session/drain/playback_drain_completion.hpp"
+#include "kivo/core/playback/session/drain/playback_drain_ticket.hpp"
 #include "kivo/core/playback/session/snapshot/playback_session_snapshot.hpp"
 #include "kivo/core/playback/recovery/playback_recovery_completion.hpp"
 #include "kivo/core/playback/recovery/playback_recovery_policy.hpp"
@@ -30,6 +32,11 @@ public:
     [[nodiscard]] bool complete_seek(
         uint64_t session_generation,
         bool succeeded) noexcept;
+    [[nodiscard]] PlaybackDrainTicket begin_drain(
+        uint64_t session_generation) noexcept;
+    [[nodiscard]] bool complete_drain(
+        PlaybackDrainTicket ticket,
+        PlaybackDrainCompletion completion) noexcept;
     [[nodiscard]] PlaybackRecoveryDecision begin_recovery(
         uint64_t session_generation,
         contract::ErrorDomain domain) noexcept;

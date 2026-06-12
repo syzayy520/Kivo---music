@@ -219,6 +219,7 @@ add_library(kivo_playback_session STATIC
     src/core/playback/recovery/playback_recovery_executor.cpp
     src/core/playback/session/command/playback_session_command.cpp
     src/core/playback/session/controller/playback_session_controller.cpp
+    src/core/playback/session/drain/playback_session_drain.cpp
     src/core/playback/session/position/playback_session_position.cpp
     src/core/playback/session/recovery/playback_session_recovery.cpp
     src/core/playback/session/result/playback_session_result.cpp
@@ -447,6 +448,7 @@ target_compile_options(kivo_decode_boundary_tests PRIVATE
 add_executable(kivo_playback_session_tests
     tests/playback_session/runner/playback_session_tests_main.cpp
     tests/playback_session/scenario/command_lifecycle_tests.cpp
+    tests/playback_session/scenario/drain_lifecycle_tests.cpp
     tests/playback_session/scenario/recovery_executor_tests.cpp
     tests/playback_session/scenario/recovery_state_tests.cpp
     tests/playback_session/scenario/seek_tests.cpp

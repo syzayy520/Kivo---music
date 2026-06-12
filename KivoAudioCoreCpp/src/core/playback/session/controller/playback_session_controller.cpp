@@ -37,6 +37,20 @@ bool PlaybackSessionController::complete_seek(
         && impl_->complete_seek(session_generation, succeeded);
 }
 
+PlaybackDrainTicket PlaybackSessionController::begin_drain(
+    uint64_t session_generation) noexcept {
+    return impl_
+        ? impl_->begin_drain(session_generation)
+        : PlaybackDrainTicket{};
+}
+
+bool PlaybackSessionController::complete_drain(
+    PlaybackDrainTicket ticket,
+    PlaybackDrainCompletion completion) noexcept {
+    return impl_
+        && impl_->complete_drain(ticket, completion);
+}
+
 PlaybackRecoveryDecision PlaybackSessionController::begin_recovery(
     uint64_t session_generation,
     contract::ErrorDomain domain) noexcept {

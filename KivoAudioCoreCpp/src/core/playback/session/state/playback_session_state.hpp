@@ -18,6 +18,11 @@ public:
     [[nodiscard]] bool complete_seek(
         uint64_t session_generation,
         bool succeeded) noexcept;
+    [[nodiscard]] PlaybackDrainTicket begin_drain(
+        uint64_t session_generation) noexcept;
+    [[nodiscard]] bool complete_drain(
+        PlaybackDrainTicket ticket,
+        PlaybackDrainCompletion completion) noexcept;
     [[nodiscard]] PlaybackRecoveryDecision begin_recovery(
         uint64_t session_generation,
         contract::ErrorDomain domain) noexcept;

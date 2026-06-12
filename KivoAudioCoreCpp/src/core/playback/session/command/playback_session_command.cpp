@@ -52,6 +52,10 @@ PlaybackCommandResult PlaybackSessionController::Impl::submit(
                 previous);
         }
         const bool replacing = snapshot_.session_generation != 0;
+        if (replacing
+            && snapshot_.state == contract::CoreState::Draining) {
+            saturating_increment(snapshot_.drain_cancellations);
+        }
         snapshot_.session_generation = command.generation.generation;
         snapshot_.state = contract::CoreState::Ready;
         snapshot_.rendered_position = 0;
@@ -93,6 +97,9 @@ PlaybackCommandResult PlaybackSessionController::Impl::submit(
 
     switch (command.kind) {
     case contract::CommandKind::CloseSource:
+        if (snapshot_.state == contract::CoreState::Draining) {
+            saturating_increment(snapshot_.drain_cancellations);
+        }
         snapshot_.state = contract::CoreState::Idle;
         snapshot_.session_generation = 0;
         snapshot_.rendered_position = 0;
@@ -122,6 +129,9 @@ PlaybackCommandResult PlaybackSessionController::Impl::submit(
         break;
     case contract::CommandKind::Stop:
         if (snapshot_.state != contract::CoreState::Idle) {
+            if (snapshot_.state == contract::CoreState::Draining) {
+                saturating_increment(snapshot_.drain_cancellations);
+            }
             snapshot_.state = contract::CoreState::Stopped;
             snapshot_.pending_seek_target =
                 contract::kInvalidSamplePosition;
@@ -174,6 +184,9 @@ PlaybackCommandResult PlaybackSessionController::Impl::submit(
                 command.id,
                 PlaybackCommandFailure::StaleSession,
                 previous);
+        }
+        if (snapshot_.state == contract::CoreState::Draining) {
+            saturating_increment(snapshot_.drain_cancellations);
         }
         snapshot_.state = contract::CoreState::Closed;
         snapshot_.session_generation = 0;
