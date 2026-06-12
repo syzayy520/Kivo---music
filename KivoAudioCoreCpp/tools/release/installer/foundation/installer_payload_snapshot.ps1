@@ -38,6 +38,16 @@ function Get-KivoInstallerRelativePath {
         $rootUri.MakeRelativeUri($pathUri).ToString())
 }
 
+function Read-KivoInstallerJson {
+    param([Parameter(Mandatory = $true)][string]$Path)
+
+    $resolved = (Resolve-Path -LiteralPath $Path).Path
+    return [System.IO.File]::ReadAllText(
+        $resolved,
+        [System.Text.UTF8Encoding]::new($false)) |
+        ConvertFrom-Json
+}
+
 function Get-KivoInstallerPayloadSnapshot {
     param([Parameter(Mandatory = $true)][string]$RuntimeDirectory)
 
@@ -48,8 +58,7 @@ function Get-KivoInstallerPayloadSnapshot {
         throw "Build manifest is missing: $manifestPath"
     }
 
-    $manifest = Get-Content -Raw -LiteralPath $manifestPath |
-        ConvertFrom-Json
+    $manifest = Read-KivoInstallerJson -Path $manifestPath
     if ($manifest.schema -ne "kivo.build-manifest.v1") {
         $errors.Add("Unsupported build manifest schema: $($manifest.schema)")
     }
@@ -109,8 +118,7 @@ function Get-KivoInstallerPayloadSnapshot {
     if (-not (Test-Path -LiteralPath $installerPath)) {
         $errors.Add("Installer payload contract is missing.")
     } else {
-        $installer = Get-Content -Raw -LiteralPath $installerPath |
-            ConvertFrom-Json
+        $installer = Read-KivoInstallerJson -Path $installerPath
         if ($installer.schema -ne "kivo.installer-payload.v1") {
             $errors.Add(
                 "Unsupported installer payload schema: $($installer.schema)")

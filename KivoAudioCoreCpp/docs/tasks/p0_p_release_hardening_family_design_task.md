@@ -66,7 +66,10 @@ tools/release/
     write_release_notices.ps1
     write_cyclonedx_sbom.ps1
   signing/
-    sign_release_binary.ps1
+    operation/
+      sign_release_binary.ps1
+    verification/
+      verify_authenticode_signature.ps1
   manifest/
     write_build_manifest.ps1
   verification/

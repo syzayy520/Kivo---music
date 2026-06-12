@@ -125,8 +125,17 @@ Repository plus external custody:
 
 ```text
 tools/release/compliance/
-  acquire_ffmpeg_source.ps1
-  verify_ffmpeg_source_bundle.ps1
+  source/
+    acquisition/
+      acquire_ffmpeg_source.ps1
+    archival/
+      archive_ffmpeg_corresponding_source.ps1
+    foundation/
+      source_bundle_foundation.ps1
+    verification/
+      verify_ffmpeg_source_bundle.ps1
+    testing/
+      test_ffmpeg_source_bundle.ps1
 docs/dependencies/
   ffmpeg/
     binary_provenance.md
@@ -136,7 +145,9 @@ docs/dependencies/
 
 Repository automation must download or accept the exact source revision,
 verify revision/configuration/hash, include build scripts and notices, and
-produce a deterministic source archive manifest. It must never fabricate legal
+produce a deterministic source archive manifest. A supplied verified archive
+is copied beside the RC and bound into its build manifest and release index.
+It must never fabricate legal
 approval. Legal name, reviewer, scope, date and approved markets are external
 signed records.
 
@@ -153,6 +164,10 @@ Repository controlled tooling, externally supplied certificate:
 - post-sign verification and tamper-negative test
 - no PFX, password, private key or signing token in repository/logs
 - CI signing identity separated from developer engineering builds
+- independent trusted-chain, SHA-256, timestamp and expected-thumbprint
+  verification for final artifacts
+- tamper-negative Authenticode verifier self-test with an ephemeral,
+  non-exportable test certificate
 
 Exit: valid signatures verified on final bytes. Until certificate access
 exists, status remains `BLOCKED: CERTIFICATE`.

@@ -8,29 +8,9 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
-$ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..")).Path
+$ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..\..")).Path
 . (Join-Path $ProjectRoot "tools\release\foundation\release_foundation.ps1")
-
-function Get-CleanGitSource {
-    param(
-        [Parameter(Mandatory = $true)][string]$Root,
-        [Parameter(Mandatory = $true)][string]$Label
-    )
-    $resolved = (Resolve-Path -LiteralPath $Root).Path
-    $commit = (git -C $resolved rev-parse HEAD).Trim()
-    if ($LASTEXITCODE -ne 0 -or -not $commit) {
-        throw "$Label is not a readable git checkout: $resolved"
-    }
-    $status = git -C $resolved status --porcelain
-    if ($LASTEXITCODE -ne 0 -or $status) {
-        throw "$Label checkout must be clean before archival: $resolved"
-    }
-    return [ordered]@{
-        root = $resolved
-        commit = $commit
-        remote = (git -C $resolved remote get-url origin).Trim()
-    }
-}
+. (Join-Path $PSScriptRoot "..\foundation\source_bundle_foundation.ps1")
 
 function Export-GitTree {
     param(
@@ -53,24 +33,22 @@ function Export-GitTree {
     Remove-Item -LiteralPath $TemporaryArchive -Force
 }
 
-$ffmpeg = Get-CleanGitSource `
+$ffmpeg = Get-KivoCleanGitCheckout `
     -Root $FfmpegSourceRoot `
     -Label "FFmpeg source"
-$buildScripts = Get-CleanGitSource `
+$buildScripts = Get-KivoCleanGitCheckout `
     -Root $BuildScriptsRoot `
     -Label "FFmpeg build scripts"
 
-if (-not $ffmpeg.commit.StartsWith(
-        $ExpectedFfmpegRevision,
-        [System.StringComparison]::OrdinalIgnoreCase)) {
-    throw "FFmpeg revision mismatch. Expected $ExpectedFfmpegRevision, found $($ffmpeg.commit)."
-}
+Assert-KivoRevisionMatch `
+    -Actual $ffmpeg.commit `
+    -Expected $ExpectedFfmpegRevision
 
 $outRoot = Join-Path $ProjectRoot "out"
 New-Item -ItemType Directory -Path $outRoot -Force | Out-Null
-$output = Assert-KivoPathInside `
+$output = Reset-KivoDirectory `
     -Path (Join-Path $ProjectRoot $OutputDirectory) `
-    -Parent $outRoot
+    -AllowedParent $outRoot
 $work = Reset-KivoDirectory `
     -Path (Join-Path $outRoot "compliance-work\ffmpeg-source") `
     -AllowedParent $outRoot
@@ -88,23 +66,14 @@ Export-GitTree `
     -Destination $scriptsDestination `
     -TemporaryArchive (Join-Path $work "build-scripts.tar")
 
-$licenseCandidates = @(
-    "COPYING.LGPLv3",
-    "COPYING.LGPLv2.1",
-    "LICENSE.md"
-)
-$presentLicenses = @(
-    $licenseCandidates |
-        Where-Object {
-            Test-Path -LiteralPath (Join-Path $sourceDestination $_)
-        }
-)
-if ($presentLicenses.Count -eq 0) {
-    throw "FFmpeg source archive does not contain an expected LGPL/license file."
-}
+$presentLicenses = @(Get-KivoFfmpegLicenses `
+    -SourceRoot $sourceDestination)
+$inventory = @(Get-KivoSourceInventory `
+    -PayloadRoot $payload `
+    -RelativeRoots @("ffmpeg-source", "build-scripts"))
 
 $manifest = [ordered]@{
-    schema = "kivo.ffmpeg-corresponding-source.v1"
+    schema = "kivo.ffmpeg-corresponding-source.v2"
     binary_revision = $BinaryRevision
     expected_ffmpeg_revision = $ExpectedFfmpegRevision
     ffmpeg = [ordered]@{
@@ -119,6 +88,8 @@ $manifest = [ordered]@{
         clean_checkout = $true
     }
     modifications = "none recorded by this repository"
+    file_count = $inventory.Count
+    files = $inventory
     distribution_note =
         "External legal approval and long-term custody remain required."
 }
@@ -133,12 +104,14 @@ New-KivoDeterministicZip `
     -ArchivePath $archivePath
 
 $evidence = [ordered]@{
-    schema = "kivo.ffmpeg-source-archive-evidence.v1"
+    schema = "kivo.ffmpeg-source-archive-evidence.v2"
     archive = $archiveName
     sha256 = Get-KivoSha256 -Path $archivePath
     size = (Get-Item -LiteralPath $archivePath).Length
     ffmpeg_commit = $ffmpeg.commit
     build_scripts_commit = $buildScripts.commit
+    manifest_sha256 = Get-KivoSha256 `
+        -Path (Join-Path $payload "corresponding-source-manifest.json")
     legal_approval = "BLOCKED_EXTERNAL_REVIEW"
     custody = "REQUIRES_EXTERNAL_RETENTION_RECORD"
 }

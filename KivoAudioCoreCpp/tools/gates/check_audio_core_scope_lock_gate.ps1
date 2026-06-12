@@ -37,14 +37,44 @@ $videoRendererTokens = @(
     "RenderOutcome"
 )
 
-# Scan all source files
-# Exclude: .git, .build, node_modules, scope lock policy doc, this gate script
+# Scan repository-controlled source files only. Generated build, release,
+# dependency checkout, and self-test output must never influence scope truth.
+$excludedRoots = @(
+    ".git",
+    ".build",
+    "build",
+    "out",
+    "node_modules"
+) | ForEach-Object {
+    ([System.IO.Path]::GetFullPath(
+        (Join-Path $ProjectRoot $_))).TrimEnd("\", "/")
+}
+
+function Test-KivoScopeExcludedPath {
+    param([Parameter(Mandatory = $true)][string]$FullPath)
+
+    $candidate = [System.IO.Path]::GetFullPath($FullPath)
+    foreach ($root in $excludedRoots) {
+        if ($candidate -eq $root -or
+            $candidate.StartsWith(
+                $root + [System.IO.Path]::DirectorySeparatorChar,
+                [System.StringComparison]::OrdinalIgnoreCase)) {
+            return $true
+        }
+    }
+    return $false
+}
+
+function Get-KivoScopeRelativePath {
+    param([Parameter(Mandatory = $true)][string]$FullPath)
+
+    return $FullPath.Substring($ProjectRoot.Length).
+        TrimStart("\", "/").Replace("\", "/")
+}
+
 $sourceFiles = Get-ChildItem -Path $ProjectRoot -Recurse -File -Include "*.cpp","*.h","*.hpp","*.c","*.ps1","*.md","*.txt","*.json" -ErrorAction SilentlyContinue |
     Where-Object {
-        $normPath = $_.FullName.ToLower()
-        $normPath -notlike "*\.git\*" -and
-        $normPath -notlike "*\.build\*" -and
-        $normPath -notlike "*\node_modules\*" -and
+        -not (Test-KivoScopeExcludedPath -FullPath $_.FullName) -and
         $_.Name -ne "audio_core_scope_lock_policy.md" -and
         $_.Name -ne "check_audio_core_scope_lock_gate.ps1"
     }
@@ -54,7 +84,8 @@ foreach ($file in $sourceFiles) {
     if ($content) {
         foreach ($token in $videoRendererTokens) {
             if ($content -match [regex]::Escape($token)) {
-                $relativePath = $file.FullName.Replace($ProjectRoot, "").TrimStart("\", "/")
+                $relativePath = Get-KivoScopeRelativePath `
+                    -FullPath $file.FullName
                 $violations += "VIDEO_RENDERER_SCOPE_DRIFT: $relativePath contains: $token"
             }
         }
@@ -76,7 +107,8 @@ foreach ($file in $sourceFiles) {
         foreach ($token in $videoSurfaceTokens) {
             # Case-insensitive search
             if ($content -match "(?i)" + [regex]::Escape($token)) {
-                $relativePath = $file.FullName.Replace($ProjectRoot, "").TrimStart("\", "/")
+                $relativePath = Get-KivoScopeRelativePath `
+                    -FullPath $file.FullName
                 # Skip docs/policy mentions (DOC_MENTION_ALLOWED)
                 if ($relativePath -like "docs/*" -or $relativePath -like "tools/gates/*") {
                     continue
@@ -101,7 +133,8 @@ foreach ($file in $sourceFiles) {
     if ($content) {
         foreach ($token in $videoHdrTokens) {
             if ($content -match [regex]::Escape($token)) {
-                $relativePath = $file.FullName.Replace($ProjectRoot, "").TrimStart("\", "/")
+                $relativePath = Get-KivoScopeRelativePath `
+                    -FullPath $file.FullName
                 if ($relativePath -like "docs/*" -or $relativePath -like "tools/gates/*") {
                     continue
                 }
@@ -158,7 +191,8 @@ foreach ($file in $sourceFiles) {
     if ($content) {
         foreach ($token in $p013RestrictedTokens) {
             if ($content -match [regex]::Escape($token)) {
-                $relativePath = $file.FullName.Replace($ProjectRoot, "").TrimStart("\", "/")
+                $relativePath = Get-KivoScopeRelativePath `
+                    -FullPath $file.FullName
                 # Skip docs/policy mentions
                 if ($relativePath -like "docs/*" -or $relativePath -like "tools/gates/*") {
                     continue

@@ -78,7 +78,7 @@ not replace release counsel approval.
 Technical corresponding-source archival is implemented by:
 
 ```text
-tools/release/compliance/archive_ffmpeg_corresponding_source.ps1
+tools/release/compliance/source/archival/archive_ffmpeg_corresponding_source.ps1
 docs/dependencies/ffmpeg/source_custody_record.md
 ```
 

@@ -14,6 +14,9 @@
 | Device inventory evidence | IMPLEMENTED | UTF-8 JSON endpoint inventory and ten required lab rows |
 | Ten-hour evidence tooling | IMPLEMENTED | Resource sampling and runtime counter classification |
 | Commercial regression workflow | IMPLEMENTED | Privacy-safe intake and closure validation |
+| FFmpeg source bundle tooling | IMPLEMENTED | Exact acquisition, deterministic archive, full inventory verification and tamper self-test |
+| Authenticode verification tooling | IMPLEMENTED | Independent certificate/timestamp/hash policy and tamper self-test |
+| Pull-request CI | IMPLEMENTED | Windows gates, platform-neutral build/CTest and release-tool self-tests |
 | Lyrics ownership | LOCKED | Independent `KivoLyricsCoreCpp` sibling project |
 
 ## Current Local Evidence
@@ -26,13 +29,20 @@
 - Current development host inventory is valid with 12 discovered endpoints.
 - All ten physical commercial rows remain `not_run`; none is claimed passed.
 - No ten-hour endurance run was executed during this change.
+- Repository self-tests use only fixture source repositories and an ephemeral
+  self-signed certificate; they are not production source custody or signing.
+- Exact FFmpeg source `a5faeca88fdaaf82a151e21ad69b5250374833e4`
+  and BtbN build scripts `a9410e4be2b332e535000004a8ebf304d9b46689`
+  produced a verified 8,831-file technical archive with SHA-256
+  `7c4e280cddea5180b045b7f1449fd47ff82d61b6c4d734f1019dbf6ffef66245`.
 
 ## External Commercial Gates
 
 | Gate | Truthful state | Required completion evidence |
 |---|---|---|
 | Authenticode | BLOCKED | Final DLL and installer signatures with RFC 3161 timestamp |
-| FFmpeg source custody | OPEN | Exact corresponding source/build-script archive and hash |
+| FFmpeg technical archive | PASS | Exact source/build scripts and complete inventory verified |
+| FFmpeg source custody | BLOCKED | Durable external retention owner, location, expiry and delivery route |
 | Legal approval | BLOCKED | Signed market/codec/LGPL review record |
 | Product installer | BLOCKED | Signed clean VM install, upgrade, rollback and uninstall logs |
 | USB DAC class 1/2 | OPEN | Physical rows with driver and format evidence |

@@ -145,6 +145,25 @@ $runtimeFamilyRules = @(
         )
     },
     @{
+        Path = "tools\release\compliance\source"
+        AllowedDirectories = @(
+            "acquisition",
+            "archival",
+            "foundation",
+            "testing",
+            "verification"
+        )
+    },
+    @{
+        Path = "tools\release\signing"
+        AllowedDirectories = @(
+            "foundation",
+            "operation",
+            "testing",
+            "verification"
+        )
+    },
+    @{
         Path = "tests\host_abi"
         AllowedDirectories = @(
             "compatibility",

@@ -18,7 +18,8 @@
 | Endurance evidence tooling | Resource sampling and runtime counter classification | PASS |
 | Commercial regression gate | Privacy-safe intake and closure validator | PASS |
 | Authenticode | Kivo DLL and product installer signatures | BLOCKED: CERTIFICATE/PRODUCT |
-| Corresponding source | Exact FFmpeg source and build-script archive | BLOCKED: EXTERNAL RECORD |
+| Corresponding source archive | Exact FFmpeg source and build-script archive, 8,831 files, SHA-256 locked | PASS: TECHNICAL |
+| Corresponding source custody | Durable retained storage and delivery route | BLOCKED: EXTERNAL CUSTODY |
 | Legal approval | LGPL, codecs, target markets | BLOCKED: LEGAL REVIEW |
 | Installer clean install | Signed product installer consumes payload | BLOCKED: PRODUCT INSTALLER |
 | Installer upgrade | Atomic full-payload replacement | BLOCKED: PRODUCT INSTALLER |

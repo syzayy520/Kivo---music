@@ -49,6 +49,16 @@ function Write-KivoJson {
         [System.Text.UTF8Encoding]::new($false))
 }
 
+function Read-KivoJson {
+    param([Parameter(Mandatory = $true)][string]$Path)
+
+    $resolved = (Resolve-Path -LiteralPath $Path).Path
+    $text = [System.IO.File]::ReadAllText(
+        $resolved,
+        [System.Text.UTF8Encoding]::new($false))
+    return $text | ConvertFrom-Json
+}
+
 function Write-KivoText {
     param(
         [Parameter(Mandatory = $true)][string]$Value,

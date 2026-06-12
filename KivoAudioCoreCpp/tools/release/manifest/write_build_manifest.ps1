@@ -5,7 +5,8 @@ param(
     [Parameter(Mandatory = $true)][string]$Version,
     [Parameter(Mandatory = $true)]$GitMetadata,
     [Parameter(Mandatory = $true)][string]$SigningStatusPath,
-    [Parameter(Mandatory = $true)][string]$ReproducibilityPath
+    [Parameter(Mandatory = $true)][string]$ReproducibilityPath,
+    [string]$CorrespondingSourceReportPath
 )
 
 $ErrorActionPreference = "Stop"
@@ -38,6 +39,22 @@ $compilerLine = Select-String `
 $compilerVersion = $compilerLine.Matches[0].Groups[1].Value
 $ffmpegVersion = (& (Join-Path $FfmpegRoot "bin\ffmpeg.exe") -version |
     Select-Object -First 1).Trim()
+$ffmpegBinaryRevision = if ($ffmpegVersion -match
+    "^ffmpeg version ([^\s]+)") {
+    $Matches[1]
+} else {
+    "unknown"
+}
+$sourceVerification = if ($CorrespondingSourceReportPath -and
+    (Test-Path -LiteralPath $CorrespondingSourceReportPath)) {
+    Read-KivoJson -Path $CorrespondingSourceReportPath
+} else {
+    [ordered]@{
+        schema = "kivo.ffmpeg-source-verification.v1"
+        verified = $false
+        status = "not_supplied"
+    }
+}
 
 $manifest = [ordered]@{
     schema = "kivo.build-manifest.v1"
@@ -61,14 +78,16 @@ $manifest = [ordered]@{
     }
     dependency = [ordered]@{
         ffmpeg = $ffmpegVersion
+        ffmpeg_binary_revision = $ffmpegBinaryRevision
         baseline_archive_sha256 =
             "c8bc13fb4079fc477ecca83985d913d43d1a69efdb974ebc1f37490e603b5b79"
         dynamic_linking = $true
         replaceable_dlls = $true
+        corresponding_source = $sourceVerification
     }
-    signing = Get-Content -Raw $SigningStatusPath | ConvertFrom-Json
+    signing = Read-KivoJson -Path $SigningStatusPath
     reproducibility =
-        Get-Content -Raw $ReproducibilityPath | ConvertFrom-Json
+        Read-KivoJson -Path $ReproducibilityPath
     privacy = [ordered]@{
         absolute_source_paths_in_manifest = $false
         credentials_in_diagnostics = $false

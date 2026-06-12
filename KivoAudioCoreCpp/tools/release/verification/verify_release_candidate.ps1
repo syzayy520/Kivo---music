@@ -13,7 +13,7 @@ if (-not (Import-KivoMsvcEnvironment)) {
 }
 
 $manifestPath = Join-Path $RuntimeDirectory "manifest\build-manifest.json"
-$manifest = Get-Content -Raw $manifestPath | ConvertFrom-Json
+$manifest = Read-KivoJson -Path $manifestPath
 $errors = [System.Collections.Generic.List[string]]::new()
 
 foreach ($file in $manifest.files) {
@@ -76,7 +76,9 @@ if ($pdbInRuntime) {
     $errors.Add("Runtime package contains private PDB symbols.")
 }
 
-$manifestText = Get-Content -Raw $manifestPath
+$manifestText = [System.IO.File]::ReadAllText(
+    $manifestPath,
+    [System.Text.UTF8Encoding]::new($false))
 $containsProjectRoot =
     $manifestText -match [regex]::Escape($ProjectRoot)
 $containsWindowsUserPath =
@@ -87,18 +89,34 @@ if ($containsProjectRoot -or $containsWindowsUserPath) {
 
 $signed = [bool]$manifest.signing.signed
 if ($signed) {
-    signtool.exe verify /pa /all $dll | Out-Null
-    if ($LASTEXITCODE -ne 0) {
-        $errors.Add("Authenticode verification failed.")
-    }
+    $signatureReport = Join-Path (Split-Path -Parent $ReportPath) `
+        "authenticode-verification.json"
+    & (Join-Path $ProjectRoot `
+        "tools\release\signing\verification\verify_authenticode_signature.ps1") `
+        -ArtifactPath $dll `
+        -ReportPath $signatureReport `
+        -ExpectedThumbprint $manifest.signing.certificate_thumbprint
 }
 
 $commercialBlockers = [System.Collections.Generic.List[string]]::new()
 if (-not $signed) {
     $commercialBlockers.Add("Kivo DLL is not Authenticode signed.")
 }
+$sourceVerified = $false
+$source = $manifest.dependency.corresponding_source
+if ($source -and
+    $source.schema -eq "kivo.ffmpeg-source-verification.v1" -and
+    [bool]$source.verified -and
+    $source.binary_revision -eq
+        $manifest.dependency.ffmpeg_binary_revision) {
+    $sourceVerified = $true
+}
+if (-not $sourceVerified) {
+    $commercialBlockers.Add(
+        "Exact FFmpeg corresponding-source archive is not bound to this release.")
+}
 $commercialBlockers.Add(
-    "Exact FFmpeg corresponding-source archive and legal approval are external release records.")
+    "FFmpeg distribution legal approval is an external signed record.")
 $commercialBlockers.Add(
     "USB, Bluetooth, active HDMI, physical transition, and ten-hour lab rows remain open.")
 $commercialBlockers.Add(
@@ -115,6 +133,7 @@ $report = [ordered]@{
     file_version = $version.FileVersion
     product_version = $version.ProductVersion
     signed = $signed
+    corresponding_source_verified = $sourceVerified
 }
 Write-KivoJson -Path $ReportPath -Value $report
 

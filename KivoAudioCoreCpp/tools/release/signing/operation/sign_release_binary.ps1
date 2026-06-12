@@ -7,14 +7,17 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..")).Path
+$ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path
 . (Join-Path $ProjectRoot "tools\release\foundation\release_foundation.ps1")
 . (Join-Path $ProjectRoot "tools\validation\import_msvc_environment.ps1")
 
 $binary = Join-Path $RuntimeDirectory "bin\kivo_audio_core.dll"
+if (-not (Test-Path -LiteralPath $binary -PathType Leaf)) {
+    throw "Release binary is missing: $binary"
+}
 if (-not $CertificateThumbprint) {
     Write-KivoJson -Path $StatusPath -Value ([ordered]@{
-        schema = "kivo.signing-status.v1"
+        schema = "kivo.signing-status.v2"
         status = "blocked_no_certificate"
         artifact = "bin/kivo_audio_core.dll"
         signed = $false
@@ -45,13 +48,16 @@ signtool.exe sign /sha1 $CertificateThumbprint /fd SHA256 `
 if ($LASTEXITCODE -ne 0) {
     throw "Authenticode signing failed."
 }
-signtool.exe verify /pa /all $binary
-if ($LASTEXITCODE -ne 0) {
-    throw "Authenticode verification failed."
-}
+$verificationPath = Join-Path (Split-Path -Parent $StatusPath) `
+    "authenticode-verification.json"
+& (Join-Path $ProjectRoot `
+    "tools\release\signing\verification\verify_authenticode_signature.ps1") `
+    -ArtifactPath $binary `
+    -ReportPath $verificationPath `
+    -ExpectedThumbprint $certificate.Thumbprint
 
 Write-KivoJson -Path $StatusPath -Value ([ordered]@{
-    schema = "kivo.signing-status.v1"
+    schema = "kivo.signing-status.v2"
     status = "signed_and_verified"
     artifact = "bin/kivo_audio_core.dll"
     signed = $true
@@ -59,5 +65,7 @@ Write-KivoJson -Path $StatusPath -Value ([ordered]@{
     certificate_subject = $certificate.Subject
     certificate_expiry = $certificate.NotAfter.ToUniversalTime().ToString("o")
     timestamp_url = $TimestampUrl
+    artifact_sha256 = Get-KivoSha256 -Path $binary
+    verification_report = "manifest/authenticode-verification.json"
 })
 Write-Host "SIGNING_PASS"
