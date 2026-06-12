@@ -38,6 +38,12 @@ PlaybackRuntimeResult PlaybackRuntimeCoordinator::seek(
         : runtime_result::failed(PlaybackRuntimeFailure::BoundaryFailure);
 }
 
+PlaybackRuntimeResult PlaybackRuntimeCoordinator::recover() noexcept {
+    return impl_
+        ? impl_->recover()
+        : runtime_result::failed(PlaybackRuntimeFailure::BoundaryFailure);
+}
+
 DecodeRenderQueueProducerResult
 PlaybackRuntimeCoordinator::produce_step() noexcept {
     return impl_

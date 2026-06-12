@@ -30,7 +30,7 @@ namespace kivo::core::playback::runtime_result {
 }
 
 [[nodiscard]] inline PlaybackRuntimeResult succeeded(
-    PlaybackCommandResult command) noexcept {
+    PlaybackCommandResult command = {}) noexcept {
     return {
         PlaybackRuntimeDisposition::Succeeded,
         PlaybackRuntimeFailure::None,

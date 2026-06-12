@@ -35,6 +35,7 @@ public:
         const PlaybackCommand& command) noexcept;
     [[nodiscard]] PlaybackRuntimeResult seek(
         const PlaybackCommand& command) noexcept;
+    [[nodiscard]] PlaybackRuntimeResult recover() noexcept;
 
     [[nodiscard]] DecodeRenderQueueProducerResult produce_step() noexcept;
     [[nodiscard]] render::RenderPumpResult render_step() noexcept;

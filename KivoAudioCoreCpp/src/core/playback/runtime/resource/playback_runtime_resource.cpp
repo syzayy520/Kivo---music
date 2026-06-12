@@ -53,7 +53,9 @@ bool PlaybackRuntimeCoordinator::Impl::release_runtime() noexcept {
     format_ = {};
     generations_ = {};
     decode_generation_ = {};
+    render_open_request_ = {};
     drain_request_ = {};
+    device_recovery_pending_ = false;
     return decode_result.is_success() && render_result.is_success();
 }
 

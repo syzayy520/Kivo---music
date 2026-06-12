@@ -254,6 +254,7 @@ add_library(kivo_playback_runtime STATIC
     src/core/playback/runtime/flush/playback_runtime_flush.cpp
     src/core/playback/runtime/lifecycle/playback_runtime_lifecycle.cpp
     src/core/playback/runtime/open/playback_runtime_open.cpp
+    src/core/playback/runtime/recovery/playback_runtime_device_recovery.cpp
     src/core/playback/runtime/resource/playback_runtime_resource.cpp
     src/core/playback/runtime/seek/playback_runtime_seek.cpp
     src/core/playback/runtime/snapshot/playback_runtime_snapshot.cpp
@@ -475,6 +476,7 @@ add_executable(kivo_playback_runtime_tests
     tests/playback_runtime/coordinator/runner/playback_runtime_tests_main.cpp
     tests/playback_runtime/coordinator/scenario/command_isolation_tests.cpp
     tests/playback_runtime/coordinator/scenario/eos_drain_tests.cpp
+    tests/playback_runtime/coordinator/scenario/device_recovery_tests.cpp
     tests/playback_runtime/coordinator/scenario/lifecycle_tests.cpp
     tests/playback_runtime/coordinator/scenario/open_transaction_tests.cpp
     tests/playback_runtime/coordinator/scenario/seek_generation_tests.cpp

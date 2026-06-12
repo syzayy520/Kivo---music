@@ -27,6 +27,12 @@ PlaybackRuntimeCoordinator::Impl::snapshot() const noexcept {
     result.successful_drains = successful_drains_;
     result.failed_drains = failed_drains_;
     result.drain_timeouts = drain_timeouts_;
+    result.device_recovery_pending = device_recovery_pending_;
+    result.device_loss_events = device_loss_events_;
+    result.device_recovery_attempts = device_recovery_attempts_;
+    result.successful_device_recoveries =
+        successful_device_recoveries_;
+    result.failed_device_recoveries = failed_device_recoveries_;
     return result;
 }
 

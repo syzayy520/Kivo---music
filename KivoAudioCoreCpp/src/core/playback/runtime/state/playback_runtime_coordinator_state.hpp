@@ -25,6 +25,7 @@ public:
         const PlaybackCommand& command) noexcept;
     [[nodiscard]] PlaybackRuntimeResult seek(
         const PlaybackCommand& command) noexcept;
+    [[nodiscard]] PlaybackRuntimeResult recover() noexcept;
     [[nodiscard]] DecodeRenderQueueProducerResult produce_step() noexcept;
     [[nodiscard]] render::RenderPumpResult render_step() noexcept;
     [[nodiscard]] PlaybackRuntimeSnapshot snapshot() const noexcept;
@@ -54,6 +55,8 @@ private:
         const PlaybackCommand& command) noexcept;
     [[nodiscard]] render::RenderPumpResult complete_end_of_stream(
         render::RenderPumpResult result,
+        uint64_t session_generation) noexcept;
+    [[nodiscard]] bool request_device_recovery(
         uint64_t session_generation) noexcept;
 
     [[nodiscard]] PlaybackRuntimeResult reject_command(
@@ -89,10 +92,12 @@ private:
     decode::DecodeGeneration decode_generation_{};
     render::SpscAudioBlockQueueConfiguration queue_configuration_{};
     DecodeRenderQueueProducerConfiguration producer_configuration_{};
+    render::RenderOpenRequest render_open_request_{};
     render::RenderDrainRequest drain_request_{
         std::chrono::seconds{2}};
     bool active_{false};
     bool closed_{false};
+    bool device_recovery_pending_{false};
     uint64_t successful_opens_{0};
     uint64_t rolled_back_opens_{0};
     uint64_t successful_seeks_{0};
@@ -102,6 +107,10 @@ private:
     uint64_t successful_drains_{0};
     uint64_t failed_drains_{0};
     uint64_t drain_timeouts_{0};
+    uint64_t device_loss_events_{0};
+    uint64_t device_recovery_attempts_{0};
+    uint64_t successful_device_recoveries_{0};
+    uint64_t failed_device_recoveries_{0};
 };
 
 } // namespace kivo::core::playback

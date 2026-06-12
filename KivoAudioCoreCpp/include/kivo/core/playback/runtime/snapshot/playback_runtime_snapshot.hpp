@@ -30,6 +30,11 @@ struct PlaybackRuntimeSnapshot {
     uint64_t successful_drains{0};
     uint64_t failed_drains{0};
     uint64_t drain_timeouts{0};
+    bool device_recovery_pending{false};
+    uint64_t device_loss_events{0};
+    uint64_t device_recovery_attempts{0};
+    uint64_t successful_device_recoveries{0};
+    uint64_t failed_device_recoveries{0};
 
     [[nodiscard]] constexpr bool operator==(
         const PlaybackRuntimeSnapshot&) const noexcept = default;

@@ -73,8 +73,12 @@ PlaybackRuntimeCoordinator::Impl::render_step() noexcept {
     }
     if (result.disposition == render::RenderPumpDisposition::Failed
         || result.disposition == render::RenderPumpDisposition::Rejected) {
-        static_cast<void>(session_.report_failure(
-            session_snapshot.session_generation));
+        if (result.failure != render::RenderFailure::DeviceLost
+            || !request_device_recovery(
+                session_snapshot.session_generation)) {
+            static_cast<void>(session_.report_failure(
+                session_snapshot.session_generation));
+        }
         saturating_increment(failed_operations_);
     }
     return result;

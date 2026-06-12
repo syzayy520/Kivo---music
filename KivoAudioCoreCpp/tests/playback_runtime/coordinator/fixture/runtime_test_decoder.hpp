@@ -15,6 +15,8 @@ public:
     bool fail_seek{false};
     bool emit_stale_after_seek{false};
     uint64_t close_count{0};
+    uint64_t seek_count{0};
+    kivo::core::contract::SamplePosition last_seek_target{0};
 
     [[nodiscard]] kivo::core::decode::DecodeOpenResult open(
         std::unique_ptr<kivo::core::decode::ByteSourceBoundary> source,
@@ -69,6 +71,8 @@ public:
         previous_decode_generation_ = decode_generation_;
         decode_generation_ = generation;
         target_frame_ = target_frame;
+        last_seek_target = target_frame;
+        ++seek_count;
         next_block_ = 0;
         seeked_ = true;
         probe_.decode_generation = generation;

@@ -142,6 +142,7 @@ $runtimeFamilyRules = @(
             "flush",
             "lifecycle",
             "open",
+            "recovery",
             "resource",
             "result",
             "seek",

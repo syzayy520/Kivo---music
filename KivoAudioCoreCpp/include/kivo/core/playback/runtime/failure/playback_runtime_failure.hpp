@@ -16,6 +16,7 @@ enum class PlaybackRuntimeFailure : uint8_t {
     ProducerCreationFailed,
     RenderControlFailed,
     DecodeControlFailed,
+    NoPendingRecovery,
     RuntimeClosed,
     BoundaryFailure
 };
