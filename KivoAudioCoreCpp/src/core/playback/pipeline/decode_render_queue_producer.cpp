@@ -20,6 +20,12 @@ struct BufferedBlock {
     decode::DecodeGeneration decode_generation{};
 };
 
+enum class StoreDecodedResult : uint8_t {
+    Stored = 0,
+    DiscardedStale,
+    Failed
+};
+
 } // namespace
 
 class DecodeRenderQueueProducer::Impl {
@@ -29,11 +35,13 @@ public:
         render::SpscAudioBlockQueue& queue,
         contract::RenderFormat format,
         render::RenderGenerationSet generations,
+        decode::DecodeGeneration decode_generation,
         DecodeRenderQueueProducerConfiguration configuration) noexcept
         : decoder_(decoder),
           queue_(queue),
           format_(format),
           generations_(generations),
+          decode_generation_(decode_generation),
           configuration_(configuration),
           next_buffer_id_(configuration.first_buffer_id) {}
 
@@ -73,8 +81,18 @@ public:
         const auto decoded = decoder_.decode_next();
         switch (decoded.disposition()) {
         case decode::DecodeStepDisposition::Produced:
-            if (!store_decoded(decoded.block())) {
+            switch (store_decoded(decoded.block())) {
+            case StoreDecodedResult::DiscardedStale:
+                return {
+                    DecodeRenderQueueProducerDisposition::DiscardedStale,
+                    snapshot_.last_decode_failure,
+                    render::SpscQueuePushResult::Pushed,
+                    0
+                };
+            case StoreDecodedResult::Failed:
                 return failed(snapshot_.last_decode_failure);
+            case StoreDecodedResult::Stored:
+                break;
             }
             if (!held_index_) {
                 held_index_ = stored_index_;
@@ -118,18 +136,33 @@ public:
     }
 
 private:
-    [[nodiscard]] bool store_decoded(
+    [[nodiscard]] StoreDecodedResult store_decoded(
         const decode::DecodedAudioBlockView& block) noexcept {
         if (!block.is_valid()
-            || block.format != format_
-            || block.bytes.size()
-                > configuration_.maximum_decode_block_bytes) {
+            || block.format != format_) {
             snapshot_.last_decode_failure =
-                block.bytes.size() > configuration_.maximum_decode_block_bytes
-                ? decode::DecodeFailure::InvalidBuffer
-                : decode::DecodeFailure::BoundaryFailure;
+                decode::DecodeFailure::BoundaryFailure;
             snapshot_.state = DecodeRenderQueueProducerState::Failed;
-            return false;
+            return StoreDecodedResult::Failed;
+        }
+        if (block.source_generation.id != generations_.stream.id) {
+            snapshot_.last_decode_failure =
+                decode::DecodeFailure::StaleSourceGeneration;
+            saturating_increment(snapshot_.stale_blocks_discarded);
+            return StoreDecodedResult::DiscardedStale;
+        }
+        if (block.decode_generation != decode_generation_) {
+            snapshot_.last_decode_failure =
+                decode::DecodeFailure::StaleDecodeGeneration;
+            saturating_increment(snapshot_.stale_blocks_discarded);
+            return StoreDecodedResult::DiscardedStale;
+        }
+        if (block.bytes.size()
+            > configuration_.maximum_decode_block_bytes) {
+            snapshot_.last_decode_failure =
+                decode::DecodeFailure::InvalidBuffer;
+            snapshot_.state = DecodeRenderQueueProducerState::Failed;
+            return StoreDecodedResult::Failed;
         }
         const size_t index = held_index_ ? 1u - *held_index_ : 0u;
         auto& stored = blocks_[index];
@@ -142,7 +175,8 @@ private:
         stored_index_ = index;
         saturating_add(snapshot_.decoded_frames, block.frame_count);
         saturating_increment(snapshot_.decoded_blocks);
-        return true;
+        snapshot_.last_decode_failure = decode::DecodeFailure::None;
+        return StoreDecodedResult::Stored;
     }
 
     void activate_held(bool terminal) noexcept {
@@ -265,6 +299,7 @@ private:
     render::SpscAudioBlockQueue& queue_;
     contract::RenderFormat format_{};
     render::RenderGenerationSet generations_{};
+    decode::DecodeGeneration decode_generation_{};
     DecodeRenderQueueProducerConfiguration configuration_{};
     std::array<BufferedBlock, 2> blocks_{};
     std::optional<size_t> held_index_{};
@@ -283,6 +318,7 @@ DecodeRenderQueueProducer::create(
     render::SpscAudioBlockQueue& queue,
     contract::RenderFormat format,
     render::RenderGenerationSet generations,
+    decode::DecodeGeneration decode_generation,
     DecodeRenderQueueProducerConfiguration configuration) noexcept {
     const auto queue_snapshot = queue.snapshot();
     const auto bytes_per_frame = format.format.bytes_per_frame();
@@ -303,6 +339,7 @@ DecodeRenderQueueProducer::create(
         queue,
         format,
         generations,
+        decode_generation,
         configuration)};
     if (!impl || !impl->allocate()) {
         return nullptr;

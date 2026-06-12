@@ -109,6 +109,7 @@ template <size_t Size>
     size_t maximum_bytes,
     core::contract::FrameCount chunk_frames) {
     core::render::RenderGenerationSet generations{};
+    generations.stream.id = generation(2);
     generations.seek.id = generation(5);
     generations.flush.id = generation(6);
     generations.device.id = generation(7);
@@ -117,6 +118,7 @@ template <size_t Size>
         queue,
         format(),
         generations,
+        {generation(3)},
         {maximum_bytes, chunk_frames, {1}});
 }
 
@@ -242,6 +244,48 @@ void creation_rejects_chunk_larger_than_queue_slot() {
     PIPELINE_ASSERT(!producer(decoder, *queue, 64, 3));
 }
 
+void stale_decode_generation_fails_before_queue_mutation() {
+    const std::array<std::byte, 8> bytes{};
+    ScriptedDecoder decoder;
+    decoder.blocks[0] = decoded_block(bytes, 1, 0, 2, 2);
+    decoder.block_count = 1;
+    auto queue = core::render::SpscAudioBlockQueue::create({2, 8});
+    PIPELINE_ASSERT(queue);
+    auto pipeline = producer(decoder, *queue, 8, 1);
+    PIPELINE_ASSERT(pipeline);
+
+    const auto result = pipeline->step();
+    PIPELINE_ASSERT(
+        result.disposition
+        == core::playback::DecodeRenderQueueProducerDisposition::DiscardedStale);
+    PIPELINE_ASSERT(
+        result.decode_failure
+        == core::decode::DecodeFailure::StaleDecodeGeneration);
+    PIPELINE_ASSERT(queue->empty());
+    PIPELINE_ASSERT(pipeline->snapshot().stale_blocks_discarded == 1);
+}
+
+void stale_source_generation_fails_before_queue_mutation() {
+    const std::array<std::byte, 8> bytes{};
+    ScriptedDecoder decoder;
+    decoder.blocks[0] = decoded_block(bytes, 1, 0, 1, 3);
+    decoder.block_count = 1;
+    auto queue = core::render::SpscAudioBlockQueue::create({2, 8});
+    PIPELINE_ASSERT(queue);
+    auto pipeline = producer(decoder, *queue, 8, 1);
+    PIPELINE_ASSERT(pipeline);
+
+    const auto result = pipeline->step();
+    PIPELINE_ASSERT(
+        result.disposition
+        == core::playback::DecodeRenderQueueProducerDisposition::DiscardedStale);
+    PIPELINE_ASSERT(
+        result.decode_failure
+        == core::decode::DecodeFailure::StaleSourceGeneration);
+    PIPELINE_ASSERT(queue->empty());
+    PIPELINE_ASSERT(pipeline->snapshot().stale_blocks_discarded == 1);
+}
+
 } // namespace
 
 int main() {
@@ -259,7 +303,11 @@ int main() {
         {"oversized_decode_block_fails_before_queue_mutation",
          oversized_decode_block_fails_before_queue_mutation},
         {"creation_rejects_chunk_larger_than_queue_slot",
-         creation_rejects_chunk_larger_than_queue_slot}
+         creation_rejects_chunk_larger_than_queue_slot},
+        {"stale_decode_generation_fails_before_queue_mutation",
+         stale_decode_generation_fails_before_queue_mutation},
+        {"stale_source_generation_fails_before_queue_mutation",
+         stale_source_generation_fails_before_queue_mutation}
     };
     int passed = 0;
     std::cout << "=== Playback Pipeline Tests ===\n\n";

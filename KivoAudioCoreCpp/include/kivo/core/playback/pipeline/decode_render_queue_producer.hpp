@@ -19,6 +19,7 @@ public:
         render::SpscAudioBlockQueue& queue,
         contract::RenderFormat format,
         render::RenderGenerationSet generations,
+        decode::DecodeGeneration decode_generation,
         DecodeRenderQueueProducerConfiguration configuration) noexcept;
 
     ~DecodeRenderQueueProducer();

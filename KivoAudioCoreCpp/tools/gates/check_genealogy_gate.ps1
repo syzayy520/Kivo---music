@@ -91,6 +91,89 @@ if (Test-Path $toolsPath) {
     }
 }
 
+$runtimeFamilyRules = @(
+    @{
+        Path = "include\kivo\core\playback\runtime"
+        AllowedDirectories = @(
+            "coordinator",
+            "failure",
+            "request",
+            "result",
+            "snapshot"
+        )
+    },
+    @{
+        Path = "src\core\playback\runtime"
+        AllowedDirectories = @(
+            "command",
+            "coordinator",
+            "flush",
+            "lifecycle",
+            "open",
+            "resource",
+            "result",
+            "seek",
+            "snapshot",
+            "state",
+            "step",
+            "transport"
+        )
+    },
+    @{
+        Path = "tests\playback_runtime"
+        AllowedDirectories = @("coordinator")
+    },
+    @{
+        Path = "tests\playback_runtime\coordinator"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    }
+)
+
+foreach ($rule in $runtimeFamilyRules) {
+    $familyPath = Join-Path $ProjectRoot $rule.Path
+    if (-not (Test-Path $familyPath)) {
+        continue
+    }
+
+    $rootFiles = Get-ChildItem -Path $familyPath -File -Force
+    foreach ($file in $rootFiles) {
+        $violations += "FLAT_FAMILY_FILE: $($rule.Path)\$($file.Name)"
+    }
+
+    $childDirectories = Get-ChildItem -Path $familyPath -Directory -Force
+    foreach ($directory in $childDirectories) {
+        if ($directory.Name -notin $rule.AllowedDirectories) {
+            $violations += "UNAUTHORIZED_RUNTIME_SUBFAMILY: $($rule.Path)\$($directory.Name)\"
+        }
+    }
+}
+
+$runtimeSourceRoots = @(
+    "include\kivo\core\playback\runtime",
+    "src\core\playback\runtime",
+    "tests\playback_runtime"
+)
+$runtimeMaximumLines = 260
+foreach ($relativeRoot in $runtimeSourceRoots) {
+    $runtimeRoot = Join-Path $ProjectRoot $relativeRoot
+    if (-not (Test-Path $runtimeRoot)) {
+        continue
+    }
+    $runtimeFiles = Get-ChildItem -Path $runtimeRoot -Recurse -File |
+        Where-Object { $_.Extension -in @(".hpp", ".cpp") }
+    foreach ($file in $runtimeFiles) {
+        $lineCount = (Get-Content $file.FullName).Count
+        if ($lineCount -gt $runtimeMaximumLines) {
+            $relativeFile = $file.FullName.Substring($ProjectRoot.Length).TrimStart("\")
+            $violations += "RUNTIME_FILE_RESPONSIBILITY_OVERFLOW: $relativeFile has $lineCount lines (max $runtimeMaximumLines)"
+        }
+    }
+}
+
 Write-Host "--- Allowed Top-Level Items ---"
 foreach ($a in $allowedTopLevel) {
     Write-Host "  $a"

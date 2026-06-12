@@ -24,6 +24,7 @@ struct DecodeRenderQueueProducerSnapshot {
     uint64_t decoded_blocks{0};
     uint64_t queued_blocks{0};
     uint64_t backpressure_count{0};
+    uint64_t stale_blocks_discarded{0};
 
     [[nodiscard]] constexpr bool operator==(
         const DecodeRenderQueueProducerSnapshot&) const noexcept = default;

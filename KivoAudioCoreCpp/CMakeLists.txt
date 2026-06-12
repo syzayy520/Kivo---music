@@ -239,6 +239,32 @@ target_compile_options(kivo_playback_pipeline PRIVATE
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
 )
 
+add_library(kivo_playback_runtime STATIC
+    src/core/playback/runtime/coordinator/playback_runtime_coordinator.cpp
+    src/core/playback/runtime/command/playback_runtime_command_dispatch.cpp
+    src/core/playback/runtime/command/playback_runtime_command_validation.cpp
+    src/core/playback/runtime/flush/playback_runtime_flush.cpp
+    src/core/playback/runtime/lifecycle/playback_runtime_lifecycle.cpp
+    src/core/playback/runtime/open/playback_runtime_open.cpp
+    src/core/playback/runtime/resource/playback_runtime_resource.cpp
+    src/core/playback/runtime/seek/playback_runtime_seek.cpp
+    src/core/playback/runtime/snapshot/playback_runtime_snapshot.cpp
+    src/core/playback/runtime/state/playback_runtime_coordinator_state.cpp
+    src/core/playback/runtime/step/playback_runtime_step.cpp
+    src/core/playback/runtime/transport/playback_runtime_transport.cpp
+)
+target_link_libraries(kivo_playback_runtime
+    PUBLIC
+        kivo_playback_pipeline
+        kivo_playback_session
+)
+target_include_directories(kivo_playback_runtime PUBLIC include/)
+target_compile_features(kivo_playback_runtime PUBLIC cxx_std_20)
+target_compile_options(kivo_playback_runtime PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
+
 # Contract tests
 add_executable(kivo_contract_tests
     tests/contracts/contract_tests_main.cpp
@@ -432,6 +458,24 @@ target_compile_options(kivo_playback_pipeline_tests PRIVATE
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
 )
 
+add_executable(kivo_playback_runtime_tests
+    tests/playback_runtime/coordinator/runner/playback_runtime_tests_main.cpp
+    tests/playback_runtime/coordinator/scenario/command_isolation_tests.cpp
+    tests/playback_runtime/coordinator/scenario/lifecycle_tests.cpp
+    tests/playback_runtime/coordinator/scenario/open_transaction_tests.cpp
+    tests/playback_runtime/coordinator/scenario/seek_generation_tests.cpp
+)
+target_link_libraries(kivo_playback_runtime_tests
+    PRIVATE
+        kivo_playback_runtime
+        kivo_fake_render_backend
+)
+target_compile_features(kivo_playback_runtime_tests PRIVATE cxx_std_20)
+target_compile_options(kivo_playback_runtime_tests PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc /wd4127>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
+
 # Deterministic fake render backend
 add_library(kivo_fake_render_backend STATIC
     src/testing/time/manual_clock.cpp
@@ -594,6 +638,7 @@ add_dependencies(kivo_render_queue_tests kivo_public_header_checks)
 add_dependencies(kivo_decode_boundary_tests kivo_public_header_checks)
 add_dependencies(kivo_playback_session_tests kivo_public_header_checks)
 add_dependencies(kivo_playback_pipeline_tests kivo_public_header_checks)
+add_dependencies(kivo_playback_runtime_tests kivo_public_header_checks)
 add_dependencies(kivo_fake_renderer_tests kivo_public_header_checks)
 if(TARGET kivo_wasapi_tests)
     add_dependencies(kivo_wasapi_tests kivo_public_header_checks)
@@ -617,6 +662,7 @@ add_test(NAME render_queue_tests COMMAND kivo_render_queue_tests)
 add_test(NAME decode_boundary_tests COMMAND kivo_decode_boundary_tests)
 add_test(NAME playback_session_tests COMMAND kivo_playback_session_tests)
 add_test(NAME playback_pipeline_tests COMMAND kivo_playback_pipeline_tests)
+add_test(NAME playback_runtime_tests COMMAND kivo_playback_runtime_tests)
 add_test(NAME fake_renderer_tests COMMAND kivo_fake_renderer_tests)
 if(TARGET kivo_wasapi_tests)
     add_test(NAME wasapi_tests COMMAND kivo_wasapi_tests)

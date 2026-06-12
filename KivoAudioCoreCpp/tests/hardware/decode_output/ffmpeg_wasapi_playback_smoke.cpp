@@ -121,6 +121,7 @@ using kivo::core::contract::FrameCount;
         *queue,
         format,
         renderer_generations,
+        decode_generation,
         {maximum_decode_block_bytes, maximum_chunk_frames, {1}});
     if (!producer) {
         std::cerr << "Decode/render producer allocation failed\n";

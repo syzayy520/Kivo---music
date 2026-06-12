@@ -21,6 +21,8 @@ enum class DecodeFailure : uint8_t {
     ConversionFailed,
     SeekUnsupported,
     FlushUnsupported,
+    StaleSourceGeneration,
+    StaleDecodeGeneration,
     EndOfStream,
     BoundaryFailure
 };

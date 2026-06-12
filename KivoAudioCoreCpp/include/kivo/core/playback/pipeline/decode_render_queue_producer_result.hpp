@@ -11,6 +11,7 @@ enum class DecodeRenderQueueProducerDisposition : uint8_t {
     Primed = 0,
     Queued,
     Backpressure,
+    DiscardedStale,
     EndOfStream,
     Failed
 };
