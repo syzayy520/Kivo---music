@@ -1,6 +1,6 @@
 # =============================================================================
 # check_audio_core_scope_lock_gate.ps1
-# Audio Core Scope Lock Gate — Video/Out-of-Scope Drift Detection
+# Audio Core Scope Lock Gate - Video/Out-of-Scope Drift Detection
 # =============================================================================
 # Scans for video renderer, video surface, video HDR, and out-of-scope tokens.
 # Prevents scope drift into video rendering domain.
@@ -14,7 +14,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-# Resolve PROJECT_ROOT — always resolve to absolute path
+# Resolve PROJECT_ROOT - always resolve to absolute path
 if (-not $ProjectRoot) {
     $ProjectRoot = Join-Path $PSScriptRoot "..\.."
 }
@@ -174,7 +174,7 @@ $p013RestrictedPaths = @(
 foreach ($path in $p013RestrictedPaths) {
     $fullPath = Join-Path $ProjectRoot $path
     if (Test-Path $fullPath) {
-        $violations += "P0_013_RESTRICTED: $path/ exists — P0-013 is blocked until complete allowlist + dependency proof + audio-only confirmation"
+        $violations += "P0_013_RESTRICTED: $path/ exists - P0-013 is blocked until complete allowlist + dependency proof + audio-only confirmation"
     }
 }
 
@@ -197,7 +197,7 @@ foreach ($file in $sourceFiles) {
                 if ($relativePath -like "docs/*" -or $relativePath -like "tools/gates/*") {
                     continue
                 }
-                $violations += "P0_013_RESTRICTED: $relativePath contains: $token — P0-013 is blocked until complete allowlist + dependency proof + audio-only confirmation"
+                $violations += "P0_013_RESTRICTED: $relativePath contains: $token - P0-013 is blocked until complete allowlist + dependency proof + audio-only confirmation"
             }
         }
     }
@@ -207,7 +207,7 @@ foreach ($file in $sourceFiles) {
 # Section 6: Allowed Audio Core Tokens (Verification)
 # =============================================================================
 # These tokens are legitimate audio core content and must NOT be flagged.
-# This section is for documentation only — no scanning needed.
+# This section is for documentation only - no scanning needed.
 
 $allowedTokens = @(
     "kivo_capability_tests",

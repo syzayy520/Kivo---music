@@ -133,3 +133,4 @@ if ($tamperExitCode -eq 0) {
 }
 
 Write-Host "INSTALLER_TRANSACTION_SELFTEST_PASS"
+exit 0

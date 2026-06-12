@@ -187,3 +187,4 @@ if ($maliciousExitCode -eq 0 -or
 }
 
 Write-Host "SOURCE_BUNDLE_TOOLCHAIN_SELFTEST_PASS"
+exit 0

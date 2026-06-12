@@ -84,3 +84,4 @@ try {
 }
 
 Write-Host "AUTHENTICODE_VERIFIER_SELFTEST_PASS"
+exit 0
