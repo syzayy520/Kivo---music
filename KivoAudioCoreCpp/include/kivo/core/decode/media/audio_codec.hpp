@@ -11,7 +11,8 @@ enum class AudioCodec : uint8_t {
     Mp3,
     Aac,
     Vorbis,
-    Opus
+    Opus,
+    Dsd
 };
 
 } // namespace kivo::core::decode

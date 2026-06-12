@@ -171,6 +171,11 @@ core::decode::AudioCodec map_audio_codec(AVCodecID codec_id) noexcept {
         return AudioCodec::Vorbis;
     case AV_CODEC_ID_OPUS:
         return AudioCodec::Opus;
+    case AV_CODEC_ID_DSD_LSBF:
+    case AV_CODEC_ID_DSD_MSBF:
+    case AV_CODEC_ID_DSD_LSBF_PLANAR:
+    case AV_CODEC_ID_DSD_MSBF_PLANAR:
+        return AudioCodec::Dsd;
     default:
         return AudioCodec::Unknown;
     }
@@ -199,6 +204,8 @@ core::decode::MediaContainer map_media_container(
         || contains_name(names, "webm")) {
         return MediaContainer::Matroska;
     }
+    if (contains_name(names, "dsf")) return MediaContainer::Dsf;
+    if (contains_name(names, "dsdiff")) return MediaContainer::Dsdiff;
     return MediaContainer::Unknown;
 }
 

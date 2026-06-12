@@ -24,7 +24,7 @@
 | Bluetooth | Physical release-lab row | OPEN |
 | Active HDMI | Physical release-lab row | OPEN |
 | Device unplug/change/sleep | Physical release-lab rows | OPEN |
-| Ten-hour endurance | Physical release-lab run | OPEN |
+| Ten-hour endurance | Wrapper ready; physical release-lab run | OPEN |
 
 An `OPEN` or `BLOCKED` row cannot be rewritten as `PASS` without the named
 artifact or laboratory record.

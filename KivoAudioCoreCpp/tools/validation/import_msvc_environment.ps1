@@ -8,11 +8,23 @@ function Import-KivoMsvcEnvironment {
     [CmdletBinding()]
     param()
 
+    function Test-MsvcEnvironmentReady {
+        $cl = Get-Command cl.exe -ErrorAction SilentlyContinue
+        $include = [Environment]::GetEnvironmentVariable("INCLUDE", "Process")
+        $lib = [Environment]::GetEnvironmentVariable("LIB", "Process")
+
+        return $null -ne $cl -and
+            $include -and
+            $include -match "VC\\Tools\\MSVC" -and
+            $lib -and
+            $lib -match "VC\\Tools\\MSVC"
+    }
+
     # Set this before vcvarsall so every child process inherits stable
     # /showIncludes output that CMake and Ninja can recognize.
     [Environment]::SetEnvironmentVariable("VSLANG", "1033", "Process")
 
-    if (Get-Command cl.exe -ErrorAction SilentlyContinue) {
+    if (Test-MsvcEnvironmentReady) {
         return $true
     }
 
@@ -60,5 +72,5 @@ function Import-KivoMsvcEnvironment {
         }
     }
 
-    return $null -ne (Get-Command cl.exe -ErrorAction SilentlyContinue)
+    return Test-MsvcEnvironmentReady
 }

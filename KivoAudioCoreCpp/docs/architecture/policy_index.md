@@ -1,8 +1,8 @@
 # Policy Index
 
 **Version:** V10.1 FINAL P0-B READY LOCKED PATCHED
-**Current Task:** KIVO-AUDIO-CORE-P0-P-ENGINEERING-COMPLETE
-**Last Updated:** 2026-06-12 (P0-P Release Hardening)
+**Current Task:** KIVO-AUDIO-CORE-BACKEND-COMPLETION-PROGRAM
+**Last Updated:** 2026-06-13
 
 ## 1. Authority
 
@@ -11,8 +11,12 @@ the implementation order from the current repository state.
 
 - Roadmap: `docs/architecture/audio_core_execution_roadmap.md`
 - Release contract: `docs/architecture/commercial_release_contract.md`
-- Active taskbook:
-  `docs/tasks/p0_p_release_hardening_family_design_task.md`
+- Backend completion program:
+  `docs/architecture/windows_backend_completion_program.md`
+- Lyrics boundary: `docs/architecture/lyrics_core_boundary.md`
+- Active research taskbooks:
+  `docs/tasks/p0_q_hi_res_dsd_dop_research_family_design_task.md`
+  `docs/tasks/p0_r_mpv_libmpv_reference_research_family_design_task.md`
 
 Safety, legal, privacy, and project-root rules take precedence over schedule.
 
@@ -34,8 +38,8 @@ Safety, legal, privacy, and project-root rules take precedence over schedule.
 | P0-N | ReplayGain, volume, resample, and DSP | DONE |
 | P0-O | Host ABI | DONE |
 | P0-P | Commercial release hardening | DONE (ENGINEERING RC) |
-| P0-Q | Hi-Res, DSD, and DoP research | PLANNED |
-| P0-R | mpv/libmpv reference research | PLANNED |
+| P0-Q | Hi-Res, DSD, and DoP research | CONTRACT + EXPLICIT RUNTIME REJECTION COMPLETE; PLAYBACK OPEN |
+| P0-R | mpv/libmpv reference research | REFERENCE PROBE INITIALIZED |
 
 ## 3. Active Gate Set
 
@@ -78,8 +82,10 @@ engineering candidate into a source failure.
 ## 6. P0-P Handoff
 
 P0-P owns the reproducible engineering release-candidate payload and its
-evidence. P0-Q and P0-R remain research-only and may not change current product
-claims without a new implementation phase and evidence review.
+evidence. P0-Q now owns Hi-Res PCM, DSD/DoP contract-level tests, and explicit
+decode unsupported classification. P0-R owns a reference-only mpv probe. Neither
+may change current product claims without a new implementation phase and
+evidence review.
 
 ## 7. Project Root Rule
 
@@ -89,9 +95,13 @@ claims without a new implementation phase and evidence review.
 
 ## 8. Immediate Execution Order
 
-1. Generate and verify the unsigned engineering release candidate.
+1. Keep the P0-P engineering RC evidence intact.
 2. Retain the exact FFmpeg corresponding-source archive.
 3. Complete external legal approval.
 4. Integrate and sign the product installer.
 5. Complete remaining physical-device and endurance rows.
-6. Approve commercial capability claims only after all evidence is stored.
+6. Keep P0-Q/P0-R slices narrow: Hi-Res PCM and DSD/DoP contract tests, decode
+   unsupported classification, and mpv reference probing are allowed; DSD/DoP
+   runtime and compatibility implementation remain unauthorized until a
+   follow-up slice admits them.
+7. Approve commercial capability claims only after all evidence is stored.

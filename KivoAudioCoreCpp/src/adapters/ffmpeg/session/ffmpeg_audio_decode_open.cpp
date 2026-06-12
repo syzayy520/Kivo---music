@@ -10,6 +10,7 @@ extern "C" {
 
 #include "adapters/ffmpeg/container/validation/known_container_extent.hpp"
 #include "adapters/ffmpeg/mapping/ffmpeg_audio_format.hpp"
+#include "kivo/core/decode/media/support/media_support_classification.hpp"
 
 namespace kivo::adapters::ffmpeg::detail {
 
@@ -111,23 +112,20 @@ core::decode::DecodeOpenResult FfmpegAudioDecodeRuntime::open(
         return core::decode::DecodeOpenResult::failed(
             core::decode::DecodeFailure::NoAudioStream);
     }
+
+    const auto codec = map_audio_codec(stream->codecpar->codec_id);
+    const auto container = map_media_container(demux_.context()->iformat);
+    const auto support =
+        core::decode::classify_media_support(codec, container);
+    if (!support.is_supported()) {
+        close();
+        return core::decode::DecodeOpenResult::rejected(
+            support.failure);
+    }
     if (!decoder_.open(*stream->codecpar)) {
         const auto failure = decoder_.failure();
         close();
         return core::decode::DecodeOpenResult::failed(failure);
-    }
-
-    const auto codec = map_audio_codec(stream->codecpar->codec_id);
-    const auto container = map_media_container(demux_.context()->iformat);
-    if (codec == core::decode::AudioCodec::Unknown) {
-        close();
-        return core::decode::DecodeOpenResult::rejected(
-            core::decode::DecodeFailure::UnsupportedCodec);
-    }
-    if (container == core::decode::MediaContainer::Unknown) {
-        close();
-        return core::decode::DecodeOpenResult::rejected(
-            core::decode::DecodeFailure::UnsupportedContainer);
     }
 
     input_eof_ = false;

@@ -15,6 +15,33 @@ if (-not $ProjectRoot) {
 }
 $ProjectRoot = (Resolve-Path $ProjectRoot).Path
 
+function Find-GitSafeDirectory {
+    param([Parameter(Mandatory = $true)][string]$StartPath)
+
+    $current = (Resolve-Path $StartPath).Path
+    while ($current) {
+        if (Test-Path (Join-Path $current ".git")) {
+            return $current.Replace("\", "/")
+        }
+
+        $parent = Split-Path $current -Parent
+        if (-not $parent -or $parent -eq $current) {
+            break
+        }
+        $current = $parent
+    }
+
+    return $StartPath.Replace("\", "/")
+}
+
+$GitSafeDirectory = Find-GitSafeDirectory -StartPath $ProjectRoot
+
+function Invoke-ProjectGit {
+    param([Parameter(ValueFromRemainingArguments = $true)][string[]]$Arguments)
+
+    & git -c "safe.directory=$GitSafeDirectory" @Arguments
+}
+
 Push-Location $ProjectRoot
 try {
     Write-Host "============================================================================="
@@ -26,17 +53,17 @@ try {
     Write-Host "============================================================================="
     Write-Host ""
 
-    $branch = git branch --show-current
+    $branch = Invoke-ProjectGit branch --show-current
     if (-not $RemoteRef) {
-        $RemoteRef = git rev-parse --abbrev-ref --symbolic-full-name "@{upstream}" 2>$null
+        $RemoteRef = Invoke-ProjectGit rev-parse --abbrev-ref --symbolic-full-name "@{upstream}" 2>$null
         if (-not $RemoteRef) {
             $RemoteRef = "origin/master"
         }
     }
 
-    $status = git status --short
-    $head = git rev-parse HEAD
-    $remote = git rev-parse $RemoteRef
+    $status = Invoke-ProjectGit status --short
+    $head = Invoke-ProjectGit rev-parse HEAD
+    $remote = Invoke-ProjectGit rev-parse $RemoteRef
 
     Write-Host "Branch: $branch"
     Write-Host "HEAD:   $head"

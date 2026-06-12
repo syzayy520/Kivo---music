@@ -205,6 +205,8 @@ if (Test-Path $cmakePath) {
         "kivo_audio_processing",
         "kivo_audio_processing_tests",
         "audio_processing_tests",
+        "kivo_hires_pcm_tests",
+        "hires_pcm_tests",
         "kivo_render_queue",
         "kivo_decode_boundary",
         "kivo_decode_boundary_tests",

@@ -160,6 +160,44 @@ $runtimeFamilyRules = @(
         )
     },
     @{
+        Path = "tests\decode_boundary\scenario"
+        AllowedDirectories = @(
+            "contract",
+            "media",
+            "source"
+        )
+    },
+    @{
+        Path = "tests\decode_boundary\scenario\contract"
+        AllowedDirectories = @(
+            "block",
+            "control",
+            "media_probe",
+            "open_result",
+            "step"
+        )
+    },
+    @{
+        Path = "tests\decode_boundary\scenario\source"
+        AllowedDirectories = @(
+            "large_file",
+            "local_file"
+        )
+    },
+    @{
+        Path = "tests\decode_boundary\scenario\source\large_file"
+        AllowedDirectories = @("size_seek")
+    },
+    @{
+        Path = "tests\decode_boundary\scenario\source\local_file"
+        AllowedDirectories = @(
+            "failure",
+            "open",
+            "read",
+            "seek"
+        )
+    },
+    @{
         Path = "tests\hardware"
         AllowedDirectories = @(
             "decode_output",
@@ -470,6 +508,21 @@ $runtimeFamilyRules = @(
         )
     },
     @{
+        Path = "tests\hires_pcm"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
+        Path = "tests\hires_pcm\scenario"
+        AllowedDirectories = @(
+            "boundary",
+            "descriptor"
+        )
+    },
+    @{
         Path = "tests\playback_pipeline\scenario"
         AllowedDirectories = @(
             "backpressure",
@@ -618,6 +671,7 @@ $runtimeSourceRoots = @(
     "tests\playback_gapless",
     "tests\output_truth",
     "tests\audio_processing",
+    "tests\hires_pcm",
     "tests\playback_session",
     "tests\playback_runtime",
     "include\kivo\host\abi",

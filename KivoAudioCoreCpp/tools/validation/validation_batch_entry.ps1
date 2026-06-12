@@ -17,6 +17,27 @@ if (-not $ProjectRoot) {
 $ProjectRoot = (Resolve-Path $ProjectRoot).Path
 $ValidationRoot = Join-Path $ProjectRoot "tools\validation"
 
+function Find-GitSafeDirectory {
+    param([Parameter(Mandatory = $true)][string]$StartPath)
+
+    $current = (Resolve-Path $StartPath).Path
+    while ($current) {
+        if (Test-Path (Join-Path $current ".git")) {
+            return $current.Replace("\", "/")
+        }
+
+        $parent = Split-Path $current -Parent
+        if (-not $parent -or $parent -eq $current) {
+            break
+        }
+        $current = $parent
+    }
+
+    return $StartPath.Replace("\", "/")
+}
+
+$GitSafeDirectory = Find-GitSafeDirectory -StartPath $ProjectRoot
+
 function Invoke-ValidationScript {
     param(
         [Parameter(Mandatory = $true)][string]$Name,
@@ -100,7 +121,7 @@ if (-not $SkipGates) {
 Write-Host "-----------------------------------------------------------------------------"
 Write-Host "Running: git diff --check"
 Write-Host "-----------------------------------------------------------------------------"
-git diff --check
+git -c "safe.directory=$GitSafeDirectory" -C $ProjectRoot diff --check
 if ($LASTEXITCODE -ne 0) {
     Write-Host "CLASSIFICATION: FAIL_VALIDATION_BATCH_DIFF_CHECK"
     exit 1

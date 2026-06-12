@@ -5,8 +5,9 @@
 **Effective Date:** 2026-06-12
 **Applies To:** `KivoAudioCoreCpp/`
 **Architecture Basis:** V10.1 FINAL P0-B READY LOCKED PATCHED
-**Current Execution Position:** P0-P engineering complete; deferred research
-and external commercial release gates remain
+**Current Execution Position:** P0-P engineering complete; P0-Q Hi-Res PCM,
+DSD/DoP contracts, and decode unsupported classification complete; P0-R
+reference probe initialized; external commercial release gates remain
 
 ---
 
@@ -752,15 +753,33 @@ No release is approved only because playback works on the development machine.
 
 ### P0-Q Hi-Res, DSD, and DoP
 
-Research only until PCM, stability, and truth reporting are mature. Contract
-design must not make future support impossible, but speculative implementation
-must not delay the primary PCM path.
+Research baseline initialized by
+`docs/tasks/p0_q_hi_res_dsd_dop_research_family_design_task.md`.
+
+Research only until a narrow implementation slice is explicitly admitted.
+Contract design must not make future support impossible, but speculative
+implementation must not delay the primary PCM path. Native DSD and DoP must not
+be represented as ordinary PCM or enter the processing chain without explicit
+conversion or carrier evidence.
+
+Completed local slices: contract-level Hi-Res PCM descriptor tests under
+`tests/hires_pcm/`, native DSD and DoP value contracts under
+`include/kivo/core/contract/format/dsd/`, and explicit decode unsupported
+classification under `include/kivo/core/decode/media/support/`. Device support,
+decode/render support, passthrough, and commercial claims still require
+implementation, WASAPI probing, release-lab evidence, and claim review.
 
 ### P0-R mpv/libmpv
 
+Research baseline initialized by
+`docs/tasks/p0_r_mpv_libmpv_reference_research_family_design_task.md`.
+
 Reference and benchmark first. Any compatibility mode must be independently
 isolated, labeled, observed, licensed, and excluded from the primary core's
-bit-perfect and gapless claims.
+bit-perfect, gapless, Hi-Res, DSD, and DoP claims.
+
+Completed local slice: reference-only `tools/validation/mpv_reference_probe.ps1`.
+Compatibility implementation remains unauthorized.
 
 ---
 

@@ -279,6 +279,7 @@ if(KIVO_FFMPEG_ROOT)
         tests/ffmpeg_decode/scenario/decode/decode_fixture_tests.cpp
         tests/ffmpeg_decode/scenario/policy/conversion_policy_tests.cpp
         tests/ffmpeg_decode/scenario/policy/conversion_truth_tests.cpp
+        tests/ffmpeg_decode/scenario/policy/dsd_support_policy_tests.cpp
         tests/ffmpeg_decode/scenario/truncation/truncation_matrix_tests.cpp
     )
     target_link_libraries(kivo_ffmpeg_decode_tests
@@ -409,6 +410,10 @@ add_executable(kivo_contract_tests
     tests/contracts/format/descriptor/channel_layout_tests.cpp
     tests/contracts/format/descriptor/frame_layout_tests.cpp
     tests/contracts/format/descriptor/channel_mask_tests.cpp
+    tests/contracts/format/dsd/dsd_rate_tests.cpp
+    tests/contracts/format/dsd/native_dsd_format_tests.cpp
+    tests/contracts/format/dsd/dop_marker_tests.cpp
+    tests/contracts/format/dsd/dop_carrier_format_tests.cpp
     tests/contracts/format/roles/native_decoded_format_tests.cpp
     tests/contracts/format/roles/core_canonical_format_tests.cpp
     tests/contracts/format/roles/render_format_tests.cpp
@@ -555,6 +560,12 @@ add_executable(kivo_audio_processing_tests
     tests/audio_processing/scenario/gain/gain_plan_tests.cpp
     tests/audio_processing/scenario/policy/policy_tests.cpp
 )
+
+add_executable(kivo_hires_pcm_tests
+    tests/hires_pcm/runner/hires_pcm_tests_main.cpp
+    tests/hires_pcm/scenario/boundary/non_pcm_boundary_tests.cpp
+    tests/hires_pcm/scenario/descriptor/hires_pcm_descriptor_tests.cpp
+)
 target_link_libraries(kivo_audio_processing_tests
     PRIVATE kivo_audio_processing)
 target_compile_features(kivo_audio_processing_tests PRIVATE cxx_std_20)
@@ -565,6 +576,12 @@ target_compile_options(kivo_audio_processing_tests PRIVATE
 target_link_libraries(kivo_output_truth_tests PRIVATE kivo_output_truth)
 target_compile_features(kivo_output_truth_tests PRIVATE cxx_std_20)
 target_compile_options(kivo_output_truth_tests PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc /wd4127>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
+target_link_libraries(kivo_hires_pcm_tests PRIVATE kivo_core_contract)
+target_compile_features(kivo_hires_pcm_tests PRIVATE cxx_std_20)
+target_compile_options(kivo_hires_pcm_tests PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc /wd4127>
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
 )
@@ -589,9 +606,17 @@ target_compile_options(kivo_render_queue_tests PRIVATE
 
 add_executable(kivo_decode_boundary_tests
     tests/decode_boundary/runner/decode_boundary_tests_main.cpp
-    tests/decode_boundary/scenario/decode_contract_tests.cpp
-    tests/decode_boundary/scenario/large_file_byte_source_tests.cpp
-    tests/decode_boundary/scenario/local_file_byte_source_tests.cpp
+    tests/decode_boundary/scenario/contract/block/decoded_block_contract_tests.cpp
+    tests/decode_boundary/scenario/contract/control/control_result_contract_tests.cpp
+    tests/decode_boundary/scenario/contract/media_probe/media_probe_contract_tests.cpp
+    tests/decode_boundary/scenario/contract/open_result/open_result_contract_tests.cpp
+    tests/decode_boundary/scenario/contract/step/step_result_contract_tests.cpp
+    tests/decode_boundary/scenario/source/large_file/size_seek/large_file_byte_source_tests.cpp
+    tests/decode_boundary/scenario/source/local_file/failure/local_file_failure_tests.cpp
+    tests/decode_boundary/scenario/source/local_file/open/local_file_open_tests.cpp
+    tests/decode_boundary/scenario/source/local_file/read/local_file_read_tests.cpp
+    tests/decode_boundary/scenario/source/local_file/seek/local_file_seek_tests.cpp
+    tests/decode_boundary/scenario/media/media_support_tests.cpp
 )
 target_link_libraries(kivo_decode_boundary_tests PRIVATE kivo_decode_boundary)
 target_compile_features(kivo_decode_boundary_tests PRIVATE cxx_std_20)
@@ -1072,6 +1097,7 @@ add_dependencies(kivo_capability_tests kivo_public_header_checks)
 add_dependencies(kivo_render_boundary_tests kivo_public_header_checks)
 add_dependencies(kivo_output_truth_tests kivo_public_header_checks)
 add_dependencies(kivo_audio_processing_tests kivo_public_header_checks)
+add_dependencies(kivo_hires_pcm_tests kivo_public_header_checks)
 add_dependencies(kivo_render_queue_tests kivo_public_header_checks)
 add_dependencies(kivo_decode_boundary_tests kivo_public_header_checks)
 add_dependencies(kivo_playback_session_tests kivo_public_header_checks)
@@ -1115,6 +1141,7 @@ add_test(NAME capability_tests COMMAND kivo_capability_tests)
 add_test(NAME render_boundary_tests COMMAND kivo_render_boundary_tests)
 add_test(NAME output_truth_tests COMMAND kivo_output_truth_tests)
 add_test(NAME audio_processing_tests COMMAND kivo_audio_processing_tests)
+add_test(NAME hires_pcm_tests COMMAND kivo_hires_pcm_tests)
 add_test(NAME render_queue_tests COMMAND kivo_render_queue_tests)
 add_test(NAME decode_boundary_tests COMMAND kivo_decode_boundary_tests)
 add_test(NAME playback_session_tests COMMAND kivo_playback_session_tests)

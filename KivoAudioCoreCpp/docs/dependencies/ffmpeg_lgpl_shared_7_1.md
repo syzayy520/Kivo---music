@@ -74,3 +74,14 @@ Before any commercial package ships:
 
 This document records engineering provenance. It is not legal advice and does
 not replace release counsel approval.
+
+Technical corresponding-source archival is implemented by:
+
+```text
+tools/release/compliance/archive_ffmpeg_corresponding_source.ps1
+docs/dependencies/ffmpeg/source_custody_record.md
+```
+
+The archive cannot be marked complete until exact clean FFmpeg and build-script
+checkouts are supplied and the resulting evidence receives external custody
+and legal records.

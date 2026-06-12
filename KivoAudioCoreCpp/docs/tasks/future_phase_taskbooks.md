@@ -31,6 +31,10 @@ P0-M      docs/tasks/p0_m_exclusive_bit_perfect_truth_family_design_task.md
 P0-N      docs/tasks/p0_n_volume_processing_boundary_family_design_task.md
 P0-O      docs/tasks/p0_o_host_abi_integration_boundary_family_design_task.md
 P0-P      docs/tasks/p0_p_release_hardening_family_design_task.md
+P0-Q      docs/tasks/p0_q_hi_res_dsd_dop_research_family_design_task.md
+P0-R      docs/tasks/p0_r_mpv_libmpv_reference_research_family_design_task.md
+PROGRAM   docs/architecture/windows_backend_completion_program.md
+LYRICS    docs/architecture/lyrics_core_boundary.md
 ```
 
 Rule:

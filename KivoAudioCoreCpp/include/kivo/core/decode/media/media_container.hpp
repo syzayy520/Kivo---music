@@ -11,7 +11,9 @@ enum class MediaContainer : uint8_t {
     Mp3,
     Mp4,
     Ogg,
-    Matroska
+    Matroska,
+    Dsf,
+    Dsdiff
 };
 
 } // namespace kivo::core::decode

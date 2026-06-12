@@ -1,10 +1,12 @@
 # KivoAudioCoreCpp
 
-Kivo Windows Desktop Commercial Audio Core — C++ Implementation
+Kivo Windows Desktop Commercial Audio Core - C++ Implementation
 
 ## Project Status
 
-**Current execution position:** P0-P engineering complete; external commercial
+**Current execution position:** P0-P engineering RC complete; P0-Q Hi-Res PCM
+contracts plus explicit DSD/DoP rejection are implemented; P0-R reference
+probe is initialized but no reproducible mpv baseline exists; commercial
 release gates remain open.
 
 This project is the standalone C++ audio core for the Kivo Windows desktop music player.
@@ -26,6 +28,8 @@ Current state:
 - P0-P produces a verified, reproducible `1.0.0-rc.1` engineering release
   candidate. Commercial shipping remains blocked by signing, legal/source,
   product-installer, and physical release-lab evidence.
+- P0-Q Hi-Res PCM plus DSD/DoP contract validation and P0-R mpv reference
+  probing are initialized without changing current product capability claims.
 
 The authoritative implementation order is:
 
@@ -60,8 +64,8 @@ roadmap amendment is committed.
 | P0-N | ReplayGain / Volume / DSP | DONE |
 | P0-O | Host ABI / Tauri Integration | DONE |
 | P0-P | Commercial Release Hardening | DONE (ENGINEERING RC) |
-| P0-Q | Hi-Res / DSD / DoP Research | PLANNED |
-| P0-R | mpv/libmpv Reference Research | PLANNED |
+| P0-Q | Hi-Res / DSD / DoP Research | CONTRACT + EXPLICIT RUNTIME REJECTION COMPLETE; PLAYBACK OPEN |
+| P0-R | mpv/libmpv Reference Research | REFERENCE PROBE INITIALIZED |
 
 ## Build and Validation
 
@@ -105,4 +109,4 @@ See `docs/architecture/` for the full policy pack.
 
 ## License
 
-Proprietary — Kivo Music
+Proprietary - Kivo Music
