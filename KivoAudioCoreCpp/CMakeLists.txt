@@ -637,7 +637,11 @@ if(WIN32)
     )
 
     add_executable(kivo_wasapi_tone_smoke
-        tests/hardware/wasapi/wasapi_tone_smoke.cpp
+        tests/hardware/wasapi/fixture/tone_generator.cpp
+        tests/hardware/wasapi/fixture/tone_options.cpp
+        tests/hardware/wasapi/runner/wasapi_tone_smoke_main.cpp
+        tests/hardware/wasapi/scenario/wasapi_tone_cycle.cpp
+        tests/hardware/wasapi/scenario/wasapi_tone_playback.cpp
     )
     target_link_libraries(kivo_wasapi_tone_smoke PRIVATE kivo_wasapi_renderer)
     target_compile_features(kivo_wasapi_tone_smoke PRIVATE cxx_std_20)
@@ -648,7 +652,10 @@ if(WIN32)
 
     if(TARGET kivo_ffmpeg_decode_adapter)
         add_executable(kivo_ffmpeg_wasapi_playback_smoke
-            tests/hardware/decode_output/ffmpeg_wasapi_playback_smoke.cpp
+            tests/hardware/decode_output/runner/ffmpeg_wasapi_playback_smoke_main.cpp
+            tests/hardware/decode_output/scenario/decode_output_smoke_complete.cpp
+            tests/hardware/decode_output/scenario/decode_output_smoke_open.cpp
+            tests/hardware/decode_output/scenario/decode_output_smoke_play.cpp
         )
         target_link_libraries(kivo_ffmpeg_wasapi_playback_smoke
             PRIVATE
