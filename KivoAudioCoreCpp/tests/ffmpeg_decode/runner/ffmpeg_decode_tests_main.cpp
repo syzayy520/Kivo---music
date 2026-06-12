@@ -1,4 +1,4 @@
-#include "../fixture/ffmpeg_decode_test_runner.hpp"
+#include "../fixture/harness/ffmpeg_decode_test_runner.hpp"
 #include "ffmpeg_decode_test_cases.hpp"
 
 int main(int argc, char** argv) {

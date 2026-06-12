@@ -1,6 +1,6 @@
 # P0-K Commercial Stability Matrix
 
-**Status:** ACTIVE IMPLEMENTATION
+**Status:** IMPLEMENTATION COMPLETE / RELEASE-LAB EVIDENCE OPEN
 **Execution Authority:** Owner-directed continuous implementation
 **Last Updated:** 2026-06-12
 
@@ -24,6 +24,12 @@
   shared/exclusive support, form-factor, and device-period evidence.
 - Default-console endpoint change and current-endpoint loss notifications are
   converted into one-shot device-loss recovery signals.
+- All render endpoint states are inventoried and active endpoints are
+  correlated to their parent PnP driver.
+- Suspend/resume notifications are converted into one-shot device-loss
+  recovery signals.
+- Header corruption, deterministic trailing junk, and two truncation depths
+  cover every supported codec/container family.
 
 ## Natural Validation Families
 
@@ -62,7 +68,7 @@ tests/
     scenario/
 ```
 
-## Remaining P0-K Evidence
+## External Release-Lab Evidence
 
 - Physical device matrix still missing USB DAC, Bluetooth, and active
   HDMI/DisplayPort evidence. The current onboard endpoint is inventoried and
@@ -73,6 +79,7 @@ tests/
 - Per-device identity, driver, format, mode, underrun, recovery, and
   limitation records.
 
-P0-K remains open until the remaining physical-lab evidence is recorded. The
-automated matrix is implemented and must remain green while the physical matrix
-is completed.
+P0-K implementation is complete. The remaining rows require hardware that is
+not present on the development machine and move forward as mandatory P0-P
+release-lab evidence. They must remain `NOT PRESENT` or `NOT EXECUTED` until a
+matching physical run is recorded.

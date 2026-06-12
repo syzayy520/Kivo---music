@@ -8,29 +8,34 @@
 - A scenario that was not physically performed remains `NOT EXECUTED`.
 - Endpoint IDs are represented by stable one-way hashes.
 
-## Active WASAPI Inventory
+## WASAPI Inventory
 
 `kivo_wasapi_device_matrix.exe` returned exit code `0`.
 
-| Identity | Endpoint | Form factor | Default roles | Mix format | Shared | Exclusive | Default/minimum period |
-|---|---|---|---|---|---|---|---|
-| `0x621A89954F483265` | Speakers (High Definition Audio Device) | speakers | console, multimedia, communications | 48,000 Hz, 2 ch, 32 bit | yes | no | 100,000 / 26,667 x 100 ns |
+| Identity | Endpoint | Category | State | Driver | Mix format | Default roles |
+|---|---|---|---|---|---|---|
+| `0x621A89954F483265` | Speakers (High Definition Audio Device) | integrated | active | Microsoft `10.0.22621.2506` | 48,000 Hz, 2 ch, 32 bit | console, multimedia, communications |
+| multiple sanitized identities | HDMI / display audio | display-audio | not-present | Intel `10.27.0.12` where correlated | unavailable | none |
+| sanitized identity | Headphones | unknown | unplugged | unavailable | unavailable | none |
+
+The executable reported 12 total endpoint records. Only the active endpoint
+was queried for mix format and shared/exclusive capabilities.
 
 Inventory gate: `PASS`.
 
 ## Driver Correlation
 
-The endpoint property store did not expose a driver version. A separate signed
-PnP-driver query reported:
+The endpoint property store did not expose a usable parent-driver version.
+The executable now correlates each MMDevice endpoint to its parent PnP device
+through SetupAPI:
 
 | Device | Provider | Driver version | INF | Endpoint state |
 |---|---|---|---|---|
 | High Definition Audio Device | Microsoft | `10.0.22621.2506` | `hdaudio.inf` | active speaker endpoint |
 | Intel Display Audio | Intel Corporation | `10.27.0.12` | `oem39.inf` | driver present, no active endpoint |
 
-The active speaker-to-driver correlation is inferred from the matching Windows
-device name. The Intel display driver must not be counted as HDMI/DisplayPort
-playback evidence until an active endpoint appears and playback is run.
+The Intel display driver must not be counted as HDMI/DisplayPort playback
+evidence until an active endpoint appears and playback is run.
 
 ## Physical Matrix
 
@@ -42,7 +47,8 @@ playback evidence until an active endpoint appears and playback is run.
 | HDMI/DisplayPort | NOT ACTIVE | Intel display-audio driver present; no active render endpoint |
 | Default-device change | NOT EXECUTED | Requires a second active render endpoint |
 | Device unplug/replug | NOT EXECUTED | Requires removable output hardware |
-| Sleep/resume | NOT EXECUTED | Physical release-candidate scenario remains |
+| Sleep/resume notification path | PASS | Deterministic callback and one-shot renderer invalidation tests |
+| Physical sleep/resume | NOT EXECUTED | Real operating-system transition remains a release-lab row |
 | Ten-hour endurance | NOT EXECUTED | Release-candidate endurance remains |
 
 ## Existing Onboard Playback Evidence
@@ -64,8 +70,9 @@ cmake --build .build/p0c-contract-debug --target kivo_wasapi_device_matrix
 Get-CimInstance Win32_PnPSignedDriver
 ```
 
-## Verdict
+## Implementation Verdict
 
-The executable inventory mechanism is complete and the onboard path is
-evidence-backed. P0-K remains open because the external-device and
-power-transition rows are not physically covered.
+The executable inventory, hostile-media matrix, endpoint-change path, and
+power-transition recovery signal are complete and evidence-backed. Hardware
+not present on this machine remains mandatory P0-P release-lab evidence and is
+not marked as passed.

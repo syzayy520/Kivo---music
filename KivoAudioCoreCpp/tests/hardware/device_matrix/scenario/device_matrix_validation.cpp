@@ -11,7 +11,7 @@ bool validate_inventory(const DeviceInventory& inventory) noexcept {
     const auto valid_endpoint = [](const EndpointRecord& endpoint) {
         if (endpoint.identity == 0
             || endpoint.friendly_name.empty()
-            || endpoint.state == 0) {
+            || endpoint.state == EndpointState::Unknown) {
             return false;
         }
         if (!endpoint.is_active()) {

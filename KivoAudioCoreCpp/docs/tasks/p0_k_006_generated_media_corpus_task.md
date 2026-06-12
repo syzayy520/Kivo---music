@@ -46,7 +46,12 @@ severely truncated WAV, FLAC, VBR MP3, and M4A derivatives
 - Nine deterministic valid fixtures generated and hash-locked.
 - Valid decode corpus: PCM WAV, FLAC, CBR MP3, VBR MP3, AAC/M4A,
   22.05 kHz mono, 96 kHz stereo, 48 kHz 5.1, and 30-second PCM.
-- FFmpeg adapter scenarios: 18 of 18 passed.
+- FFmpeg adapter scenarios: 16 of 16 passed after responsibility-based test
+  family consolidation.
+- One-third and two-thirds truncation cover WAV, FLAC, CBR MP3, VBR MP3, and
+  AAC/M4A.
+- Destroyed-header and deterministic trailing-junk derivatives cover every
+  supported corpus family.
 - Severe WAV truncation rejected by RIFF declared-extent validation.
 - Severe FLAC, VBR MP3, and M4A truncation classified as
   `InvalidMediaData`.

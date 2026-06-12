@@ -2,7 +2,7 @@
 #include <string>
 
 #include "../../fixture/assertion/abnormal_media_decode.hpp"
-#include "../../fixture/ffmpeg_decode_test_runner.hpp"
+#include "../../fixture/harness/ffmpeg_decode_test_runner.hpp"
 #include "../../fixture/mutation/media_mutation_file.hpp"
 
 namespace {

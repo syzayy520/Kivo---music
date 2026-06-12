@@ -112,6 +112,22 @@ constexpr PROPERTYKEY kAudioEndpointFormFactor{
     return result;
 }
 
+[[nodiscard]] EndpointState endpoint_state(DWORD state) noexcept {
+    if ((state & DEVICE_STATE_ACTIVE) != 0) {
+        return EndpointState::Active;
+    }
+    if ((state & DEVICE_STATE_DISABLED) != 0) {
+        return EndpointState::Disabled;
+    }
+    if ((state & DEVICE_STATE_NOTPRESENT) != 0) {
+        return EndpointState::NotPresent;
+    }
+    if ((state & DEVICE_STATE_UNPLUGGED) != 0) {
+        return EndpointState::Unplugged;
+    }
+    return EndpointState::Unknown;
+}
+
 } // namespace
 
 bool probe_endpoint_metadata(
@@ -123,11 +139,13 @@ bool probe_endpoint_metadata(
     EndpointRecord& record,
     long& platform_code) {
     record.identity = stable_endpoint_hash(endpoint_id);
-    auto code = device.GetState(&record.state);
+    DWORD raw_state = 0;
+    auto code = device.GetState(&raw_state);
     if (FAILED(code)) {
         platform_code = code;
         return false;
     }
+    record.state = endpoint_state(raw_state);
     record.default_console = default_console;
     record.default_multimedia = default_multimedia;
     record.default_communications = default_communications;

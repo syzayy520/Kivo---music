@@ -1,7 +1,5 @@
 #include "device_matrix_report.hpp"
 
-#include <mmdeviceapi.h>
-
 #include <iomanip>
 #include <ostream>
 
@@ -25,18 +23,13 @@ namespace {
     return "unknown";
 }
 
-[[nodiscard]] const char* state_name(uint32_t state) noexcept {
-    if ((state & DEVICE_STATE_ACTIVE) != 0) {
-        return "active";
-    }
-    if ((state & DEVICE_STATE_DISABLED) != 0) {
-        return "disabled";
-    }
-    if ((state & DEVICE_STATE_NOTPRESENT) != 0) {
-        return "not-present";
-    }
-    if ((state & DEVICE_STATE_UNPLUGGED) != 0) {
-        return "unplugged";
+[[nodiscard]] const char* state_name(EndpointState state) noexcept {
+    switch (state) {
+    case EndpointState::Active: return "active";
+    case EndpointState::Disabled: return "disabled";
+    case EndpointState::NotPresent: return "not-present";
+    case EndpointState::Unplugged: return "unplugged";
+    case EndpointState::Unknown: break;
     }
     return "unknown";
 }

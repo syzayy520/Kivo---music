@@ -23,8 +23,13 @@ tests/hardware/device_matrix/
     endpoint/
       endpoint_inventory.hpp
       endpoint_inventory.cpp
-      endpoint_probe.hpp
-      endpoint_probe.cpp
+      endpoint_capability_probe.hpp
+      endpoint_capability_probe.cpp
+      endpoint_metadata_probe.hpp
+      endpoint_metadata_probe.cpp
+    driver/
+      pnp_device_probe.hpp
+      pnp_device_probe.cpp
   runner/
     wasapi_device_matrix_main.cpp
   scenario/
@@ -38,9 +43,11 @@ tests/hardware/device_matrix/
 
 - Fixture files contain records only.
 - Apartment files own COM thread initialization only.
-- Inventory files enumerate active render endpoints and resolve default roles.
-- Probe files inspect one endpoint's identity, properties, format support, and
-  device periods.
+- Inventory files enumerate all render endpoint states and resolve default
+  roles.
+- Metadata files inspect identity, state, properties, and form factor.
+- Capability files inspect active endpoint format support and device periods.
+- Driver files correlate the endpoint to its parent PnP driver.
 - Validation files enforce evidence invariants.
 - Report files serialize evidence without changing probe results.
 - Runner only coordinates inventory, report, and exit status.
@@ -67,8 +74,13 @@ remain explicit physical-lab gaps.
 ## Completion Evidence
 
 - `kivo_wasapi_device_matrix` builds with `/W4 /WX`.
-- Current machine inventory gate passes.
+- Current machine inventory gate passes with 12 endpoint records.
 - One active speaker endpoint is reported at 48 kHz, 2 channels, 32 bits.
+- Inactive display-audio, headphone, and auxiliary endpoint states remain
+  visible instead of disappearing from the matrix.
+- The active speaker endpoint correlates to Microsoft driver
+  `10.0.22621.2506`; inactive Intel display audio correlates to
+  `10.27.0.12`.
 - Shared mix support is present; exclusive support for the shared mix format is
   absent and reported truthfully.
 - Console, multimedia, and communications defaults resolve to the same active

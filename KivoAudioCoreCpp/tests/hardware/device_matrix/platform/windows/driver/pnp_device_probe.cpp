@@ -1,6 +1,7 @@
 #include "pnp_device_probe.hpp"
 
 #include <Windows.h>
+#include <initguid.h>
 #include <devpkey.h>
 #include <setupapi.h>
 

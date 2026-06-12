@@ -15,6 +15,14 @@ enum class DeviceCategory : uint8_t {
     Other
 };
 
+enum class EndpointState : uint8_t {
+    Unknown = 0,
+    Active,
+    Disabled,
+    NotPresent,
+    Unplugged
+};
+
 struct EndpointFormat final {
     uint16_t format_tag{0};
     uint16_t channels{0};
@@ -39,7 +47,7 @@ struct EndpointRecord final {
     std::string parent_driver_version;
     std::string form_factor;
     DeviceCategory category{DeviceCategory::Unknown};
-    uint32_t state{0};
+    EndpointState state{EndpointState::Unknown};
     bool default_console{false};
     bool default_multimedia{false};
     bool default_communications{false};
@@ -50,7 +58,7 @@ struct EndpointRecord final {
     EndpointFormat mix_format{};
 
     [[nodiscard]] bool is_active() const noexcept {
-        return (state & 0x00000001u) != 0;
+        return state == EndpointState::Active;
     }
 };
 

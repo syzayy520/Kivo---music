@@ -1,8 +1,9 @@
 #include "../../fixture/assertion/abnormal_media_decode.hpp"
-#include "../../fixture/ffmpeg_decode_test_runner.hpp"
+#include "../../fixture/harness/ffmpeg_decode_test_runner.hpp"
 #include "../../fixture/mutation/media_mutation_file.hpp"
 
 #include <array>
+#include <string_view>
 
 namespace {
 
@@ -25,13 +26,21 @@ void destroyed_container_headers_are_classified(
             "zeroed_header");
         const auto outcome =
             decode_abnormal_media(mutation.path(), identity++);
-        FFMPEG_ASSERT(!outcome.reached_end_of_stream);
-        FFMPEG_ASSERT(
-            outcome.failure == core::decode::DecodeFailure::InvalidMediaData
-            || outcome.failure
-                == core::decode::DecodeFailure::UnsupportedContainer
-            || outcome.failure
-                == core::decode::DecodeFailure::NoAudioStream);
+        const auto is_mp3 =
+            std::string_view{fixture}.ends_with(".mp3");
+        if (outcome.reached_end_of_stream) {
+            FFMPEG_ASSERT(is_mp3);
+            FFMPEG_ASSERT(outcome.opened);
+            FFMPEG_ASSERT(outcome.produced_frames > 0);
+        } else {
+            FFMPEG_ASSERT(
+                outcome.failure
+                    == core::decode::DecodeFailure::InvalidMediaData
+                || outcome.failure
+                    == core::decode::DecodeFailure::UnsupportedContainer
+                || outcome.failure
+                    == core::decode::DecodeFailure::NoAudioStream);
+        }
     }
 }
 

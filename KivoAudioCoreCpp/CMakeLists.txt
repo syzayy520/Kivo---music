@@ -226,13 +226,13 @@ if(KIVO_FFMPEG_ROOT)
         tests/ffmpeg_decode/fixture/assertion/abnormal_media_decode.cpp
         tests/ffmpeg_decode/fixture/mutation/media_mutation_file.cpp
         tests/ffmpeg_decode/runner/ffmpeg_decode_tests_main.cpp
-        tests/ffmpeg_decode/scenario/decode_fixture_tests.cpp
+        tests/ffmpeg_decode/scenario/control/seek_flush_tests.cpp
         tests/ffmpeg_decode/scenario/corruption/header_corruption_tests.cpp
         tests/ffmpeg_decode/scenario/corruption/trailing_junk_tests.cpp
+        tests/ffmpeg_decode/scenario/cue/unsupported_cue_tests.cpp
+        tests/ffmpeg_decode/scenario/decode/decode_fixture_tests.cpp
         tests/ffmpeg_decode/scenario/policy/conversion_policy_tests.cpp
-        tests/ffmpeg_decode/scenario/seek_flush_tests.cpp
         tests/ffmpeg_decode/scenario/truncation/truncation_matrix_tests.cpp
-        tests/ffmpeg_decode/scenario/unsupported_cue_tests.cpp
     )
     target_link_libraries(kivo_ffmpeg_decode_tests
         PRIVATE kivo_ffmpeg_decode_adapter)
@@ -717,7 +717,8 @@ if(WIN32)
         tests/hardware/device_matrix/scenario/device_matrix_report.cpp
         tests/hardware/device_matrix/scenario/device_matrix_validation.cpp
     )
-    target_link_libraries(kivo_wasapi_device_matrix PRIVATE ole32 setupapi)
+    target_link_libraries(kivo_wasapi_device_matrix
+        PRIVATE ole32 setupapi)
     target_compile_features(kivo_wasapi_device_matrix PRIVATE cxx_std_20)
     target_compile_options(kivo_wasapi_device_matrix PRIVATE
         $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc>

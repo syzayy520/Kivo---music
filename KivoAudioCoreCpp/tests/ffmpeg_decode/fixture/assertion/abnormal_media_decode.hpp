@@ -10,6 +10,7 @@ namespace ffmpeg_decode_test {
 struct AbnormalMediaOutcome final {
     bool opened{false};
     bool reached_end_of_stream{false};
+    uint64_t produced_frames{0};
     kivo::core::decode::DecodeFailure failure{
         kivo::core::decode::DecodeFailure::None};
 };

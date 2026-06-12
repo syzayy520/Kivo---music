@@ -1,5 +1,5 @@
-#include "../../fixture/ffmpeg_decode_test_factory.hpp"
-#include "../../fixture/ffmpeg_decode_test_runner.hpp"
+#include "../../fixture/decode/ffmpeg_decode_test_factory.hpp"
+#include "../../fixture/harness/ffmpeg_decode_test_runner.hpp"
 #include "../../fixture/mutation/media_mutation_file.hpp"
 
 #include <array>
@@ -35,6 +35,13 @@ void appended_junk_does_not_destabilize_valid_audio(
             FFMPEG_ASSERT(step_count < 10000);
             if (step.disposition()
                 == core::decode::DecodeStepDisposition::EndOfStream) {
+                break;
+            }
+            if (step.disposition()
+                == core::decode::DecodeStepDisposition::Failed) {
+                FFMPEG_ASSERT(
+                    step.failure()
+                    == core::decode::DecodeFailure::InvalidMediaData);
                 break;
             }
             FFMPEG_ASSERT(

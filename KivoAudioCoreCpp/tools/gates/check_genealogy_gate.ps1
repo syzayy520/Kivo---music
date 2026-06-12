@@ -185,13 +185,18 @@ $runtimeFamilyRules = @(
         Path = "tests\ffmpeg_decode\fixture"
         AllowedDirectories = @(
             "assertion",
+            "decode",
+            "harness",
             "mutation"
         )
     },
     @{
         Path = "tests\ffmpeg_decode\scenario"
         AllowedDirectories = @(
+            "control",
             "corruption",
+            "cue",
+            "decode",
             "policy",
             "truncation"
         )

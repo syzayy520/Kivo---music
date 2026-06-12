@@ -1,5 +1,5 @@
-#include "../fixture/ffmpeg_decode_test_factory.hpp"
-#include "../fixture/ffmpeg_decode_test_runner.hpp"
+#include "../../fixture/decode/ffmpeg_decode_test_factory.hpp"
+#include "../../fixture/harness/ffmpeg_decode_test_runner.hpp"
 
 #include <filesystem>
 #include <fstream>
