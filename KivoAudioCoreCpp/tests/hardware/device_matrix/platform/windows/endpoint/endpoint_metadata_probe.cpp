@@ -1,13 +1,12 @@
-#include "endpoint_probe.hpp"
+#include "endpoint_metadata_probe.hpp"
 
 #include <Windows.h>
-#include <audioclient.h>
 #include <mmdeviceapi.h>
 #include <propsys.h>
 #include <propvarutil.h>
 #include <wrl/client.h>
 
-#include <string>
+#include "../driver/pnp_device_probe.hpp"
 
 namespace device_matrix::windows {
 
@@ -20,25 +19,20 @@ constexpr PROPERTYKEY kDeviceFriendlyName{
      {0x80, 0x20, 0x67, 0xd1, 0x46, 0xa8, 0x50, 0xe0}},
     14
 };
-constexpr PROPERTYKEY kDeviceDriverVersion{
-    {0xa8b865dd, 0x2e3d, 0x4094,
-     {0xad, 0x97, 0xe5, 0x93, 0xa7, 0x0c, 0x75, 0xd6}},
-    3
-};
 constexpr PROPERTYKEY kAudioEndpointFormFactor{
     {0x1da5d803, 0xd492, 0x4edd,
      {0x8c, 0x23, 0xe0, 0xc0, 0xff, 0xee, 0x7f, 0x0e}},
     0
 };
 
-[[nodiscard]] uint64_t stable_endpoint_hash(const wchar_t* value) noexcept {
+[[nodiscard]] uint64_t stable_endpoint_hash(
+    const std::wstring& value) noexcept {
     constexpr uint64_t offset_basis = 14695981039346656037ull;
     constexpr uint64_t prime = 1099511628211ull;
     uint64_t hash = offset_basis;
-    while (value != nullptr && *value != L'\0') {
-        hash ^= static_cast<uint16_t>(*value);
+    for (const auto character : value) {
+        hash ^= static_cast<uint16_t>(character);
         hash *= prime;
-        ++value;
     }
     return hash == 0 ? 1 : hash;
 }
@@ -60,16 +54,15 @@ constexpr PROPERTYKEY kAudioEndpointFormFactor{
         return {};
     }
     std::string result(static_cast<size_t>(required), '\0');
-    const auto written = WideCharToMultiByte(
-        CP_UTF8,
-        WC_ERR_INVALID_CHARS,
-        value,
-        -1,
-        result.data(),
-        required,
-        nullptr,
-        nullptr);
-    if (written != required) {
+    if (WideCharToMultiByte(
+            CP_UTF8,
+            WC_ERR_INVALID_CHARS,
+            value,
+            -1,
+            result.data(),
+            required,
+            nullptr,
+            nullptr) != required) {
         return {};
     }
     result.resize(static_cast<size_t>(required - 1));
@@ -110,9 +103,7 @@ constexpr PROPERTYKEY kAudioEndpointFormFactor{
 [[nodiscard]] std::string read_form_factor(IPropertyStore& properties) {
     PROPVARIANT value;
     PropVariantInit(&value);
-    const auto code = properties.GetValue(
-        kAudioEndpointFormFactor,
-        &value);
+    const auto code = properties.GetValue(kAudioEndpointFormFactor, &value);
     const auto* result = "unavailable";
     if (SUCCEEDED(code) && value.vt == VT_UI4) {
         result = form_factor_name(value.ulVal);
@@ -123,29 +114,20 @@ constexpr PROPERTYKEY kAudioEndpointFormFactor{
 
 } // namespace
 
-bool probe_endpoint(
+bool probe_endpoint_metadata(
     IMMDevice& device,
+    const std::wstring& endpoint_id,
     bool default_console,
     bool default_multimedia,
     bool default_communications,
     EndpointRecord& record,
     long& platform_code) {
-    LPWSTR endpoint_id = nullptr;
-    auto code = device.GetId(&endpoint_id);
-    if (FAILED(code)) {
-        platform_code = code;
-        return false;
-    }
     record.identity = stable_endpoint_hash(endpoint_id);
-    CoTaskMemFree(endpoint_id);
-
-    DWORD state = 0;
-    code = device.GetState(&state);
+    auto code = device.GetState(&record.state);
     if (FAILED(code)) {
         platform_code = code;
         return false;
     }
-    record.state = state;
     record.default_console = default_console;
     record.default_multimedia = default_multimedia;
     record.default_communications = default_communications;
@@ -158,55 +140,14 @@ bool probe_endpoint(
     }
     record.friendly_name =
         read_string(*properties.Get(), kDeviceFriendlyName);
-    record.driver_version =
-        read_string(*properties.Get(), kDeviceDriverVersion);
     record.form_factor = read_form_factor(*properties.Get());
 
-    ComPtr<IAudioClient> client;
-    code = device.Activate(
-        __uuidof(IAudioClient),
-        CLSCTX_INPROC_SERVER,
-        nullptr,
-        reinterpret_cast<void**>(client.GetAddressOf()));
-    if (FAILED(code)) {
-        platform_code = code;
-        return false;
-    }
-
-    WAVEFORMATEX* mix_format = nullptr;
-    code = client->GetMixFormat(&mix_format);
-    if (FAILED(code) || mix_format == nullptr) {
-        platform_code = FAILED(code) ? code : E_UNEXPECTED;
-        return false;
-    }
-    record.mix_format = {
-        mix_format->wFormatTag,
-        mix_format->nChannels,
-        mix_format->nSamplesPerSec,
-        mix_format->wBitsPerSample,
-        mix_format->nBlockAlign
-    };
-
-    WAVEFORMATEX* closest = nullptr;
-    const auto shared_code = client->IsFormatSupported(
-        AUDCLNT_SHAREMODE_SHARED,
-        mix_format,
-        &closest);
-    record.shared_mix_supported = shared_code == S_OK;
-    CoTaskMemFree(closest);
-    record.exclusive_mix_supported = client->IsFormatSupported(
-        AUDCLNT_SHAREMODE_EXCLUSIVE,
-        mix_format,
-        nullptr) == S_OK;
-
-    code = client->GetDevicePeriod(
-        &record.default_period_100ns,
-        &record.minimum_period_100ns);
-    CoTaskMemFree(mix_format);
-    if (FAILED(code)) {
-        platform_code = code;
-        return false;
-    }
+    const auto pnp = probe_pnp_device(endpoint_id);
+    record.endpoint_driver_version = pnp.endpoint_driver_version;
+    record.parent_device_name = pnp.parent_device_name;
+    record.parent_driver_provider = pnp.parent_driver_provider;
+    record.parent_driver_version = pnp.parent_driver_version;
+    record.category = classify_device(pnp, record.form_factor);
     return true;
 }
 

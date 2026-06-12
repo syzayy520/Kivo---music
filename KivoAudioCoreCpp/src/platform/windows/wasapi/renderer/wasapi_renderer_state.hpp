@@ -8,6 +8,7 @@
 #include "kivo/platform/windows/wasapi/renderer/wasapi_renderer.hpp"
 #include "platform/windows/wasapi/apartment/com_apartment.hpp"
 #include "platform/windows/wasapi/device/notification/default_render_endpoint_observer.hpp"
+#include "platform/windows/wasapi/power/notification/audio_power_transition_observer.hpp"
 
 namespace kivo::platform::windows::wasapi::detail {
 
@@ -40,7 +41,7 @@ private:
     [[nodiscard]] core::render::RenderControlResult wrong_thread_result() noexcept;
     [[nodiscard]] core::render::RenderFailure stale_generation(
         const core::render::RenderGenerationSet& generations) const noexcept;
-    [[nodiscard]] bool detect_endpoint_change() noexcept;
+    [[nodiscard]] bool detect_render_environment_change() noexcept;
     [[nodiscard]] core::render::RenderOpenResult fail_open(HRESULT result) noexcept;
     [[nodiscard]] core::render::RenderControlResult fail_control(HRESULT result) noexcept;
     [[nodiscard]] core::render::RenderWriteResult fail_write(
@@ -54,6 +55,7 @@ private:
     Microsoft::WRL::ComPtr<IMMDevice> device_;
     Microsoft::WRL::ComPtr<IAudioClient> audio_client_;
     Microsoft::WRL::ComPtr<IAudioRenderClient> render_client_;
+    AudioPowerTransitionObserver power_observer_;
     HANDLE event_handle_{nullptr};
     DWORD control_thread_id_{0};
     core::contract::DeviceGeneration device_generation_{};

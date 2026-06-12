@@ -1,9 +1,5 @@
-#include "../fixture/ffmpeg_decode_test_factory.hpp"
-#include "../fixture/ffmpeg_decode_test_runner.hpp"
-
-#include <array>
-#include <cstddef>
-#include <fstream>
+#include "../../fixture/ffmpeg_decode_test_factory.hpp"
+#include "../../fixture/ffmpeg_decode_test_runner.hpp"
 
 namespace {
 
@@ -47,28 +43,6 @@ void int24_target_is_not_silently_reinterpreted(
         opened.failure() == core::decode::DecodeFailure::ConversionRequired);
 }
 
-void corrupt_input_is_not_reported_as_eos(
-    const FfmpegDecodeTestContext& context) {
-    const auto path = context.fixture_directory / "corrupt.bin";
-    {
-        std::ofstream output(path, std::ios::binary | std::ios::trunc);
-        const std::array<std::byte, 64> bytes{
-            std::byte{0x4b}, std::byte{0x49}, std::byte{0x56}, std::byte{0x4f}
-        };
-        output.write(
-            reinterpret_cast<const char*>(bytes.data()),
-            static_cast<std::streamsize>(bytes.size()));
-    }
-
-    adapters::ffmpeg::FfmpegAudioDecodeSession session;
-    auto source = open_source(path, 202);
-    FFMPEG_ASSERT(source != nullptr);
-    const auto opened = session.open(std::move(source), open_request());
-    FFMPEG_ASSERT(!opened.is_accepted());
-    FFMPEG_ASSERT(
-        opened.failure() != core::decode::DecodeFailure::EndOfStream);
-}
-
 } // namespace
 
 void run_ffmpeg_policy_and_corruption_tests(FfmpegDecodeTestRunner& runner) {
@@ -76,7 +50,4 @@ void run_ffmpeg_policy_and_corruption_tests(FfmpegDecodeTestRunner& runner) {
     runner.run(
         "int24_target_is_not_silently_reinterpreted",
         int24_target_is_not_silently_reinterpreted);
-    runner.run(
-        "corrupt_input_is_not_reported_as_eos",
-        corrupt_input_is_not_reported_as_eos);
 }

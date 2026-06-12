@@ -8,7 +8,8 @@
 #include <wrl/client.h>
 
 #include "../apartment/com_apartment.hpp"
-#include "endpoint_probe.hpp"
+#include "endpoint_capability_probe.hpp"
+#include "endpoint_metadata_probe.hpp"
 
 namespace device_matrix::windows {
 
@@ -37,7 +38,7 @@ using Microsoft::WRL::ComPtr;
 
 } // namespace
 
-DeviceInventory enumerate_active_render_endpoints() {
+DeviceInventory enumerate_render_endpoints() {
     DeviceInventory result;
     ComApartment apartment;
     if (FAILED(apartment.result())) {
@@ -65,7 +66,7 @@ DeviceInventory enumerate_active_render_endpoints() {
     ComPtr<IMMDeviceCollection> endpoints;
     code = enumerator->EnumAudioEndpoints(
         eRender,
-        DEVICE_STATE_ACTIVE,
+        DEVICE_STATEMASK_ALL,
         endpoints.GetAddressOf());
     if (FAILED(code)) {
         result.platform_code = code;
@@ -97,11 +98,19 @@ DeviceInventory enumerate_active_render_endpoints() {
         CoTaskMemFree(endpoint_id);
 
         EndpointRecord record;
-        if (!probe_endpoint(
+        if (!probe_endpoint_metadata(
                 *endpoint.Get(),
+                id,
                 id == default_ids[0],
                 id == default_ids[1],
                 id == default_ids[2],
+                record,
+                result.platform_code)) {
+            return result;
+        }
+        if (record.is_active()
+            && !probe_endpoint_capabilities(
+                *endpoint.Get(),
                 record,
                 result.platform_code)) {
             return result;

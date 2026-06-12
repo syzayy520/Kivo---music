@@ -223,11 +223,15 @@ if(KIVO_FFMPEG_ROOT)
     )
 
     add_executable(kivo_ffmpeg_decode_tests
+        tests/ffmpeg_decode/fixture/assertion/abnormal_media_decode.cpp
+        tests/ffmpeg_decode/fixture/mutation/media_mutation_file.cpp
         tests/ffmpeg_decode/runner/ffmpeg_decode_tests_main.cpp
         tests/ffmpeg_decode/scenario/decode_fixture_tests.cpp
-        tests/ffmpeg_decode/scenario/policy_and_corruption_tests.cpp
+        tests/ffmpeg_decode/scenario/corruption/header_corruption_tests.cpp
+        tests/ffmpeg_decode/scenario/corruption/trailing_junk_tests.cpp
+        tests/ffmpeg_decode/scenario/policy/conversion_policy_tests.cpp
         tests/ffmpeg_decode/scenario/seek_flush_tests.cpp
-        tests/ffmpeg_decode/scenario/truncated_media_tests.cpp
+        tests/ffmpeg_decode/scenario/truncation/truncation_matrix_tests.cpp
         tests/ffmpeg_decode/scenario/unsupported_cue_tests.cpp
     )
     target_link_libraries(kivo_ffmpeg_decode_tests
@@ -634,6 +638,7 @@ if(WIN32)
         src/platform/windows/wasapi/device/notification/default_render_endpoint_observer.cpp
         src/platform/windows/wasapi/error/wasapi_error.cpp
         src/platform/windows/wasapi/format/wasapi_format.cpp
+        src/platform/windows/wasapi/power/notification/audio_power_transition_observer.cpp
         src/platform/windows/wasapi/renderer/wasapi_renderer_control.cpp
         src/platform/windows/wasapi/renderer/wasapi_renderer_drain.cpp
         src/platform/windows/wasapi/renderer/wasapi_renderer_facade.cpp
@@ -648,7 +653,7 @@ if(WIN32)
     )
     target_link_libraries(kivo_wasapi_renderer
         PUBLIC kivo_core_render kivo_render_queue
-        PRIVATE ole32 uuid avrt
+        PRIVATE ole32 uuid avrt powrprof
     )
     target_include_directories(kivo_wasapi_renderer
         PUBLIC include/
@@ -670,6 +675,7 @@ if(WIN32)
         tests/platform_windows/wasapi/scenario/format_mapping_tests.cpp
         tests/platform_windows/wasapi/scenario/error_mapping_tests.cpp
         tests/platform_windows/wasapi/scenario/endpoint_notification_tests.cpp
+        tests/platform_windows/wasapi/scenario/power_notification_tests.cpp
         tests/platform_windows/wasapi/scenario/render_worker_tests.cpp
     )
     target_link_libraries(kivo_wasapi_tests PRIVATE kivo_wasapi_renderer)
@@ -703,13 +709,15 @@ if(WIN32)
 
     add_executable(kivo_wasapi_device_matrix
         tests/hardware/device_matrix/platform/windows/apartment/com_apartment.cpp
+        tests/hardware/device_matrix/platform/windows/driver/pnp_device_probe.cpp
+        tests/hardware/device_matrix/platform/windows/endpoint/endpoint_capability_probe.cpp
         tests/hardware/device_matrix/platform/windows/endpoint/endpoint_inventory.cpp
-        tests/hardware/device_matrix/platform/windows/endpoint/endpoint_probe.cpp
+        tests/hardware/device_matrix/platform/windows/endpoint/endpoint_metadata_probe.cpp
         tests/hardware/device_matrix/runner/wasapi_device_matrix_main.cpp
         tests/hardware/device_matrix/scenario/device_matrix_report.cpp
         tests/hardware/device_matrix/scenario/device_matrix_validation.cpp
     )
-    target_link_libraries(kivo_wasapi_device_matrix PRIVATE ole32)
+    target_link_libraries(kivo_wasapi_device_matrix PRIVATE ole32 setupapi)
     target_compile_features(kivo_wasapi_device_matrix PRIVATE cxx_std_20)
     target_compile_options(kivo_wasapi_device_matrix PRIVATE
         $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc>

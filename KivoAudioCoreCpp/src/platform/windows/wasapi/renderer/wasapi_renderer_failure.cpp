@@ -84,6 +84,7 @@ core::render::RenderWriteResult WasapiRendererState::fail_write(
 }
 
 void WasapiRendererState::close_stream() noexcept {
+    power_observer_.unregister_callback();
     if (audio_client_ != nullptr) {
         static_cast<void>(audio_client_->Stop());
     }

@@ -42,7 +42,7 @@ core::render::RenderControlResult WasapiRendererState::drain(
     if (!on_control_thread()) {
         return wrong_thread_result();
     }
-    if (detect_endpoint_change()) {
+    if (detect_render_environment_change()) {
         return RenderControlResult::Failed(RenderFailure::DeviceLost);
     }
     if (!request.is_valid()) {

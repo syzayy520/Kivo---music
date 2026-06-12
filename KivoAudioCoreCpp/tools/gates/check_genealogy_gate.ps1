@@ -125,6 +125,7 @@ $runtimeFamilyRules = @(
         Path = "tests\hardware\device_matrix\platform\windows"
         AllowedDirectories = @(
             "apartment",
+            "driver",
             "endpoint"
         )
     },
@@ -181,6 +182,21 @@ $runtimeFamilyRules = @(
         )
     },
     @{
+        Path = "tests\ffmpeg_decode\fixture"
+        AllowedDirectories = @(
+            "assertion",
+            "mutation"
+        )
+    },
+    @{
+        Path = "tests\ffmpeg_decode\scenario"
+        AllowedDirectories = @(
+            "corruption",
+            "policy",
+            "truncation"
+        )
+    },
+    @{
         Path = "include\kivo\platform\windows\wasapi"
         AllowedDirectories = @(
             "diagnostics",
@@ -196,12 +212,17 @@ $runtimeFamilyRules = @(
             "device",
             "error",
             "format",
+            "power",
             "renderer",
             "worker"
         )
     },
     @{
         Path = "src\platform\windows\wasapi\device"
+        AllowedDirectories = @("notification")
+    },
+    @{
+        Path = "src\platform\windows\wasapi\power"
         AllowedDirectories = @("notification")
     },
     @{

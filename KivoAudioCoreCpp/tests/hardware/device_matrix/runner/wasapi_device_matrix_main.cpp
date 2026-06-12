@@ -8,7 +8,7 @@
 int main() {
     try {
         const auto inventory =
-            device_matrix::windows::enumerate_active_render_endpoints();
+            device_matrix::windows::enumerate_render_endpoints();
         device_matrix::write_device_matrix_report(std::cout, inventory);
 
         const auto valid = device_matrix::validate_inventory(inventory);

@@ -11,6 +11,8 @@ int main(int argc, char** argv) {
     FfmpegDecodeTestRunner runner{{argv[1]}};
     run_ffmpeg_decode_fixture_tests(runner);
     run_ffmpeg_policy_and_corruption_tests(runner);
+    run_ffmpeg_header_corruption_tests(runner);
+    run_ffmpeg_trailing_junk_tests(runner);
     run_ffmpeg_seek_flush_tests(runner);
     run_ffmpeg_truncated_media_tests(runner);
     run_ffmpeg_unsupported_cue_tests(runner);

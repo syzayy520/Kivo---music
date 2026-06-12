@@ -108,6 +108,11 @@ core::render::RenderOpenResult WasapiRendererState::open(
     endpoint_observer_registered_ = true;
     CoTaskMemFree(endpoint_id);
 
+    const auto power_result = power_observer_.register_callback();
+    if (power_result != ERROR_SUCCESS) {
+        return fail_open(HRESULT_FROM_WIN32(power_result));
+    }
+
     result = device_->Activate(
         __uuidof(IAudioClient),
         CLSCTX_INPROC_SERVER,
@@ -223,6 +228,8 @@ core::render::RenderOpenResult WasapiRendererState::open(
     diagnostics_.mode_capabilities = WasapiRenderer::supported_modes();
     diagnostics_.event_driven = true;
     diagnostics_.reopen_required = false;
+    diagnostics_.power_transition_count =
+        power_observer_.transition_count();
     diagnostics_.default_device_period =
         reference_time_duration(default_device_period);
     diagnostics_.minimum_device_period =

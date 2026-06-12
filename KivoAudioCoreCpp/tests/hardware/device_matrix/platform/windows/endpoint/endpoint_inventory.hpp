@@ -4,6 +4,6 @@
 
 namespace device_matrix::windows {
 
-[[nodiscard]] DeviceInventory enumerate_active_render_endpoints();
+[[nodiscard]] DeviceInventory enumerate_render_endpoints();
 
 } // namespace device_matrix::windows

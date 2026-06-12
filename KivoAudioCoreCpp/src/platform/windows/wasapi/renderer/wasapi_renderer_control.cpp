@@ -10,7 +10,7 @@ RenderControlResult WasapiRendererState::start() noexcept {
     if (!on_control_thread()) {
         return wrong_thread_result();
     }
-    if (detect_endpoint_change()) {
+    if (detect_render_environment_change()) {
         return RenderControlResult::Failed(RenderFailure::DeviceLost);
     }
     if (snapshot_.state == RenderLifecycleState::Started) {
@@ -35,7 +35,7 @@ RenderControlResult WasapiRendererState::flush(
     if (!on_control_thread()) {
         return wrong_thread_result();
     }
-    if (detect_endpoint_change()) {
+    if (detect_render_environment_change()) {
         return RenderControlResult::Failed(RenderFailure::DeviceLost);
     }
     if (snapshot_.state == RenderLifecycleState::Closed
@@ -76,7 +76,7 @@ RenderControlResult WasapiRendererState::reset(
     if (!on_control_thread()) {
         return wrong_thread_result();
     }
-    if (detect_endpoint_change()) {
+    if (detect_render_environment_change()) {
         return RenderControlResult::Failed(RenderFailure::DeviceLost);
     }
     if (snapshot_.state == RenderLifecycleState::Closed) {
@@ -105,7 +105,7 @@ RenderControlResult WasapiRendererState::stop() noexcept {
     if (!on_control_thread()) {
         return wrong_thread_result();
     }
-    if (detect_endpoint_change()) {
+    if (detect_render_environment_change()) {
         return RenderControlResult::Failed(RenderFailure::DeviceLost);
     }
     if (snapshot_.state == RenderLifecycleState::Stopped) {

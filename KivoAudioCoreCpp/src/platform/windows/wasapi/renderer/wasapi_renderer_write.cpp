@@ -24,7 +24,7 @@ core::render::RenderWriteResult WasapiRendererState::write(
     using core::render::RenderLifecycleState;
     using core::render::RenderWriteResult;
 
-    if (detect_endpoint_change()) {
+    if (detect_render_environment_change()) {
         return RenderWriteResult::Failed(
             block.frame_count,
             RenderFailure::DeviceLost);

@@ -6,6 +6,15 @@
 
 namespace device_matrix {
 
+enum class DeviceCategory : uint8_t {
+    Unknown = 0,
+    Integrated,
+    Usb,
+    Bluetooth,
+    DisplayAudio,
+    Other
+};
+
 struct EndpointFormat final {
     uint16_t format_tag{0};
     uint16_t channels{0};
@@ -24,8 +33,12 @@ struct EndpointFormat final {
 struct EndpointRecord final {
     uint64_t identity{0};
     std::string friendly_name;
-    std::string driver_version;
+    std::string endpoint_driver_version;
+    std::string parent_device_name;
+    std::string parent_driver_provider;
+    std::string parent_driver_version;
     std::string form_factor;
+    DeviceCategory category{DeviceCategory::Unknown};
     uint32_t state{0};
     bool default_console{false};
     bool default_multimedia{false};
@@ -35,6 +48,10 @@ struct EndpointRecord final {
     int64_t default_period_100ns{0};
     int64_t minimum_period_100ns{0};
     EndpointFormat mix_format{};
+
+    [[nodiscard]] bool is_active() const noexcept {
+        return (state & 0x00000001u) != 0;
+    }
 };
 
 struct DeviceInventory final {
