@@ -96,7 +96,8 @@ foreach ($dir in $strictDirs) {
                 $authorizedWindowsPath =
                     $relativePath.StartsWith("src\platform\windows\wasapi\", [System.StringComparison]::OrdinalIgnoreCase) -or
                     $relativePath.StartsWith("tests\platform_windows\wasapi\", [System.StringComparison]::OrdinalIgnoreCase) -or
-                    $relativePath.StartsWith("tests\hardware\wasapi\", [System.StringComparison]::OrdinalIgnoreCase)
+                    $relativePath.StartsWith("tests\hardware\wasapi\", [System.StringComparison]::OrdinalIgnoreCase) -or
+                    $relativePath.StartsWith("tests\stability\platform\windows\", [System.StringComparison]::OrdinalIgnoreCase)
                 $authorizedFfmpegPath =
                     $relativePath.StartsWith("src\adapters\ffmpeg\", [System.StringComparison]::OrdinalIgnoreCase)
                 foreach ($token in $implementationTokens) {
@@ -230,6 +231,8 @@ if (Test-Path $cmakePath) {
         "kivo_wasapi_tests",
         "wasapi_tests",
         "kivo_wasapi_tone_smoke",
+        "kivo_stability_tests",
+        "stability_tests",
         "kivo_public_header_checks"
     )
     foreach ($line in $cmakeLines) {

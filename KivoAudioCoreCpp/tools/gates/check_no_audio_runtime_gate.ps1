@@ -49,6 +49,7 @@ $allowedContractPaths = @(
     "tests\playback_pipeline",
     "tests\playback_runtime",
     "tests\fake_renderer",
+    "tests\stability",
     "tests\platform_windows\wasapi",
     "tests\hardware\wasapi",
     "tests\hardware\decode_output"
@@ -171,6 +172,8 @@ if (Test-Path $cmakePath) {
         "kivo_wasapi_tests",
         "wasapi_tests",
         "kivo_wasapi_tone_smoke",
+        "kivo_stability_tests",
+        "stability_tests",
         "kivo_public_header_checks"
     )
     foreach ($pattern in @("add_executable", "add_library")) {
