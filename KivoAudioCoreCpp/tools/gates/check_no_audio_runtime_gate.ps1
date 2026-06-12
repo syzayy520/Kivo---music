@@ -31,6 +31,7 @@ $allowedContractPaths = @(
     "include\kivo\source\local",
     "include\kivo\testing",
     "include\kivo\platform\windows\wasapi",
+    "include\kivo\host\abi",
     "src\core\contract",
     "src\core\render\queue",
     "src\core\render\pump",
@@ -45,6 +46,7 @@ $allowedContractPaths = @(
     "src\source\local",
     "src\adapters\ffmpeg",
     "src\platform\windows\wasapi",
+    "src\host\abi",
     "tests\contracts",
     "tests\render_boundary",
     "tests\output_truth",
@@ -61,7 +63,9 @@ $allowedContractPaths = @(
     "tests\platform_windows\wasapi",
     "tests\hardware\device_matrix",
     "tests\hardware\wasapi",
-    "tests\hardware\decode_output"
+    "tests\hardware\decode_output",
+    "tests\hardware\host_abi",
+    "tests\host_abi"
 )
 
 $excludedPathPatterns = @("*\docs\*", "*\tools\*", "*\.build\*", "*\build\*", "*\.git\*")
@@ -193,7 +197,12 @@ if (Test-Path $cmakePath) {
         "kivo_wasapi_device_matrix",
         "kivo_stability_tests",
         "stability_tests",
-        "kivo_public_header_checks"
+        "kivo_public_header_checks",
+        "kivo_public_c_header_checks",
+        "kivo_host_abi",
+        "kivo_host_abi_tests",
+        "kivo_host_abi_playback_smoke",
+        "host_abi_tests"
     )
     foreach ($pattern in @("add_executable", "add_library")) {
         foreach ($line in $lines) {

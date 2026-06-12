@@ -244,7 +244,12 @@ if (Test-Path $cmakePath) {
         "kivo_wasapi_device_matrix",
         "kivo_stability_tests",
         "stability_tests",
-        "kivo_public_header_checks"
+        "kivo_public_header_checks",
+        "kivo_public_c_header_checks",
+        "kivo_host_abi",
+        "kivo_host_abi_tests",
+        "kivo_host_abi_playback_smoke",
+        "host_abi_tests"
     )
     foreach ($line in $cmakeLines) {
         if ($line -match "^\s*add_executable\((\w+)" -or $line -match "^\s*add_library\((\w+)") {

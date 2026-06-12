@@ -15,9 +15,14 @@ cmake_minimum_required(VERSION 3.24)
 
 project(KivoAudioCoreCpp
     VERSION 0.0.0
-    LANGUAGES CXX
+    LANGUAGES C CXX
     DESCRIPTION "Kivo Audio Core — C++ Windows Desktop Audio Engine"
 )
+
+# --- C ABI Standard Policy ---
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS OFF)
 
 # --- C++ Standard Policy ---
 # C++20 is required. No extensions. No fallback.
@@ -287,6 +292,7 @@ if(KIVO_FFMPEG_ROOT)
             VERBATIM
         )
     endforeach()
+
 endif()
 
 # Bounded SPSC render transport
@@ -722,6 +728,7 @@ if(WIN32 AND TARGET kivo_ffmpeg_decode_adapter)
             VERBATIM
         )
     endforeach()
+
 endif()
 
 # Windows WASAPI renderer
@@ -862,6 +869,102 @@ if(WIN32)
     endif()
 endif()
 
+if(WIN32
+    AND TARGET kivo_ffmpeg_decode_adapter
+    AND TARGET kivo_wasapi_renderer)
+    add_library(kivo_host_abi SHARED
+        src/host/abi/api/host_audio_api.cpp
+        src/host/abi/engine/host_audio_engine_command.cpp
+        src/host/abi/engine/host_audio_engine_configuration.cpp
+        src/host/abi/engine/host_audio_engine_lifecycle.cpp
+        src/host/abi/engine/host_audio_engine_pump.cpp
+        src/host/abi/engine/host_audio_engine_snapshot.cpp
+        src/host/abi/handle/host_handle_registry.cpp
+        src/host/abi/mapping/host_result_mapping.cpp
+        src/host/abi/source/host_callback_byte_source.cpp
+        src/host/abi/validation/host_abi_validation.cpp
+    )
+    target_link_libraries(kivo_host_abi
+        PRIVATE
+            kivo_ffmpeg_decode_adapter
+            kivo_playback_runtime
+            kivo_wasapi_renderer
+    )
+    target_include_directories(kivo_host_abi
+        PUBLIC include/
+        PRIVATE src
+    )
+    target_compile_features(kivo_host_abi PRIVATE cxx_std_20)
+    target_compile_definitions(kivo_host_abi PRIVATE
+        KIVO_AUDIO_HOST_ABI_BUILD
+        WIN32_LEAN_AND_MEAN
+        NOMINMAX
+        _WIN32_WINNT=0x0A00
+    )
+    target_compile_options(kivo_host_abi PRIVATE
+        $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc>
+        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+    )
+    set_target_properties(kivo_host_abi PROPERTIES
+        OUTPUT_NAME "kivo_audio_core"
+    )
+
+    add_executable(kivo_host_abi_tests
+        tests/host_abi/compatibility/c_header_compile.c
+        tests/host_abi/runner/host_abi_tests_main.cpp
+        tests/host_abi/scenario/compatibility_tests.cpp
+        tests/host_abi/scenario/handle_lifecycle_tests.cpp
+        tests/host_abi/scenario/source_ownership_tests.cpp
+    )
+    target_link_libraries(kivo_host_abi_tests PRIVATE kivo_host_abi)
+    target_compile_features(kivo_host_abi_tests PRIVATE cxx_std_20)
+    target_compile_options(kivo_host_abi_tests PRIVATE
+        $<$<COMPILE_LANG_AND_ID:C,MSVC>:/W4 /WX /utf-8>
+        $<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/W4 /WX /utf-8 /EHsc>
+        $<$<AND:$<COMPILE_LANGUAGE:C>,$<NOT:$<C_COMPILER_ID:MSVC>>>:-Wall -Wextra -Wpedantic -Werror>
+        $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-Wall -Wextra -Wpedantic -Werror>
+    )
+    foreach(ffmpeg_dll
+        avcodec-61.dll
+        avformat-61.dll
+        avutil-59.dll
+        swresample-5.dll)
+        add_custom_command(TARGET kivo_host_abi_tests POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                "${KIVO_FFMPEG_BINARY_DIR}/${ffmpeg_dll}"
+                "$<TARGET_FILE_DIR:kivo_host_abi_tests>"
+            VERBATIM
+        )
+    endforeach()
+
+    add_executable(kivo_host_abi_playback_smoke
+        tests/hardware/host_abi/fixture/local_callback_source.cpp
+        tests/hardware/host_abi/runner/host_abi_playback_smoke_main.cpp
+        tests/hardware/host_abi/scenario/host_abi_playback_cycle.cpp
+    )
+    target_link_libraries(
+        kivo_host_abi_playback_smoke
+        PRIVATE kivo_host_abi)
+    target_compile_features(
+        kivo_host_abi_playback_smoke PRIVATE cxx_std_20)
+    target_compile_options(kivo_host_abi_playback_smoke PRIVATE
+        $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc>
+        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+    )
+    foreach(ffmpeg_dll
+        avcodec-61.dll
+        avformat-61.dll
+        avutil-59.dll
+        swresample-5.dll)
+        add_custom_command(TARGET kivo_host_abi_playback_smoke POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                "${KIVO_FFMPEG_BINARY_DIR}/${ffmpeg_dll}"
+                "$<TARGET_FILE_DIR:kivo_host_abi_playback_smoke>"
+            VERBATIM
+        )
+    endforeach()
+endif()
+
 # Public header compile checks
 file(GLOB_RECURSE KIVO_PUBLIC_HEADERS
     CONFIGURE_DEPENDS
@@ -894,6 +997,34 @@ target_compile_options(kivo_public_header_checks PRIVATE
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
 )
 
+file(GLOB_RECURSE KIVO_PUBLIC_C_HEADERS
+    CONFIGURE_DEPENDS
+    RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/kivo/*.h"
+)
+set(KIVO_C_HEADER_CHECK_DIR
+    "${CMAKE_CURRENT_BINARY_DIR}/generated/c_header_checks")
+file(MAKE_DIRECTORY "${KIVO_C_HEADER_CHECK_DIR}")
+set(KIVO_C_HEADER_CHECK_SOURCES)
+foreach(header IN LISTS KIVO_PUBLIC_C_HEADERS)
+    string(REPLACE "/" "_" header_source_name "${header}")
+    string(REPLACE "." "_" header_source_name "${header_source_name}")
+    set(header_source
+        "${KIVO_C_HEADER_CHECK_DIR}/${header_source_name}.c")
+    file(WRITE "${header_source}" "#include \"${header}\"\n")
+    list(APPEND KIVO_C_HEADER_CHECK_SOURCES "${header_source}")
+endforeach()
+add_library(kivo_public_c_header_checks
+    OBJECT
+    ${KIVO_C_HEADER_CHECK_SOURCES}
+)
+target_include_directories(kivo_public_c_header_checks PRIVATE include/)
+target_compile_features(kivo_public_c_header_checks PRIVATE c_std_11)
+target_compile_options(kivo_public_c_header_checks PRIVATE
+    $<$<C_COMPILER_ID:MSVC>:/W4 /WX /utf-8>
+    $<$<NOT:$<C_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
+
 add_dependencies(kivo_contract_tests kivo_public_header_checks)
 add_dependencies(kivo_capability_tests kivo_public_header_checks)
 add_dependencies(kivo_render_boundary_tests kivo_public_header_checks)
@@ -922,6 +1053,18 @@ if(TARGET kivo_ffmpeg_wasapi_playback_smoke)
         kivo_ffmpeg_wasapi_playback_smoke
         kivo_public_header_checks)
 endif()
+if(TARGET kivo_host_abi_tests)
+    add_dependencies(
+        kivo_host_abi_tests
+        kivo_public_header_checks
+        kivo_public_c_header_checks)
+endif()
+if(TARGET kivo_host_abi_playback_smoke)
+    add_dependencies(
+        kivo_host_abi_playback_smoke
+        kivo_public_header_checks
+        kivo_public_c_header_checks)
+endif()
 
 # Register with CTest
 enable_testing()
@@ -949,4 +1092,7 @@ if(TARGET kivo_ffmpeg_decode_tests)
     add_test(
         NAME ffmpeg_decode_tests
         COMMAND kivo_ffmpeg_decode_tests "${KIVO_FFMPEG_FIXTURE_DIR}")
+endif()
+if(TARGET kivo_host_abi_tests)
+    add_test(NAME host_abi_tests COMMAND kivo_host_abi_tests)
 endif()

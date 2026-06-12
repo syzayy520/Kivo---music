@@ -844,13 +844,12 @@ The following are not sufficient reasons to change the sequence:
 
 Execute these items in order:
 
-1. Lock the P0-N processing family and strict-bypass ownership.
-2. Implement software volume and ReplayGain without hidden activation.
-3. Implement explicit resampling and channel-remix boundaries.
-4. Implement processor participation, latency, tail, and dither truth.
-5. Prove byte-preserving bypass and bit-perfect incompatibility.
-6. Implement the versioned P0-O host ABI.
-7. Complete P0-P release, dependency, privacy, and commercial hardening.
+1. Lock the P0-P release artifact and version policy.
+2. Record reproducible build inputs and FFmpeg provenance.
+3. Generate third-party notices and a machine-readable SBOM.
+4. Define signing, symbol, crash privacy, upgrade, and rollback contracts.
+5. Execute the release device, media, endurance, and ABI matrices.
+6. Review every commercial capability claim against stored evidence.
 
 ---
 

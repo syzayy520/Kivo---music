@@ -93,6 +93,49 @@ if (Test-Path $toolsPath) {
 
 $runtimeFamilyRules = @(
     @{
+        Path = "include\kivo\host"
+        AllowedDirectories = @("abi")
+    },
+    @{
+        Path = "include\kivo\host\abi"
+        AllowedDirectories = @(
+            "api",
+            "capability",
+            "command",
+            "configuration",
+            "diagnostic",
+            "handle",
+            "result",
+            "snapshot",
+            "source",
+            "version"
+        )
+    },
+    @{
+        Path = "src\host"
+        AllowedDirectories = @("abi")
+    },
+    @{
+        Path = "src\host\abi"
+        AllowedDirectories = @(
+            "api",
+            "engine",
+            "handle",
+            "mapping",
+            "source",
+            "validation"
+        )
+    },
+    @{
+        Path = "tests\host_abi"
+        AllowedDirectories = @(
+            "compatibility",
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
         Path = "tests\decode_boundary"
         AllowedDirectories = @(
             "fixture",
@@ -105,7 +148,16 @@ $runtimeFamilyRules = @(
         AllowedDirectories = @(
             "decode_output",
             "device_matrix",
+            "host_abi",
             "wasapi"
+        )
+    },
+    @{
+        Path = "tests\hardware\host_abi"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
         )
     },
     @{
@@ -551,7 +603,10 @@ $runtimeSourceRoots = @(
     "tests\output_truth",
     "tests\audio_processing",
     "tests\playback_session",
-    "tests\playback_runtime"
+    "tests\playback_runtime",
+    "include\kivo\host\abi",
+    "src\host\abi",
+    "tests\host_abi"
 )
 $runtimeMaximumLines = 260
 foreach ($relativeRoot in $runtimeSourceRoots) {
@@ -560,7 +615,7 @@ foreach ($relativeRoot in $runtimeSourceRoots) {
         continue
     }
     $runtimeFiles = Get-ChildItem -Path $runtimeRoot -Recurse -File |
-        Where-Object { $_.Extension -in @(".hpp", ".cpp") }
+        Where-Object { $_.Extension -in @(".h", ".hpp", ".c", ".cpp") }
     foreach ($file in $runtimeFiles) {
         $lineCount = (Get-Content $file.FullName).Count
         if ($lineCount -gt $runtimeMaximumLines) {
