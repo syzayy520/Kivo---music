@@ -476,6 +476,7 @@ target_compile_options(kivo_playback_pipeline_tests PRIVATE
 
 add_executable(kivo_playback_runtime_tests
     tests/playback_runtime/coordinator/runner/playback_runtime_tests_main.cpp
+    tests/playback_runtime/coordinator/scenario/active_operation_shutdown_tests.cpp
     tests/playback_runtime/coordinator/scenario/command_isolation_tests.cpp
     tests/playback_runtime/coordinator/scenario/decode_failure_recovery_tests.cpp
     tests/playback_runtime/coordinator/scenario/eos_drain_tests.cpp

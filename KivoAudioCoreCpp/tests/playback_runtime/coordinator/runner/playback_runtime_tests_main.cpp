@@ -5,11 +5,16 @@
 
 int main() {
     using namespace playback_runtime_test;
+    std::cout << std::unitbuf;
     struct Test {
         const char* name;
         void (*run)();
     };
     const Test tests[] = {
+        {"shutdown_waits_for_active_write_and_releases_runtime",
+         shutdown_waits_for_active_write_and_releases_runtime},
+        {"close_waits_for_active_drain_and_releases_runtime",
+         close_waits_for_active_drain_and_releases_runtime},
         {"source_failure_stops_media_with_classified_domain",
          source_failure_stops_media_with_classified_domain},
         {"codec_failure_is_truthful_and_remains_closable",
