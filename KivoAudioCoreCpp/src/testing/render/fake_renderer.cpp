@@ -108,6 +108,12 @@ RenderControlResult FakeRenderer::flush(
         record(RenderObservationOperation::Flush, RenderFailure::InvalidState);
         return RenderControlResult::Rejected(RenderFailure::InvalidState, snapshot_.state);
     }
+    if (take_fault(RenderFaultKind::DeviceLost, RenderFaultTrigger::NextFlush)) {
+        snapshot_.state = RenderLifecycleState::Failed;
+        snapshot_.last_failure = RenderFailure::DeviceLost;
+        record(RenderObservationOperation::Flush, RenderFailure::DeviceLost);
+        return RenderControlResult::Failed(RenderFailure::DeviceLost);
+    }
 
     snapshot_.buffered_frames = 0;
     snapshot_.generations = request.generations;

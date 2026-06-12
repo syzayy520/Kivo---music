@@ -4,6 +4,7 @@ namespace playback_session_test {
 
 void lifecycle_and_pause_freeze();
 void replacement_rejects_old_session_commands();
+void rapid_replacement_keeps_latest_generation();
 void command_ids_are_globally_monotonic();
 void failed_session_can_close_and_shutdown();
 void concurrent_intake_remains_serialized();

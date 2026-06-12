@@ -20,7 +20,8 @@ enum class RenderFaultTrigger : uint8_t {
     FramePositionAtOrAfter,
     StreamGeneration,
     NextConsume,
-    NextDrain
+    NextDrain,
+    NextFlush
 };
 
 struct ScheduledRenderFault {
@@ -42,8 +43,12 @@ struct ScheduledRenderFault {
         if (kind == RenderFaultKind::DrainTimeout) {
             return trigger == RenderFaultTrigger::NextDrain;
         }
+        if (trigger == RenderFaultTrigger::NextFlush) {
+            return kind == RenderFaultKind::DeviceLost;
+        }
         return trigger != RenderFaultTrigger::NextConsume
-            && trigger != RenderFaultTrigger::NextDrain;
+            && trigger != RenderFaultTrigger::NextDrain
+            && trigger != RenderFaultTrigger::NextFlush;
     }
 
     [[nodiscard]] constexpr bool operator==(const ScheduledRenderFault&) const noexcept = default;

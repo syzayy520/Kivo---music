@@ -480,10 +480,12 @@ add_executable(kivo_playback_runtime_tests
     tests/playback_runtime/coordinator/scenario/command_isolation_tests.cpp
     tests/playback_runtime/coordinator/scenario/decode_failure_recovery_tests.cpp
     tests/playback_runtime/coordinator/scenario/eos_drain_tests.cpp
+    tests/playback_runtime/coordinator/scenario/flush_recovery_tests.cpp
     tests/playback_runtime/coordinator/scenario/device_recovery_tests.cpp
     tests/playback_runtime/coordinator/scenario/lifecycle_tests.cpp
     tests/playback_runtime/coordinator/scenario/open_transaction_tests.cpp
     tests/playback_runtime/coordinator/scenario/seek_generation_tests.cpp
+    tests/playback_runtime/coordinator/scenario/track_switch_race_tests.cpp
 )
 target_link_libraries(kivo_playback_runtime_tests
     PRIVATE
@@ -515,6 +517,7 @@ add_executable(kivo_fake_renderer_tests
     tests/fake_renderer/lifecycle_tests.cpp
     tests/fake_renderer/write_and_generation_tests.cpp
     tests/fake_renderer/fault_injection_tests.cpp
+    tests/fake_renderer/scenario/device_lifecycle_fault_tests.cpp
     tests/fake_renderer/observation_history_tests.cpp
 )
 target_link_libraries(kivo_fake_renderer_tests PRIVATE kivo_fake_render_backend)

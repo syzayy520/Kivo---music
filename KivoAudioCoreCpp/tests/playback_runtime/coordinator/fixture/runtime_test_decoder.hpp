@@ -6,6 +6,8 @@
 
 #include "kivo/core/decode/boundary/audio_decode_boundary.hpp"
 
+#include "runtime_test_call_gate.hpp"
+
 namespace playback_runtime_test {
 
 class ScriptedDecoder final
@@ -16,6 +18,7 @@ public:
     bool emit_stale_after_seek{false};
     kivo::core::decode::DecodeFailure terminal_failure{
         kivo::core::decode::DecodeFailure::None};
+    RuntimeTestCallGate* open_gate{nullptr};
     uint64_t close_count{0};
     uint64_t seek_count{0};
     kivo::core::contract::SamplePosition last_seek_target{0};
@@ -23,6 +26,9 @@ public:
     [[nodiscard]] kivo::core::decode::DecodeOpenResult open(
         std::unique_ptr<kivo::core::decode::ByteSourceBoundary> source,
         const kivo::core::decode::DecodeOpenRequest& request) noexcept override {
+        if (open_gate) {
+            open_gate->enter_and_wait();
+        }
         if (!source || fail_open) {
             opened_ = false;
             return kivo::core::decode::DecodeOpenResult::failed(

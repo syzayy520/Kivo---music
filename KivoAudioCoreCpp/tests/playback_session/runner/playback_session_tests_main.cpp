@@ -14,6 +14,8 @@ int main() {
         {"lifecycle_and_pause_freeze", lifecycle_and_pause_freeze},
         {"replacement_rejects_old_session_commands",
          replacement_rejects_old_session_commands},
+        {"rapid_replacement_keeps_latest_generation",
+         rapid_replacement_keeps_latest_generation},
         {"command_ids_are_globally_monotonic",
          command_ids_are_globally_monotonic},
         {"failed_session_can_close_and_shutdown",

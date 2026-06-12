@@ -48,6 +48,34 @@ void replacement_rejects_old_session_commands() {
     SESSION_ASSERT(session.snapshot().source_replacements == 1);
 }
 
+void rapid_replacement_keeps_latest_generation() {
+    using namespace kivo;
+    core::playback::PlaybackSessionController session;
+    SESSION_ASSERT(session.submit(command(
+        1, core::contract::CommandKind::OpenSource, 10)).accepted());
+    SESSION_ASSERT(session.submit(command(
+        2, core::contract::CommandKind::OpenSource, 11)).accepted());
+    SESSION_ASSERT(session.submit(command(
+        3, core::contract::CommandKind::OpenSource, 12)).accepted());
+    SESSION_ASSERT(session.submit(command(
+        4, core::contract::CommandKind::OpenSource, 13)).accepted());
+
+    for (uint64_t generation = 10; generation < 13; ++generation) {
+        const auto stale = session.submit(command(
+            5 + generation,
+            core::contract::CommandKind::Pause,
+            generation));
+        SESSION_ASSERT(!stale.accepted());
+        SESSION_ASSERT(
+            stale.failure
+            == core::playback::PlaybackCommandFailure::StaleSession);
+    }
+    const auto snapshot = session.snapshot();
+    SESSION_ASSERT(snapshot.session_generation == 13);
+    SESSION_ASSERT(snapshot.source_replacements == 3);
+    SESSION_ASSERT(snapshot.state == core::contract::CoreState::Ready);
+}
+
 void command_ids_are_globally_monotonic() {
     using namespace kivo;
     core::playback::PlaybackSessionController session;

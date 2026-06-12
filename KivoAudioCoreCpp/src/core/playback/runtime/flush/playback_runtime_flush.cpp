@@ -26,6 +26,16 @@ PlaybackRuntimeResult PlaybackRuntimeCoordinator::Impl::flush(
     queue_->reset();
     const auto render_result = renderer_.flush({next_generations});
     if (!decode_result.is_success() || !render_result.is_success()) {
+        if (decode_result.is_success()
+            && render_result.failure() == render::RenderFailure::DeviceLost
+            && request_device_recovery(before.session_generation)) {
+            saturating_increment(failed_operations_);
+            return runtime_result::failed(
+                PlaybackRuntimeFailure::RenderControlFailed,
+                {},
+                decode::DecodeFailure::None,
+                render_result.failure());
+        }
         return fail_active(
             !decode_result.is_success()
                 ? PlaybackRuntimeFailure::DecodeControlFailed
