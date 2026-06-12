@@ -1,7 +1,7 @@
 # Policy Index
 
 **Version:** V10.1 FINAL P0-B READY LOCKED PATCHED
-**Current Task:** KIVO-AUDIO-CORE-P0-P-RELEASE-HARDENING
+**Current Task:** KIVO-AUDIO-CORE-P0-P-ENGINEERING-COMPLETE
 **Last Updated:** 2026-06-12 (P0-P Release Hardening)
 
 ## 1. Authority
@@ -33,7 +33,7 @@ Safety, legal, privacy, and project-root rules take precedence over schedule.
 | P0-M | Exclusive mode and bit-perfect truth | DONE |
 | P0-N | ReplayGain, volume, resample, and DSP | DONE |
 | P0-O | Host ABI | DONE |
-| P0-P | Commercial release hardening | ACTIVE |
+| P0-P | Commercial release hardening | DONE (ENGINEERING RC) |
 | P0-Q | Hi-Res, DSD, and DoP research | PLANNED |
 | P0-R | mpv/libmpv reference research | PLANNED |
 

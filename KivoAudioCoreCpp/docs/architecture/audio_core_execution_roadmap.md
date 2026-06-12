@@ -5,7 +5,8 @@
 **Effective Date:** 2026-06-12
 **Applies To:** `KivoAudioCoreCpp/`
 **Architecture Basis:** V10.1 FINAL P0-B READY LOCKED PATCHED
-**Current Execution Position:** P0-P commercial release hardening
+**Current Execution Position:** P0-P engineering complete; deferred research
+and external commercial release gates remain
 
 ---
 
@@ -45,7 +46,7 @@ for the remaining audio-core phases.
 decode, product-core coordination, quality, host integration, and release work
 inside `KivoAudioCoreCpp/`.
 
-**Current Phase:** P0-P reproducible, auditable release-candidate proof.
+**Current Phase:** P0-P engineering closeout and external release handoff.
 
 **Allowed:** Work that directly satisfies the active milestone, its tests, its
 validation requirements, or a documented correctness, safety, legal, privacy,
@@ -725,6 +726,10 @@ Exit criteria:
 ---
 
 ## 14. Milestone 10: P0-P Release Hardening
+
+**Engineering Status:** COMPLETE on 2026-06-12. The reproducible unsigned
+engineering candidate passed repository-controlled gates. Commercial approval
+remains blocked by the external records listed in the P0-P closeout.
 
 Required release gates:
 

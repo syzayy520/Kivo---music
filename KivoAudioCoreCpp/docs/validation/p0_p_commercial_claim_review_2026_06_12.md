@@ -9,7 +9,7 @@
 | Bit-perfect capable | ALLOWED WITH STRICT QUALIFIER | Claim only when runtime truth reports active |
 | Gapless capable | ALLOWED WITH FORMAT/FILE QUALIFIER | Existing sample-domain tests |
 | ReplayGain and software volume | ALLOWED | Must disclose processing disables bit-perfect |
-| Reproducible binary | PENDING | Requires two-build byte identity |
+| Reproducible binary | ALLOWED | Two clean builds are byte-identical |
 | Signed release | FORBIDDEN | No certificate evidence |
 | Commercially approved release | FORBIDDEN | External gates remain open |
 | Supports every Windows audio device | FORBIDDEN | Matrix is incomplete |

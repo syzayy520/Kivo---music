@@ -2,16 +2,16 @@
 
 | Area | Evidence | Status |
 |---|---|---|
-| Release build | Clean MSVC x64 Release build and CTest | PENDING PIPELINE |
-| Repository gates | Aggregated gate suite | PENDING PIPELINE |
-| ABI exports | Exactly seven locked C exports | PENDING PIPELINE |
-| PE hardening | ASLR, NX, CFG, CET | PENDING PIPELINE |
-| DLL reproducibility | Two clean builds, identical SHA-256 | PENDING PIPELINE |
-| Archive reproducibility | Two archive creations, identical SHA-256 | PENDING PIPELINE |
-| Symbols | PDB separated from runtime | PENDING PIPELINE |
-| Dependency record | FFmpeg version, config, hashes, license | PENDING PIPELINE |
-| SBOM | CycloneDX 1.6 | PENDING PIPELINE |
-| Manifest privacy | No checkout or Windows user path | PENDING PIPELINE |
+| Release build | Clean MSVC x64 Release build and CTest 16/16 | PASS |
+| Repository gates | Aggregated gate suite 9/9 | PASS |
+| ABI exports | Exactly seven locked C exports | PASS |
+| PE hardening | ASLR, NX, CFG, CET | PASS |
+| DLL reproducibility | Two clean builds, identical SHA-256 | PASS |
+| Archive reproducibility | Two archive creations, identical SHA-256 | PASS |
+| Symbols | PDB separated from runtime | PASS |
+| Dependency record | FFmpeg version, config, hashes, license | PASS |
+| SBOM | CycloneDX 1.6 | PASS |
+| Manifest privacy | No checkout or Windows user path | PASS |
 | Authenticode | Kivo DLL and product installer signatures | BLOCKED: CERTIFICATE/PRODUCT |
 | Corresponding source | Exact FFmpeg source and build-script archive | BLOCKED: EXTERNAL RECORD |
 | Legal approval | LGPL, codecs, target markets | BLOCKED: LEGAL REVIEW |
