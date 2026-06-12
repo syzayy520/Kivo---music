@@ -2,7 +2,7 @@
 
 #include <array>
 
-#include "kivo/core/playback/recovery/playback_recovery_operations.hpp"
+#include "kivo/core/playback/recovery/operations/playback_recovery_operations.hpp"
 
 namespace playback_session_test {
 

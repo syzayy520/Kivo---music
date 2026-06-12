@@ -93,6 +93,20 @@ if (Test-Path $toolsPath) {
 
 $runtimeFamilyRules = @(
     @{
+        Path = "include\kivo\core\playback\recovery"
+        AllowedDirectories = @(
+            "completion",
+            "execution",
+            "executor",
+            "operations",
+            "policy"
+        )
+    },
+    @{
+        Path = "src\core\playback\recovery"
+        AllowedDirectories = @("executor")
+    },
+    @{
         Path = "include\kivo\core\playback\session"
         AllowedDirectories = @(
             "command",
@@ -186,8 +200,10 @@ foreach ($rule in $runtimeFamilyRules) {
 }
 
 $runtimeSourceRoots = @(
+    "include\kivo\core\playback\recovery",
     "include\kivo\core\playback\session",
     "include\kivo\core\playback\runtime",
+    "src\core\playback\recovery",
     "src\core\playback\session",
     "src\core\playback\runtime",
     "tests\playback_session",

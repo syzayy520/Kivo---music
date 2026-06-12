@@ -3,7 +3,7 @@
 #include <cstdint>
 
 #include "kivo/core/contract/error/recovery/recovery_action.hpp"
-#include "kivo/core/playback/recovery/playback_recovery_completion.hpp"
+#include "kivo/core/playback/recovery/completion/playback_recovery_completion.hpp"
 
 namespace kivo::core::playback {
 

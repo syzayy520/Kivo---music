@@ -3,8 +3,8 @@
 #include <cstdint>
 
 #include "kivo/core/contract/error/domain/error_domain.hpp"
-#include "kivo/core/playback/recovery/playback_recovery_execution_result.hpp"
-#include "kivo/core/playback/recovery/playback_recovery_operations.hpp"
+#include "kivo/core/playback/recovery/execution/playback_recovery_execution_result.hpp"
+#include "kivo/core/playback/recovery/operations/playback_recovery_operations.hpp"
 
 namespace kivo::core::playback {
 

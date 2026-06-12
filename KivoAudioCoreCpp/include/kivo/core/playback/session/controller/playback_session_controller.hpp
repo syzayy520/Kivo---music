@@ -7,8 +7,8 @@
 #include "kivo/core/playback/session/drain/playback_drain_completion.hpp"
 #include "kivo/core/playback/session/drain/playback_drain_ticket.hpp"
 #include "kivo/core/playback/session/snapshot/playback_session_snapshot.hpp"
-#include "kivo/core/playback/recovery/playback_recovery_completion.hpp"
-#include "kivo/core/playback/recovery/playback_recovery_policy.hpp"
+#include "kivo/core/playback/recovery/completion/playback_recovery_completion.hpp"
+#include "kivo/core/playback/recovery/policy/playback_recovery_policy.hpp"
 
 namespace kivo::core::playback {
 

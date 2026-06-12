@@ -216,7 +216,7 @@ target_compile_options(kivo_render_queue PRIVATE
 
 # Serialized product-control session state
 add_library(kivo_playback_session STATIC
-    src/core/playback/recovery/playback_recovery_executor.cpp
+    src/core/playback/recovery/executor/playback_recovery_executor.cpp
     src/core/playback/session/command/playback_session_command.cpp
     src/core/playback/session/controller/playback_session_controller.cpp
     src/core/playback/session/drain/playback_session_drain.cpp
