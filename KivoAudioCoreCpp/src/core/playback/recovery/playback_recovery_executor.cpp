@@ -1,6 +1,6 @@
 #include "kivo/core/playback/recovery/playback_recovery_executor.hpp"
 
-#include "kivo/core/playback/session/playback_session_controller.hpp"
+#include "kivo/core/playback/session/controller/playback_session_controller.hpp"
 
 namespace kivo::core::playback {
 

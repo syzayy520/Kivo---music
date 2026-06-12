@@ -2,9 +2,9 @@
 
 #include <memory>
 
-#include "kivo/core/playback/session/playback_command.hpp"
-#include "kivo/core/playback/session/playback_command_result.hpp"
-#include "kivo/core/playback/session/playback_session_snapshot.hpp"
+#include "kivo/core/playback/session/command/playback_command.hpp"
+#include "kivo/core/playback/session/command/playback_command_result.hpp"
+#include "kivo/core/playback/session/snapshot/playback_session_snapshot.hpp"
 #include "kivo/core/playback/recovery/playback_recovery_completion.hpp"
 #include "kivo/core/playback/recovery/playback_recovery_policy.hpp"
 

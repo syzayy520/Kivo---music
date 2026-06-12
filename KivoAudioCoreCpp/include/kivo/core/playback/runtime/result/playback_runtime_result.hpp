@@ -4,7 +4,7 @@
 
 #include "kivo/core/decode/failure/decode_failure.hpp"
 #include "kivo/core/playback/runtime/failure/playback_runtime_failure.hpp"
-#include "kivo/core/playback/session/playback_command_result.hpp"
+#include "kivo/core/playback/session/command/playback_command_result.hpp"
 #include "kivo/core/render/failure/render_failure.hpp"
 
 namespace kivo::core::playback {

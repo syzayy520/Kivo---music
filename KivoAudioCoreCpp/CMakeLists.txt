@@ -217,7 +217,13 @@ target_compile_options(kivo_render_queue PRIVATE
 # Serialized product-control session state
 add_library(kivo_playback_session STATIC
     src/core/playback/recovery/playback_recovery_executor.cpp
-    src/core/playback/session/playback_session_controller.cpp
+    src/core/playback/session/command/playback_session_command.cpp
+    src/core/playback/session/controller/playback_session_controller.cpp
+    src/core/playback/session/position/playback_session_position.cpp
+    src/core/playback/session/recovery/playback_session_recovery.cpp
+    src/core/playback/session/result/playback_session_result.cpp
+    src/core/playback/session/seek/playback_session_seek.cpp
+    src/core/playback/session/snapshot/playback_session_snapshot.cpp
 )
 target_link_libraries(kivo_playback_session PUBLIC kivo_core_contract)
 target_include_directories(kivo_playback_session PUBLIC include/)
@@ -439,7 +445,11 @@ target_compile_options(kivo_decode_boundary_tests PRIVATE
 )
 
 add_executable(kivo_playback_session_tests
-    tests/playback_session/playback_session_tests.cpp
+    tests/playback_session/runner/playback_session_tests_main.cpp
+    tests/playback_session/scenario/command_lifecycle_tests.cpp
+    tests/playback_session/scenario/recovery_executor_tests.cpp
+    tests/playback_session/scenario/recovery_state_tests.cpp
+    tests/playback_session/scenario/seek_tests.cpp
 )
 target_link_libraries(kivo_playback_session_tests PRIVATE kivo_playback_session)
 target_compile_features(kivo_playback_session_tests PRIVATE cxx_std_20)

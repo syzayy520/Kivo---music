@@ -7,8 +7,8 @@
 #include "kivo/core/playback/runtime/request/playback_runtime_open_request.hpp"
 #include "kivo/core/playback/runtime/result/playback_runtime_result.hpp"
 #include "kivo/core/playback/runtime/snapshot/playback_runtime_snapshot.hpp"
-#include "kivo/core/playback/session/playback_command.hpp"
-#include "kivo/core/playback/session/playback_session_controller.hpp"
+#include "kivo/core/playback/session/command/playback_command.hpp"
+#include "kivo/core/playback/session/controller/playback_session_controller.hpp"
 #include "kivo/core/render/boundary/render_boundary.hpp"
 #include "kivo/core/render/pump/render_pump_result.hpp"
 

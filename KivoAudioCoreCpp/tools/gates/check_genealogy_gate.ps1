@@ -93,6 +93,35 @@ if (Test-Path $toolsPath) {
 
 $runtimeFamilyRules = @(
     @{
+        Path = "include\kivo\core\playback\session"
+        AllowedDirectories = @(
+            "command",
+            "controller",
+            "snapshot"
+        )
+    },
+    @{
+        Path = "src\core\playback\session"
+        AllowedDirectories = @(
+            "command",
+            "controller",
+            "position",
+            "recovery",
+            "result",
+            "seek",
+            "snapshot",
+            "state"
+        )
+    },
+    @{
+        Path = "tests\playback_session"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
         Path = "include\kivo\core\playback\runtime"
         AllowedDirectories = @(
             "coordinator",
@@ -153,8 +182,11 @@ foreach ($rule in $runtimeFamilyRules) {
 }
 
 $runtimeSourceRoots = @(
+    "include\kivo\core\playback\session",
     "include\kivo\core\playback\runtime",
+    "src\core\playback\session",
     "src\core\playback\runtime",
+    "tests\playback_session",
     "tests\playback_runtime"
 )
 $runtimeMaximumLines = 260
