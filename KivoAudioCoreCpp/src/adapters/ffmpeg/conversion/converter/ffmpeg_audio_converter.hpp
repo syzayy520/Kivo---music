@@ -10,10 +10,14 @@ extern "C" {
 #include <libswresample/swresample.h>
 }
 
+#include "adapters/ffmpeg/mapping/ffmpeg_audio_format.hpp"
+#include "kivo/core/contract/format/negotiation/conversion_policy.hpp"
 #include "kivo/core/contract/format/roles/render_format.hpp"
 #include "kivo/core/contract/sample_position.hpp"
 #include "kivo/core/decode/failure/decode_failure.hpp"
-#include "adapters/ffmpeg/mapping/ffmpeg_audio_format.hpp"
+#include "kivo/core/processing/policy/dither_policy.hpp"
+#include "kivo/core/processing/policy/resample_quality.hpp"
+#include "kivo/core/processing/snapshot/audio_conversion_snapshot.hpp"
 
 namespace kivo::adapters::ffmpeg::detail {
 
@@ -27,7 +31,11 @@ public:
 
     [[nodiscard]] bool open(
         const AVFrame& frame,
-        const core::contract::RenderFormat& target) noexcept;
+        const core::contract::AudioFormatDescriptor& source,
+        const core::contract::RenderFormat& target,
+        const core::contract::ConversionPolicy& conversion,
+        core::processing::ResampleQuality resample_quality,
+        core::processing::DitherPolicy dither_policy) noexcept;
     void close() noexcept;
 
     [[nodiscard]] bool is_open() const noexcept;
@@ -37,6 +45,8 @@ public:
     [[nodiscard]] std::span<const std::byte> bytes() const noexcept;
     [[nodiscard]] core::contract::FrameCount frame_count() const noexcept;
     [[nodiscard]] core::decode::DecodeFailure failure() const noexcept;
+    [[nodiscard]] core::processing::AudioConversionSnapshot
+    snapshot() const noexcept;
 
 private:
     [[nodiscard]] bool convert_samples(
@@ -46,6 +56,7 @@ private:
     SwrContext* context_{nullptr};
     FfmpegTargetFormat target_{};
     core::contract::RenderFormat render_format_{};
+    core::processing::AudioConversionSnapshot snapshot_{};
     std::vector<std::byte> output_{};
     core::contract::FrameCount frame_count_{0};
     core::decode::DecodeFailure failure_{

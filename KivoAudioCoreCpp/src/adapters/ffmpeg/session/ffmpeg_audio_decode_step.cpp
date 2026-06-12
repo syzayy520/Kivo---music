@@ -54,7 +54,13 @@ core::decode::DecodeStepResult FfmpegAudioDecodeRuntime::decode_next() noexcept 
         const auto receive_result = decoder_.receive_frame();
         if (receive_result == 0) {
             if (!converter_.is_open()
-                && !converter_.open(*decoder_.frame(), target_format_)) {
+                && !converter_.open(
+                    *decoder_.frame(),
+                    current_probe_.native_format.format,
+                    target_format_,
+                    current_probe_.conversion,
+                    resample_quality_,
+                    conversion_dither_)) {
                 return core::decode::DecodeStepResult::failed(
                     converter_.failure());
             }
@@ -62,6 +68,7 @@ core::decode::DecodeStepResult FfmpegAudioDecodeRuntime::decode_next() noexcept 
                 return core::decode::DecodeStepResult::failed(
                     converter_.failure());
             }
+            current_probe_.conversion_snapshot = converter_.snapshot();
             auto frame_count = converter_.frame_count();
             auto bytes = converter_.bytes();
             if (frame_count == 0) {
@@ -134,6 +141,7 @@ core::decode::DecodeStepResult FfmpegAudioDecodeRuntime::decode_next() noexcept 
                     return core::decode::DecodeStepResult::failed(
                         converter_.failure());
                 }
+                current_probe_.conversion_snapshot = converter_.snapshot();
                 converter_drained_ = converter_.frame_count() == 0;
                 if (!converter_drained_) {
                     const auto frame_count = converter_.frame_count();

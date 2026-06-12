@@ -22,6 +22,10 @@ public:
     uint64_t close_count{0};
     uint64_t seek_count{0};
     kivo::core::contract::SamplePosition last_seek_target{0};
+    kivo::core::processing::ResampleQuality last_resample_quality{
+        kivo::core::processing::ResampleQuality::Balanced};
+    kivo::core::processing::DitherPolicy last_conversion_dither{
+        kivo::core::processing::DitherPolicy::Disabled};
 
     [[nodiscard]] kivo::core::decode::DecodeOpenResult open(
         std::unique_ptr<kivo::core::decode::ByteSourceBoundary> source,
@@ -40,6 +44,8 @@ public:
         decode_generation_ = request.decode_generation;
         previous_decode_generation_ = request.decode_generation;
         output_format_ = request.target_format;
+        last_resample_quality = request.resample_quality;
+        last_conversion_dither = request.conversion_dither;
         next_block_ = 0;
         seeked_ = false;
         probe_ = make_probe();

@@ -4,7 +4,7 @@ Kivo Windows Desktop Commercial Audio Core — C++ Implementation
 
 ## Project Status
 
-**Current execution position:** P0-N processing boundary.
+**Current execution position:** P0-O host ABI.
 
 This project is the standalone C++ audio core for the Kivo Windows desktop music player.
 It replaces the previous Rust audio backend with a fully self-controlled C++ implementation.
@@ -18,7 +18,9 @@ Current state:
 - WASAPI exclusive negotiation is implemented without shared fallback.
 - Bit-perfect is reported only from complete mode, format, engine, conversion,
   and processing evidence.
-- P0-N processing implementation is the active phase.
+- ReplayGain, software volume, deterministic dither, explicit resample
+  quality, conversion latency/tail truth, and strict bypass are complete.
+- P0-O host ABI implementation is the active phase.
 
 The authoritative implementation order is:
 
@@ -50,8 +52,8 @@ roadmap amendment is committed.
 | P0-K | Commercial Stability / Device Matrix | DONE |
 | P0-L | Gapless Playback / Timeline Accuracy | DONE |
 | P0-M | Exclusive Mode / Bit-Perfect | DONE |
-| P0-N | ReplayGain / Volume / DSP | ACTIVE |
-| P0-O | Host ABI / Tauri Integration | PLANNED |
+| P0-N | ReplayGain / Volume / DSP | DONE |
+| P0-O | Host ABI / Tauri Integration | ACTIVE |
 | P0-P | Commercial Release Hardening | PLANNED |
 | P0-Q | Hi-Res / DSD / DoP Research | PLANNED |
 | P0-R | mpv/libmpv Reference Research | PLANNED |

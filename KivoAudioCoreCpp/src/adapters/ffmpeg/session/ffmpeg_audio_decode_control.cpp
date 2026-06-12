@@ -67,6 +67,8 @@ core::decode::DecodeControlResult FfmpegAudioDecodeRuntime::close() noexcept {
     source_generation_ = {};
     decode_generation_ = {};
     target_format_ = {};
+    resample_quality_ = core::processing::ResampleQuality::Balanced;
+    conversion_dither_ = core::processing::DitherPolicy::Disabled;
     current_probe_ = {};
     next_frame_offset_ = 0;
     opened_ = false;
@@ -91,6 +93,8 @@ void FfmpegAudioDecodeRuntime::reset_decode_state(
     converter_.close();
     decode_generation_ = generation;
     current_probe_.decode_generation = generation;
+    current_probe_.conversion_snapshot.latency_frames = 0;
+    current_probe_.conversion_snapshot.pending_tail_frames = 0;
     input_eof_ = false;
     decoder_drain_sent_ = false;
     converter_drained_ = false;

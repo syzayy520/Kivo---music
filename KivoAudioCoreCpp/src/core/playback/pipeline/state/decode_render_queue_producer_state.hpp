@@ -5,6 +5,7 @@
 
 #include "../buffer/decode_render_queue_buffer.hpp"
 #include "kivo/core/playback/pipeline/producer/decode_render_queue_producer.hpp"
+#include "kivo/core/processing/chain/audio_processing_chain.hpp"
 
 namespace kivo::core::playback {
 
@@ -42,6 +43,7 @@ private:
     render::RenderGenerationSet generations_{};
     decode::DecodeGeneration decode_generation_{};
     DecodeRenderQueueProducerConfiguration configuration_{};
+    std::unique_ptr<processing::AudioProcessingChain> processing_{};
     std::array<pipeline_buffer::BufferedBlock, 2> blocks_{};
     std::optional<size_t> held_index_{};
     std::optional<size_t> active_index_{};

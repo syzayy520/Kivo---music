@@ -46,6 +46,7 @@ using namespace kivo;
     probe.native_format = native_format();
     probe.output_format = output_format();
     probe.conversion = {true, true, false, true};
+    probe.conversion_snapshot.conversion = probe.conversion;
     probe.resample = {
         true,
         core::contract::ResampleReason::DeviceMismatch,

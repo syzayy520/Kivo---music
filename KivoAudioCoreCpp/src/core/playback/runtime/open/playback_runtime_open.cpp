@@ -62,7 +62,9 @@ PlaybackRuntimeResult PlaybackRuntimeCoordinator::Impl::open(
     const decode::DecodeOpenRequest decode_request{
         render_open.accepted_format(),
         request.decode_generation,
-        request.allow_conversion
+        request.allow_conversion,
+        request.resample_quality,
+        request.conversion_dither
     };
     const auto decode_open = decoder_.open(
         std::move(source),

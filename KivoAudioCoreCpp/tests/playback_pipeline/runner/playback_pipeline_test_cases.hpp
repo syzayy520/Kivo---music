@@ -11,5 +11,6 @@ void oversized_decode_block_fails_before_queue_mutation();
 void creation_rejects_chunk_larger_than_queue_slot();
 void stale_decode_generation_fails_before_queue_mutation();
 void stale_source_generation_fails_before_queue_mutation();
+void processing_runs_before_queue_publication();
 
 } // namespace playback_pipeline_test

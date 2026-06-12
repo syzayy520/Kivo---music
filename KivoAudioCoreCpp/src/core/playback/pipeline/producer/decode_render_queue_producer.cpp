@@ -19,9 +19,15 @@ DecodeRenderQueueProducer::Impl::Impl(
       generations_(generations),
       decode_generation_(decode_generation),
       configuration_(configuration),
+      processing_(processing::AudioProcessingChain::create(
+          format,
+          configuration.processing)),
       next_buffer_id_(configuration.first_buffer_id) {}
 
 bool DecodeRenderQueueProducer::Impl::allocate() noexcept {
+    if (!processing_) {
+        return false;
+    }
     for (auto& block : blocks_) {
         block.bytes.reset(new (std::nothrow) std::byte[
             configuration_.maximum_decode_block_bytes]);

@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cstring>
 #include <limits>
+#include <span>
 
 namespace kivo::core::playback {
 
@@ -53,6 +54,15 @@ DecodeRenderQueueProducer::Impl::store_decoded(
         stored.bytes.get(),
         block.bytes.data(),
         block.bytes.size());
+    const auto processed = processing_->process(
+        std::span<std::byte>{stored.bytes.get(), block.bytes.size()},
+        block.frame_count);
+    if (!processed.succeeded()) {
+        snapshot_.last_decode_failure =
+            decode::DecodeFailure::ProcessingFailed;
+        snapshot_.state = DecodeRenderQueueProducerState::Failed;
+        return pipeline_buffer::StoreResult::Failed;
+    }
     stored.byte_count = block.bytes.size();
     stored.frame_count = block.frame_count;
     stored.frame_offset = block.frame_offset;

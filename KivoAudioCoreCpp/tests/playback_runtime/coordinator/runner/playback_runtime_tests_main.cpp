@@ -25,6 +25,8 @@ int main() {
          codec_failure_is_truthful_and_remains_closable},
         {"open_failure_rolls_back_every_boundary",
          open_failure_rolls_back_every_boundary},
+        {"processing_policy_is_propagated_and_bit_perfect_conflicts_reject",
+         processing_policy_is_propagated_and_bit_perfect_conflicts_reject},
         {"eos_drains_buffer_and_stops_session",
          eos_drains_buffer_and_stops_session},
         {"drain_timeout_fails_and_close_releases_boundaries",

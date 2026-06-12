@@ -27,7 +27,9 @@ int main() {
         {"stale_decode_generation_fails_before_queue_mutation",
          stale_decode_generation_fails_before_queue_mutation},
         {"stale_source_generation_fails_before_queue_mutation",
-         stale_source_generation_fails_before_queue_mutation}
+         stale_source_generation_fails_before_queue_mutation},
+        {"processing_runs_before_queue_publication",
+         processing_runs_before_queue_publication}
     };
     int passed = 0;
     std::cout << "=== Playback Pipeline Tests ===\n\n";

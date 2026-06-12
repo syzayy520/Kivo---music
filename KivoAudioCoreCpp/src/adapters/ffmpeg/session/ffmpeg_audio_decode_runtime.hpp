@@ -5,7 +5,7 @@
 #include "kivo/adapters/ffmpeg/session/ffmpeg_audio_decode_session.hpp"
 #include "adapters/ffmpeg/codec/ffmpeg_audio_decoder.hpp"
 #include "adapters/ffmpeg/container/ffmpeg_demux_session.hpp"
-#include "adapters/ffmpeg/conversion/ffmpeg_audio_converter.hpp"
+#include "adapters/ffmpeg/conversion/converter/ffmpeg_audio_converter.hpp"
 #include "adapters/ffmpeg/source/ffmpeg_avio_bridge.hpp"
 
 namespace kivo::adapters::ffmpeg::detail {
@@ -39,6 +39,10 @@ private:
     core::contract::SourceGeneration source_generation_{};
     core::decode::DecodeGeneration decode_generation_{};
     core::contract::RenderFormat target_format_{};
+    core::processing::ResampleQuality resample_quality_{
+        core::processing::ResampleQuality::Balanced};
+    core::processing::DitherPolicy conversion_dither_{
+        core::processing::DitherPolicy::Disabled};
     core::decode::MediaProbe current_probe_{};
     core::contract::SamplePosition next_frame_offset_{0};
     bool opened_{false};

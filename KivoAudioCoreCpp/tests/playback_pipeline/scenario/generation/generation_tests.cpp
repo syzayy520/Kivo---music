@@ -1,6 +1,6 @@
-#include "../fixture/pipeline_test_assert.hpp"
-#include "../fixture/pipeline_test_factory.hpp"
-#include "../runner/playback_pipeline_test_cases.hpp"
+#include "../../fixture/pipeline_test_assert.hpp"
+#include "../../fixture/pipeline_test_factory.hpp"
+#include "../../runner/playback_pipeline_test_cases.hpp"
 
 namespace playback_pipeline_test {
 

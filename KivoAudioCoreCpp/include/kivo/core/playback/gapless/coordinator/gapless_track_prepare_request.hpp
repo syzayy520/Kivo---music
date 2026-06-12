@@ -14,7 +14,7 @@ struct GaplessTrackPrepareRequest {
     decode::DecodeGeneration decode_generation{};
     DecodeRenderQueueProducerConfiguration producer_configuration{};
 
-    [[nodiscard]] constexpr bool is_valid() const noexcept {
+    [[nodiscard]] bool is_valid() const noexcept {
         return decoder != nullptr
             && plan.is_valid()
             && decode_generation.value() != 0

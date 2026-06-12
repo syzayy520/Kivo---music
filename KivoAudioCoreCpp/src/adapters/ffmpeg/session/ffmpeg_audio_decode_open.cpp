@@ -83,6 +83,8 @@ core::decode::DecodeOpenResult FfmpegAudioDecodeRuntime::open(
     source_generation_ = new_source->generation();
     decode_generation_ = request.decode_generation;
     target_format_ = request.target_format;
+    resample_quality_ = request.resample_quality;
+    conversion_dither_ = request.conversion_dither;
     source_ = std::move(new_source);
 
     const auto extent_failure = validate_known_container_extent(*source_);
@@ -190,7 +192,13 @@ core::decode::DecodeOpenResult FfmpegAudioDecodeRuntime::open(
         return core::decode::DecodeOpenResult::rejected(
             core::decode::DecodeFailure::ConversionRequired);
     }
-    if (!converter_.open(*decoder_.frame(), target_format_)
+    if (!converter_.open(
+            *decoder_.frame(),
+            native->format,
+            target_format_,
+            conversion,
+            resample_quality_,
+            conversion_dither_)
         || !converter_.convert(*decoder_.frame())) {
         const auto failure = converter_.failure();
         close();
@@ -207,6 +215,7 @@ core::decode::DecodeOpenResult FfmpegAudioDecodeRuntime::open(
     current_probe_.native_format = *native;
     current_probe_.output_format = target_format_;
     current_probe_.conversion = conversion;
+    current_probe_.conversion_snapshot = converter_.snapshot();
     current_probe_.resample = {
         conversion.sample_rate_convert,
         conversion.sample_rate_convert

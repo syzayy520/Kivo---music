@@ -5,7 +5,7 @@
 **Effective Date:** 2026-06-12
 **Applies To:** `KivoAudioCoreCpp/`
 **Architecture Basis:** V10.1 FINAL P0-B READY LOCKED PATCHED
-**Current Execution Position:** P0-N processing boundary
+**Current Execution Position:** P0-O host ABI
 
 ---
 
@@ -45,7 +45,7 @@ for the remaining audio-core phases.
 decode, product-core coordination, quality, host integration, and release work
 inside `KivoAudioCoreCpp/`.
 
-**Current Phase:** P0-N processing boundary and strict bypass proof.
+**Current Phase:** P0-O versioned host ABI and ownership proof.
 
 **Allowed:** Work that directly satisfies the active milestone, its tests, its
 validation requirements, or a documented correctness, safety, legal, privacy,

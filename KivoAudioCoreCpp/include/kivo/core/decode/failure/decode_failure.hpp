@@ -19,6 +19,7 @@ enum class DecodeFailure : uint8_t {
     InvalidMediaData,
     ConversionRequired,
     ConversionFailed,
+    ProcessingFailed,
     SeekUnsupported,
     FlushUnsupported,
     StaleSourceGeneration,

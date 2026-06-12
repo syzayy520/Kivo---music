@@ -162,7 +162,11 @@ DecodeRenderQueueProducer::Impl::finish() noexcept {
 
 DecodeRenderQueueProducerSnapshot
 DecodeRenderQueueProducer::Impl::snapshot() const noexcept {
-    return snapshot_;
+    auto result = snapshot_;
+    if (processing_) {
+        result.processing = processing_->snapshot();
+    }
+    return result;
 }
 
 DecodeRenderQueueProducerResult

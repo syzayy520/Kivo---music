@@ -3,6 +3,7 @@
 namespace playback_runtime_test {
 
 void open_failure_rolls_back_every_boundary();
+void processing_policy_is_propagated_and_bit_perfect_conflicts_reject();
 void shutdown_waits_for_active_write_and_releases_runtime();
 void close_waits_for_active_drain_and_releases_runtime();
 void device_loss_during_flush_recovers_pipeline();

@@ -23,7 +23,9 @@ int main() {
         {"engine_resample_and_conversion_are_rejected",
          engine_resample_and_conversion_are_rejected},
         {"processing_and_dither_are_rejected",
-         processing_and_dither_are_rejected}
+         processing_and_dither_are_rejected},
+        {"snapshots_build_complete_truth_evidence",
+         snapshots_build_complete_truth_evidence}
     };
     int passed = 0;
     std::cout << "=== Output Truth Tests ===\n\n";

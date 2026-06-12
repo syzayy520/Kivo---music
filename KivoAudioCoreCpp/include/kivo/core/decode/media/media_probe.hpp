@@ -12,6 +12,7 @@
 #include "kivo/core/decode/generation/decode_generation.hpp"
 #include "kivo/core/decode/media/audio_codec.hpp"
 #include "kivo/core/decode/media/media_container.hpp"
+#include "kivo/core/processing/snapshot/audio_conversion_snapshot.hpp"
 
 namespace kivo::core::decode {
 
@@ -25,6 +26,7 @@ struct MediaProbe {
     contract::RenderFormat output_format{};
     contract::ConversionPolicy conversion{};
     contract::ResampleDecision resample{};
+    processing::AudioConversionSnapshot conversion_snapshot{};
     contract::CodecDelay codec_delay{};
     contract::Padding trailing_padding{};
     contract::FrameCount duration_frames{0};
@@ -38,6 +40,7 @@ struct MediaProbe {
             && native_format.is_valid()
             && output_format.is_valid()
             && (!duration_known || duration_frames != 0)
+            && conversion_snapshot.conversion == conversion
             && resample.source_rate == native_format.format.sample_rate
             && resample.target_rate == output_format.format.sample_rate;
     }

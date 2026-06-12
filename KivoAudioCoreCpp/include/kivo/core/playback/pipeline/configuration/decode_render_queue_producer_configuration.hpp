@@ -5,6 +5,7 @@
 #include "kivo/core/contract/buffer/identity/buffer_id.hpp"
 #include "kivo/core/contract/sample_position.hpp"
 #include "kivo/core/playback/pipeline/configuration/queue_end_of_stream_policy.hpp"
+#include "kivo/core/processing/configuration/audio_processing_configuration.hpp"
 
 namespace kivo::core::playback {
 
@@ -15,16 +16,18 @@ struct DecodeRenderQueueProducerConfiguration {
     contract::SamplePosition timeline_origin_frames{0};
     QueueEndOfStreamPolicy end_of_stream_policy{
         QueueEndOfStreamPolicy::CloseAndMarkFinal};
+    processing::AudioProcessingConfiguration processing{};
 
-    [[nodiscard]] constexpr bool is_valid() const noexcept {
+    [[nodiscard]] bool is_valid() const noexcept {
         return maximum_decode_block_bytes != 0
             && maximum_chunk_frames != 0
             && first_buffer_id.value != 0
             && timeline_origin_frames
-                != contract::kInvalidSamplePosition;
+                != contract::kInvalidSamplePosition
+            && processing.is_valid();
     }
 
-    [[nodiscard]] constexpr bool operator==(
+    [[nodiscard]] bool operator==(
         const DecodeRenderQueueProducerConfiguration&) const noexcept = default;
 };
 

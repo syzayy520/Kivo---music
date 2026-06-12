@@ -174,6 +174,14 @@ $runtimeFamilyRules = @(
         )
     },
     @{
+        Path = "src\adapters\ffmpeg\conversion"
+        AllowedDirectories = @(
+            "converter",
+            "policy",
+            "truth"
+        )
+    },
+    @{
         Path = "tests\ffmpeg_decode"
         AllowedDirectories = @(
             "fixture",
@@ -338,7 +346,10 @@ $runtimeFamilyRules = @(
     },
     @{
         Path = "src\core\output\truth"
-        AllowedDirectories = @("evaluation")
+        AllowedDirectories = @(
+            "evaluation",
+            "evidence"
+        )
     },
     @{
         Path = "tests\output_truth"
@@ -350,7 +361,55 @@ $runtimeFamilyRules = @(
     },
     @{
         Path = "tests\output_truth\scenario"
-        AllowedDirectories = @("evaluation")
+        AllowedDirectories = @(
+            "evaluation",
+            "evidence"
+        )
+    },
+    @{
+        Path = "include\kivo\core\processing"
+        AllowedDirectories = @(
+            "chain",
+            "configuration",
+            "policy",
+            "result",
+            "snapshot"
+        )
+    },
+    @{
+        Path = "src\core\processing"
+        AllowedDirectories = @(
+            "chain",
+            "gain",
+            "planning"
+        )
+    },
+    @{
+        Path = "tests\audio_processing"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
+        Path = "tests\audio_processing\scenario"
+        AllowedDirectories = @(
+            "bypass",
+            "formats",
+            "gain",
+            "policy"
+        )
+    },
+    @{
+        Path = "tests\playback_pipeline\scenario"
+        AllowedDirectories = @(
+            "backpressure",
+            "eos",
+            "generation",
+            "processing",
+            "validation"
+        )
     },
     @{
         Path = "include\kivo\core\playback\recovery"
@@ -482,12 +541,15 @@ $runtimeSourceRoots = @(
     "src\core\playback\gapless",
     "include\kivo\core\output\truth",
     "src\core\output\truth",
+    "include\kivo\core\processing",
+    "src\core\processing",
     "src\core\playback\recovery",
     "src\core\playback\session",
     "src\core\playback\runtime",
     "tests\playback_pipeline",
     "tests\playback_gapless",
     "tests\output_truth",
+    "tests\audio_processing",
     "tests\playback_session",
     "tests\playback_runtime"
 )

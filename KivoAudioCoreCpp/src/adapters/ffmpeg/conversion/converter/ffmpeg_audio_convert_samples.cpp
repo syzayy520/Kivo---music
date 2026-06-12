@@ -1,69 +1,18 @@
-#include "adapters/ffmpeg/conversion/ffmpeg_audio_converter.hpp"
+#include "adapters/ffmpeg/conversion/converter/ffmpeg_audio_converter.hpp"
 
 #include <cstdint>
 #include <limits>
 
-extern "C" {
-#include <libavutil/error.h>
-}
+#include "adapters/ffmpeg/conversion/truth/ffmpeg_conversion_delay.hpp"
 
 namespace kivo::adapters::ffmpeg::detail {
-
-FfmpegAudioConverter::~FfmpegAudioConverter() {
-    close();
-}
-
-bool FfmpegAudioConverter::open(
-    const AVFrame& frame,
-    const core::contract::RenderFormat& target) noexcept {
-    close();
-    auto mapped_target = map_target_format(target);
-    if (!mapped_target.has_value()) {
-        failure_ = core::decode::DecodeFailure::ConversionRequired;
-        return false;
-    }
-    target_ = *mapped_target;
-    render_format_ = target;
-
-    if (swr_alloc_set_opts2(
-            &context_,
-            &target_.channel_layout,
-            target_.sample_format,
-            target_.sample_rate,
-            &frame.ch_layout,
-            static_cast<AVSampleFormat>(frame.format),
-            frame.sample_rate,
-            0,
-            nullptr) < 0
-        || context_ == nullptr
-        || swr_init(context_) < 0) {
-        failure_ = core::decode::DecodeFailure::ConversionFailed;
-        close();
-        return false;
-    }
-    failure_ = core::decode::DecodeFailure::None;
-    return true;
-}
-
-void FfmpegAudioConverter::close() noexcept {
-    swr_free(&context_);
-    uninit_target_format(target_);
-    render_format_ = {};
-    output_.clear();
-    frame_count_ = 0;
-}
-
-bool FfmpegAudioConverter::is_open() const noexcept {
-    return context_ != nullptr;
-}
 
 bool FfmpegAudioConverter::convert(const AVFrame& frame) noexcept {
     if (context_ == nullptr || frame.nb_samples <= 0) {
         failure_ = core::decode::DecodeFailure::InvalidMediaData;
         return false;
     }
-    const uint8_t* const* input = frame.extended_data;
-    return convert_samples(input, frame.nb_samples);
+    return convert_samples(frame.extended_data, frame.nb_samples);
 }
 
 bool FfmpegAudioConverter::drain() noexcept {
@@ -72,18 +21,6 @@ bool FfmpegAudioConverter::drain() noexcept {
         return false;
     }
     return convert_samples(nullptr, 0);
-}
-
-std::span<const std::byte> FfmpegAudioConverter::bytes() const noexcept {
-    return output_;
-}
-
-core::contract::FrameCount FfmpegAudioConverter::frame_count() const noexcept {
-    return frame_count_;
-}
-
-core::decode::DecodeFailure FfmpegAudioConverter::failure() const noexcept {
-    return failure_;
 }
 
 bool FfmpegAudioConverter::convert_samples(
@@ -122,6 +59,10 @@ bool FfmpegAudioConverter::convert_samples(
     }
     output_.resize(static_cast<size_t>(converted) * bytes_per_frame);
     frame_count_ = static_cast<core::contract::FrameCount>(converted);
+    refresh_ffmpeg_conversion_delay(
+        *context_,
+        render_format_.format.sample_rate,
+        snapshot_);
     failure_ = core::decode::DecodeFailure::None;
     return true;
 }

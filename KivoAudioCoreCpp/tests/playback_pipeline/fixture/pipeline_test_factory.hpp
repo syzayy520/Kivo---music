@@ -60,7 +60,8 @@ template <size_t Size>
     kivo::core::playback::QueueEndOfStreamPolicy end_policy =
         kivo::core::playback::QueueEndOfStreamPolicy::
             CloseAndMarkFinal,
-    kivo::core::contract::BufferId first_buffer_id = {1}) {
+    kivo::core::contract::BufferId first_buffer_id = {1},
+    kivo::core::processing::AudioProcessingConfiguration processing = {}) {
     kivo::core::render::RenderGenerationSet generations{};
     generations.stream.id = generation(2);
     generations.seek.id = generation(5);
@@ -77,7 +78,8 @@ template <size_t Size>
             chunk_frames,
             first_buffer_id,
             timeline_origin,
-            end_policy
+            end_policy,
+            processing
         });
 }
 

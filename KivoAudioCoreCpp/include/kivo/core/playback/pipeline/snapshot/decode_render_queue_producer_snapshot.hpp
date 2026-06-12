@@ -4,6 +4,7 @@
 
 #include "kivo/core/contract/sample_position.hpp"
 #include "kivo/core/decode/failure/decode_failure.hpp"
+#include "kivo/core/processing/snapshot/audio_processing_snapshot.hpp"
 
 namespace kivo::core::playback {
 
@@ -26,8 +27,9 @@ struct DecodeRenderQueueProducerSnapshot {
     uint64_t queued_blocks{0};
     uint64_t backpressure_count{0};
     uint64_t stale_blocks_discarded{0};
+    processing::AudioProcessingSnapshot processing{};
 
-    [[nodiscard]] constexpr bool operator==(
+    [[nodiscard]] bool operator==(
         const DecodeRenderQueueProducerSnapshot&) const noexcept = default;
 };
 
