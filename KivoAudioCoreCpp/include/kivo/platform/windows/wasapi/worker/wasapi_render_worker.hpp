@@ -4,10 +4,14 @@
 #include <memory>
 
 #include "kivo/core/render/queue/spsc_audio_block_queue.hpp"
-#include "kivo/platform/windows/wasapi/wasapi_render_worker_snapshot.hpp"
-#include "kivo/platform/windows/wasapi/wasapi_renderer.hpp"
+#include "kivo/platform/windows/wasapi/renderer/wasapi_renderer.hpp"
+#include "kivo/platform/windows/wasapi/worker/wasapi_render_worker_snapshot.hpp"
 
 namespace kivo::platform::windows::wasapi {
+
+namespace detail {
+class WasapiRenderWorkerRuntime;
+}
 
 class WasapiRenderWorker final {
 public:
@@ -27,8 +31,7 @@ public:
     [[nodiscard]] WasapiRenderWorkerSnapshot snapshot() const noexcept;
 
 private:
-    class Impl;
-    std::unique_ptr<Impl> impl_;
+    std::unique_ptr<detail::WasapiRenderWorkerRuntime> impl_;
 };
 
 } // namespace kivo::platform::windows::wasapi

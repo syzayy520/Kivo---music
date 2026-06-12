@@ -1,12 +1,12 @@
-#include "wasapi_tests_main.hpp"
+#include "../fixture/wasapi_test_runner.hpp"
 
 #include <Windows.h>
 #include <ks.h>
 #include <ksmedia.h>
 #include <mmreg.h>
 
-#include "kivo/platform/windows/wasapi/wasapi_renderer.hpp"
-#include "wasapi_format.hpp"
+#include "kivo/platform/windows/wasapi/renderer/wasapi_renderer.hpp"
+#include "platform/windows/wasapi/format/wasapi_format.hpp"
 
 namespace {
 

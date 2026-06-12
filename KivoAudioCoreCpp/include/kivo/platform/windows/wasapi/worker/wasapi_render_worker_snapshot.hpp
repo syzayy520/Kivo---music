@@ -4,7 +4,7 @@
 
 #include "kivo/core/contract/sample_position.hpp"
 #include "kivo/core/render/failure/render_failure.hpp"
-#include "kivo/platform/windows/wasapi/wasapi_wait_result.hpp"
+#include "kivo/platform/windows/wasapi/result/wasapi_wait_result.hpp"
 
 namespace kivo::platform::windows::wasapi {
 

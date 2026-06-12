@@ -4,10 +4,14 @@
 #include <memory>
 
 #include "kivo/core/render/boundary/render_boundary.hpp"
-#include "kivo/platform/windows/wasapi/wasapi_diagnostics.hpp"
-#include "kivo/platform/windows/wasapi/wasapi_wait_result.hpp"
+#include "kivo/platform/windows/wasapi/diagnostics/wasapi_diagnostics.hpp"
+#include "kivo/platform/windows/wasapi/result/wasapi_wait_result.hpp"
 
 namespace kivo::platform::windows::wasapi {
+
+namespace detail {
+class WasapiRendererState;
+}
 
 class WasapiRenderer final : public core::render::RenderBoundary {
 public:
@@ -45,8 +49,7 @@ public:
     [[nodiscard]] WasapiDiagnostics diagnostics() const noexcept;
 
 private:
-    class Impl;
-    std::unique_ptr<Impl> impl_;
+    std::unique_ptr<detail::WasapiRendererState> impl_;
 };
 
 } // namespace kivo::platform::windows::wasapi

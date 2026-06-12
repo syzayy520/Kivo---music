@@ -1,9 +1,9 @@
-#include "wasapi_tests_main.hpp"
+#include "../fixture/wasapi_test_runner.hpp"
 
 #include <Windows.h>
 #include <audioclient.h>
 
-#include "wasapi_error.hpp"
+#include "platform/windows/wasapi/error/wasapi_error.hpp"
 
 namespace {
 

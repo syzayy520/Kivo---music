@@ -9,8 +9,8 @@
 #include "kivo/adapters/ffmpeg/ffmpeg_audio_decode_session.hpp"
 #include "kivo/core/playback/pipeline/producer/decode_render_queue_producer.hpp"
 #include "kivo/core/render/queue/spsc_audio_block_queue.hpp"
-#include "kivo/platform/windows/wasapi/wasapi_render_worker.hpp"
-#include "kivo/platform/windows/wasapi/wasapi_renderer.hpp"
+#include "kivo/platform/windows/wasapi/renderer/wasapi_renderer.hpp"
+#include "kivo/platform/windows/wasapi/worker/wasapi_render_worker.hpp"
 #include "kivo/source/local/local_file_byte_source.hpp"
 
 namespace {

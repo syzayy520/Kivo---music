@@ -93,6 +93,33 @@ if (Test-Path $toolsPath) {
 
 $runtimeFamilyRules = @(
     @{
+        Path = "include\kivo\platform\windows\wasapi"
+        AllowedDirectories = @(
+            "diagnostics",
+            "renderer",
+            "result",
+            "worker"
+        )
+    },
+    @{
+        Path = "src\platform\windows\wasapi"
+        AllowedDirectories = @(
+            "apartment",
+            "error",
+            "format",
+            "renderer",
+            "worker"
+        )
+    },
+    @{
+        Path = "tests\platform_windows\wasapi"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
         Path = "include\kivo\testing\render"
         AllowedDirectories = @(
             "configuration",
@@ -255,6 +282,9 @@ foreach ($rule in $runtimeFamilyRules) {
 }
 
 $runtimeSourceRoots = @(
+    "include\kivo\platform\windows\wasapi",
+    "src\platform\windows\wasapi",
+    "tests\platform_windows\wasapi",
     "include\kivo\testing\render",
     "src\testing\render",
     "tests\fake_renderer",

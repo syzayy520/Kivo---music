@@ -1,8 +1,6 @@
-#include "wasapi_tests_main.hpp"
+#include "../fixture/wasapi_test_runner.hpp"
+#include "wasapi_test_cases.hpp"
 
-void run_wasapi_format_mapping_tests(WasapiTestRunner& runner);
-void run_wasapi_error_mapping_tests(WasapiTestRunner& runner);
-void run_wasapi_render_worker_tests(WasapiTestRunner& runner);
 
 int main() {
     std::cout << "=== WASAPI Adapter Tests ===\n\n";

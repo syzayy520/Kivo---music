@@ -541,11 +541,19 @@ target_compile_options(kivo_fake_renderer_tests PRIVATE
 # Windows WASAPI renderer
 if(WIN32)
     add_library(kivo_wasapi_renderer STATIC
-        src/platform/windows/wasapi/com_apartment.cpp
-        src/platform/windows/wasapi/wasapi_error.cpp
-        src/platform/windows/wasapi/wasapi_format.cpp
-        src/platform/windows/wasapi/wasapi_render_worker.cpp
-        src/platform/windows/wasapi/wasapi_renderer.cpp
+        src/platform/windows/wasapi/apartment/com_apartment.cpp
+        src/platform/windows/wasapi/error/wasapi_error.cpp
+        src/platform/windows/wasapi/format/wasapi_format.cpp
+        src/platform/windows/wasapi/renderer/wasapi_renderer_control.cpp
+        src/platform/windows/wasapi/renderer/wasapi_renderer_drain.cpp
+        src/platform/windows/wasapi/renderer/wasapi_renderer_facade.cpp
+        src/platform/windows/wasapi/renderer/wasapi_renderer_failure.cpp
+        src/platform/windows/wasapi/renderer/wasapi_renderer_open.cpp
+        src/platform/windows/wasapi/renderer/wasapi_renderer_query.cpp
+        src/platform/windows/wasapi/renderer/wasapi_renderer_write.cpp
+        src/platform/windows/wasapi/worker/wasapi_render_worker_facade.cpp
+        src/platform/windows/wasapi/worker/wasapi_render_worker_lifecycle.cpp
+        src/platform/windows/wasapi/worker/wasapi_render_worker_run.cpp
     )
     target_link_libraries(kivo_wasapi_renderer
         PUBLIC kivo_core_render kivo_render_queue
@@ -553,7 +561,7 @@ if(WIN32)
     )
     target_include_directories(kivo_wasapi_renderer
         PUBLIC include/
-        PRIVATE src/platform/windows/wasapi
+        PRIVATE src
     )
     target_compile_features(kivo_wasapi_renderer PUBLIC cxx_std_20)
     target_compile_definitions(kivo_wasapi_renderer PRIVATE
@@ -567,14 +575,14 @@ if(WIN32)
     )
 
     add_executable(kivo_wasapi_tests
-        tests/platform_windows/wasapi/wasapi_tests_main.cpp
-        tests/platform_windows/wasapi/format_mapping_tests.cpp
-        tests/platform_windows/wasapi/error_mapping_tests.cpp
-        tests/platform_windows/wasapi/render_worker_tests.cpp
+        tests/platform_windows/wasapi/runner/wasapi_tests_main.cpp
+        tests/platform_windows/wasapi/scenario/format_mapping_tests.cpp
+        tests/platform_windows/wasapi/scenario/error_mapping_tests.cpp
+        tests/platform_windows/wasapi/scenario/render_worker_tests.cpp
     )
     target_link_libraries(kivo_wasapi_tests PRIVATE kivo_wasapi_renderer)
     target_include_directories(kivo_wasapi_tests PRIVATE
-        src/platform/windows/wasapi
+        src
     )
     target_compile_features(kivo_wasapi_tests PRIVATE cxx_std_20)
     target_compile_definitions(kivo_wasapi_tests PRIVATE

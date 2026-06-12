@@ -14,8 +14,8 @@
 #include <vector>
 
 #include "kivo/core/render/queue/spsc_audio_block_queue.hpp"
-#include "kivo/platform/windows/wasapi/wasapi_render_worker.hpp"
-#include "kivo/platform/windows/wasapi/wasapi_renderer.hpp"
+#include "kivo/platform/windows/wasapi/renderer/wasapi_renderer.hpp"
+#include "kivo/platform/windows/wasapi/worker/wasapi_render_worker.hpp"
 
 namespace {
 
