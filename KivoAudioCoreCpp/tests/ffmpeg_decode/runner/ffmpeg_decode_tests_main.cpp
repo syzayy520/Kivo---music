@@ -12,6 +12,8 @@ int main(int argc, char** argv) {
     run_ffmpeg_decode_fixture_tests(runner);
     run_ffmpeg_policy_and_corruption_tests(runner);
     run_ffmpeg_seek_flush_tests(runner);
+    run_ffmpeg_truncated_media_tests(runner);
+    run_ffmpeg_unsupported_cue_tests(runner);
 
     std::cout << "\n=== " << runner.tests_passed << "/" << runner.tests_run
               << " passed ===\n";

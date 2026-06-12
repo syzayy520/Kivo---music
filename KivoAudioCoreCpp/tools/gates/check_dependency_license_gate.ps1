@@ -104,7 +104,13 @@ if (-not (Test-Path $fixtureManifestPath)) {
     foreach ($fixtureHash in @(
         "101b74ef127db194060ca1240e16551f92d3449d75f0248c3894963290f53de1",
         "0239214dc0f0a21376185d71a482f4f0b1b704dc315a5432d2acb2d23783ce46",
-        "a111e9605c587b55f99c43998d86220ea234c15c12b6b31ed29b015a8a744a42"
+        "a111e9605c587b55f99c43998d86220ea234c15c12b6b31ed29b015a8a744a42",
+        "210201592638c074385c54797e8d35564327a06a058a5f28eaa4e57ed5f84751",
+        "32133a19bf3f4f5ced41dc2593511ccd48d97f4ca83aeaa23586f8ae68fc350e",
+        "e4075edc6baa7c6f4e841dd99aa00e31be908472afaf8619f5c0eac5ed843f6d",
+        "fc620ee67a7f3c6b090f342e242150a52b648d6633c4dff3ef40f65e953f86e6",
+        "5070a3a3f9e45a1d49311ef44f568c0dbd156d4b428fd7ea2c160dcf7cc588b0",
+        "e9deb80bb404f66baa5ac400886ba56d433e65b57e350f64d2d2aa1b16054a57"
     )) {
         if ($fixtureManifest -notmatch [regex]::Escape($fixtureHash)) {
             $violations += "TEST_FIXTURE_PROVENANCE: missing hash '$fixtureHash'"

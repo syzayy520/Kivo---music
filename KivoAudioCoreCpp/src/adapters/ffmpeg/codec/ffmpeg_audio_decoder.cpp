@@ -22,6 +22,7 @@ bool FfmpegAudioDecoder::open(
         close();
         return false;
     }
+    context_->err_recognition = AV_EF_BUFFER | AV_EF_EXPLODE;
     if (avcodec_parameters_to_context(context_, &parameters) < 0
         || avcodec_open2(context_, codec, nullptr) < 0) {
         failure_ = core::decode::DecodeFailure::DecoderOpenFailed;

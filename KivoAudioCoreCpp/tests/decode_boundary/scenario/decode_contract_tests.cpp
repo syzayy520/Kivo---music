@@ -1,4 +1,4 @@
-#include "decode_boundary_tests_main.hpp"
+#include "../fixture/decode_boundary_test_runner.hpp"
 
 #include <array>
 #include <cstddef>

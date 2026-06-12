@@ -10,6 +10,24 @@ extern "C" {
 
 namespace kivo::adapters::ffmpeg::detail {
 
+bool FfmpegAudioDecodeRuntime::declared_duration_complete(
+    core::contract::FrameCount additional_frames) const noexcept {
+    if (!current_probe_.duration_known) {
+        return true;
+    }
+    const auto tolerance = std::max<core::contract::FrameCount>(
+        4096,
+        target_format_.format.sample_rate / 10u);
+    const auto completed_frames =
+        next_frame_offset_
+            > std::numeric_limits<core::contract::SamplePosition>::max()
+                - additional_frames
+        ? std::numeric_limits<core::contract::SamplePosition>::max()
+        : next_frame_offset_ + additional_frames;
+    return completed_frames >= current_probe_.duration_frames
+        || current_probe_.duration_frames - completed_frames <= tolerance;
+}
+
 core::decode::DecodeStepResult FfmpegAudioDecodeRuntime::decode_next() noexcept {
     if (!opened_) {
         return core::decode::DecodeStepResult::failed(
@@ -119,6 +137,8 @@ core::decode::DecodeStepResult FfmpegAudioDecodeRuntime::decode_next() noexcept 
                 converter_drained_ = converter_.frame_count() == 0;
                 if (!converter_drained_) {
                     const auto frame_count = converter_.frame_count();
+                    const auto terminal =
+                        declared_duration_complete(frame_count);
                     const core::decode::DecodedAudioBlockView block{
                         converter_.bytes(),
                         target_format_,
@@ -126,11 +146,15 @@ core::decode::DecodeStepResult FfmpegAudioDecodeRuntime::decode_next() noexcept 
                         next_frame_offset_,
                         source_generation_,
                         decode_generation_,
-                        true
+                        terminal
                     };
                     next_frame_offset_ += frame_count;
                     return core::decode::DecodeStepResult::produced(block);
                 }
+            }
+            if (!declared_duration_complete()) {
+                return core::decode::DecodeStepResult::failed(
+                    core::decode::DecodeFailure::InvalidMediaData);
             }
             return core::decode::DecodeStepResult::end_of_stream();
         }

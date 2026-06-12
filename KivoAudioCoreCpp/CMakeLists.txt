@@ -115,6 +115,7 @@ if(KIVO_FFMPEG_ROOT)
     add_library(kivo_ffmpeg_decode_adapter STATIC
         src/adapters/ffmpeg/source/ffmpeg_avio_bridge.cpp
         src/adapters/ffmpeg/container/ffmpeg_demux_session.cpp
+        src/adapters/ffmpeg/container/validation/known_container_extent.cpp
         src/adapters/ffmpeg/codec/ffmpeg_audio_decoder.cpp
         src/adapters/ffmpeg/conversion/ffmpeg_audio_converter.cpp
         src/adapters/ffmpeg/mapping/ffmpeg_audio_format.cpp
@@ -149,11 +150,29 @@ if(KIVO_FFMPEG_ROOT)
         "${KIVO_FFMPEG_FIXTURE_DIR}/tone.flac")
     set(KIVO_FFMPEG_MP3_FIXTURE
         "${KIVO_FFMPEG_FIXTURE_DIR}/tone.mp3")
+    set(KIVO_FFMPEG_VBR_MP3_FIXTURE
+        "${KIVO_FFMPEG_FIXTURE_DIR}/tone_vbr.mp3")
+    set(KIVO_FFMPEG_AAC_FIXTURE
+        "${KIVO_FFMPEG_FIXTURE_DIR}/tone_aac.m4a")
+    set(KIVO_FFMPEG_MONO_WAVE_FIXTURE
+        "${KIVO_FFMPEG_FIXTURE_DIR}/mono_22050.wav")
+    set(KIVO_FFMPEG_HIRES_FLAC_FIXTURE
+        "${KIVO_FFMPEG_FIXTURE_DIR}/stereo_96000.flac")
+    set(KIVO_FFMPEG_SURROUND_WAVE_FIXTURE
+        "${KIVO_FFMPEG_FIXTURE_DIR}/surround_48000.wav")
+    set(KIVO_FFMPEG_LONG_WAVE_FIXTURE
+        "${KIVO_FFMPEG_FIXTURE_DIR}/long_pcm_s16le.wav")
     add_custom_command(
         OUTPUT
             "${KIVO_FFMPEG_WAVE_FIXTURE}"
             "${KIVO_FFMPEG_FLAC_FIXTURE}"
             "${KIVO_FFMPEG_MP3_FIXTURE}"
+            "${KIVO_FFMPEG_VBR_MP3_FIXTURE}"
+            "${KIVO_FFMPEG_AAC_FIXTURE}"
+            "${KIVO_FFMPEG_MONO_WAVE_FIXTURE}"
+            "${KIVO_FFMPEG_HIRES_FLAC_FIXTURE}"
+            "${KIVO_FFMPEG_SURROUND_WAVE_FIXTURE}"
+            "${KIVO_FFMPEG_LONG_WAVE_FIXTURE}"
         COMMAND "${CMAKE_COMMAND}" -E make_directory
             "${KIVO_FFMPEG_FIXTURE_DIR}"
         COMMAND "${KIVO_FFMPEG_BINARY_DIR}/ffmpeg.exe"
@@ -168,6 +187,32 @@ if(KIVO_FFMPEG_ROOT)
             -nostdin -hide_banner -loglevel error -y
             -f lavfi -i "sine=frequency=783.99:duration=2:sample_rate=44100"
             -ac 2 -c:a libmp3lame -b:a 192k "${KIVO_FFMPEG_MP3_FIXTURE}"
+        COMMAND "${KIVO_FFMPEG_BINARY_DIR}/ffmpeg.exe"
+            -nostdin -hide_banner -loglevel error -y
+            -f lavfi -i "sine=frequency=880:duration=2:sample_rate=44100"
+            -ac 2 -c:a libmp3lame -q:a 2 "${KIVO_FFMPEG_VBR_MP3_FIXTURE}"
+        COMMAND "${KIVO_FFMPEG_BINARY_DIR}/ffmpeg.exe"
+            -nostdin -hide_banner -loglevel error -y
+            -f lavfi -i "sine=frequency=987.77:duration=2:sample_rate=44100"
+            -ac 2 -c:a aac -b:a 160k -movflags +faststart
+            "${KIVO_FFMPEG_AAC_FIXTURE}"
+        COMMAND "${KIVO_FFMPEG_BINARY_DIR}/ffmpeg.exe"
+            -nostdin -hide_banner -loglevel error -y
+            -f lavfi -i "sine=frequency=261.63:duration=2:sample_rate=22050"
+            -ac 1 -c:a pcm_s16le "${KIVO_FFMPEG_MONO_WAVE_FIXTURE}"
+        COMMAND "${KIVO_FFMPEG_BINARY_DIR}/ffmpeg.exe"
+            -nostdin -hide_banner -loglevel error -y
+            -f lavfi -i "sine=frequency=329.63:duration=2:sample_rate=96000"
+            -ac 2 -c:a flac "${KIVO_FFMPEG_HIRES_FLAC_FIXTURE}"
+        COMMAND "${KIVO_FFMPEG_BINARY_DIR}/ffmpeg.exe"
+            -nostdin -hide_banner -loglevel error -y
+            -f lavfi -i "sine=frequency=392:duration=2:sample_rate=48000"
+            -ac 6 -channel_layout 5.1 -c:a pcm_s16le
+            "${KIVO_FFMPEG_SURROUND_WAVE_FIXTURE}"
+        COMMAND "${KIVO_FFMPEG_BINARY_DIR}/ffmpeg.exe"
+            -nostdin -hide_banner -loglevel error -y
+            -f lavfi -i "sine=frequency=440:duration=30:sample_rate=44100"
+            -ac 2 -c:a pcm_s16le "${KIVO_FFMPEG_LONG_WAVE_FIXTURE}"
         VERBATIM
     )
     add_custom_target(kivo_ffmpeg_test_fixtures
@@ -182,6 +227,8 @@ if(KIVO_FFMPEG_ROOT)
         tests/ffmpeg_decode/scenario/decode_fixture_tests.cpp
         tests/ffmpeg_decode/scenario/policy_and_corruption_tests.cpp
         tests/ffmpeg_decode/scenario/seek_flush_tests.cpp
+        tests/ffmpeg_decode/scenario/truncated_media_tests.cpp
+        tests/ffmpeg_decode/scenario/unsupported_cue_tests.cpp
     )
     target_link_libraries(kivo_ffmpeg_decode_tests
         PRIVATE kivo_ffmpeg_decode_adapter)
@@ -444,9 +491,10 @@ target_compile_options(kivo_render_queue_tests PRIVATE
 )
 
 add_executable(kivo_decode_boundary_tests
-    tests/decode_boundary/decode_boundary_tests_main.cpp
-    tests/decode_boundary/decode_contract_tests.cpp
-    tests/decode_boundary/local_file_byte_source_tests.cpp
+    tests/decode_boundary/runner/decode_boundary_tests_main.cpp
+    tests/decode_boundary/scenario/decode_contract_tests.cpp
+    tests/decode_boundary/scenario/large_file_byte_source_tests.cpp
+    tests/decode_boundary/scenario/local_file_byte_source_tests.cpp
 )
 target_link_libraries(kivo_decode_boundary_tests PRIVATE kivo_decode_boundary)
 target_compile_features(kivo_decode_boundary_tests PRIVATE cxx_std_20)

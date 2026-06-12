@@ -1,52 +1,64 @@
-# P0-K Commercial Stability Matrix — Family Design Taskbook
+# P0-K Commercial Stability Matrix
 
-Planning only. No implementation.
+**Status:** ACTIVE IMPLEMENTATION
+**Execution Authority:** Owner-directed continuous implementation
+**Last Updated:** 2026-06-12
 
-Owner approval required before implementation:
+## Implemented Automated Evidence
 
-```text
-PLANNING_APPROVED_FOR_IMPLEMENTATION
-```
+- Deterministic renderer lifecycle and bounded observation history.
+- Repeated FFmpeg open/decode/close resource measurements.
+- Windows process handle and PrivateUsage growth assertions.
+- PCM WAV, FLAC, CBR MP3, VBR MP3, and AAC/M4A.
+- 22.05 kHz mono, 44.1/48/96 kHz stereo, and 48 kHz 5.1 input.
+- 30-second generated PCM fixture and a sparse source beyond 4 GiB.
+- Severe truncation for WAV, FLAC, VBR MP3, and M4A.
+- Random corrupt input classification.
+- CUE sheet input explicitly unsupported.
+- Queue pressure, backpressure, starvation, seek generation, track-switch
+  race, device-loss recovery, and lifecycle shutdown tests.
+- Real generated PCM WASAPI output.
+- Real FFmpeg-to-SPSC-to-MMCSS-to-WASAPI playback.
+- One-hour real-device endurance evidence.
 
-## Goal
-
-P0-K plans commercial stability coverage across devices, long-running sessions, large libraries, and hostile media cases.
-
-## Required family-design areas
-
-```text
-device matrix
-sample-rate matrix
-file-size matrix
-corrupted-media matrix
-whole-file album matrix
-slow-source matrix
-removable-source matrix
-sleep-wake matrix
-hot-plug matrix
-long-session matrix
-```
-
-## Candidate roots
+## Natural Validation Families
 
 ```text
-include/kivo/stability_matrix/
-tests/stability_matrix/
+tests/
+  decode_boundary/
+    fixture/
+    runner/
+    scenario/
+  ffmpeg_decode/
+    fixture/
+    runner/
+    scenario/
+  hardware/
+    decode_output/
+      fixture/
+      runner/
+      scenario/
+    wasapi/
+      fixture/
+      runner/
+      scenario/
+  stability/
+    fixture/
+    platform/
+      windows/
+    runner/
+    scenario/
 ```
 
-The next assistant must verify actual repository conventions before choosing final paths.
+## Remaining P0-K Evidence
 
-## Non-goals
+- Physical device matrix: onboard, USB DAC, Bluetooth, and HDMI/DisplayPort.
+- Default-device change and unplug/replug on applicable hardware.
+- Sleep/resume on the release candidate build.
+- Ten-hour release-candidate endurance run.
+- Per-device identity, driver, format, mode, underrun, recovery, and
+  limitation records.
 
-No full stress runner. No lab automation. No platform device probing implementation. No UI.
-
-## Required planning draft
-
-The next assistant must output Base Gate, Inventory Gate, ODR Gate, natural family tree, matrix scope, tests, gates, STOP conditions, and implementation readiness verdict.
-
-Final planning classification:
-
-```text
-KIVO-AUDIO-CORE-P0-K-FAMILY-DESIGN-DRAFT-001
-PLANNING_DRAFT_READY_FOR_OWNER_REVIEW
-```
+P0-K remains open until the remaining physical-lab evidence is recorded. The
+automated matrix is implemented and must remain green while the physical matrix
+is completed.

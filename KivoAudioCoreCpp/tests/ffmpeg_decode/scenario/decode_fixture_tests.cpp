@@ -18,13 +18,21 @@ void decode_fixture(
     const auto& probe = opened.probe();
     FFMPEG_ASSERT(probe.codec == expectation.codec);
     FFMPEG_ASSERT(probe.container == expectation.container);
+    FFMPEG_ASSERT(
+        probe.native_format.format.sample_rate
+        == expectation.native_sample_rate);
+    FFMPEG_ASSERT(
+        probe.native_format.format.channel_layout
+        == expectation.native_channel_layout);
     FFMPEG_ASSERT(probe.output_format == target_format());
     FFMPEG_ASSERT(probe.source_identity.value == 101);
     FFMPEG_ASSERT(probe.source_generation.value() == 7);
     FFMPEG_ASSERT(probe.decode_generation.value() == 11);
     FFMPEG_ASSERT(probe.duration_known);
-    FFMPEG_ASSERT(probe.duration_frames >= 95000);
-    FFMPEG_ASSERT(probe.duration_frames <= 97000);
+    FFMPEG_ASSERT(
+        probe.duration_frames >= expectation.minimum_output_frames);
+    FFMPEG_ASSERT(
+        probe.duration_frames <= expectation.maximum_output_frames);
     FFMPEG_ASSERT(probe.seekable);
 
     core::contract::FrameCount decoded_frames = 0;
@@ -57,11 +65,11 @@ void decode_fixture(
         FFMPEG_ASSERT(block_count < 10000);
     }
     FFMPEG_ASSERT(block_count > 0);
-    FFMPEG_ASSERT(decoded_frames >= 95000);
-    FFMPEG_ASSERT(decoded_frames <= 97000);
+    FFMPEG_ASSERT(decoded_frames >= expectation.minimum_output_frames);
+    FFMPEG_ASSERT(decoded_frames <= expectation.maximum_output_frames);
     FFMPEG_ASSERT(
         saw_terminal_block
-        || expectation.codec != core::decode::AudioCodec::Mp3);
+        || !expectation.terminal_block_required);
     FFMPEG_ASSERT(session.close().is_success());
 }
 
@@ -86,7 +94,87 @@ void decodes_mp3_to_requested_pcm(const FfmpegDecodeTestContext& context) {
         context,
         {"tone.mp3",
          core::decode::AudioCodec::Mp3,
-         core::decode::MediaContainer::Mp3});
+         core::decode::MediaContainer::Mp3,
+         44100,
+         core::contract::ChannelLayout::Stereo,
+         95000,
+         97000,
+         false});
+}
+
+void decodes_vbr_mp3_to_requested_pcm(
+    const FfmpegDecodeTestContext& context) {
+    decode_fixture(
+        context,
+        {"tone_vbr.mp3",
+         core::decode::AudioCodec::Mp3,
+         core::decode::MediaContainer::Mp3,
+         44100,
+         core::contract::ChannelLayout::Stereo,
+         95000,
+         97000,
+         false});
+}
+
+void decodes_aac_m4a_to_requested_pcm(
+    const FfmpegDecodeTestContext& context) {
+    decode_fixture(
+        context,
+        {"tone_aac.m4a",
+         core::decode::AudioCodec::Aac,
+         core::decode::MediaContainer::Mp4,
+         44100,
+         core::contract::ChannelLayout::Stereo,
+         94000,
+         97000});
+}
+
+void decodes_mono_22050_wave_to_requested_pcm(
+    const FfmpegDecodeTestContext& context) {
+    decode_fixture(
+        context,
+        {"mono_22050.wav",
+         core::decode::AudioCodec::Pcm,
+         core::decode::MediaContainer::Wave,
+         22050,
+         core::contract::ChannelLayout::Mono});
+}
+
+void decodes_stereo_96000_flac_to_requested_pcm(
+    const FfmpegDecodeTestContext& context) {
+    decode_fixture(
+        context,
+        {"stereo_96000.flac",
+         core::decode::AudioCodec::Flac,
+         core::decode::MediaContainer::Flac,
+         96000});
+}
+
+void decodes_surround_48000_wave_to_requested_pcm(
+    const FfmpegDecodeTestContext& context) {
+    decode_fixture(
+        context,
+        {"surround_48000.wav",
+         core::decode::AudioCodec::Pcm,
+         core::decode::MediaContainer::Wave,
+         48000,
+         core::contract::ChannelLayout::Surround51,
+         95000,
+         97000,
+         false});
+}
+
+void decodes_long_wave_to_requested_pcm(
+    const FfmpegDecodeTestContext& context) {
+    decode_fixture(
+        context,
+        {"long_pcm_s16le.wav",
+         core::decode::AudioCodec::Pcm,
+         core::decode::MediaContainer::Wave,
+         44100,
+         core::contract::ChannelLayout::Stereo,
+         1439000,
+         1441000});
 }
 
 } // namespace
@@ -95,4 +183,22 @@ void run_ffmpeg_decode_fixture_tests(FfmpegDecodeTestRunner& runner) {
     runner.run("decodes_wave_to_requested_pcm", decodes_wave_to_requested_pcm);
     runner.run("decodes_flac_to_requested_pcm", decodes_flac_to_requested_pcm);
     runner.run("decodes_mp3_to_requested_pcm", decodes_mp3_to_requested_pcm);
+    runner.run(
+        "decodes_vbr_mp3_to_requested_pcm",
+        decodes_vbr_mp3_to_requested_pcm);
+    runner.run(
+        "decodes_aac_m4a_to_requested_pcm",
+        decodes_aac_m4a_to_requested_pcm);
+    runner.run(
+        "decodes_mono_22050_wave_to_requested_pcm",
+        decodes_mono_22050_wave_to_requested_pcm);
+    runner.run(
+        "decodes_stereo_96000_flac_to_requested_pcm",
+        decodes_stereo_96000_flac_to_requested_pcm);
+    runner.run(
+        "decodes_surround_48000_wave_to_requested_pcm",
+        decodes_surround_48000_wave_to_requested_pcm);
+    runner.run(
+        "decodes_long_wave_to_requested_pcm",
+        decodes_long_wave_to_requested_pcm);
 }

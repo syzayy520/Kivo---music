@@ -5,6 +5,7 @@
 #include "adapters/ffmpeg/source/ffmpeg_avio_bridge.hpp"
 
 extern "C" {
+#include <libavcodec/defs.h>
 #include <libavutil/error.h>
 }
 
@@ -24,6 +25,7 @@ bool FfmpegDemuxSession::open(FfmpegAvioBridge& bridge) noexcept {
     }
     context_->pb = bridge.context();
     context_->flags |= AVFMT_FLAG_CUSTOM_IO;
+    context_->error_recognition = AV_EF_BUFFER | AV_EF_EXPLODE;
 
     if (avformat_open_input(&context_, nullptr, nullptr, nullptr) < 0) {
         failure_ = bridge.last_failure() != core::decode::DecodeFailure::None

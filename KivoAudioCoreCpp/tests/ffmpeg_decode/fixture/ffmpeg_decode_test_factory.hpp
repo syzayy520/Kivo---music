@@ -25,6 +25,12 @@ struct FixtureExpectation {
     const char* file_name;
     kivo::core::decode::AudioCodec codec;
     kivo::core::decode::MediaContainer container;
+    uint32_t native_sample_rate{44100};
+    kivo::core::contract::ChannelLayout native_channel_layout{
+        kivo::core::contract::ChannelLayout::Stereo};
+    kivo::core::contract::FrameCount minimum_output_frames{95000};
+    kivo::core::contract::FrameCount maximum_output_frames{97000};
+    bool terminal_block_required{true};
 };
 
 [[nodiscard]] constexpr kivo::core::contract::GenerationId generation(

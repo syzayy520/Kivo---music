@@ -25,6 +25,8 @@ public:
     [[nodiscard]] core::decode::MediaProbe probe() const noexcept;
 
 private:
+    [[nodiscard]] bool declared_duration_complete(
+        core::contract::FrameCount additional_frames = 0) const noexcept;
     void reset_decode_state(
         core::decode::DecodeGeneration generation) noexcept;
 

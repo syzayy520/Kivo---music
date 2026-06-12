@@ -8,6 +8,7 @@ extern "C" {
 #include <libavutil/mathematics.h>
 }
 
+#include "adapters/ffmpeg/container/validation/known_container_extent.hpp"
 #include "adapters/ffmpeg/mapping/ffmpeg_audio_format.hpp"
 
 namespace kivo::adapters::ffmpeg::detail {
@@ -84,6 +85,11 @@ core::decode::DecodeOpenResult FfmpegAudioDecodeRuntime::open(
     target_format_ = request.target_format;
     source_ = std::move(new_source);
 
+    const auto extent_failure = validate_known_container_extent(*source_);
+    if (extent_failure != core::decode::DecodeFailure::None) {
+        close();
+        return core::decode::DecodeOpenResult::failed(extent_failure);
+    }
     if (source_identity_.value == 0 || !avio_.open(*source_)) {
         const auto failure = avio_.last_failure();
         close();
