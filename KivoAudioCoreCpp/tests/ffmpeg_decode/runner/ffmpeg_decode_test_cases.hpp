@@ -2,7 +2,8 @@
 
 struct FfmpegDecodeTestRunner;
 
-void run_ffmpeg_decode_fixture_tests(FfmpegDecodeTestRunner& runner);
+void run_ffmpeg_baseline_decode_tests(FfmpegDecodeTestRunner& runner);
+void run_ffmpeg_extended_format_matrix_tests(FfmpegDecodeTestRunner& runner);
 void run_ffmpeg_policy_and_corruption_tests(FfmpegDecodeTestRunner& runner);
 void run_ffmpeg_conversion_truth_tests(FfmpegDecodeTestRunner& runner);
 void run_ffmpeg_dsd_support_policy_tests(FfmpegDecodeTestRunner& runner);

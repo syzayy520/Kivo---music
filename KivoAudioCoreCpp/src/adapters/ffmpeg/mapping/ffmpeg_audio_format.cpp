@@ -167,6 +167,8 @@ core::decode::AudioCodec map_audio_codec(AVCodecID codec_id) noexcept {
         return AudioCodec::Mp3;
     case AV_CODEC_ID_AAC:
         return AudioCodec::Aac;
+    case AV_CODEC_ID_ALAC:
+        return AudioCodec::Alac;
     case AV_CODEC_ID_VORBIS:
         return AudioCodec::Vorbis;
     case AV_CODEC_ID_OPUS:

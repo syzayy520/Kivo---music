@@ -200,6 +200,12 @@ if(KIVO_FFMPEG_ROOT)
         "${KIVO_FFMPEG_FIXTURE_DIR}/tone_vbr.mp3")
     set(KIVO_FFMPEG_AAC_FIXTURE
         "${KIVO_FFMPEG_FIXTURE_DIR}/tone_aac.m4a")
+    set(KIVO_FFMPEG_ALAC_FIXTURE
+        "${KIVO_FFMPEG_FIXTURE_DIR}/tone_alac.m4a")
+    set(KIVO_FFMPEG_VORBIS_FIXTURE
+        "${KIVO_FFMPEG_FIXTURE_DIR}/tone_vorbis.ogg")
+    set(KIVO_FFMPEG_OPUS_FIXTURE
+        "${KIVO_FFMPEG_FIXTURE_DIR}/tone_opus.ogg")
     set(KIVO_FFMPEG_MONO_WAVE_FIXTURE
         "${KIVO_FFMPEG_FIXTURE_DIR}/mono_22050.wav")
     set(KIVO_FFMPEG_HIRES_FLAC_FIXTURE
@@ -215,6 +221,9 @@ if(KIVO_FFMPEG_ROOT)
             "${KIVO_FFMPEG_MP3_FIXTURE}"
             "${KIVO_FFMPEG_VBR_MP3_FIXTURE}"
             "${KIVO_FFMPEG_AAC_FIXTURE}"
+            "${KIVO_FFMPEG_ALAC_FIXTURE}"
+            "${KIVO_FFMPEG_VORBIS_FIXTURE}"
+            "${KIVO_FFMPEG_OPUS_FIXTURE}"
             "${KIVO_FFMPEG_MONO_WAVE_FIXTURE}"
             "${KIVO_FFMPEG_HIRES_FLAC_FIXTURE}"
             "${KIVO_FFMPEG_SURROUND_WAVE_FIXTURE}"
@@ -244,6 +253,21 @@ if(KIVO_FFMPEG_ROOT)
             "${KIVO_FFMPEG_AAC_FIXTURE}"
         COMMAND "${KIVO_FFMPEG_BINARY_DIR}/ffmpeg.exe"
             -nostdin -hide_banner -loglevel error -y
+            -f lavfi -i "sine=frequency=1046.50:duration=2:sample_rate=44100"
+            -ac 2 -c:a alac -movflags +faststart
+            "${KIVO_FFMPEG_ALAC_FIXTURE}"
+        COMMAND "${KIVO_FFMPEG_BINARY_DIR}/ffmpeg.exe"
+            -nostdin -hide_banner -loglevel error -y
+            -f lavfi -i "sine=frequency=1174.66:duration=2:sample_rate=44100"
+            -ac 2 -c:a libvorbis -q:a 5
+            "${KIVO_FFMPEG_VORBIS_FIXTURE}"
+        COMMAND "${KIVO_FFMPEG_BINARY_DIR}/ffmpeg.exe"
+            -nostdin -hide_banner -loglevel error -y
+            -f lavfi -i "sine=frequency=1318.51:duration=2:sample_rate=48000"
+            -ac 2 -c:a libopus -b:a 128k
+            "${KIVO_FFMPEG_OPUS_FIXTURE}"
+        COMMAND "${KIVO_FFMPEG_BINARY_DIR}/ffmpeg.exe"
+            -nostdin -hide_banner -loglevel error -y
             -f lavfi -i "sine=frequency=261.63:duration=2:sample_rate=22050"
             -ac 1 -c:a pcm_s16le "${KIVO_FFMPEG_MONO_WAVE_FIXTURE}"
         COMMAND "${KIVO_FFMPEG_BINARY_DIR}/ffmpeg.exe"
@@ -266,17 +290,28 @@ if(KIVO_FFMPEG_ROOT)
             "${KIVO_FFMPEG_WAVE_FIXTURE}"
             "${KIVO_FFMPEG_FLAC_FIXTURE}"
             "${KIVO_FFMPEG_MP3_FIXTURE}"
+            "${KIVO_FFMPEG_VBR_MP3_FIXTURE}"
+            "${KIVO_FFMPEG_AAC_FIXTURE}"
+            "${KIVO_FFMPEG_ALAC_FIXTURE}"
+            "${KIVO_FFMPEG_VORBIS_FIXTURE}"
+            "${KIVO_FFMPEG_OPUS_FIXTURE}"
+            "${KIVO_FFMPEG_MONO_WAVE_FIXTURE}"
+            "${KIVO_FFMPEG_HIRES_FLAC_FIXTURE}"
+            "${KIVO_FFMPEG_SURROUND_WAVE_FIXTURE}"
+            "${KIVO_FFMPEG_LONG_WAVE_FIXTURE}"
     )
 
     add_executable(kivo_ffmpeg_decode_tests
         tests/ffmpeg_decode/fixture/assertion/abnormal_media_decode.cpp
+        tests/ffmpeg_decode/fixture/assertion/fixture_decode_assertion.cpp
         tests/ffmpeg_decode/fixture/mutation/media_mutation_file.cpp
         tests/ffmpeg_decode/runner/ffmpeg_decode_tests_main.cpp
         tests/ffmpeg_decode/scenario/control/seek_flush_tests.cpp
         tests/ffmpeg_decode/scenario/corruption/header_corruption_tests.cpp
         tests/ffmpeg_decode/scenario/corruption/trailing_junk_tests.cpp
         tests/ffmpeg_decode/scenario/cue/unsupported_cue_tests.cpp
-        tests/ffmpeg_decode/scenario/decode/decode_fixture_tests.cpp
+        tests/ffmpeg_decode/scenario/decode/baseline_decode_tests.cpp
+        tests/ffmpeg_decode/scenario/format/extended_format_matrix_tests.cpp
         tests/ffmpeg_decode/scenario/policy/conversion_policy_tests.cpp
         tests/ffmpeg_decode/scenario/policy/conversion_truth_tests.cpp
         tests/ffmpeg_decode/scenario/policy/dsd_support_policy_tests.cpp
@@ -318,6 +353,43 @@ target_compile_options(kivo_render_queue PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc>
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
 )
+
+if(TARGET kivo_ffmpeg_decode_adapter)
+    add_executable(kivo_audio_core_performance_probe
+        tools/validation/performance/measurement/decode_latency_measurement.cpp
+        tools/validation/performance/measurement/queue_timing_measurement.cpp
+        tools/validation/performance/reporting/performance_evidence_writer.cpp
+        tools/validation/performance/runner/audio_core_performance_probe_main.cpp
+    )
+    target_link_libraries(kivo_audio_core_performance_probe
+        PRIVATE
+            kivo_ffmpeg_decode_adapter
+            kivo_render_queue
+    )
+    target_compile_features(
+        kivo_audio_core_performance_probe PRIVATE cxx_std_20)
+    target_compile_options(kivo_audio_core_performance_probe PRIVATE
+        $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /utf-8 /EHsc>
+        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+    )
+    add_dependencies(
+        kivo_audio_core_performance_probe
+        kivo_ffmpeg_test_fixtures)
+
+    foreach(ffmpeg_dll
+        avcodec-61.dll
+        avformat-61.dll
+        avutil-59.dll
+        swresample-5.dll)
+        add_custom_command(
+            TARGET kivo_audio_core_performance_probe POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                "${KIVO_FFMPEG_BINARY_DIR}/${ffmpeg_dll}"
+                "$<TARGET_FILE_DIR:kivo_audio_core_performance_probe>"
+            VERBATIM
+        )
+    endforeach()
+endif()
 
 # Serialized product-control session state
 add_library(kivo_playback_session STATIC

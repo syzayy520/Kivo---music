@@ -3,45 +3,11 @@
 #include <array>
 #include <atomic>
 #include <cstring>
-#include <limits>
 #include <new>
 
+#include "atomic/queue_atomic_counter.hpp"
+
 namespace kivo::core::render {
-
-namespace {
-
-template <typename Value>
-void saturating_increment(std::atomic<Value>& value, Value amount = 1) noexcept {
-    auto current = value.load(std::memory_order_relaxed);
-    while (true) {
-        const auto maximum = std::numeric_limits<Value>::max();
-        const auto next = amount > maximum - current ? maximum : current + amount;
-        if (value.compare_exchange_weak(
-                current,
-                next,
-                std::memory_order_relaxed,
-                std::memory_order_relaxed)) {
-            return;
-        }
-    }
-}
-
-template <typename Value>
-void saturating_decrement(std::atomic<Value>& value, Value amount) noexcept {
-    auto current = value.load(std::memory_order_relaxed);
-    while (true) {
-        const auto next = amount > current ? Value{0} : current - amount;
-        if (value.compare_exchange_weak(
-                current,
-                next,
-                std::memory_order_relaxed,
-                std::memory_order_relaxed)) {
-            return;
-        }
-    }
-}
-
-} // namespace
 
 struct SpscAudioBlockQueue::SlotMetadata {
     contract::RenderFormat format{};
@@ -74,6 +40,7 @@ struct alignas(64) SpscAudioBlockQueue::AtomicState {
     CacheLineAtomic rejected_full{};
     CacheLineAtomic rejected_oversized{};
     CacheLineAtomic queued_frames{};
+    CacheLineAtomic observed_peak_used_slots{};
 };
 
 std::unique_ptr<SpscAudioBlockQueue> SpscAudioBlockQueue::create(
@@ -107,14 +74,14 @@ SpscQueuePushResult SpscAudioBlockQueue::try_push(
         return SpscQueuePushResult::InvalidBlock;
     }
     if (block.bytes.size() > configuration_.maximum_bytes_per_slot) {
-        saturating_increment(state_->rejected_oversized.value);
+        detail::saturating_increment(state_->rejected_oversized.value);
         return SpscQueuePushResult::BlockTooLarge;
     }
 
     const auto producer = state_->producer.value.load(std::memory_order_relaxed);
     const auto consumer = state_->consumer.value.load(std::memory_order_acquire);
     if (producer - consumer >= configuration_.slot_count) {
-        saturating_increment(state_->rejected_full.value);
+        detail::saturating_increment(state_->rejected_full.value);
         return SpscQueuePushResult::Full;
     }
 
@@ -129,8 +96,16 @@ SpscQueuePushResult SpscAudioBlockQueue::try_push(
     metadata.generations = block.generations;
     metadata.end_of_stream = block.end_of_stream;
 
-    saturating_increment(state_->pushed_blocks.value);
-    saturating_increment(state_->queued_frames.value, block.frame_count);
+    const auto observed_used = producer + 1 - consumer;
+    detail::update_maximum(
+        state_->observed_peak_used_slots.value,
+        observed_used > configuration_.slot_count
+            ? static_cast<uint64_t>(configuration_.slot_count)
+            : observed_used);
+    detail::saturating_increment(state_->pushed_blocks.value);
+    detail::saturating_increment(
+        state_->queued_frames.value,
+        block.frame_count);
     state_->producer.value.store(producer + 1, std::memory_order_release);
     return SpscQueuePushResult::Pushed;
 }
@@ -178,9 +153,11 @@ bool SpscAudioBlockQueue::consume_front(
     }
 
     metadata.consumed_frames += accepted_frames;
-    saturating_decrement(state_->queued_frames.value, accepted_frames);
+    detail::saturating_decrement(
+        state_->queued_frames.value,
+        accepted_frames);
     if (metadata.consumed_frames == metadata.frame_count) {
-        saturating_increment(state_->consumed_blocks.value);
+        detail::saturating_increment(state_->consumed_blocks.value);
         state_->consumer.value.store(consumer + 1, std::memory_order_release);
     }
     return true;
@@ -207,6 +184,9 @@ SpscAudioBlockQueueSnapshot SpscAudioBlockQueue::snapshot() const noexcept {
         configuration_.slot_count,
         static_cast<uint32_t>(
             used > configuration_.slot_count ? configuration_.slot_count : used),
+        static_cast<uint32_t>(
+            state_->observed_peak_used_slots.value.load(
+                std::memory_order_relaxed)),
         configuration_.maximum_bytes_per_slot,
         state_->queued_frames.value.load(std::memory_order_relaxed),
         state_->pushed_blocks.value.load(std::memory_order_relaxed),
@@ -226,6 +206,9 @@ void SpscAudioBlockQueue::reset() noexcept {
     state_->rejected_full.value.store(0, std::memory_order_relaxed);
     state_->rejected_oversized.value.store(0, std::memory_order_relaxed);
     state_->queued_frames.value.store(0, std::memory_order_relaxed);
+    state_->observed_peak_used_slots.value.store(
+        0,
+        std::memory_order_relaxed);
 }
 
 bool SpscAudioBlockQueue::storage_ready() const noexcept {

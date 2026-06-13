@@ -16,6 +16,9 @@ FLAC
 CBR MP3
 VBR MP3
 AAC in M4A
+ALAC in M4A
+Vorbis in Ogg
+Opus in Ogg
 22.05 kHz mono PCM
 96 kHz stereo FLAC
 48 kHz 5.1 PCM
@@ -43,8 +46,9 @@ severely truncated WAV, FLAC, VBR MP3, and M4A derivatives
 
 ## Completion Evidence
 
-- Nine deterministic valid fixtures generated and hash-locked.
-- Valid decode corpus: PCM WAV, FLAC, CBR MP3, VBR MP3, AAC/M4A,
+- Twelve deterministic valid fixtures generated and hash-locked.
+- Valid decode corpus: PCM WAV, FLAC, CBR MP3, VBR MP3, AAC/M4A, ALAC/M4A,
+  Vorbis/Ogg, Opus/Ogg,
   22.05 kHz mono, 96 kHz stereo, 48 kHz 5.1, and 30-second PCM.
 - FFmpeg adapter scenarios: 16 of 16 passed after responsibility-based test
   family consolidation.

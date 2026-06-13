@@ -111,6 +111,9 @@ void full_and_oversized_rejections_are_explicit() {
     const auto snapshot = queue->snapshot();
     RENDER_QUEUE_ASSERT(snapshot.rejected_full == 1);
     RENDER_QUEUE_ASSERT(snapshot.rejected_oversized == 1);
+    RENDER_QUEUE_ASSERT(snapshot.observed_peak_used_slots == 2);
+    queue->reset();
+    RENDER_QUEUE_ASSERT(queue->snapshot().observed_peak_used_slots == 0);
 }
 
 void partial_consume_exposes_exact_tail() {
@@ -174,6 +177,7 @@ void wraparound_preserves_fifo_order() {
     RENDER_QUEUE_ASSERT(snapshot.consumed_blocks == 30);
     RENDER_QUEUE_ASSERT(snapshot.used_slots == 0);
     RENDER_QUEUE_ASSERT(snapshot.queued_frames == 0);
+    RENDER_QUEUE_ASSERT(snapshot.observed_peak_used_slots == 1);
 }
 
 void two_thread_stress_preserves_order_without_sleep() {
@@ -197,6 +201,10 @@ void two_thread_stress_preserves_order_without_sleep() {
     std::thread consumer([&] {
         uint64_t expected = 0;
         while (expected < block_count) {
+            if (!queue->snapshot().is_valid()) {
+                failed.store(true, std::memory_order_relaxed);
+                return;
+            }
             const auto front = queue->try_peek();
             if (!front) {
                 std::this_thread::yield();
@@ -223,6 +231,8 @@ void two_thread_stress_preserves_order_without_sleep() {
     RENDER_QUEUE_ASSERT(snapshot.pushed_blocks == block_count);
     RENDER_QUEUE_ASSERT(snapshot.consumed_blocks == block_count);
     RENDER_QUEUE_ASSERT(snapshot.used_slots == 0);
+    RENDER_QUEUE_ASSERT(snapshot.observed_peak_used_slots >= 1);
+    RENDER_QUEUE_ASSERT(snapshot.observed_peak_used_slots <= 64);
 }
 
 } // namespace

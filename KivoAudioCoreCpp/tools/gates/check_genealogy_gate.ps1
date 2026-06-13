@@ -164,6 +164,17 @@ $runtimeFamilyRules = @(
         )
     },
     @{
+        Path = "tools\validation\performance"
+        AllowedDirectories = @(
+            "capture",
+            "foundation",
+            "measurement",
+            "reporting",
+            "runner",
+            "verification"
+        )
+    },
+    @{
         Path = "tests\host_abi"
         AllowedDirectories = @(
             "compatibility",
@@ -355,6 +366,7 @@ $runtimeFamilyRules = @(
             "corruption",
             "cue",
             "decode",
+            "format",
             "policy",
             "truncation"
         )
@@ -716,6 +728,9 @@ $runtimeSourceRoots = @(
     "tests\output_truth",
     "tests\audio_processing",
     "tests\hires_pcm",
+    "include\kivo\core\render\queue",
+    "src\core\render\queue",
+    "tests\render_queue",
     "tests\playback_session",
     "tests\playback_runtime",
     "include\kivo\core\observability",
@@ -723,7 +738,8 @@ $runtimeSourceRoots = @(
     "include\kivo\host\abi",
     "src\host\abi",
     "tests\host_abi",
-    "tools\release"
+    "tools\release",
+    "tools\validation\performance"
 )
 $runtimeMaximumLines = 260
 foreach ($relativeRoot in $runtimeSourceRoots) {

@@ -219,6 +219,7 @@ if (Test-Path $cmakePath) {
         "kivo_ffmpeg_test_fixtures",
         "kivo_ffmpeg_decode_tests",
         "ffmpeg_decode_tests",
+        "kivo_audio_core_performance_probe",
         "kivo_ffmpeg_wasapi_playback_smoke",
         "kivo_playback_session",
         "kivo_playback_session_tests",

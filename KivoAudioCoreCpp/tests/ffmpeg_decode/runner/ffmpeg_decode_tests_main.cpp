@@ -9,7 +9,8 @@ int main(int argc, char** argv) {
     }
 
     FfmpegDecodeTestRunner runner{{argv[1]}};
-    run_ffmpeg_decode_fixture_tests(runner);
+    run_ffmpeg_baseline_decode_tests(runner);
+    run_ffmpeg_extended_format_matrix_tests(runner);
     run_ffmpeg_policy_and_corruption_tests(runner);
     run_ffmpeg_conversion_truth_tests(runner);
     run_ffmpeg_dsd_support_policy_tests(runner);
