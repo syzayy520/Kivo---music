@@ -14,6 +14,9 @@ if (-not $ProjectRoot) {
 }
 $ProjectRoot = (Resolve-Path $ProjectRoot).Path
 
+. (Join-Path $PSScriptRoot "import_msvc_environment.ps1")
+$msvcEnvironmentImported = Import-KivoMsvcEnvironment
+
 function Get-ToolStatus {
     param(
         [Parameter(Mandatory = $true)]
@@ -43,6 +46,8 @@ Write-Host "PROJECT_ROOT: $ProjectRoot"
 Write-Host "Date: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
 Write-Host "============================================================================="
 Write-Host ""
+Write-Host ("  {0,-10} {1}" -f "msvc-env", $(if ($msvcEnvironmentImported) { "READY" } else { "UNAVAILABLE" }))
+Write-Host ""
 
 $tools = @(
     "git",
@@ -67,10 +72,12 @@ foreach ($status in $statuses) {
 
 Write-Host ""
 
-$hasGit = ($statuses | Where-Object { $_.Name -eq "git" -and $_.Found }).Count -gt 0
-$hasCmake = ($statuses | Where-Object { $_.Name -eq "cmake" -and $_.Found }).Count -gt 0
-$hasCompiler = ($statuses | Where-Object { ($_.Name -eq "cl" -or $_.Name -eq "clang++" -or $_.Name -eq "g++") -and $_.Found }).Count -gt 0
-$hasNinja = ($statuses | Where-Object { $_.Name -eq "ninja" -and $_.Found }).Count -gt 0
+$hasGit = @($statuses | Where-Object { $_.Name -eq "git" -and $_.Found }).Count -gt 0
+$hasCmake = @($statuses | Where-Object { $_.Name -eq "cmake" -and $_.Found }).Count -gt 0
+$hasCompiler = @($statuses | Where-Object {
+    ($_.Name -eq "cl" -or $_.Name -eq "clang++" -or $_.Name -eq "g++") -and $_.Found
+}).Count -gt 0
+$hasNinja = @($statuses | Where-Object { $_.Name -eq "ninja" -and $_.Found }).Count -gt 0
 
 if ($hasGit -and $hasCmake -and $hasCompiler) {
     if ($hasNinja) {

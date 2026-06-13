@@ -21,7 +21,7 @@ void run_realtime_boundary_contract_tests(ContractTestRunner& runner) {
         ASSERT(c.ownership_transfer == OwnershipTransfer::NotSpecified);
         ASSERT(c.ownership_visibility == OwnershipVisibility::NotSpecified);
         ASSERT(c.buffer_ownership == BufferOwnership::NotSpecified);
-        ASSERT(c.buffer_lifetime == BufferLifetimeProof::NotSpecified);
+        ASSERT(c.buffer_lifetime == RealtimeBufferLifetimeProof::NotSpecified);
     });
     
     runner.run("realtime_boundary_contract_is_valid_requires_path", []() {
@@ -68,7 +68,7 @@ void run_realtime_boundary_contract_tests(ContractTestRunner& runner) {
         c.ownership_transfer = OwnershipTransfer::ExplicitTransferRequired;
         c.ownership_visibility = OwnershipVisibility::MustBeProvable;
         c.buffer_ownership = BufferOwnership::ExplicitRequired;
-        c.buffer_lifetime = BufferLifetimeProof::MustBeProvableAcrossBoundary;
+        c.buffer_lifetime = RealtimeBufferLifetimeProof::MustBeProvableAcrossBoundary;
         
         ASSERT(c.path == RealtimePath::Realtime);
         ASSERT(c.path_context == RealtimePathContext::RenderSide);
@@ -84,7 +84,7 @@ void run_realtime_boundary_contract_tests(ContractTestRunner& runner) {
         ASSERT(c.ownership_transfer == OwnershipTransfer::ExplicitTransferRequired);
         ASSERT(c.ownership_visibility == OwnershipVisibility::MustBeProvable);
         ASSERT(c.buffer_ownership == BufferOwnership::ExplicitRequired);
-        ASSERT(c.buffer_lifetime == BufferLifetimeProof::MustBeProvableAcrossBoundary);
+        ASSERT(c.buffer_lifetime == RealtimeBufferLifetimeProof::MustBeProvableAcrossBoundary);
     });
     
     runner.run("realtime_boundary_contract_equality", []() {

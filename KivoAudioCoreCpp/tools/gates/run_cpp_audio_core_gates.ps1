@@ -13,6 +13,9 @@ param(
 
 $ErrorActionPreference = "Continue"
 
+# Keep gate output and child-process diagnostics stable on localized Windows.
+chcp 65001 | Out-Null
+
 # Resolve PROJECT_ROOT — always resolve to absolute path
 if (-not $ProjectRoot) {
     $ProjectRoot = Join-Path $PSScriptRoot "..\.."
@@ -96,7 +99,7 @@ Write-Host ""
 if ($allPassed) {
     Write-Host "OVERALL: PASS"
     Write-Host ""
-    Write-Host "All P0-C gates passed."
+    Write-Host "All active audio core gates passed."
     Write-Host "NOTE: Configure smoke PASS does NOT mean build/test/runtime PASS."
     exit 0
 } else {

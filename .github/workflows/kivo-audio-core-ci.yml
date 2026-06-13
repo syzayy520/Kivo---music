@@ -1,0 +1,75 @@
+name: Kivo Audio Core CI
+
+on:
+  pull_request:
+    paths:
+      - "KivoAudioCoreCpp/**"
+      - ".github/workflows/kivo-audio-core-ci.yml"
+  push:
+    branches:
+      - master
+      - main
+    paths:
+      - "KivoAudioCoreCpp/**"
+      - ".github/workflows/kivo-audio-core-ci.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kivo-audio-core-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: powershell
+
+jobs:
+  repository-gates:
+    name: Repository gates
+    runs-on: windows-2022
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Run nine repository gates
+        run: |
+          .\KivoAudioCoreCpp\tools\validation\gate_validation_entry.ps1 `
+            -ProjectRoot .\KivoAudioCoreCpp
+      - name: Check patch hygiene
+        run: git diff --check
+
+  platform-neutral-build:
+    name: Windows build and CTest
+    runs-on: windows-2022
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Configure without external FFmpeg SDK
+        run: |
+          cmake -S .\KivoAudioCoreCpp `
+            -B .\KivoAudioCoreCpp\out\ci-build `
+            -G "Visual Studio 17 2022" -A x64
+      - name: Build
+        run: |
+          cmake --build .\KivoAudioCoreCpp\out\ci-build `
+            --config Release --parallel 2
+      - name: Test
+        run: |
+          ctest --test-dir .\KivoAudioCoreCpp\out\ci-build `
+            -C Release --output-on-failure
+
+  release-tool-self-tests:
+    name: Release tool self-tests
+    runs-on: windows-2022
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: FFmpeg source bundle
+        run: |
+          .\KivoAudioCoreCpp\tools\release\compliance\source\testing\test_ffmpeg_source_bundle.ps1
+      - name: Authenticode verifier
+        run: |
+          .\KivoAudioCoreCpp\tools\release\signing\testing\test_authenticode_verifier.ps1
+      - name: Installer transaction verifier
+        run: |
+          .\KivoAudioCoreCpp\tools\release\installer\testing\test_installer_transaction_verifier.ps1

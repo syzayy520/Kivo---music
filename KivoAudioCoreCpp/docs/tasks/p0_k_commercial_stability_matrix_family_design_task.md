@@ -1,52 +1,85 @@
-# P0-K Commercial Stability Matrix — Family Design Taskbook
+# P0-K Commercial Stability Matrix
 
-Planning only. No implementation.
+**Status:** IMPLEMENTATION COMPLETE / RELEASE-LAB EVIDENCE OPEN
+**Execution Authority:** Owner-directed continuous implementation
+**Last Updated:** 2026-06-12
 
-Owner approval required before implementation:
+## Implemented Automated Evidence
 
-```text
-PLANNING_APPROVED_FOR_IMPLEMENTATION
-```
+- Deterministic renderer lifecycle and bounded observation history.
+- Repeated FFmpeg open/decode/close resource measurements.
+- Windows process handle and PrivateUsage growth assertions.
+- PCM WAV, FLAC, CBR MP3, VBR MP3, and AAC/M4A.
+- 22.05 kHz mono, 44.1/48/96 kHz stereo, and 48 kHz 5.1 input.
+- 30-second generated PCM fixture and a sparse source beyond 4 GiB.
+- Severe truncation for WAV, FLAC, VBR MP3, and M4A.
+- Random corrupt input classification.
+- CUE sheet input explicitly unsupported.
+- Queue pressure, backpressure, starvation, seek generation, track-switch
+  race, device-loss recovery, and lifecycle shutdown tests.
+- Real generated PCM WASAPI output.
+- Real FFmpeg-to-SPSC-to-MMCSS-to-WASAPI playback.
+- One-hour real-device endurance evidence.
+- Executable active-render-endpoint inventory with default-role, mix-format,
+  shared/exclusive support, form-factor, and device-period evidence.
+- Default-console endpoint change and current-endpoint loss notifications are
+  converted into one-shot device-loss recovery signals.
+- All render endpoint states are inventoried and active endpoints are
+  correlated to their parent PnP driver.
+- Suspend/resume notifications are converted into one-shot device-loss
+  recovery signals.
+- Header corruption, deterministic trailing junk, and two truncation depths
+  cover every supported codec/container family.
 
-## Goal
-
-P0-K plans commercial stability coverage across devices, long-running sessions, large libraries, and hostile media cases.
-
-## Required family-design areas
-
-```text
-device matrix
-sample-rate matrix
-file-size matrix
-corrupted-media matrix
-whole-file album matrix
-slow-source matrix
-removable-source matrix
-sleep-wake matrix
-hot-plug matrix
-long-session matrix
-```
-
-## Candidate roots
-
-```text
-include/kivo/stability_matrix/
-tests/stability_matrix/
-```
-
-The next assistant must verify actual repository conventions before choosing final paths.
-
-## Non-goals
-
-No full stress runner. No lab automation. No platform device probing implementation. No UI.
-
-## Required planning draft
-
-The next assistant must output Base Gate, Inventory Gate, ODR Gate, natural family tree, matrix scope, tests, gates, STOP conditions, and implementation readiness verdict.
-
-Final planning classification:
+## Natural Validation Families
 
 ```text
-KIVO-AUDIO-CORE-P0-K-FAMILY-DESIGN-DRAFT-001
-PLANNING_DRAFT_READY_FOR_OWNER_REVIEW
+tests/
+  decode_boundary/
+    fixture/
+    runner/
+    scenario/
+  ffmpeg_decode/
+    fixture/
+    runner/
+    scenario/
+  hardware/
+    device_matrix/
+      fixture/
+      platform/
+        windows/
+          apartment/
+          endpoint/
+      runner/
+      scenario/
+    decode_output/
+      fixture/
+      runner/
+      scenario/
+    wasapi/
+      fixture/
+      runner/
+      scenario/
+  stability/
+    fixture/
+    platform/
+      windows/
+    runner/
+    scenario/
 ```
+
+## External Release-Lab Evidence
+
+- Physical device matrix still missing USB DAC, Bluetooth, and active
+  HDMI/DisplayPort evidence. The current onboard endpoint is inventoried and
+  covered by real playback plus one-hour endurance evidence.
+- Default-device change and unplug/replug on applicable hardware.
+- Sleep/resume on the release candidate build.
+- Ten-hour release-candidate endurance run.
+- Per-device identity, driver, format, mode, underrun, recovery, and
+  limitation records.
+
+P0-K implementation is complete. The remaining rows require hardware that is
+not present on the development machine and move forward as mandatory P0-P
+release-lab evidence. They must remain `NOT PRESENT` or `NOT EXECUTED` until a
+matching physical run is recorded.

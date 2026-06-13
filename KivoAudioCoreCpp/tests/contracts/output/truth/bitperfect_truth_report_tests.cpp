@@ -18,9 +18,13 @@ static void default_report_not_bit_perfect() {
 static void achieved_bit_perfect() {
     BitPerfectTruthReport report;
     report.bit_perfect_achieved = true;
+    report.evidence_complete = true;
+    report.requested_exclusive = true;
+    report.actual_exclusive = true;
     report.formats_match = true;
     report.no_processing_active = true;
     report.no_engine_in_path = true;
+    report.no_sample_mutation = true;
     ASSERT(report.is_bit_perfect());
     ASSERT(!report.was_rejected());
 }
