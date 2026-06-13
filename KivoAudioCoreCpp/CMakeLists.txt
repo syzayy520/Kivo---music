@@ -260,11 +260,13 @@ if(KIVO_FFMPEG_ROOT)
             -nostdin -hide_banner -loglevel error -y
             -f lavfi -i "sine=frequency=1174.66:duration=2:sample_rate=44100"
             -ac 2 -c:a libvorbis -q:a 5
+            -fflags +bitexact -flags:a +bitexact -serial_offset 0
             "${KIVO_FFMPEG_VORBIS_FIXTURE}"
         COMMAND "${KIVO_FFMPEG_BINARY_DIR}/ffmpeg.exe"
             -nostdin -hide_banner -loglevel error -y
             -f lavfi -i "sine=frequency=1318.51:duration=2:sample_rate=48000"
             -ac 2 -c:a libopus -b:a 128k
+            -fflags +bitexact -flags:a +bitexact -serial_offset 0
             "${KIVO_FFMPEG_OPUS_FIXTURE}"
         COMMAND "${KIVO_FFMPEG_BINARY_DIR}/ffmpeg.exe"
             -nostdin -hide_banner -loglevel error -y

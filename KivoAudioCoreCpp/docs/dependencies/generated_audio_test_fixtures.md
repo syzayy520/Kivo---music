@@ -23,8 +23,8 @@ ffmpeg -f lavfi -i sine=frequency=783.99:duration=2:sample_rate=44100 -ac 2 -c:a
 ffmpeg -f lavfi -i sine=frequency=880:duration=2:sample_rate=44100 -ac 2 -c:a libmp3lame -q:a 2 tone_vbr.mp3
 ffmpeg -f lavfi -i sine=frequency=987.77:duration=2:sample_rate=44100 -ac 2 -c:a aac -b:a 160k -movflags +faststart tone_aac.m4a
 ffmpeg -f lavfi -i sine=frequency=1046.50:duration=2:sample_rate=44100 -ac 2 -c:a alac -movflags +faststart tone_alac.m4a
-ffmpeg -f lavfi -i sine=frequency=1174.66:duration=2:sample_rate=44100 -ac 2 -c:a libvorbis -q:a 5 tone_vorbis.ogg
-ffmpeg -f lavfi -i sine=frequency=1318.51:duration=2:sample_rate=48000 -ac 2 -c:a libopus -b:a 128k tone_opus.ogg
+ffmpeg -f lavfi -i sine=frequency=1174.66:duration=2:sample_rate=44100 -ac 2 -c:a libvorbis -q:a 5 -fflags +bitexact -flags:a +bitexact -serial_offset 0 tone_vorbis.ogg
+ffmpeg -f lavfi -i sine=frequency=1318.51:duration=2:sample_rate=48000 -ac 2 -c:a libopus -b:a 128k -fflags +bitexact -flags:a +bitexact -serial_offset 0 tone_opus.ogg
 ffmpeg -f lavfi -i sine=frequency=261.63:duration=2:sample_rate=22050 -ac 1 -c:a pcm_s16le mono_22050.wav
 ffmpeg -f lavfi -i sine=frequency=329.63:duration=2:sample_rate=96000 -ac 2 -c:a flac stereo_96000.flac
 ffmpeg -f lavfi -i sine=frequency=392:duration=2:sample_rate=48000 -ac 6 -channel_layout 5.1 -c:a pcm_s16le surround_48000.wav
@@ -43,8 +43,8 @@ For FFmpeg `n7.1.4-39-ga5faeca88f-20260611`:
 | `tone_vbr.mp3` | 12,685 | `210201592638c074385c54797e8d35564327a06a058a5f28eaa4e57ed5f84751` |
 | `tone_aac.m4a` | 41,557 | `32133a19bf3f4f5ced41dc2593511ccd48d97f4ca83aeaa23586f8ae68fc350e` |
 | `tone_alac.m4a` | 41,274 | `df10895e2083b127b80e6969e796ad786fab1dc21cca8ecbd9c519eb079a03c0` |
-| `tone_vorbis.ogg` | 10,388 | `0c71234421377f0d422a7e7253b433b8d5ca550bd3b55c24b65683bafe2187aa` |
-| `tone_opus.ogg` | 38,148 | `2f19be3f8d8592edecbc6ba1e9387999abe5bdd6e2a76c456a2e1f8285e664b4` |
+| `tone_vorbis.ogg` | 10,373 | `38ac21cbcf70a01bea3bd0e1cdd0fde90b5315d616649703abee06ea0c364d6c` |
+| `tone_opus.ogg` | 38,133 | `a59bd927171f0b3b8d972134ea8583a027b65821347f9ba0ea2197bf92d255d8` |
 | `mono_22050.wav` | 88,278 | `e4075edc6baa7c6f4e841dd99aa00e31be908472afaf8619f5c0eac5ed843f6d` |
 | `stereo_96000.flac` | 59,178 | `fc620ee67a7f3c6b090f342e242150a52b648d6633c4dff3ef40f65e953f86e6` |
 | `surround_48000.wav` | 1,152,102 | `5070a3a3f9e45a1d49311ef44f568c0dbd156d4b428fd7ea2c160dcf7cc588b0` |

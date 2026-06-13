@@ -60,9 +60,9 @@ $expectedFixtures = [ordered]@{
     "tone_alac.m4a" =
         "df10895e2083b127b80e6969e796ad786fab1dc21cca8ecbd9c519eb079a03c0"
     "tone_vorbis.ogg" =
-        "0c71234421377f0d422a7e7253b433b8d5ca550bd3b55c24b65683bafe2187aa"
+        "38ac21cbcf70a01bea3bd0e1cdd0fde90b5315d616649703abee06ea0c364d6c"
     "tone_opus.ogg" =
-        "2f19be3f8d8592edecbc6ba1e9387999abe5bdd6e2a76c456a2e1f8285e664b4"
+        "a59bd927171f0b3b8d972134ea8583a027b65821347f9ba0ea2197bf92d255d8"
 }
 
 if ([uint32]$document.schema_version -ne 1) {

@@ -37,6 +37,8 @@
 - Performance evidence: seven formats, five measured iterations per format,
   256 queue occupancy samples, and 255 consumer interval samples passed the
   structural verifier.
+- Vorbis/Ogg and Opus/Ogg bitexact commands produced identical sizes and
+  SHA-256 hashes across three independent generations.
 - Negative verification: altered fixture hash rejected.
 - Negative verification: altered reported percentile rejected.
 - Governed implementation, test, and validation files remain at or below the
