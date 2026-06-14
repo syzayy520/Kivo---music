@@ -59,6 +59,8 @@ Reference-only local tooling ownership:
 ```text
 tools/validation/
   mpv_reference_probe.ps1
+tools/gates/
+  check_mpv_reference_probe_gate.ps1
 ```
 
 Future implementation, if approved, must stay outside the primary core:
@@ -125,6 +127,10 @@ version and uses a locked option set:
 
 The probe never links libmpv, never enters core, and reports missing mpv or
 missing local media as local blockers rather than source failures.
+
+The active gate runner includes `tools/gates/check_mpv_reference_probe_gate.ps1`
+to statically lock the probe to reference-only null-output, untimed options and
+classification labels without requiring a local mpv install.
 
 The executable version itself is not pinned until a reviewed binary and its
 hash/provenance record are supplied. Therefore this slice is a probe, not a

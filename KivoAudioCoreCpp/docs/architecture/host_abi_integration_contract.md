@@ -13,7 +13,7 @@ compatibility rules between the Kivo host application and audio core.
 ## Scope
 
 This policy applies to all public C headers, exported DLL functions, host
-source callbacks, diagnostics, snapshots, and future Tauri adapter code.
+source callbacks, diagnostics, snapshots, and future Qt product adapter code.
 
 ## Current Phase
 
@@ -105,8 +105,8 @@ the existing playback runtime.
 ## Pump Contract
 
 `kivo_audio_pump` executes at most `maximum_steps` decode/render iterations.
-The host calls it repeatedly from a native worker, not the JavaScript/UI
-thread. A no-progress result should be retried after a short wait or a host
+The host calls it repeatedly from a native worker, not the Qt UI thread. A
+no-progress result should be retried after a short wait or a host
 scheduler yield.
 
 `reached_end_of_stream` means render completion, not merely decoder
@@ -131,15 +131,15 @@ They never contain paths, URLs, hostnames, credentials, tokens, media tags, or
 raw platform error strings. The host may enrich diagnostics only after
 applying its own privacy and redaction policy.
 
-## Tauri Integration
+## Qt Product Integration
 
-The Tauri adapter is a consumer of the ABI. It should:
+The Qt product adapter is a consumer of the ABI. It should:
 
 1. Load and own one ABI handle per playback engine instance.
 2. Resolve application source IDs into callback contexts.
 3. Run open, commands, pumping, and destroy on a native serialized worker.
-4. Convert snapshots to bounded application events.
-5. Keep Rust panics and JavaScript exceptions outside all C callbacks.
+4. Convert snapshots to bounded Qt model and signal updates.
+5. Keep Qt exceptions, UI objects, and QML state outside all C callbacks.
 6. Destroy the handle before unloading the DLL or callback module.
 
 The adapter must not mirror internal queues, issue FFmpeg calls, create a
@@ -171,7 +171,7 @@ a release blocker.
 ## Future Phase
 
 P0-P owns packaging, signing, symbols, SBOM, crash privacy, and release
-matrices. A future Tauri adapter consumes this ABI without taking core
+matrices. A future Qt product adapter consumes this ABI without taking core
 ownership.
 
 ## Deferred

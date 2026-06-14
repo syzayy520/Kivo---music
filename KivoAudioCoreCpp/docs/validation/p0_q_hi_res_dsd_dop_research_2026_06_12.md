@@ -80,6 +80,7 @@ The repository now includes DSD/DoP value-only contract tests, covering:
 - DSD64, DSD128, DSD256, and DSD512 rate identities.
 - Native DSD requiring a known DSD rate and bounded channel count.
 - DoP marker pair validation.
+- DoP marker cadence derivation and cross-channel marker synchronization.
 - DoP carrier sample-rate derivation from the DSD payload rate.
 - DoP rejection for wrong carrier rate, wrong container width, and bad markers.
 

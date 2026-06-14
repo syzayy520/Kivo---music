@@ -24,7 +24,7 @@ Current state:
 - ReplayGain, software volume, deterministic dither, explicit resample
   quality, conversion latency/tail truth, and strict bypass are complete.
 - Versioned C ABI, opaque handles, host callback sources, sanitized
-  diagnostics, and Tauri adapter ownership rules are complete.
+  diagnostics, and Qt product adapter ownership rules are complete.
 - P0-P produces a verified, reproducible `1.0.0-rc.1` engineering release
   candidate. Commercial shipping remains blocked by signing, legal/source,
   product-installer, and physical release-lab evidence.
@@ -62,7 +62,7 @@ roadmap amendment is committed.
 | P0-L | Gapless Playback / Timeline Accuracy | DONE |
 | P0-M | Exclusive Mode / Bit-Perfect | DONE |
 | P0-N | ReplayGain / Volume / DSP | DONE |
-| P0-O | Host ABI / Tauri Integration | DONE |
+| P0-O | Host ABI / Qt Product Integration | DONE |
 | P0-P | Commercial Release Hardening | DONE (ENGINEERING RC) |
 | P0-Q | Hi-Res / DSD / DoP Research | CONTRACT + EXPLICIT RUNTIME REJECTION COMPLETE; PLAYBACK OPEN |
 | P0-R | mpv/libmpv Reference Research | REFERENCE PROBE INITIALIZED |

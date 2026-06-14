@@ -1,0 +1,46 @@
+# Build artifacts
+.build/
+build/
+out/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+
+# Qt build artifacts
+.qt/
+*.qmlc
+*.jsc
+
+# Compiled binaries
+artifacts/
+*.exe
+*.dll
+*.lib
+*.pdb
+*.obj
+*.o
+*.a
+*.so
+*.dylib
+
+# IDE files
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.sln.docstates
+*.ncb
+*.opensdf
+*.sdf
+
+# OS files
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Temp files
+*.tmp
+*.bak
+*.swp
+*.log

@@ -487,6 +487,7 @@ add_executable(kivo_contract_tests
     tests/contracts/format/dsd/dsd_rate_tests.cpp
     tests/contracts/format/dsd/native_dsd_format_tests.cpp
     tests/contracts/format/dsd/dop_marker_tests.cpp
+    tests/contracts/format/dsd/dop_marker_cadence_tests.cpp
     tests/contracts/format/dsd/dop_carrier_format_tests.cpp
     tests/contracts/format/roles/native_decoded_format_tests.cpp
     tests/contracts/format/roles/core_canonical_format_tests.cpp

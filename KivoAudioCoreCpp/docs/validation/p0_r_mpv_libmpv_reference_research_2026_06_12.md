@@ -63,6 +63,9 @@ Required evidence:
 ## Completed Local Evidence
 
 The repository now includes `tools/validation/mpv_reference_probe.ps1`.
+The active gate runner also includes
+`tools/gates/check_mpv_reference_probe_gate.ps1` to statically lock the probe
+options and classification labels without requiring a local mpv install.
 
 Probe classifications:
 

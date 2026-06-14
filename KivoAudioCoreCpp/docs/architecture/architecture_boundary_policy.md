@@ -64,7 +64,7 @@ P0-B has no implementation files. This policy documents the boundary rules for f
 ## 10. Layer Diagram
 
 ```
-Host Application (Tauri/CLI)
+Host Application (Qt/CLI)
         |
         v
    C ABI Boundary (P0-O)

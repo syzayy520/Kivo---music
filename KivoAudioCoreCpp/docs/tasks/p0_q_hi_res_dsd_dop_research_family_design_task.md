@@ -141,9 +141,10 @@ include/kivo/core/contract/format/dsd/
 tests/contracts/format/dsd/
 ```
 
-This slice gives DSD/DoP independent contract identities and carrier validation
-facts. It does not claim decode support, render support, endpoint support,
-SACD support, passthrough support, or commercial DSD/DoP playback.
+This slice gives DSD/DoP independent contract identities, marker cadence,
+cross-channel marker synchronization, and carrier validation facts. It does
+not claim decode support, render support, endpoint support, SACD support,
+passthrough support, or commercial DSD/DoP playback.
 
 Decode/media support classification is present in:
 

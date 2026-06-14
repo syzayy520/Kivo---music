@@ -7,8 +7,11 @@
 ## 1. Authority
 
 V10.1 remains the architecture constitution. The execution roadmap defines
-the implementation order from the current repository state.
+the implementation order from the current repository state. The execution spec
+defines the required workflow, ticket form, source-of-truth precedence, and
+machine-checkable guard reporting.
 
+- Execution spec: `docs/AUDIO_CORE_EXECUTION_SPEC.md`
 - Roadmap: `docs/architecture/audio_core_execution_roadmap.md`
 - Release contract: `docs/architecture/commercial_release_contract.md`
 - Backend completion program:
@@ -19,6 +22,8 @@ the implementation order from the current repository state.
   `docs/tasks/p0_r_mpv_libmpv_reference_research_family_design_task.md`
 
 Safety, legal, privacy, and project-root rules take precedence over schedule.
+When workflow or source-order conflicts appear, apply the precedence in the
+execution spec.
 
 ## 2. Phase Matrix
 
@@ -45,6 +50,7 @@ Safety, legal, privacy, and project-root rules take precedence over schedule.
 
 | Gate | Ownership | Status requirement |
 |---|---|---|
+| Execution Spec Gate | All phases | PASS |
 | Forbidden Token Gate | All phases | PASS |
 | Genealogy Gate | All phases | PASS |
 | Contract Genealogy Gate | P0-C+ | PASS |
@@ -91,7 +97,13 @@ evidence review.
 
 - `PROJECT_ROOT` is `KivoAudioCoreCpp/`.
 - Work must remain inside this project root.
-- Product UI, Rust backend, and external installer code are separate owners.
+- Product UI, Qt frontend, and external installer code are separate owners.
+- Product frontend stack is recorded in
+  `docs/architecture/frontend_technology_stack_decision.md`; no frontend
+  project files belong in `KivoAudioCoreCpp/`.
+- Qt6 product design polishing basis is recorded in
+  `docs/architecture/qt6_frontend_design_polish_brief.md`; actual design image
+  assets belong in the product repository.
 
 ## 8. Immediate Execution Order
 

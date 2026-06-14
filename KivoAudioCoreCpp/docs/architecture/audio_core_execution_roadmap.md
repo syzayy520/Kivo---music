@@ -25,9 +25,14 @@ When older planning documents describe a different next step, use the
 following precedence:
 
 1. Safety, legal, privacy, and project-root constraints from V10.1.
-2. This execution roadmap.
-3. The current phase taskbook.
-4. Older phase-planning and historical closeout documents.
+2. `docs/AUDIO_CORE_EXECUTION_SPEC.md` for workflow, ticket shape, guard
+   commands, and conflict handling.
+3. This execution roadmap for phase order, ownership, and implementation
+   sequence.
+4. `docs/architecture/policy_index.md` for active phase status and gate set.
+5. The current phase taskbook.
+6. Current closeout or validation evidence.
+7. Older phase-planning and historical closeout documents.
 
 No taskbook may silently change this sequence. A sequence change requires an
 explicit roadmap amendment with a reason, impact analysis, and owner approval.
@@ -87,7 +92,7 @@ The following rules apply to every phase.
   Windows SDK, FFmpeg, mpv, STL ABI, or host UI types.
 - WASAPI details belong below a platform adapter boundary.
 - FFmpeg details belong below a decode adapter boundary.
-- Host and Tauri integration belong behind a versioned host ABI.
+- Host and Qt product frontend integration belong behind a versioned host ABI.
 - mpv/libmpv remains reference, benchmark, or separately isolated
   compatibility research. It is not part of the primary audio core.
 
@@ -722,7 +727,7 @@ Exit criteria:
 - Invalid handle and shutdown tests.
 - Host cannot directly manipulate render/decode queues.
 - Callback threading and lifetime are documented.
-- Tauri integration is an adapter, not core ownership.
+- Qt product integration is an adapter, not core ownership.
 
 ---
 
@@ -764,10 +769,11 @@ conversion or carrier evidence.
 
 Completed local slices: contract-level Hi-Res PCM descriptor tests under
 `tests/hires_pcm/`, native DSD and DoP value contracts under
-`include/kivo/core/contract/format/dsd/`, and explicit decode unsupported
-classification under `include/kivo/core/decode/media/support/`. Device support,
-decode/render support, passthrough, and commercial claims still require
-implementation, WASAPI probing, release-lab evidence, and claim review.
+`include/kivo/core/contract/format/dsd/`, DoP marker cadence and channel
+synchronization contracts under `tests/contracts/format/dsd/`, and explicit
+decode unsupported classification under `include/kivo/core/decode/media/support/`.
+Device support, decode/render support, passthrough, and commercial claims still
+require implementation, WASAPI probing, release-lab evidence, and claim review.
 
 ### P0-R mpv/libmpv
 
@@ -892,7 +898,7 @@ P0-C closeout hardening
   -> sample-accurate gapless
   -> exclusive mode and bit-perfect truth
   -> ReplayGain, volume, resampler, and DSP
-  -> versioned host ABI and Tauri adapter
+  -> versioned host ABI and Qt product adapter
   -> commercial release hardening
   -> deferred Hi-Res and compatibility research
 ```

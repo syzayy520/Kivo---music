@@ -23,6 +23,7 @@ void run_channel_mask_contract_tests(ContractTestRunner& runner);
 void run_dsd_rate_tests(ContractTestRunner& runner);
 void run_native_dsd_format_tests(ContractTestRunner& runner);
 void run_dop_marker_tests(ContractTestRunner& runner);
+void run_dop_marker_cadence_tests(ContractTestRunner& runner);
 void run_dop_carrier_format_tests(ContractTestRunner& runner);
 void run_native_decoded_format_contract_tests(ContractTestRunner& runner);
 void run_core_canonical_format_contract_tests(ContractTestRunner& runner);
@@ -138,6 +139,7 @@ int main() {
     run_dsd_rate_tests(runner);
     run_native_dsd_format_tests(runner);
     run_dop_marker_tests(runner);
+    run_dop_marker_cadence_tests(runner);
     run_dop_carrier_format_tests(runner);
     run_native_decoded_format_contract_tests(runner);
     run_core_canonical_format_contract_tests(runner);

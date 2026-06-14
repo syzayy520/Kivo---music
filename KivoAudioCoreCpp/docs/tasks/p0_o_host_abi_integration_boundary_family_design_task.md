@@ -34,7 +34,7 @@ The ABI must not expose:
 - C++ classes, STL, exceptions, COM, Windows SDK, or FFmpeg types;
 - render or decode queue references;
 - file paths, URLs, credentials, access tokens, or host library records;
-- frontend state, Tauri commands, or Rust ownership.
+- frontend state, Qt commands, QML state, or product adapter ownership.
 
 ## ODR Gate
 
@@ -100,18 +100,18 @@ Each file remains below the repository's 260-line responsibility gate.
 - Snapshots are copies of sanitized facts, never queue control surfaces.
 - Diagnostics contain numeric domains and codes only.
 
-## Tauri Adapter Ownership
+## Qt Product Adapter Ownership
 
-The future Tauri/Rust layer owns:
+The future Qt/C++ product layer owns:
 
 - URI/path resolution, NAS/WebDAV/cloud authentication, and credential refresh;
 - native worker scheduling for serialized ABI calls and pumping;
-- conversion from ABI snapshots to frontend events;
+- conversion from ABI snapshots to Qt models, signals, and frontend events;
 - application shutdown ordering and DLL packaging.
 
 The audio core owns decode, render, playback state, bounded queues, generation
-checks, processing, and device recovery. Tauri is an adapter and never becomes
-the audio engine owner.
+checks, processing, and device recovery. Qt is an adapter consumer and never
+becomes the audio engine owner.
 
 ## Tests
 
