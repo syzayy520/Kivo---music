@@ -124,12 +124,6 @@ target_sources(KivoMusicQt
         native/audio_core_bridge/controller/audio_playback_controller_impl_commands.cpp
         native/audio_core_bridge/controller/audio_playback_controller_impl_snapshot.cpp
         native/audio_core_bridge/controller/audio_playback_controller_impl_properties.cpp
-        # Worker thread (Host ABI off UI thread)
-        native/audio_core_bridge/worker/audio_core_worker.hpp
-        native/audio_core_bridge/worker/audio_core_worker.cpp
-        native/audio_core_bridge/worker/audio_core_worker_command.hpp
-        native/audio_core_bridge/worker/audio_core_worker_result.hpp
-        native/audio_core_bridge/worker/audio_core_worker_snapshot.hpp
         # Playback Queue and Mode
         native/audio_core_bridge/queue/play_queue.hpp
         native/audio_core_bridge/queue/play_queue.cpp
