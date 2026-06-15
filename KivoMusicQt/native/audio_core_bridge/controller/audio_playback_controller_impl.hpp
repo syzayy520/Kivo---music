@@ -1,32 +1,27 @@
 // =============================================================================
 // Kivo Music Qt - audio_playback_controller_impl.hpp
-// AudioCoreBridge: Internal Qt controller state and operations
+// AudioCoreBridge: Controller — delegates Host ABI calls to worker thread
 // =============================================================================
 
 #pragma once
 
 #include "../audio_playback_controller.hpp"
-#include "../handle/engine_handle.hpp"
-#include "../loader/audio_core_library_guard.hpp"
-#include "../snapshot/format_snapshot.hpp"
-#include "../snapshot/playback_snapshot.hpp"
-#include "../state/bridge_session_clock.hpp"
 #include "../queue/play_queue.hpp"
 #include "../queue/playback_mode.hpp"
+#include "../worker/audio_core_worker.hpp"
 
-#include <QFileInfo>
-#include <QTimer>
-#include <chrono>
+#include <QThread>
 #include <memory>
 #include <mutex>
-#include <optional>
 
 namespace kivo::qt::audio_bridge {
 
-class AudioPlaybackControllerImpl {
+class AudioPlaybackControllerImpl : public QObject {
+    Q_OBJECT
+
 public:
     explicit AudioPlaybackControllerImpl(AudioPlaybackController* owner);
-    ~AudioPlaybackControllerImpl();
+    ~AudioPlaybackControllerImpl() override;
 
     void initialize();
     void openFile(const QString& filePath);
@@ -60,29 +55,27 @@ public:
     QString bitPerfectStatus() const;
     QString coverArtPath() const;
 
+private slots:
+    void onWorkerPlaybackSnapshot(const worker::WorkerPlaybackSnapshot& snap);
+    void onWorkerFormatSnapshot(const worker::WorkerFormatSnapshot& snap);
+    void onWorkerTruthSnapshot(const worker::WorkerTruthSnapshot& snap);
+    void onWorkerError(const QString& message);
+    void onWorkerLoadingChanged(bool loading);
+
 private:
-    void startSnapshotPolling();
-    void stopSnapshotPolling();
-    void pollSnapshot();
-    void updateFromSnapshot();
     void extractMetadata(const QString& filePath);
     void notifyError(const QString& message);
     void onEndOfStream();
-    [[nodiscard]] bool submitCommand(uint32_t kind, uint64_t requestedFrame, const char* label);
-    [[nodiscard]] bool pumpOnce();
 
     AudioPlaybackController* owner_ = nullptr;
-    std::unique_ptr<loader::AudioCoreLibraryGuard> libraryGuard_;
-    std::optional<handle::EngineHandle> engineHandle_;
-    state::BridgeSessionClock sessionClock_;
-    QTimer* snapshotTimer_ = nullptr;
-    
-    // Queue and mode
+
+    // Worker thread (owns all Host ABI calls)
+    QThread* workerThread_ = nullptr;
+    worker::AudioCoreWorker* audioWorker_ = nullptr;
+
+    // Queue and mode (GUI thread, QML-accessible)
     PlayQueue* playQueue_ = nullptr;
     PlaybackMode* playbackMode_ = nullptr;
-
-    // Performance: dynamic polling interval
-    int idleCounter_ = 0;
 
     mutable std::mutex stateMutex_;
     QString title_ = "No Track";
@@ -97,10 +90,6 @@ private:
     bool loading_ = false;
     QString bitPerfectStatus_ = "--";
     QString coverArtPath_;
-
-    snapshot::PlaybackSnapshot lastPlaybackSnapshot_;
-    snapshot::FormatSnapshot lastFormatSnapshot_;
-    std::chrono::milliseconds duration_{0};
 };
 
 } // namespace kivo::qt::audio_bridge
