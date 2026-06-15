@@ -17,13 +17,14 @@ Item {
     signal maximizeRequested()
     signal closeRequested()
     signal dragRequested()
+
     readonly property string currentTitle: {
         if (currentPage === "home") return "Home";
         if (currentPage === "artists") return "Artists";
         if (currentPage === "albums") return "Albums";
         if (currentPage === "songs") return "Songs";
-        if (currentPage === "new") return "New";
-        if (currentPage === "radio") return "Radio";
+        if (currentPage === "recent") return "Recently Added";
+        if (currentPage === "new") return "New Music";
         if (currentPage === "made") return "Made for You";
         if (currentPage === "search") return "Search";
         if (currentPage === "settings") return "Settings";
@@ -40,7 +41,18 @@ Item {
         color: theme.page
     }
 
-    // File drop area for drag-and-drop support
+    Rectangle {
+        anchors.left: sidebar.right
+        anchors.right: parent.right
+        anchors.top: parent.top
+        height: 260
+        opacity: 0.78
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: "#ffffff" }
+            GradientStop { position: 1.0; color: "#00ffffff" }
+        }
+    }
+
     FileDropArea {
         id: fileDropArea
         audioController: audioController
@@ -68,7 +80,7 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
-            height: 78
+            height: 74
             pageTitle: root.currentTitle
             onMinimizeRequested: root.minimizeRequested()
             onMaximizeRequested: root.maximizeRequested()
@@ -76,7 +88,6 @@ Item {
             onDragRequested: root.dragRequested()
         }
 
-        // ── Page Loader with Apple Music transitions ──────────
         Loader {
             id: pageLoader
             anchors.top: topBar.bottom
@@ -91,21 +102,18 @@ Item {
 
             function switchPage(pageKey) {
                 if (_pendingPage !== "" || (sourceComponent && opacity < 1)) {
-                    return; // 正在切换中，忽略
+                    return;
                 }
                 _pendingPage = pageKey;
-
-                // 淡出当前页面
                 var targetY = y;
                 opacity = 1;
                 y = targetY;
 
                 var outAnim = Qt.createQmlObject(
                     'import QtQuick; SequentialAnimation { ' +
-                    '  PauseAnimation { duration: 30 } ' +
                     '  ParallelAnimation { ' +
-                    '    NumberAnimation { target: pageLoader; property: "opacity"; from: 1; to: 0; duration: 180; easing.type: Easing.InQuad } ' +
-                    '    NumberAnimation { target: pageLoader; property: "y"; from: ' + targetY + '; to: ' + (targetY + 14) + '; duration: 180; easing.type: Easing.InQuad } ' +
+                    '    NumberAnimation { target: pageLoader; property: "opacity"; from: 1; to: 0; duration: 120; easing.type: Easing.InQuad } ' +
+                    '    NumberAnimation { target: pageLoader; property: "y"; from: ' + targetY + '; to: ' + (targetY + 10) + '; duration: 120; easing.type: Easing.InQuad } ' +
                     '  } ' +
                     '  ScriptAction { script: pageLoader._onFadeOutDone(); } ' +
                     '}',
@@ -122,17 +130,15 @@ Item {
                     sourceComponent = newSource;
                 }
 
-                // 淡入新页面
                 var targetY = y;
-                y = targetY + 14;
+                y = targetY + 10;
                 opacity = 0;
 
                 var inAnim = Qt.createQmlObject(
                     'import QtQuick; SequentialAnimation { ' +
-                    '  PauseAnimation { duration: 40 } ' +
                     '  ParallelAnimation { ' +
-                    '    NumberAnimation { target: pageLoader; property: "opacity"; from: 0; to: 1; duration: 280; easing.type: Easing.OutCubic } ' +
-                    '    NumberAnimation { target: pageLoader; property: "y"; from: ' + (targetY + 14) + '; to: ' + targetY + '; duration: 280; easing.type: Easing.OutCubic } ' +
+                    '    NumberAnimation { target: pageLoader; property: "opacity"; from: 0; to: 1; duration: 220; easing.type: Easing.OutCubic } ' +
+                    '    NumberAnimation { target: pageLoader; property: "y"; from: ' + (targetY + 10) + '; to: ' + targetY + '; duration: 220; easing.type: Easing.OutCubic } ' +
                     '  } ' +
                     '  ScriptAction { script: pageLoader._onFadeInDone(); } ' +
                     '}',
@@ -164,14 +170,11 @@ Item {
 
             Component.onCompleted: {
                 opacity = 0;
-                y = y + 14;
+                y = y + 10;
                 var initAnim = Qt.createQmlObject(
-                    'import QtQuick; SequentialAnimation { ' +
-                    '  PauseAnimation { duration: 500 } ' +
-                    '  ParallelAnimation { ' +
-                    '    NumberAnimation { target: pageLoader; property: "opacity"; from: 0; to: 1; duration: 350; easing.type: Easing.OutCubic } ' +
-                    '    NumberAnimation { target: pageLoader; property: "y"; from: ' + y + '; to: ' + (y - 14) + '; duration: 350; easing.type: Easing.OutCubic } ' +
-                    '  } ' +
+                    'import QtQuick; ParallelAnimation { ' +
+                    '  NumberAnimation { target: pageLoader; property: "opacity"; from: 0; to: 1; duration: 260; easing.type: Easing.OutCubic } ' +
+                    '  NumberAnimation { target: pageLoader; property: "y"; from: ' + y + '; to: ' + (y - 10) + '; duration: 260; easing.type: Easing.OutCubic } ' +
                     '}',
                     pageLoader
                 );
@@ -187,32 +190,10 @@ Item {
         }
     }
 
-    // ── Page Components ────────────────────────────────────
-
-    Component {
-        id: homePageComponent
-        HomePage {}
-    }
-
-    Component {
-        id: libraryPageComponent
-        LibraryPage {
-            mode: root.currentPage
-        }
-    }
-
-    Component {
-        id: searchPageComponent
-        SearchPage {}
-    }
-
-    Component {
-        id: discoveryPageComponent
-        DiscoveryPage {
-            mode: root.currentPage
-        }
-    }
-
+    Component { id: homePageComponent; HomePage {} }
+    Component { id: libraryPageComponent; LibraryPage { mode: root.currentPage } }
+    Component { id: searchPageComponent; SearchPage {} }
+    Component { id: discoveryPageComponent; DiscoveryPage { mode: root.currentPage } }
     Component {
         id: settingsPageComponent
         SettingsPage {
@@ -221,27 +202,15 @@ Item {
             onShowAbout: root.currentPage = "about"
         }
     }
-
-    Component {
-        id: privacyPageComponent
-        PrivacyPolicy {}
-    }
-
-    Component {
-        id: eulaPageComponent
-        EulaPage {}
-    }
-
-    Component {
-        id: aboutPageComponent
-        AboutPage {}
-    }
+    Component { id: privacyPageComponent; PrivacyPolicy {} }
+    Component { id: eulaPageComponent; EulaPage {} }
+    Component { id: aboutPageComponent; AboutPage {} }
 
     TransportBar {
         id: transport
         anchors.left: sidebar.right
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        height: theme.transportHeight + 54
+        height: theme.transportHeight + 44
     }
 }
