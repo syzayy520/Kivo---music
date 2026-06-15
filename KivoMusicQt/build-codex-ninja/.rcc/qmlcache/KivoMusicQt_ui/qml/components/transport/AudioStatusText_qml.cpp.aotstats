@@ -1,0 +1,44 @@
+[
+    {
+        "moduleFiles": [
+            {
+                "entries": [
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 11,
+                        "durationMicroseconds": 383,
+                        "errorMessage": "",
+                        "functionName": "text",
+                        "line": 10
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 12,
+                        "durationMicroseconds": 188,
+                        "errorMessage": "",
+                        "functionName": "elide",
+                        "line": 14
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 26,
+                        "durationMicroseconds": 155,
+                        "errorMessage": "",
+                        "functionName": "horizontalAlignment",
+                        "line": 15
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 18,
+                        "durationMicroseconds": 157,
+                        "errorMessage": "",
+                        "functionName": "weight",
+                        "line": 13
+                    }
+                ],
+                "filepath": "F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/transport/AudioStatusText.qml"
+            }
+        ],
+        "moduleId": "KivoMusic(KivoMusicQt)"
+    }
+]

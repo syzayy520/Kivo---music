@@ -1,0 +1,9 @@
+LIBRARY "kivo_audio_core"
+EXPORTS
+    kivo_audio_create
+    kivo_audio_destroy
+    kivo_audio_get_capabilities
+    kivo_audio_get_snapshot
+    kivo_audio_open_source
+    kivo_audio_pump
+    kivo_audio_submit_command

@@ -23,7 +23,16 @@ enum class BitPerfectRejectionCategory : uint8_t {
     ChannelLayoutMismatch,// source and device channel layouts differ
     ProcessingActive,     // DSP/volume/replay-gain is active
     EngineParticipation,   // host audio engine is in the path
-    PolicyForbidden        // bit-perfect disabled by user policy
+    PolicyForbidden,       // bit-perfect disabled by user policy
+    EvidenceIncomplete,
+    SharedMode,
+    ModeMismatch,
+    ResamplingActive,
+    ConversionActive,
+    ReplayGainActive,
+    VolumeActive,
+    DspActive,
+    DitherActive
 };
 
 // =============================================================================
@@ -37,6 +46,16 @@ struct BitPerfectRejectionReason {
     bool processing_active = false;
     bool engine_in_path = false;
     bool policy_forbidden = false;
+    bool evidence_incomplete = false;
+    bool shared_mode = false;
+    bool mode_mismatch = false;
+    bool resampling_active = false;
+    bool conversion_active = false;
+    bool channel_remix_active = false;
+    bool replay_gain_active = false;
+    bool volume_active = false;
+    bool dsp_active = false;
+    bool dither_active = false;
 
     // --- Convenience ---
     [[nodiscard]] bool has_reason() const noexcept {

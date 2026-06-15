@@ -1,0 +1,176 @@
+{
+    "classes": [
+        {
+            "className": "LibraryModelBundle",
+            "lineNumber": 10,
+            "object": true,
+            "properties": [
+                {
+                    "constant": true,
+                    "designable": true,
+                    "final": false,
+                    "index": 0,
+                    "name": "albums",
+                    "read": "albums",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "AlbumListModel*",
+                    "user": false
+                },
+                {
+                    "constant": true,
+                    "designable": true,
+                    "final": false,
+                    "index": 1,
+                    "name": "topPicks",
+                    "read": "topPicks",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "AlbumListModel*",
+                    "user": false
+                },
+                {
+                    "constant": true,
+                    "designable": true,
+                    "final": false,
+                    "index": 2,
+                    "name": "pins",
+                    "read": "pins",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "AlbumListModel*",
+                    "user": false
+                },
+                {
+                    "constant": true,
+                    "designable": true,
+                    "final": false,
+                    "index": 3,
+                    "name": "continueListening",
+                    "read": "continueListening",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "AlbumListModel*",
+                    "user": false
+                },
+                {
+                    "constant": true,
+                    "designable": true,
+                    "final": false,
+                    "index": 4,
+                    "name": "recent",
+                    "read": "recent",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "AlbumListModel*",
+                    "user": false
+                },
+                {
+                    "constant": true,
+                    "designable": true,
+                    "final": false,
+                    "index": 5,
+                    "name": "rediscover",
+                    "read": "rediscover",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "AlbumListModel*",
+                    "user": false
+                },
+                {
+                    "constant": true,
+                    "designable": true,
+                    "final": false,
+                    "index": 6,
+                    "name": "afterHours",
+                    "read": "afterHours",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "AlbumListModel*",
+                    "user": false
+                },
+                {
+                    "constant": true,
+                    "designable": true,
+                    "final": false,
+                    "index": 7,
+                    "name": "artists",
+                    "read": "artists",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "ArtistListModel*",
+                    "user": false
+                },
+                {
+                    "constant": true,
+                    "designable": true,
+                    "final": false,
+                    "index": 8,
+                    "name": "songs",
+                    "read": "songs",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "TrackListModel*",
+                    "user": false
+                },
+                {
+                    "constant": true,
+                    "designable": true,
+                    "final": false,
+                    "index": 9,
+                    "name": "favorites",
+                    "read": "favorites",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "TrackListModel*",
+                    "user": false
+                },
+                {
+                    "constant": true,
+                    "designable": true,
+                    "final": false,
+                    "index": 10,
+                    "name": "focus",
+                    "read": "focus",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "TrackListModel*",
+                    "user": false
+                },
+                {
+                    "constant": true,
+                    "designable": true,
+                    "final": false,
+                    "index": 11,
+                    "name": "videos",
+                    "read": "videos",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "TrackListModel*",
+                    "user": false
+                }
+            ],
+            "qualifiedClassName": "LibraryModelBundle",
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QObject"
+                }
+            ]
+        }
+    ],
+    "inputFile": "library_model_bundle.h",
+    "outputRevision": 68
+}

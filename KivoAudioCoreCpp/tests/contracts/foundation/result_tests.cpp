@@ -9,6 +9,19 @@
 
 using namespace kivo::core::contract;
 
+namespace {
+
+struct NonDefaultValue {
+    explicit NonDefaultValue(int value_in)
+        : value(value_in) {}
+
+    int value;
+
+    [[nodiscard]] bool operator==(const NonDefaultValue&) const = default;
+};
+
+} // namespace
+
 // =============================================================================
 // Tests
 // =============================================================================
@@ -57,6 +70,12 @@ static void statusor_equality() {
     ASSERT(!(a == c));
 }
 
+static void statusor_supports_non_default_constructible_values() {
+    auto s = StatusOr<NonDefaultValue>::Ok(NonDefaultValue{7});
+    ASSERT(s.is_ok());
+    ASSERT(s.value().value == 7);
+}
+
 // =============================================================================
 // Runner
 // =============================================================================
@@ -70,5 +89,6 @@ void run_result_contract_tests(ContractTestRunner& runner) {
     runner.run("statusor_error_message_access", statusor_error_message_access);
     runner.run("statusor_string_value", statusor_string_value);
     runner.run("statusor_equality", statusor_equality);
+    runner.run("statusor_supports_non_default_constructible_values", statusor_supports_non_default_constructible_values);
     std::cout << "\n";
 }

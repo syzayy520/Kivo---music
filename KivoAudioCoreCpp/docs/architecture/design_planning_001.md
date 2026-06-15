@@ -43,7 +43,7 @@ V10.1 only corrects 7 execution risk points:
 | P0-L | Gapless Playback | Sample-accurate gapless |
 | P0-M | Exclusive Mode | Bit-perfect, exclusive mode |
 | P0-N | ReplayGain / DSP | Volume, DSP, resampler boundary |
-| P0-O | Host ABI | C ABI, Tauri integration |
+| P0-O | Host ABI | C ABI, Qt product integration |
 | P0-P | Commercial Release | Installer, signing, crash diagnostics |
 | P0-Q | Hi-Res Research | DSD, DoP, decode isolation |
 | P0-R | mpv Reference Research | mpv benchmark/fallback |

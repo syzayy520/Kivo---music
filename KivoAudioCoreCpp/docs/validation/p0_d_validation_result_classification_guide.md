@@ -18,6 +18,7 @@ PASS_BUILD_VALIDATION_NINJA
 PASS_BUILD_VALIDATION_VISUAL_STUDIO
 PASS_GATE_VALIDATION
 PASS_VALIDATION_BATCH
+PASS_CONFIGURE_SMOKE
 PASS_VERIFIED_BY_USER_LOCAL_RUN
 ```
 
@@ -29,9 +30,12 @@ Use BLOCKED when validation could not run because required local preconditions w
 BLOCKED_BY_LOCAL_TOOLCHAIN
 BLOCKED_BY_LOCAL_GENERATOR
 BLOCKED_BY_GATE_DETAIL_REQUIRED
+BLOCKED_GATE_VALIDATION_ENVIRONMENT
+BLOCKED_VALIDATION_BATCH_GATES
 ```
 
 A BLOCKED result is not a source-code PASS. It means the result is deferred until the missing precondition is fixed.
+`PASS_CONFIGURE_SMOKE` is not a build, test, runtime, or release pass.
 
 ## FAIL classifications
 
@@ -47,6 +51,7 @@ FAIL_VALIDATION_BATCH_ENVIRONMENT_PRECONDITION
 FAIL_VALIDATION_BATCH_BUILD
 FAIL_VALIDATION_BATCH_GATES
 FAIL_VALIDATION_BATCH_DIFF_CHECK
+FAIL_GATE_VALIDATION_UNKNOWN_RESULT
 ```
 
 ## Deferred validation language
@@ -89,3 +94,4 @@ PASS_VERIFIED_BY_USER_LOCAL_RUN
 ```
 
 Do not treat `No CMAKE_CXX_COMPILER could be found` as a source-code failure. It is a local toolchain blocker until proven otherwise.
+Do not report `OVERALL: ENVIRONMENT_BLOCKED` as `OVERALL: PASS`.

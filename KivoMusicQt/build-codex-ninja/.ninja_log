@@ -1,0 +1,297 @@
+# ninja log v7
+100	248	8031543304326697	.qt/KivoMusicQt_qml.txt	82037986128503e5
+100	248	8031543304326697	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.qt/KivoMusicQt_qml.txt	82037986128503e5
+250	434	8031543305968081	.qt/KivoMusicQt_res.txt	85e5cb23a92e116e
+250	434	8031543305968081	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.qt/KivoMusicQt_res.txt	85e5cb23a92e116e
+435	4106	8031543341047321	KivoMusicQt_autogen/timestamp	9f522a0d21bea9c9
+435	4106	8031543341047321	KivoMusicQt_autogen/mocs_compilation.cpp	9f522a0d21bea9c9
+435	4106	8031543341047321	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/KivoMusicQt_autogen/timestamp	9f522a0d21bea9c9
+435	4106	8031543341047321	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/KivoMusicQt_autogen/mocs_compilation.cpp	9f522a0d21bea9c9
+4119	4302	8031543344861413	meta_types/KivoMusicQt_json_file_list.txt	92c56dd3172cf1b4
+4119	4302	8031543344861413	meta_types/KivoMusicQt_json_file_list.txt.timestamp	92c56dd3172cf1b4
+4119	4302	8031543344861413	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/meta_types/KivoMusicQt_json_file_list.txt	92c56dd3172cf1b4
+4119	4302	8031543344861413	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/meta_types/KivoMusicQt_json_file_list.txt.timestamp	92c56dd3172cf1b4
+4303	4453	8031543346360588	meta_types/qt6kivomusicqt_debug_metatypes.json.gen	e3a1604225a95b82
+4303	4453	8031543346360588	meta_types/qt6kivomusicqt_debug_metatypes.json	e3a1604225a95b82
+4303	4453	8031543346360588	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/meta_types/qt6kivomusicqt_debug_metatypes.json.gen	e3a1604225a95b82
+4303	4453	8031543346360588	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/meta_types/qt6kivomusicqt_debug_metatypes.json	e3a1604225a95b82
+4453	5024	8031543349459315	kivomusicqt_qmltyperegistrations.cpp	536065dd23dbf58d
+4453	5024	8031543349459315	KivoMusic/KivoMusicQt.qmltypes	536065dd23dbf58d
+4453	5024	8031543349459315	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/kivomusicqt_qmltyperegistrations.cpp	536065dd23dbf58d
+4453	5024	8031543349459315	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/KivoMusic/KivoMusicQt.qmltypes	536065dd23dbf58d
+5024	5090	8031543352748580	.qt/rcc/qrc_qmake_KivoMusic.cpp	aadcf2aa15bc3735
+5024	5090	8031543352748580	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.qt/rcc/qrc_qmake_KivoMusic.cpp	aadcf2aa15bc3735
+5091	5640	8031543357047312	.rcc/qmlcache/KivoMusicQt_qmlcache_loader.cpp	9d0a91fdd8e6adbe
+5091	5640	8031543357047312	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_qmlcache_loader.cpp	9d0a91fdd8e6adbe
+5640	6694	8031543368408357	.rcc/qmlcache/KivoMusicQt_ui/qml/App_qml.cpp	cf84cc3e4040fa6b
+5640	6694	8031543368408357	.rcc/qmlcache/KivoMusicQt_ui/qml/App_qml.cpp.aotstats	cf84cc3e4040fa6b
+5640	6694	8031543368408357	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/App_qml.cpp	cf84cc3e4040fa6b
+5640	6694	8031543368408357	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/App_qml.cpp.aotstats	cf84cc3e4040fa6b
+6694	6955	8031543371327424	.rcc/qmlcache/KivoMusicQt_ui/qml/tokens/Theme_qml.cpp	1bc8d318fd8b1111
+6694	6955	8031543371327424	.rcc/qmlcache/KivoMusicQt_ui/qml/tokens/Theme_qml.cpp.aotstats	1bc8d318fd8b1111
+6694	6955	8031543371327424	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/tokens/Theme_qml.cpp	1bc8d318fd8b1111
+6694	6955	8031543371327424	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/tokens/Theme_qml.cpp.aotstats	1bc8d318fd8b1111
+6956	7598	8031543377612380	.rcc/qmlcache/KivoMusicQt_ui/qml/windows/HomeWindow_qml.cpp	d79ccbf991cf21e5
+6956	7598	8031543377612380	.rcc/qmlcache/KivoMusicQt_ui/qml/windows/HomeWindow_qml.cpp.aotstats	d79ccbf991cf21e5
+6956	7598	8031543377612380	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/windows/HomeWindow_qml.cpp	d79ccbf991cf21e5
+6956	7598	8031543377612380	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/windows/HomeWindow_qml.cpp.aotstats	d79ccbf991cf21e5
+7599	7947	8031543381192323	.rcc/qmlcache/KivoMusicQt_ui/qml/pages/home/HomePage_qml.cpp	f8239596481c55c9
+7599	7947	8031543381192323	.rcc/qmlcache/KivoMusicQt_ui/qml/pages/home/HomePage_qml.cpp.aotstats	f8239596481c55c9
+7599	7947	8031543381192323	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/pages/home/HomePage_qml.cpp	f8239596481c55c9
+7599	7947	8031543381192323	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/pages/home/HomePage_qml.cpp.aotstats	f8239596481c55c9
+7989	8361	8031543385294266	.rcc/qmlcache/KivoMusicQt_ui/qml/pages/discovery/DiscoveryPage_qml.cpp	8fc553770632c9cd
+7989	8361	8031543385294266	.rcc/qmlcache/KivoMusicQt_ui/qml/pages/discovery/DiscoveryPage_qml.cpp.aotstats	8fc553770632c9cd
+7989	8361	8031543385294266	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/pages/discovery/DiscoveryPage_qml.cpp	8fc553770632c9cd
+7989	8361	8031543385294266	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/pages/discovery/DiscoveryPage_qml.cpp.aotstats	8fc553770632c9cd
+8362	8787	8031543389599081	.rcc/qmlcache/KivoMusicQt_ui/qml/pages/library/LibraryPage_qml.cpp	e65ead307afa6144
+8362	8787	8031543389599081	.rcc/qmlcache/KivoMusicQt_ui/qml/pages/library/LibraryPage_qml.cpp.aotstats	e65ead307afa6144
+8362	8787	8031543389599081	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/pages/library/LibraryPage_qml.cpp	e65ead307afa6144
+8362	8787	8031543389599081	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/pages/library/LibraryPage_qml.cpp.aotstats	e65ead307afa6144
+8788	9183	8031543393537134	.rcc/qmlcache/KivoMusicQt_ui/qml/pages/search/SearchPage_qml.cpp	319437bf8ec693fc
+8788	9183	8031543393537134	.rcc/qmlcache/KivoMusicQt_ui/qml/pages/search/SearchPage_qml.cpp.aotstats	319437bf8ec693fc
+8788	9183	8031543393537134	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/pages/search/SearchPage_qml.cpp	319437bf8ec693fc
+8788	9183	8031543393537134	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/pages/search/SearchPage_qml.cpp.aotstats	319437bf8ec693fc
+9183	9456	8031543396327103	.rcc/qmlcache/KivoMusicQt_ui/qml/components/artwork/AlbumArtwork_qml.cpp	8c7205423fac7352
+9183	9456	8031543396327103	.rcc/qmlcache/KivoMusicQt_ui/qml/components/artwork/AlbumArtwork_qml.cpp.aotstats	8c7205423fac7352
+9183	9456	8031543396327103	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/artwork/AlbumArtwork_qml.cpp	8c7205423fac7352
+9183	9456	8031543396327103	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/artwork/AlbumArtwork_qml.cpp.aotstats	8c7205423fac7352
+9457	9702	8031543398776235	.rcc/qmlcache/KivoMusicQt_ui/qml/components/artwork/GeneratedAlbumArtwork_qml.cpp	ade554dd2b479e54
+9457	9702	8031543398776235	.rcc/qmlcache/KivoMusicQt_ui/qml/components/artwork/GeneratedAlbumArtwork_qml.cpp.aotstats	ade554dd2b479e54
+9457	9702	8031543398776235	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/artwork/GeneratedAlbumArtwork_qml.cpp	ade554dd2b479e54
+9457	9702	8031543398776235	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/artwork/GeneratedAlbumArtwork_qml.cpp.aotstats	ade554dd2b479e54
+9703	10073	8031543402253867	.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/AlbumTile_qml.cpp	2620d5744eded0b1
+9703	10073	8031543402253867	.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/AlbumTile_qml.cpp.aotstats	2620d5744eded0b1
+9703	10073	8031543402253867	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/AlbumTile_qml.cpp	2620d5744eded0b1
+9703	10073	8031543402253867	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/AlbumTile_qml.cpp.aotstats	2620d5744eded0b1
+10073	10370	8031543405442912	.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/AlbumShelfSection_qml.cpp	2ed05a55c667bb33
+10073	10370	8031543405442912	.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/AlbumShelfSection_qml.cpp.aotstats	2ed05a55c667bb33
+10073	10370	8031543405442912	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/AlbumShelfSection_qml.cpp	2ed05a55c667bb33
+10073	10370	8031543405442912	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/AlbumShelfSection_qml.cpp.aotstats	2ed05a55c667bb33
+10371	10635	8031543408092037	.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/ContinueListeningCard_qml.cpp	4dbd9a5cc99bed6d
+10371	10635	8031543408092037	.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/ContinueListeningCard_qml.cpp.aotstats	4dbd9a5cc99bed6d
+10371	10635	8031543408092037	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/ContinueListeningCard_qml.cpp	4dbd9a5cc99bed6d
+10371	10635	8031543408092037	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/ContinueListeningCard_qml.cpp.aotstats	4dbd9a5cc99bed6d
+10635	10894	8031543410715796	.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/ContinueListeningSection_qml.cpp	cfce8197e0ab723e
+10635	10894	8031543410715796	.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/ContinueListeningSection_qml.cpp.aotstats	cfce8197e0ab723e
+10635	10894	8031543410715796	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/ContinueListeningSection_qml.cpp	cfce8197e0ab723e
+10635	10894	8031543410715796	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/ContinueListeningSection_qml.cpp.aotstats	cfce8197e0ab723e
+10895	11280	8031543414532846	.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/HomeRecommendationSection_qml.cpp	347332f9bdd042d4
+10895	11280	8031543414532846	.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/HomeRecommendationSection_qml.cpp.aotstats	347332f9bdd042d4
+10895	11280	8031543414532846	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/HomeRecommendationSection_qml.cpp	347332f9bdd042d4
+10895	11280	8031543414532846	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/HomeRecommendationSection_qml.cpp.aotstats	347332f9bdd042d4
+11280	11612	8031543417831892	.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/LibraryAddedSection_qml.cpp	68bcf8ce6ee7403f
+11280	11612	8031543417831892	.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/LibraryAddedSection_qml.cpp.aotstats	68bcf8ce6ee7403f
+11280	11612	8031543417831892	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/LibraryAddedSection_qml.cpp	68bcf8ce6ee7403f
+11280	11612	8031543417831892	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/LibraryAddedSection_qml.cpp.aotstats	68bcf8ce6ee7403f
+11613	11932	8031543421026357	.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/RecentListenStrip_qml.cpp	f3d65cfaf9e1c3eb
+11613	11932	8031543421026357	.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/RecentListenStrip_qml.cpp.aotstats	f3d65cfaf9e1c3eb
+11613	11932	8031543421026357	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/RecentListenStrip_qml.cpp	f3d65cfaf9e1c3eb
+11613	11932	8031543421026357	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/RecentListenStrip_qml.cpp.aotstats	f3d65cfaf9e1c3eb
+11933	12236	8031543424119766	.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/RecentListeningSection_qml.cpp	42d564e47b164f98
+11933	12236	8031543424119766	.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/RecentListeningSection_qml.cpp.aotstats	42d564e47b164f98
+11933	12236	8031543424119766	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/RecentListeningSection_qml.cpp	42d564e47b164f98
+11933	12236	8031543424119766	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/RecentListeningSection_qml.cpp.aotstats	42d564e47b164f98
+12237	12489	8031543426630762	.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/ShelfEdgeFade_qml.cpp	f757b3f4abb3c4
+12237	12489	8031543426630762	.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/ShelfEdgeFade_qml.cpp.aotstats	f757b3f4abb3c4
+12237	12489	8031543426630762	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/ShelfEdgeFade_qml.cpp	f757b3f4abb3c4
+12237	12489	8031543426630762	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/ShelfEdgeFade_qml.cpp.aotstats	f757b3f4abb3c4
+12489	12805	8031543429787872	.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/TopPickCard_qml.cpp	774cb192d244ac96
+12489	12805	8031543429787872	.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/TopPickCard_qml.cpp.aotstats	774cb192d244ac96
+12489	12805	8031543429787872	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/TopPickCard_qml.cpp	774cb192d244ac96
+12489	12805	8031543429787872	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/TopPickCard_qml.cpp.aotstats	774cb192d244ac96
+12806	13088	8031543432607011	.rcc/qmlcache/KivoMusicQt_ui/qml/components/discovery/DiscoveryCard_qml.cpp	747a4ca683f5adc4
+12806	13088	8031543432607011	.rcc/qmlcache/KivoMusicQt_ui/qml/components/discovery/DiscoveryCard_qml.cpp.aotstats	747a4ca683f5adc4
+12806	13088	8031543432607011	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/discovery/DiscoveryCard_qml.cpp	747a4ca683f5adc4
+12806	13088	8031543432607011	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/discovery/DiscoveryCard_qml.cpp.aotstats	747a4ca683f5adc4
+13089	13425	8031543435937810	.rcc/qmlcache/KivoMusicQt_ui/qml/components/library/ArtistTile_qml.cpp	2574ce93c92cd393
+13089	13425	8031543435937810	.rcc/qmlcache/KivoMusicQt_ui/qml/components/library/ArtistTile_qml.cpp.aotstats	2574ce93c92cd393
+13089	13425	8031543435937810	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/library/ArtistTile_qml.cpp	2574ce93c92cd393
+13089	13425	8031543435937810	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/library/ArtistTile_qml.cpp.aotstats	2574ce93c92cd393
+13425	13786	8031543439483200	.rcc/qmlcache/KivoMusicQt_ui/qml/components/library/TrackRow_qml.cpp	bf31994f9d171bfd
+13425	13786	8031543439483200	.rcc/qmlcache/KivoMusicQt_ui/qml/components/library/TrackRow_qml.cpp.aotstats	bf31994f9d171bfd
+13425	13786	8031543439483200	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/library/TrackRow_qml.cpp	bf31994f9d171bfd
+13425	13786	8031543439483200	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/library/TrackRow_qml.cpp.aotstats	bf31994f9d171bfd
+13787	14177	8031543443483266	.rcc/qmlcache/KivoMusicQt_ui/qml/components/search/SearchResultRow_qml.cpp	36df6cb37ec9ca96
+13787	14177	8031543443483266	.rcc/qmlcache/KivoMusicQt_ui/qml/components/search/SearchResultRow_qml.cpp.aotstats	36df6cb37ec9ca96
+13787	14177	8031543443483266	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/search/SearchResultRow_qml.cpp	36df6cb37ec9ca96
+13787	14177	8031543443483266	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/search/SearchResultRow_qml.cpp.aotstats	36df6cb37ec9ca96
+14177	14494	8031543446694297	.rcc/qmlcache/KivoMusicQt_ui/qml/components/navigation/NavigationItem_qml.cpp	2a5736adeeb4f941
+14177	14494	8031543446694297	.rcc/qmlcache/KivoMusicQt_ui/qml/components/navigation/NavigationItem_qml.cpp.aotstats	2a5736adeeb4f941
+14177	14494	8031543446694297	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/navigation/NavigationItem_qml.cpp	2a5736adeeb4f941
+14177	14494	8031543446694297	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/navigation/NavigationItem_qml.cpp.aotstats	2a5736adeeb4f941
+14494	14751	8031543449294328	.rcc/qmlcache/KivoMusicQt_ui/qml/components/navigation/NavigationGlyph_qml.cpp	9ccb965944d38d90
+14494	14751	8031543449294328	.rcc/qmlcache/KivoMusicQt_ui/qml/components/navigation/NavigationGlyph_qml.cpp.aotstats	9ccb965944d38d90
+14494	14751	8031543449294328	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/navigation/NavigationGlyph_qml.cpp	9ccb965944d38d90
+14494	14751	8031543449294328	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/navigation/NavigationGlyph_qml.cpp.aotstats	9ccb965944d38d90
+14751	15022	8031543451971374	.rcc/qmlcache/KivoMusicQt_ui/qml/components/navigation/SidebarBrand_qml.cpp	3535c6d43beda00
+14751	15022	8031543451971374	.rcc/qmlcache/KivoMusicQt_ui/qml/components/navigation/SidebarBrand_qml.cpp.aotstats	3535c6d43beda00
+14751	15022	8031543451971374	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/navigation/SidebarBrand_qml.cpp	3535c6d43beda00
+14751	15022	8031543451971374	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/navigation/SidebarBrand_qml.cpp.aotstats	3535c6d43beda00
+15023	15393	8031543455626003	.rcc/qmlcache/KivoMusicQt_ui/qml/components/navigation/Sidebar_qml.cpp	386f905743172b15
+15023	15393	8031543455626003	.rcc/qmlcache/KivoMusicQt_ui/qml/components/navigation/Sidebar_qml.cpp.aotstats	386f905743172b15
+15023	15393	8031543455626003	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/navigation/Sidebar_qml.cpp	386f905743172b15
+15023	15393	8031543455626003	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/navigation/Sidebar_qml.cpp.aotstats	386f905743172b15
+15394	15796	8031543459654698	.rcc/qmlcache/KivoMusicQt_ui/qml/components/shell/TopBar_qml.cpp	ffb93afd8f1b3890
+15394	15796	8031543459654698	.rcc/qmlcache/KivoMusicQt_ui/qml/components/shell/TopBar_qml.cpp.aotstats	ffb93afd8f1b3890
+15394	15796	8031543459654698	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/shell/TopBar_qml.cpp	ffb93afd8f1b3890
+15394	15796	8031543459654698	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/shell/TopBar_qml.cpp.aotstats	ffb93afd8f1b3890
+15797	16094	8031543462708477	.rcc/qmlcache/KivoMusicQt_ui/qml/components/shell/OpenFileButton_qml.cpp	ecf923f35e29571f
+15797	16094	8031543462708477	.rcc/qmlcache/KivoMusicQt_ui/qml/components/shell/OpenFileButton_qml.cpp.aotstats	ecf923f35e29571f
+15797	16094	8031543462708477	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/shell/OpenFileButton_qml.cpp	ecf923f35e29571f
+15797	16094	8031543462708477	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/shell/OpenFileButton_qml.cpp.aotstats	ecf923f35e29571f
+16094	16409	8031543465790674	.rcc/qmlcache/KivoMusicQt_ui/qml/components/shell/WindowDragRegion_qml.cpp	eb53ace0708faf0e
+16094	16409	8031543465790674	.rcc/qmlcache/KivoMusicQt_ui/qml/components/shell/WindowDragRegion_qml.cpp.aotstats	eb53ace0708faf0e
+16094	16409	8031543465790674	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/shell/WindowDragRegion_qml.cpp	eb53ace0708faf0e
+16094	16409	8031543465790674	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/shell/WindowDragRegion_qml.cpp.aotstats	eb53ace0708faf0e
+16409	16737	8031543469139647	.rcc/qmlcache/KivoMusicQt_ui/qml/components/shell/WindowControlButton_qml.cpp	caae5b22b4c44860
+16409	16737	8031543469139647	.rcc/qmlcache/KivoMusicQt_ui/qml/components/shell/WindowControlButton_qml.cpp.aotstats	caae5b22b4c44860
+16409	16737	8031543469139647	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/shell/WindowControlButton_qml.cpp	caae5b22b4c44860
+16409	16737	8031543469139647	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/shell/WindowControlButton_qml.cpp.aotstats	caae5b22b4c44860
+16738	16993	8031543471659232	.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/AudioStatusText_qml.cpp	8cef8c3e96bca35e
+16738	16993	8031543471659232	.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/AudioStatusText_qml.cpp.aotstats	8cef8c3e96bca35e
+16738	16993	8031543471659232	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/AudioStatusText_qml.cpp	8cef8c3e96bca35e
+16738	16993	8031543471659232	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/AudioStatusText_qml.cpp.aotstats	8cef8c3e96bca35e
+16993	17290	8031543474639218	.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/PlaybackControlCluster_qml.cpp	e447fd33111b1f07
+16993	17290	8031543474639218	.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/PlaybackControlCluster_qml.cpp.aotstats	e447fd33111b1f07
+16993	17290	8031543474639218	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/PlaybackControlCluster_qml.cpp	e447fd33111b1f07
+16993	17290	8031543474639218	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/PlaybackControlCluster_qml.cpp.aotstats	e447fd33111b1f07
+17290	17630	8031543477987853	.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/TransportBar_qml.cpp	7dbcec23dcaebaef
+17290	17630	8031543477987853	.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/TransportBar_qml.cpp.aotstats	7dbcec23dcaebaef
+17290	17630	8031543477987853	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/TransportBar_qml.cpp	7dbcec23dcaebaef
+17290	17630	8031543477987853	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/TransportBar_qml.cpp.aotstats	7dbcec23dcaebaef
+17630	17923	8031543480938573	.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/TransportButton_qml.cpp	9f26f9a6aab6577c
+17630	17923	8031543480938573	.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/TransportButton_qml.cpp.aotstats	9f26f9a6aab6577c
+17630	17923	8031543480938573	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/TransportButton_qml.cpp	9f26f9a6aab6577c
+17630	17923	8031543480938573	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/TransportButton_qml.cpp.aotstats	9f26f9a6aab6577c
+17923	18213	8031543483890843	.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/TransportTrackInfo_qml.cpp	fb0fadf2e2274275
+17923	18213	8031543483890843	.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/TransportTrackInfo_qml.cpp.aotstats	fb0fadf2e2274275
+17923	18213	8031543483890843	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/TransportTrackInfo_qml.cpp	fb0fadf2e2274275
+17923	18213	8031543483890843	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/TransportTrackInfo_qml.cpp.aotstats	fb0fadf2e2274275
+18214	18550	8031543487253433	.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/VolumeCluster_qml.cpp	2f439e6a5a9aeeec
+18214	18550	8031543487253433	.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/VolumeCluster_qml.cpp.aotstats	2f439e6a5a9aeeec
+18214	18550	8031543487253433	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/VolumeCluster_qml.cpp	2f439e6a5a9aeeec
+18214	18550	8031543487253433	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/VolumeCluster_qml.cpp.aotstats	2f439e6a5a9aeeec
+18550	18954	8031543491223763	.rcc/qmlcache/KivoMusicQt_ui/qml/components/truth/SignalPathPanel_qml.cpp	f8b0b079cab22d2b
+18550	18954	8031543491223763	.rcc/qmlcache/KivoMusicQt_ui/qml/components/truth/SignalPathPanel_qml.cpp.aotstats	f8b0b079cab22d2b
+18550	18954	8031543491223763	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/truth/SignalPathPanel_qml.cpp	f8b0b079cab22d2b
+18550	18954	8031543491223763	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/truth/SignalPathPanel_qml.cpp.aotstats	f8b0b079cab22d2b
+18955	19291	8031543494520053	.rcc/qmlcache/KivoMusicQt_ui/qml/components/truth/TruthBadge_qml.cpp	ddd977923644b38f
+18955	19291	8031543494520053	.rcc/qmlcache/KivoMusicQt_ui/qml/components/truth/TruthBadge_qml.cpp.aotstats	ddd977923644b38f
+18955	19291	8031543494520053	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/truth/TruthBadge_qml.cpp	ddd977923644b38f
+18955	19291	8031543494520053	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/truth/TruthBadge_qml.cpp.aotstats	ddd977923644b38f
+19291	19550	8031543497222908	.rcc/qmlcache/KivoMusicQt_ui/qml/components/common/CustomScrollBar_qml.cpp	c5795a8305fe58c0
+19291	19550	8031543497222908	.rcc/qmlcache/KivoMusicQt_ui/qml/components/common/CustomScrollBar_qml.cpp.aotstats	c5795a8305fe58c0
+19291	19550	8031543497222908	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/common/CustomScrollBar_qml.cpp	c5795a8305fe58c0
+19291	19550	8031543497222908	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/common/CustomScrollBar_qml.cpp.aotstats	c5795a8305fe58c0
+19550	19607	8031543497922549	.qt/rcc/qrc_KivoMusicQt_raw_qml_0.cpp	e5ab089c2eb24d81
+19550	19607	8031543497922549	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.qt/rcc/qrc_KivoMusicQt_raw_qml_0.cpp	e5ab089c2eb24d81
+19608	19645	8031543498272326	.qt/rcc/qrc_KivoMusicQt_raw_qml_0_extra_qmldirs.cpp	f06c589b74a58689
+19608	19645	8031543498272326	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.qt/rcc/qrc_KivoMusicQt_raw_qml_0_extra_qmldirs.cpp	f06c589b74a58689
+19646	25601	8031543498372281	CMakeFiles/KivoMusicQt.dir/KivoMusicQt_autogen/mocs_compilation.cpp.obj	14bbe7aa7cbde545
+25602	36013	8031543557930915	CMakeFiles/KivoMusicQt.dir/app/main.cpp.obj	e0b0f6ca661e93d
+36013	39523	8031543662053009	CMakeFiles/KivoMusicQt.dir/native/models/common/local_file_url.cpp.obj	315e981f9bd81540
+39523	45087	8031543697135823	CMakeFiles/KivoMusicQt.dir/native/models/library/album_list_model.cpp.obj	ac746f53a308d549
+45088	51116	8031543752773948	CMakeFiles/KivoMusicQt.dir/native/models/library/artist_list_model.cpp.obj	f677919e1239dab
+51116	57966	8031543813057709	CMakeFiles/KivoMusicQt.dir/native/models/library/demo_library_seed.cpp.obj	ee2024353a51c37
+57966	65089	8031543881557314	CMakeFiles/KivoMusicQt.dir/native/models/library/home/home_curation_projection.cpp.obj	a7dee53294186f37
+65090	71726	8031543952791572	CMakeFiles/KivoMusicQt.dir/native/models/library/library_model_bundle.cpp.obj	b0f45291f2ac5e96
+71726	79670	8031544019148544	CMakeFiles/KivoMusicQt.dir/native/models/library/music_library_projection.cpp.obj	1b791986261c6f12
+79671	86622	8031544098631643	CMakeFiles/KivoMusicQt.dir/native/models/library/track_list_model.cpp.obj	339081be555e8c6b
+86623	93458	8031544168128387	CMakeFiles/KivoMusicQt.dir/native/models/search/demo_search_seed.cpp.obj	c55a6230a0f52721
+93459	99712	8031544236496297	CMakeFiles/KivoMusicQt.dir/native/models/search/search_filter_model.cpp.obj	255694fd258d4359
+99712	105706	8031544299004300	CMakeFiles/KivoMusicQt.dir/native/models/search/search_model_bundle.cpp.obj	8c8f9b2908e0e5ff
+105707	112660	8031544358958106	CMakeFiles/KivoMusicQt.dir/native/models/search/music_search_projection.cpp.obj	c84ff609fb8d2af1
+112660	119019	8031544428499524	CMakeFiles/KivoMusicQt.dir/native/models/search/search_result_model.cpp.obj	ba90b493ee10c5ce
+119020	124481	8031544492108777	CMakeFiles/KivoMusicQt.dir/native/models/transport/transport_state.cpp.obj	41b2fb0d5695ce14
+124481	128065	8031544546726952	CMakeFiles/KivoMusicQt.dir/native/sources/music/audio_file_type.cpp.obj	ebb1db4309ca6fdd
+128066	134200	8031544582555160	CMakeFiles/KivoMusicQt.dir/native/sources/music/music_cover_finder.cpp.obj	6eacd41ced504443
+134201	142450	8031544643897736	CMakeFiles/KivoMusicQt.dir/native/sources/music/music_file_scanner.cpp.obj	640142a73326cb0b
+142451	150760	8031544726396943	CMakeFiles/KivoMusicQt.dir/native/sources/music/music_filename_parser.cpp.obj	bd9b456e268ed0e7
+150761	155043	8031544809531907	CMakeFiles/KivoMusicQt.dir/native/sources/music/music_source_roots.cpp.obj	eb62e0d1de7d731a
+155044	160203	8031544852316845	CMakeFiles/KivoMusicQt.dir/native/audio_core_bridge/loader/audio_core_library_loader.cpp.obj	1b417e16d65e41ac
+160203	163584	8031544903922511	CMakeFiles/KivoMusicQt.dir/native/audio_core_bridge/loader/audio_core_function_resolver.cpp.obj	afe32dda889c5c36
+163585	169814	8031544937778201	CMakeFiles/KivoMusicQt.dir/native/audio_core_bridge/loader/audio_core_library_guard.cpp.obj	a0c993dc93ec6af2
+169815	173531	8031545000027258	CMakeFiles/KivoMusicQt.dir/native/audio_core_bridge/handle/engine_handle.cpp.obj	b8b35603f2d58951
+173532	180971	8031545037213411	CMakeFiles/KivoMusicQt.dir/native/audio_core_bridge/source/file_audio_source.cpp.obj	68d8f16d666001c7
+180971	181207	8031545111607874	CMakeFiles/KivoMusicQt.dir/native/audio_core_bridge/state/bridge_session_clock.cpp.obj	80d5a3d766e5aa20
+181207	184423	8031545113976897	CMakeFiles/KivoMusicQt.dir/native/audio_core_bridge/state/default_open_configuration.cpp.obj	5a87b9a142066e87
+184423	188648	8031545146127878	CMakeFiles/KivoMusicQt.dir/native/audio_core_bridge/snapshot/playback_snapshot.cpp.obj	3cf1e9e1a1b45906
+188649	191966	8031545188373716	CMakeFiles/KivoMusicQt.dir/native/audio_core_bridge/snapshot/format_snapshot.cpp.obj	cb74dfe1fb3b2e55
+191967	195170	8031545221587514	CMakeFiles/KivoMusicQt.dir/native/audio_core_bridge/snapshot/truth_snapshot.cpp.obj	586d6452708e730b
+195171	198670	8031545253620997	CMakeFiles/KivoMusicQt.dir/native/audio_core_bridge/command/playback_command.cpp.obj	e4c80aee00fe60ee
+198671	201961	8031545288629428	CMakeFiles/KivoMusicQt.dir/native/audio_core_bridge/command/seek_command.cpp.obj	1fe71dc30048e306
+201962	203214	8031545321541760	CMakeFiles/KivoMusicQt.dir/native/audio_core_bridge/command/volume_command.cpp.obj	3249eedfd87a9f9b
+203215	209223	8031545334070574	CMakeFiles/KivoMusicQt.dir/native/audio_core_bridge/audio_playback_controller.cpp.obj	3254733bf9727c20
+209223	216169	8031545394154480	CMakeFiles/KivoMusicQt.dir/native/audio_core_bridge/controller/audio_playback_controller_impl_lifecycle.cpp.obj	2b456711337bdadd
+140	747	8031548147176429	KivoMusicQt_autogen/timestamp	9f522a0d21bea9c9
+140	747	8031548147176429	KivoMusicQt_autogen/mocs_compilation.cpp	9f522a0d21bea9c9
+140	747	8031548147176429	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/KivoMusicQt_autogen/timestamp	9f522a0d21bea9c9
+140	747	8031548147176429	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/KivoMusicQt_autogen/mocs_compilation.cpp	9f522a0d21bea9c9
+750	913	8031548153473760	meta_types/KivoMusicQt_json_file_list.txt	92c56dd3172cf1b4
+750	913	8031548153473760	meta_types/KivoMusicQt_json_file_list.txt.timestamp	92c56dd3172cf1b4
+750	913	8031548153473760	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/meta_types/KivoMusicQt_json_file_list.txt	92c56dd3172cf1b4
+750	913	8031548153473760	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/meta_types/KivoMusicQt_json_file_list.txt.timestamp	92c56dd3172cf1b4
+914	1170	8031548153626070	meta_types/qt6kivomusicqt_debug_metatypes.json.gen	e3a1604225a95b82
+914	1170	8031548153626070	meta_types/qt6kivomusicqt_debug_metatypes.json	e3a1604225a95b82
+914	1170	8031548153626070	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/meta_types/qt6kivomusicqt_debug_metatypes.json.gen	e3a1604225a95b82
+914	1170	8031548153626070	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/meta_types/qt6kivomusicqt_debug_metatypes.json	e3a1604225a95b82
+1175	7057	8031548156245326	CMakeFiles/KivoMusicQt.dir/native/audio_core_bridge/controller/audio_playback_controller_impl_commands.cpp.obj	3adf5931fb589090
+85	566	8031549127678947	KivoMusicQt_autogen/timestamp	9f522a0d21bea9c9
+85	566	8031549127678947	KivoMusicQt_autogen/mocs_compilation.cpp	9f522a0d21bea9c9
+85	566	8031549127678947	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/KivoMusicQt_autogen/timestamp	9f522a0d21bea9c9
+85	566	8031549127678947	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/KivoMusicQt_autogen/mocs_compilation.cpp	9f522a0d21bea9c9
+569	1445	8031549140090241	meta_types/KivoMusicQt_json_file_list.txt	92c56dd3172cf1b4
+569	1445	8031549140090241	meta_types/KivoMusicQt_json_file_list.txt.timestamp	92c56dd3172cf1b4
+569	1445	8031549140090241	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/meta_types/KivoMusicQt_json_file_list.txt	92c56dd3172cf1b4
+569	1445	8031549140090241	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/meta_types/KivoMusicQt_json_file_list.txt.timestamp	92c56dd3172cf1b4
+1446	1642	8031549140189958	meta_types/qt6kivomusicqt_debug_metatypes.json.gen	e3a1604225a95b82
+1446	1642	8031549140189958	meta_types/qt6kivomusicqt_debug_metatypes.json	e3a1604225a95b82
+1446	1642	8031549140189958	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/meta_types/qt6kivomusicqt_debug_metatypes.json.gen	e3a1604225a95b82
+1446	1642	8031549140189958	F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/meta_types/qt6kivomusicqt_debug_metatypes.json	e3a1604225a95b82
+1648	6882	8031549142393726	CMakeFiles/KivoMusicQt.dir/native/audio_core_bridge/controller/audio_playback_controller_impl_snapshot.cpp.obj	bd1c6838afbcab28
+6907	16542	8031549194768787	CMakeFiles/KivoMusicQt.dir/native/audio_core_bridge/controller/audio_playback_controller_impl_properties.cpp.obj	ffe69f05eae26dce
+16558	22098	8031549291307906	CMakeFiles/KivoMusicQt.dir/kivomusicqt_qmltyperegistrations.cpp.obj	90d705b3a1b230d3
+22107	22253	8031549346777949	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.qt/rcc/qrc_qmake_KivoMusic.cpp.obj	f5982518537c064c
+22254	28575	8031549348227175	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_qmlcache_loader.cpp.obj	6566d013e1960a11
+28583	34429	8031549411559841	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/App_qml.cpp.obj	6f2a8f64ff60e475
+34438	40512	8031549470114177	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/tokens/Theme_qml.cpp.obj	df9482b332a148a
+40522	47153	8031549530910911	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/windows/HomeWindow_qml.cpp.obj	ffaef1cdf16f4050
+47163	53201	8031549597354311	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/pages/home/HomePage_qml.cpp.obj	52b7321097e6136f
+53210	58900	8031549657788979	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/pages/discovery/DiscoveryPage_qml.cpp.obj	96e46ab7fb2cc8a1
+58912	64181	8031549714849226	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/pages/library/LibraryPage_qml.cpp.obj	cf940234cf35e394
+64193	70235	8031549767625577	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/pages/search/SearchPage_qml.cpp.obj	2024353ecef56
+70244	76960	8031549828167043	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/artwork/AlbumArtwork_qml.cpp.obj	8a221c5ea7f5fd35
+76970	83555	8031549895417971	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/artwork/GeneratedAlbumArtwork_qml.cpp.obj	2a2e1e19497a7b9d
+83564	88981	8031549961333380	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/AlbumTile_qml.cpp.obj	b0d28e9831fc6c95
+88990	94484	8031550015610704	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/AlbumShelfSection_qml.cpp.obj	823734993280d4b6
+94493	101888	8031550070637820	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/ContinueListeningCard_qml.cpp.obj	f6a7b5a0d6f75e54
+101897	107182	8031550144693454	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/ContinueListeningSection_qml.cpp.obj	9fc63bc8d110bc62
+107192	113074	8031550197637992	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/HomeRecommendationSection_qml.cpp.obj	3b173ab557ff048f
+113081	119972	8031550256539902	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/LibraryAddedSection_qml.cpp.obj	8c58df6e266f6577
+119981	126267	8031550325533449	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/RecentListenStrip_qml.cpp.obj	cbf0140044af4a2
+126278	132824	8031550388489451	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/RecentListeningSection_qml.cpp.obj	731c590c642facd0
+132833	138185	8031550454061148	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/ShelfEdgeFade_qml.cpp.obj	f69b2c607fd6b945
+138192	145090	8031550507617857	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/content/TopPickCard_qml.cpp.obj	5bfa4b4a43c05efa
+145101	152115	8031550576709573	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/discovery/DiscoveryCard_qml.cpp.obj	78ba553d5e57568a
+152122	157283	8031550646945816	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/library/ArtistTile_qml.cpp.obj	7b2252c5b9bf704
+157291	165371	8031550698613585	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/library/TrackRow_qml.cpp.obj	cfda7f6720f7cce3
+165376	171389	8031550779464624	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/search/SearchResultRow_qml.cpp.obj	c7f6d30fa6421387
+171397	177425	8031550839685022	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/navigation/NavigationItem_qml.cpp.obj	9bb43fe41331789c
+177434	182557	8031550900071003	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/navigation/NavigationGlyph_qml.cpp.obj	3c658db1fd46de95
+182565	188744	8031550951384829	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/navigation/SidebarBrand_qml.cpp.obj	82bcf4369ecaef50
+188759	195379	8031551013307300	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/navigation/Sidebar_qml.cpp.obj	e4d4e9d3e6e280da
+195387	203110	8031551079566394	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/shell/TopBar_qml.cpp.obj	337d35d0120e346e
+203119	211136	8031551156877122	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/shell/OpenFileButton_qml.cpp.obj	4b0c21cba9b830ea
+211147	217299	8031551237199343	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/shell/WindowDragRegion_qml.cpp.obj	82ceb0b2fde8ab58
+217307	223853	8031551298758270	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/shell/WindowControlButton_qml.cpp.obj	da9d8bc08ae26252
+223863	229958	8031551364356486	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/AudioStatusText_qml.cpp.obj	2d5321c52889b930
+229970	235917	8031551425393558	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/PlaybackControlCluster_qml.cpp.obj	c69c32c58baba15d
+235926	241822	8031551484987072	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/TransportBar_qml.cpp.obj	e8fee49b707bbcdb
+241832	248008	8031551544013178	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/TransportButton_qml.cpp.obj	267c9da21dce66c5
+248015	254722	8031551605879761	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/TransportTrackInfo_qml.cpp.obj	849b775140ff1120
+254731	261971	8031551673045222	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/VolumeCluster_qml.cpp.obj	4a23331cfc468242
+261978	268144	8031551745479551	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/truth/SignalPathPanel_qml.cpp.obj	9a56fd00c743a732
+268152	273740	8031551807219654	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/truth/TruthBadge_qml.cpp.obj	c44554a0d7d86dd6
+273747	279840	8031551863193337	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.rcc/qmlcache/KivoMusicQt_ui/qml/components/common/CustomScrollBar_qml.cpp.obj	af9db2a3362225d7
+279849	280198	8031551924221500	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.qt/rcc/qrc_KivoMusicQt_raw_qml_0.cpp.obj	db11ecedbc63000d
+280198	280547	8031551927713190	CMakeFiles/KivoMusicQt.dir/build-codex-ninja/.qt/rcc/qrc_KivoMusicQt_raw_qml_0_extra_qmldirs.cpp.obj	39e04fb5207af5eb

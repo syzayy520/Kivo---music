@@ -66,7 +66,7 @@ struct RealtimeBoundaryContract {
     BufferOwnership buffer_ownership{BufferOwnership::NotSpecified};
     
     /// Buffer lifetime proof requirements.
-    BufferLifetimeProof buffer_lifetime{BufferLifetimeProof::NotSpecified};
+    RealtimeBufferLifetimeProof buffer_lifetime{RealtimeBufferLifetimeProof::NotSpecified};
     
     [[nodiscard]] bool operator==(const RealtimeBoundaryContract&) const noexcept = default;
     

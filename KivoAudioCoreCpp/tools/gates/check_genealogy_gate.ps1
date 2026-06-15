@@ -31,7 +31,8 @@ $allowedTopLevel = @(
     "src",
     "tests",
     ".build",
-    "build"
+    "build",
+    "out"
 )
 
 $blockedTopLevelDirs = @(
@@ -69,7 +70,13 @@ $docsPath = Join-Path $ProjectRoot "docs"
 if (Test-Path $docsPath) {
     $docsItems = Get-ChildItem -Path $docsPath -Directory
     foreach ($item in $docsItems) {
-        if ($item.Name -notin @("architecture", "closeout", "tasks", "validation")) {
+        if ($item.Name -notin @(
+            "architecture",
+            "closeout",
+            "dependencies",
+            "tasks",
+            "validation"
+        )) {
             $violations += "UNAUTHORIZED_DOCS_DIR: docs/$($item.Name)/"
         }
     }
@@ -79,8 +86,676 @@ $toolsPath = Join-Path $ProjectRoot "tools"
 if (Test-Path $toolsPath) {
     $toolsItems = Get-ChildItem -Path $toolsPath -Directory
     foreach ($item in $toolsItems) {
-        if ($item.Name -notin @("gates", "validation")) {
+        if ($item.Name -notin @("gates", "release", "validation")) {
             $violations += "UNAUTHORIZED_TOOLS_DIR: tools/$($item.Name)/"
+        }
+    }
+}
+
+$runtimeFamilyRules = @(
+    @{
+        Path = "include\kivo\host"
+        AllowedDirectories = @("abi")
+    },
+    @{
+        Path = "include\kivo\host\abi"
+        AllowedDirectories = @(
+            "api",
+            "capability",
+            "command",
+            "configuration",
+            "diagnostic",
+            "handle",
+            "result",
+            "snapshot",
+            "source",
+            "version"
+        )
+    },
+    @{
+        Path = "src\host"
+        AllowedDirectories = @("abi")
+    },
+    @{
+        Path = "src\host\abi"
+        AllowedDirectories = @(
+            "api",
+            "diagnostic",
+            "engine",
+            "export",
+            "handle",
+            "mapping",
+            "resource",
+            "source",
+            "validation"
+        )
+    },
+    @{
+        Path = "tools\release"
+        AllowedDirectories = @(
+            "artifact",
+            "build",
+            "compliance",
+            "foundation",
+            "installer",
+            "manifest",
+            "runner",
+            "signing",
+            "verification"
+        )
+    },
+    @{
+        Path = "tools\release\compliance\source"
+        AllowedDirectories = @(
+            "acquisition",
+            "archival",
+            "foundation",
+            "testing",
+            "verification"
+        )
+    },
+    @{
+        Path = "tools\release\signing"
+        AllowedDirectories = @(
+            "foundation",
+            "operation",
+            "testing",
+            "verification"
+        )
+    },
+    @{
+        Path = "tools\validation\performance"
+        AllowedDirectories = @(
+            "capture",
+            "foundation",
+            "measurement",
+            "reporting",
+            "runner",
+            "verification"
+        )
+    },
+    @{
+        Path = "tests\host_abi"
+        AllowedDirectories = @(
+            "compatibility",
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
+        Path = "tests\decode_boundary"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
+        Path = "tests\decode_boundary\scenario"
+        AllowedDirectories = @(
+            "contract",
+            "media",
+            "source"
+        )
+    },
+    @{
+        Path = "tests\decode_boundary\scenario\contract"
+        AllowedDirectories = @(
+            "block",
+            "control",
+            "media_probe",
+            "open_result",
+            "step"
+        )
+    },
+    @{
+        Path = "tests\decode_boundary\scenario\source"
+        AllowedDirectories = @(
+            "large_file",
+            "local_file"
+        )
+    },
+    @{
+        Path = "tests\decode_boundary\scenario\source\large_file"
+        AllowedDirectories = @("size_seek")
+    },
+    @{
+        Path = "tests\decode_boundary\scenario\source\local_file"
+        AllowedDirectories = @(
+            "failure",
+            "open",
+            "read",
+            "seek"
+        )
+    },
+    @{
+        Path = "tests\hardware"
+        AllowedDirectories = @(
+            "decode_output",
+            "device_matrix",
+            "host_abi",
+            "wasapi"
+        )
+    },
+    @{
+        Path = "tests\hardware\host_abi"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
+        Path = "tests\hardware\device_matrix"
+        AllowedDirectories = @(
+            "fixture",
+            "platform",
+            "runner",
+            "scenario",
+            "serialization"
+        )
+    },
+    @{
+        Path = "include\kivo\core\observability"
+        AllowedDirectories = @(
+            "category",
+            "snapshot"
+        )
+    },
+    @{
+        Path = "tests\observability"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
+        Path = "tests\observability\scenario"
+        AllowedDirectories = @(
+            "category",
+            "snapshot"
+        )
+    },
+    @{
+        Path = "tests\hardware\device_matrix\platform"
+        AllowedDirectories = @("windows")
+    },
+    @{
+        Path = "tests\hardware\device_matrix\platform\windows"
+        AllowedDirectories = @(
+            "apartment",
+            "driver",
+            "endpoint"
+        )
+    },
+    @{
+        Path = "tests\hardware\decode_output"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
+        Path = "tests\hardware\wasapi"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
+        Path = "tests\stability"
+        AllowedDirectories = @(
+            "fixture",
+            "platform",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
+        Path = "tests\stability\platform"
+        AllowedDirectories = @("windows")
+    },
+    @{
+        Path = "include\kivo\adapters\ffmpeg"
+        AllowedDirectories = @("session")
+    },
+    @{
+        Path = "src\adapters\ffmpeg"
+        AllowedDirectories = @(
+            "codec",
+            "container",
+            "conversion",
+            "mapping",
+            "session",
+            "source"
+        )
+    },
+    @{
+        Path = "src\adapters\ffmpeg\conversion"
+        AllowedDirectories = @(
+            "converter",
+            "policy",
+            "truth"
+        )
+    },
+    @{
+        Path = "tests\ffmpeg_decode"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
+        Path = "tests\ffmpeg_decode\fixture"
+        AllowedDirectories = @(
+            "assertion",
+            "decode",
+            "harness",
+            "mutation"
+        )
+    },
+    @{
+        Path = "tests\ffmpeg_decode\scenario"
+        AllowedDirectories = @(
+            "control",
+            "corruption",
+            "cue",
+            "decode",
+            "format",
+            "policy",
+            "truncation"
+        )
+    },
+    @{
+        Path = "include\kivo\platform\windows\wasapi"
+        AllowedDirectories = @(
+            "diagnostics",
+            "renderer",
+            "result",
+            "worker"
+        )
+    },
+    @{
+        Path = "src\platform\windows\wasapi"
+        AllowedDirectories = @(
+            "apartment",
+            "device",
+            "error",
+            "format",
+            "power",
+            "renderer",
+            "worker"
+        )
+    },
+    @{
+        Path = "src\platform\windows\wasapi\device"
+        AllowedDirectories = @("notification")
+    },
+    @{
+        Path = "src\platform\windows\wasapi\power"
+        AllowedDirectories = @("notification")
+    },
+    @{
+        Path = "tests\platform_windows\wasapi"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
+        Path = "include\kivo\testing\render"
+        AllowedDirectories = @(
+            "configuration",
+            "fault",
+            "observation",
+            "renderer"
+        )
+    },
+    @{
+        Path = "src\testing\render"
+        AllowedDirectories = @(
+            "consumption",
+            "fault",
+            "lifecycle",
+            "observation",
+            "write"
+        )
+    },
+    @{
+        Path = "tests\fake_renderer"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
+        Path = "include\kivo\core\playback\pipeline"
+        AllowedDirectories = @(
+            "configuration",
+            "producer",
+            "result",
+            "snapshot"
+        )
+    },
+    @{
+        Path = "src\core\playback\pipeline"
+        AllowedDirectories = @(
+            "buffer",
+            "producer",
+            "state",
+            "step",
+            "transfer"
+        )
+    },
+    @{
+        Path = "tests\playback_pipeline"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
+        Path = "include\kivo\core\playback\gapless"
+        AllowedDirectories = @(
+            "coordinator",
+            "plan",
+            "position",
+            "segment",
+            "transition"
+        )
+    },
+    @{
+        Path = "src\core\playback\gapless"
+        AllowedDirectories = @(
+            "coordinator",
+            "position",
+            "segment",
+            "transition"
+        )
+    },
+    @{
+        Path = "tests\playback_gapless"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
+        Path = "tests\playback_gapless\scenario"
+        AllowedDirectories = @(
+            "compatibility",
+            "continuity",
+            "position",
+            "segment"
+        )
+    },
+    @{
+        Path = "include\kivo\core\output\truth"
+        AllowedDirectories = @(
+            "evaluation",
+            "evidence",
+            "result"
+        )
+    },
+    @{
+        Path = "src\core\output\truth"
+        AllowedDirectories = @(
+            "evaluation",
+            "evidence"
+        )
+    },
+    @{
+        Path = "tests\output_truth"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
+        Path = "tests\output_truth\scenario"
+        AllowedDirectories = @(
+            "evaluation",
+            "evidence"
+        )
+    },
+    @{
+        Path = "include\kivo\core\processing"
+        AllowedDirectories = @(
+            "chain",
+            "configuration",
+            "policy",
+            "result",
+            "snapshot"
+        )
+    },
+    @{
+        Path = "src\core\processing"
+        AllowedDirectories = @(
+            "chain",
+            "gain",
+            "planning"
+        )
+    },
+    @{
+        Path = "tests\audio_processing"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
+        Path = "tests\audio_processing\scenario"
+        AllowedDirectories = @(
+            "bypass",
+            "formats",
+            "gain",
+            "policy"
+        )
+    },
+    @{
+        Path = "tests\hires_pcm"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
+        Path = "tests\hires_pcm\scenario"
+        AllowedDirectories = @(
+            "boundary",
+            "descriptor"
+        )
+    },
+    @{
+        Path = "tests\playback_pipeline\scenario"
+        AllowedDirectories = @(
+            "backpressure",
+            "eos",
+            "generation",
+            "processing",
+            "validation"
+        )
+    },
+    @{
+        Path = "include\kivo\core\playback\recovery"
+        AllowedDirectories = @(
+            "classification",
+            "completion",
+            "execution",
+            "executor",
+            "operations",
+            "policy"
+        )
+    },
+    @{
+        Path = "src\core\playback\recovery"
+        AllowedDirectories = @("executor")
+    },
+    @{
+        Path = "include\kivo\core\playback\session"
+        AllowedDirectories = @(
+            "command",
+            "controller",
+            "drain",
+            "snapshot"
+        )
+    },
+    @{
+        Path = "src\core\playback\session"
+        AllowedDirectories = @(
+            "command",
+            "controller",
+            "drain",
+            "position",
+            "recovery",
+            "result",
+            "seek",
+            "snapshot",
+            "state"
+        )
+    },
+    @{
+        Path = "tests\playback_session"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    },
+    @{
+        Path = "include\kivo\core\playback\runtime"
+        AllowedDirectories = @(
+            "coordinator",
+            "failure",
+            "request",
+            "result",
+            "snapshot"
+        )
+    },
+    @{
+        Path = "src\core\playback\runtime"
+        AllowedDirectories = @(
+            "command",
+            "coordinator",
+            "drain",
+            "flush",
+            "lifecycle",
+            "open",
+            "recovery",
+            "resource",
+            "result",
+            "seek",
+            "snapshot",
+            "state",
+            "step",
+            "transport"
+        )
+    },
+    @{
+        Path = "tests\playback_runtime"
+        AllowedDirectories = @("coordinator")
+    },
+    @{
+        Path = "tests\playback_runtime\coordinator"
+        AllowedDirectories = @(
+            "fixture",
+            "runner",
+            "scenario"
+        )
+    }
+)
+
+foreach ($rule in $runtimeFamilyRules) {
+    $familyPath = Join-Path $ProjectRoot $rule.Path
+    if (-not (Test-Path $familyPath)) {
+        continue
+    }
+
+    $rootFiles = Get-ChildItem -Path $familyPath -File -Force
+    foreach ($file in $rootFiles) {
+        $violations += "FLAT_FAMILY_FILE: $($rule.Path)\$($file.Name)"
+    }
+
+    $childDirectories = Get-ChildItem -Path $familyPath -Directory -Force
+    foreach ($directory in $childDirectories) {
+        if ($directory.Name -notin $rule.AllowedDirectories) {
+            $violations += "UNAUTHORIZED_RUNTIME_SUBFAMILY: $($rule.Path)\$($directory.Name)\"
+        }
+    }
+}
+
+$runtimeSourceRoots = @(
+    "tests\decode_boundary",
+    "tests\hardware",
+    "tests\stability",
+    "include\kivo\adapters\ffmpeg",
+    "src\adapters\ffmpeg",
+    "tests\ffmpeg_decode",
+    "include\kivo\platform\windows\wasapi",
+    "src\platform\windows\wasapi",
+    "tests\platform_windows\wasapi",
+    "include\kivo\testing\render",
+    "src\testing\render",
+    "tests\fake_renderer",
+    "include\kivo\core\playback\pipeline",
+    "include\kivo\core\playback\recovery",
+    "include\kivo\core\playback\session",
+    "include\kivo\core\playback\runtime",
+    "src\core\playback\pipeline",
+    "include\kivo\core\playback\gapless",
+    "src\core\playback\gapless",
+    "include\kivo\core\output\truth",
+    "src\core\output\truth",
+    "include\kivo\core\processing",
+    "src\core\processing",
+    "src\core\playback\recovery",
+    "src\core\playback\session",
+    "src\core\playback\runtime",
+    "tests\playback_pipeline",
+    "tests\playback_gapless",
+    "tests\output_truth",
+    "tests\audio_processing",
+    "tests\hires_pcm",
+    "include\kivo\core\render\queue",
+    "src\core\render\queue",
+    "tests\render_queue",
+    "tests\playback_session",
+    "tests\playback_runtime",
+    "include\kivo\core\observability",
+    "tests\observability",
+    "include\kivo\host\abi",
+    "src\host\abi",
+    "tests\host_abi",
+    "tools\release",
+    "tools\validation\performance"
+)
+$runtimeMaximumLines = 260
+foreach ($relativeRoot in $runtimeSourceRoots) {
+    $runtimeRoot = Join-Path $ProjectRoot $relativeRoot
+    if (-not (Test-Path $runtimeRoot)) {
+        continue
+    }
+    $runtimeFiles = Get-ChildItem -Path $runtimeRoot -Recurse -File |
+        Where-Object {
+            $_.Extension -in @(".h", ".hpp", ".c", ".cpp", ".ps1")
+        }
+    foreach ($file in $runtimeFiles) {
+        $lineCount = (Get-Content $file.FullName).Count
+        if ($lineCount -gt $runtimeMaximumLines) {
+            $relativeFile = $file.FullName.Substring($ProjectRoot.Length).TrimStart("\")
+            $violations += "RUNTIME_FILE_RESPONSIBILITY_OVERFLOW: $relativeFile has $lineCount lines (max $runtimeMaximumLines)"
         }
     }
 }

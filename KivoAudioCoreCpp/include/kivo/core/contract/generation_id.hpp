@@ -29,6 +29,10 @@ public:
         return GenerationId{current.id_ + 1};
     }
 
+    [[nodiscard]] static constexpr GenerationId from_value(uint64_t value) noexcept {
+        return GenerationId{value};
+    }
+
     // --- Observers ---
     [[nodiscard]] constexpr uint64_t value() const noexcept {
         return id_;

@@ -12,13 +12,30 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+# CMake probes the localized MSVC /showIncludes prefix during configure.
+# UTF-8 prevents the prefix from being decoded with the legacy console page,
+# which would make Ninja print every dependency line instead of filtering it.
+chcp 65001 | Out-Null
+
 if (-not $ProjectRoot) {
     $ProjectRoot = Join-Path $PSScriptRoot "..\.."
 }
 $ProjectRoot = (Resolve-Path $ProjectRoot).Path
 
+. (Join-Path $PSScriptRoot "import_msvc_environment.ps1")
+$null = Import-KivoMsvcEnvironment
+
 if (-not $BuildDir) {
     $BuildDir = Join-Path $ProjectRoot "build"
+}
+if (-not [System.IO.Path]::IsPathRooted($BuildDir)) {
+    $BuildDir = Join-Path $ProjectRoot $BuildDir
+}
+$BuildDir = [System.IO.Path]::GetFullPath($BuildDir)
+
+$projectPrefix = $ProjectRoot.TrimEnd("\", "/") + [System.IO.Path]::DirectorySeparatorChar
+if (-not $BuildDir.StartsWith($projectPrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+    throw "BuildDir must remain inside PROJECT_ROOT: $BuildDir"
 }
 
 function Test-CommandAvailable {
@@ -54,6 +71,13 @@ Write-Host "Date: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
 Write-Host "============================================================================="
 Write-Host ""
 
+$buildDirectoryExists = Test-Path -LiteralPath $BuildDir
+if ($buildDirectoryExists) {
+    Write-Host "Removing previous generated build directory: $BuildDir"
+    Remove-Item -LiteralPath $BuildDir -Recurse -Force
+    Write-Host ""
+}
+
 $hasCl = Test-CommandAvailable -Name "cl"
 $hasClang = Test-CommandAvailable -Name "clang++"
 $hasGcc = Test-CommandAvailable -Name "g++"
@@ -84,7 +108,7 @@ Write-Host ""
 
 if ($Generator -eq "Ninja") {
     Invoke-ExternalStep -Name "CMake configure (Ninja)" -Script {
-        cmake -S $ProjectRoot -B $BuildDir -G Ninja
+        cmake -S $ProjectRoot -B $BuildDir -G Ninja "-DCMAKE_BUILD_TYPE=$Configuration"
     }
 
     Invoke-ExternalStep -Name "CMake build (Ninja)" -Script {

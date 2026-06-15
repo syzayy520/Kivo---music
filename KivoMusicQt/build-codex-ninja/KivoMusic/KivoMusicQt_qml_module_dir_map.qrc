@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/">
+    <file alias="/qt/qml/KivoMusic">F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/KivoMusic</file>
+
+  </qresource>
+</RCC>

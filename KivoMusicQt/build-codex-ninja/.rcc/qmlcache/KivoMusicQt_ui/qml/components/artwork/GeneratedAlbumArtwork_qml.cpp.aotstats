@@ -1,0 +1,60 @@
+[
+    {
+        "moduleFiles": [
+            {
+                "entries": [
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 13,
+                        "durationMicroseconds": 322,
+                        "errorMessage": "",
+                        "functionName": "radius",
+                        "line": 8
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 36,
+                        "durationMicroseconds": 2332,
+                        "errorMessage": "Cannot generate efficient code for storing an array in a non-sequence type",
+                        "functionName": "palette",
+                        "line": 12
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 44,
+                        "durationMicroseconds": 89,
+                        "errorMessage": "Cannot load property length from (component in F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/artwork/GeneratedAlbumArtwork.qml)::palette with type QVariant.",
+                        "functionName": "color",
+                        "line": 21
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 44,
+                        "durationMicroseconds": 57,
+                        "errorMessage": "Cannot load property length from (component in F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/artwork/GeneratedAlbumArtwork.qml)::palette with type QVariant.",
+                        "functionName": "color",
+                        "line": 22
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 18,
+                        "durationMicroseconds": 78,
+                        "errorMessage": "Instruction \"generate_PushBlockContext\" not implemented",
+                        "functionName": "onPaint",
+                        "line": 29
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 23,
+                        "durationMicroseconds": 101,
+                        "errorMessage": "",
+                        "functionName": "fill",
+                        "line": 26
+                    }
+                ],
+                "filepath": "F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/artwork/GeneratedAlbumArtwork.qml"
+            }
+        ],
+        "moduleId": "KivoMusic(KivoMusicQt)"
+    }
+]

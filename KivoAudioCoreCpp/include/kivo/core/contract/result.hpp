@@ -12,6 +12,7 @@
 #include <cstdint>
 #include <string>
 #include <string_view>
+#include <utility>
 #include <variant>
 
 namespace kivo::core::contract {
@@ -41,17 +42,11 @@ class [[nodiscard]] StatusOr {
 public:
     // --- Factory methods ---
     static StatusOr Ok(T value) {
-        StatusOr s;
-        s.result_ = Result::Ok;
-        s.data_ = std::move(value);
-        return s;
+        return StatusOr(OkTag{}, std::move(value));
     }
 
     static StatusOr Error(std::string message) {
-        StatusOr s;
-        s.result_ = Result::Error;
-        s.data_ = ErrorInfo{std::move(message)};
-        return s;
+        return StatusOr(ErrorTag{}, std::move(message));
     }
 
     // --- Observers ---
@@ -69,20 +64,29 @@ public:
 
     // --- Accessors (precondition: is_ok() / is_error()) ---
     [[nodiscard]] const T& value() const {
-        return std::get<T>(data_);
+        return std::get<0>(data_);
     }
 
     [[nodiscard]] std::string_view error() const {
-        return std::get<ErrorInfo>(data_).message;
+        return std::get<1>(data_).message;
     }
 
     // --- Comparison ---
-    [[nodiscard]] bool operator==(const StatusOr&) const noexcept = default;
+    [[nodiscard]] bool operator==(const StatusOr&) const = default;
 
 private:
-    StatusOr() = default;
+    struct OkTag {};
+    struct ErrorTag {};
 
-    Result result_ = Result::Error;
+    StatusOr(OkTag, T value)
+        : result_(Result::Ok),
+          data_(std::in_place_index<0>, std::move(value)) {}
+
+    StatusOr(ErrorTag, std::string message)
+        : result_(Result::Error),
+          data_(std::in_place_index<1>, ErrorInfo{std::move(message)}) {}
+
+    Result result_;
     std::variant<T, ErrorInfo> data_;
 };
 

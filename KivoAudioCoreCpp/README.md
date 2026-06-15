@@ -1,20 +1,42 @@
 # KivoAudioCoreCpp
 
-Kivo Windows Desktop Commercial Audio Core — C++ Implementation
+Kivo Windows Desktop Commercial Audio Core - C++ Implementation
 
 ## Project Status
 
-**Current Phase:** P0-D (Validation Hardening and Contract Correctness Repair)
+**Current execution position:** P0-P engineering RC complete; P0-Q Hi-Res PCM
+contracts plus explicit DSD/DoP rejection are implemented; P0-R reference
+probe is initialized but no reproducible mpv baseline exists; commercial
+release gates remain open.
 
 This project is the standalone C++ audio core for the Kivo Windows desktop music player.
 It replaces the previous Rust audio backend with a fully self-controlled C++ implementation.
 
 Current state:
 
-- P0-C contract cleanup is ready for closeout.
-- P0-D is hardening validation, public-header composability, and core contract correctness.
-- There is still no production audio runtime engine in this repository.
-- FFmpeg decode, WASAPI output, realtime render thread, and end-to-end playback are future implementation phases.
+- Public contracts and deterministic render/failure boundaries are complete.
+- Event-driven WASAPI shared output is implemented and hardware-verified.
+- FFmpeg local-file decode, bounded queue transfer, playback control, seek,
+  recovery, hostile-media handling, and gapless timeline behavior are present.
+- WASAPI exclusive negotiation is implemented without shared fallback.
+- Bit-perfect is reported only from complete mode, format, engine, conversion,
+  and processing evidence.
+- ReplayGain, software volume, deterministic dither, explicit resample
+  quality, conversion latency/tail truth, and strict bypass are complete.
+- Versioned C ABI, opaque handles, host callback sources, sanitized
+  diagnostics, and Qt product adapter ownership rules are complete.
+- P0-P produces a verified, reproducible `1.0.0-rc.1` engineering release
+  candidate. Commercial shipping remains blocked by signing, legal/source,
+  product-installer, and physical release-lab evidence.
+- P0-Q Hi-Res PCM plus DSD/DoP contract validation and P0-R mpv reference
+  probing are initialized without changing current product capability claims.
+
+The authoritative implementation order is:
+
+[`docs/architecture/audio_core_execution_roadmap.md`](docs/architecture/audio_core_execution_roadmap.md)
+
+Future work must follow that roadmap unless an explicit, owner-approved
+roadmap amendment is committed.
 
 ## Architecture Direction
 
@@ -29,26 +51,26 @@ Current state:
 |-------|------|--------|
 | P0-A | Design Planning Lock | DONE |
 | P0-B | Skeleton + Governance + Policy Pack | DONE |
-| P0-C | Core Contract Foundation | CLOSEOUT |
-| P0-D | Validation Hardening + Contract Correctness Repair | IN PROGRESS |
-| P0-E | Minimal Decode / Output Seam Planning | PLANNED |
-| P0-F | WASAPI Adapter Shell | PLANNED |
-| P0-G | Decode Contract + FFmpeg Seam | PLANNED |
-| P0-H | Minimum Real WASAPI Output | PLANNED |
-| P0-I | Minimum FFmpeg Decode -> WASAPI Loop | PLANNED |
-| P0-J | State Machine Hardening | PLANNED |
-| P0-K | Commercial Stability / Device Matrix | PLANNED |
-| P0-L | Gapless Playback / Timeline Accuracy | PLANNED |
-| P0-M | Exclusive Mode / Bit-Perfect | PLANNED |
-| P0-N | ReplayGain / Volume / DSP | PLANNED |
-| P0-O | Host ABI / Tauri Integration | PLANNED |
-| P0-P | Commercial Release Hardening | PLANNED |
-| P0-Q | Hi-Res / DSD / DoP Research | PLANNED |
-| P0-R | mpv/libmpv Reference Research | PLANNED |
+| P0-C | Core Contract Foundation | DONE |
+| P0-D/P0-E | Validation + Deterministic Render Proof | DONE |
+| P0-F | WASAPI Adapter Shell | DONE |
+| P0-G | Decode Contract + FFmpeg Seam | DONE |
+| P0-H | Minimum Real WASAPI Output | DONE |
+| P0-I | Minimum FFmpeg Decode -> WASAPI Loop | DONE |
+| P0-J | State Machine Hardening | DONE |
+| P0-K | Commercial Stability / Device Matrix | DONE |
+| P0-L | Gapless Playback / Timeline Accuracy | DONE |
+| P0-M | Exclusive Mode / Bit-Perfect | DONE |
+| P0-N | ReplayGain / Volume / DSP | DONE |
+| P0-O | Host ABI / Qt Product Integration | DONE |
+| P0-P | Commercial Release Hardening | DONE (ENGINEERING RC) |
+| P0-Q | Hi-Res / DSD / DoP Research | CONTRACT + EXPLICIT RUNTIME REJECTION COMPLETE; PLAYBACK OPEN |
+| P0-R | mpv/libmpv Reference Research | REFERENCE PROBE INITIALIZED |
 
 ## Build and Validation
 
-P0-D has contract build/test targets and validation tooling.
+The repository contains full contract, runtime, adapter, ABI, and release
+validation tooling.
 
 Lightweight local smoke check:
 
@@ -58,12 +80,21 @@ powershell -ExecutionPolicy Bypass -File .\tools\validation\environment_probe.ps
 powershell -ExecutionPolicy Bypass -File .\tools\validation\validation_smoke_entry.ps1
 ```
 
-Full local validation requires a Windows C++ toolchain shell, such as:
+Full local validation automatically discovers the supported Visual Studio
+toolchain when it is installed. The release-candidate pipeline performs two
+clean Release builds, runs CTest, checks binary and archive reproducibility,
+stages notices and SBOM, separates symbols, and verifies the package:
 
-```text
-x64 Native Tools Command Prompt for VS
-Developer PowerShell for VS
+```powershell
+powershell -ExecutionPolicy Bypass -File `
+  .\tools\release\runner\run_release_candidate.ps1 `
+  -AllowUnsigned
 ```
+
+`-AllowUnsigned` produces an engineering release candidate and records code
+signing as a commercial blocker. Commercial distribution requires a valid
+certificate thumbprint plus the external legal, installer, source-archive,
+device, and endurance evidence listed in the P0-P release matrix.
 
 See:
 
@@ -78,4 +109,4 @@ See `docs/architecture/` for the full policy pack.
 
 ## License
 
-Proprietary — Kivo Music
+Proprietary - Kivo Music
