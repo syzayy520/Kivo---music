@@ -9,12 +9,30 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Set Qt paths explicitly to avoid path encoding issues
-set(QT_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/.qt/6.8.3/msvc2022_64")
-list(APPEND CMAKE_PREFIX_PATH "${QT_ROOT}")
-set(QT_HOST_PATH "${QT_ROOT}")
+# Qt discovery policy:
+# - CI and clean developer machines should provide Qt through KIVO_QT_ROOT,
+#   CMAKE_PREFIX_PATH, or Qt6_DIR.
+# - The repo-local .qt directory is optional local tooling and is intentionally
+#   ignored by git; it must not be required for configure.
+set(KIVO_QT_LOCAL_ROOT
+    "${CMAKE_CURRENT_SOURCE_DIR}/.qt/6.8.3/msvc2022_64"
+    CACHE PATH
+    "Optional local Qt install used only when present")
 
-find_package(Qt6 REQUIRED COMPONENTS Quick QuickControls2 Sql QuickEffectsPrivate)
+if(DEFINED ENV{KIVO_QT_ROOT} AND NOT "$ENV{KIVO_QT_ROOT}" STREQUAL "")
+    list(PREPEND CMAKE_PREFIX_PATH "$ENV{KIVO_QT_ROOT}")
+    set(QT_HOST_PATH "$ENV{KIVO_QT_ROOT}" CACHE PATH "Qt host path" FORCE)
+    message(STATUS "KivoMusicQt: using Qt from KIVO_QT_ROOT=$ENV{KIVO_QT_ROOT}")
+elseif(EXISTS "${KIVO_QT_LOCAL_ROOT}/lib/cmake/Qt6/Qt6Config.cmake")
+    list(PREPEND CMAKE_PREFIX_PATH "${KIVO_QT_LOCAL_ROOT}")
+    set(QT_HOST_PATH "${KIVO_QT_LOCAL_ROOT}" CACHE PATH "Qt host path" FORCE)
+    message(STATUS "KivoMusicQt: using optional repo-local Qt at ${KIVO_QT_LOCAL_ROOT}")
+else()
+    message(STATUS "KivoMusicQt: using externally configured Qt discovery")
+    message(STATUS "KivoMusicQt: set KIVO_QT_ROOT, CMAKE_PREFIX_PATH, or Qt6_DIR if Qt6 is not found")
+endif()
+
+find_package(Qt6 6.5 REQUIRED COMPONENTS Quick QuickControls2 Sql)
 qt_standard_project_setup(REQUIRES 6.5)
 if (COMMAND qt_policy)
     qt_policy(SET QTP0004 NEW)
@@ -204,7 +222,6 @@ target_link_libraries(KivoMusicQt
         Qt6::Quick
         Qt6::QuickControls2
         Qt6::Sql
-        Qt6::QuickEffectsPrivate
 )
 
 if (MSVC)
