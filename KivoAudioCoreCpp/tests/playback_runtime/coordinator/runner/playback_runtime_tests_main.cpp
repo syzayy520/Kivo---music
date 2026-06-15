@@ -1,0 +1,65 @@
+#include <iostream>
+#include <iterator>
+
+#include "playback_runtime_test_cases.hpp"
+
+int main() {
+    using namespace playback_runtime_test;
+    std::cout << std::unitbuf;
+    struct Test {
+        const char* name;
+        void (*run)();
+    };
+    const Test tests[] = {
+        {"shutdown_waits_for_active_write_and_releases_runtime",
+         shutdown_waits_for_active_write_and_releases_runtime},
+        {"close_waits_for_active_drain_and_releases_runtime",
+         close_waits_for_active_drain_and_releases_runtime},
+        {"device_loss_during_flush_recovers_pipeline",
+         device_loss_during_flush_recovers_pipeline},
+        {"stale_pause_cannot_mutate_replaced_source",
+         stale_pause_cannot_mutate_replaced_source},
+        {"source_failure_stops_media_with_classified_domain",
+         source_failure_stops_media_with_classified_domain},
+        {"codec_failure_is_truthful_and_remains_closable",
+         codec_failure_is_truthful_and_remains_closable},
+        {"open_failure_rolls_back_every_boundary",
+         open_failure_rolls_back_every_boundary},
+        {"renderer_format_rejection_records_negotiation_failure",
+         renderer_format_rejection_records_negotiation_failure},
+        {"format_renegotiation_metrics_are_monotonic",
+         format_renegotiation_metrics_are_monotonic},
+        {"processing_policy_is_propagated_and_bit_perfect_conflicts_reject",
+         processing_policy_is_propagated_and_bit_perfect_conflicts_reject},
+        {"eos_drains_buffer_and_stops_session",
+         eos_drains_buffer_and_stops_session},
+        {"drain_timeout_fails_and_close_releases_boundaries",
+         drain_timeout_fails_and_close_releases_boundaries},
+        {"device_loss_reopens_pipeline_and_resumes",
+         device_loss_reopens_pipeline_and_resumes},
+        {"failed_device_recovery_remains_closable",
+         failed_device_recovery_remains_closable},
+        {"seek_resets_all_scopes_and_discards_old_audio",
+         seek_resets_all_scopes_and_discards_old_audio},
+        {"stale_command_cannot_mutate_renderer",
+         stale_command_cannot_mutate_renderer},
+        {"failed_seek_can_be_closed_and_shutdown_is_terminal",
+         failed_seek_can_be_closed_and_shutdown_is_terminal}
+    };
+
+    int passed = 0;
+    std::cout << "=== Playback Runtime Coordinator Tests ===\n\n";
+    for (const auto& test : tests) {
+        std::cout << "  " << test.name << "... ";
+        try {
+            test.run();
+            ++passed;
+            std::cout << "PASS\n";
+        } catch (const std::exception& exception) {
+            std::cout << "FAIL: " << exception.what() << "\n";
+        }
+    }
+    std::cout << "\n=== " << passed << "/" << std::size(tests)
+              << " passed ===\n";
+    return passed == std::size(tests) ? 0 : 1;
+}

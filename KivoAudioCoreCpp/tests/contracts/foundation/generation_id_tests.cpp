@@ -30,6 +30,11 @@ static void next_chain() {
     ASSERT(g.value() == 100);
 }
 
+static void from_value_preserves_host_token() {
+    const auto g = GenerationId::from_value(0x123456789ABCDEF0ull);
+    ASSERT(g.value() == 0x123456789ABCDEF0ull);
+}
+
 static void equality_reflexive() {
     auto g = GenerationId::initial();
     ASSERT(g == g);
@@ -64,6 +69,9 @@ void run_generation_id_contract_tests(ContractTestRunner& runner) {
     runner.run("initial_value_is_zero", initial_value_is_zero);
     runner.run("next_increments", next_increments);
     runner.run("next_chain", next_chain);
+    runner.run(
+        "from_value_preserves_host_token",
+        from_value_preserves_host_token);
     runner.run("equality_reflexive", equality_reflexive);
     runner.run("equality_same_value", equality_same_value);
     runner.run("inequality_different_value", inequality_different_value);

@@ -59,6 +59,26 @@ static void invalid_mismatched_container_bits() {
     ASSERT(!fmt.is_valid());
 }
 
+static void invalid_unknown_frame_layout() {
+    AudioFormatDescriptor fmt;
+    fmt.sample_format = SampleFormat::Int16;
+    fmt.channel_layout = ChannelLayout::Stereo;
+    fmt.frame_layout = FrameLayout::Unknown;
+    fmt.sample_rate = 44100;
+    fmt.bits_per_sample = 16;
+    ASSERT(!fmt.is_valid());
+}
+
+static void invalid_channel_mask_mismatch() {
+    AudioFormatDescriptor fmt;
+    fmt.sample_format = SampleFormat::Int16;
+    fmt.channel_layout = ChannelLayout::Stereo;
+    fmt.channel_mask = kMonoMask;
+    fmt.sample_rate = 44100;
+    fmt.bits_per_sample = 16;
+    ASSERT(!fmt.is_valid());
+}
+
 static void channel_count_derived() {
     AudioFormatDescriptor fmt;
     fmt.channel_layout = ChannelLayout::Stereo;
@@ -101,6 +121,52 @@ static void explicit_container_bits_normalize_equality() {
     ASSERT(a == b);
 }
 
+static void implicit_and_explicit_channel_masks_normalize_equality() {
+    AudioFormatDescriptor a;
+    a.sample_format = SampleFormat::Float32;
+    a.channel_layout = ChannelLayout::Surround51;
+    a.sample_rate = 48000;
+    a.bits_per_sample = 32;
+
+    AudioFormatDescriptor b = a;
+    b.channel_mask = kSurround51Mask;
+
+    ASSERT(a.is_valid());
+    ASSERT(b.is_valid());
+    ASSERT(a == b);
+    ASSERT(a.channel_count() == 6);
+    ASSERT(a.bytes_per_frame() == 24);
+}
+
+static void common_layouts_have_consistent_masks_and_frame_sizes() {
+    AudioFormatDescriptor mono{
+        SampleFormat::Int16,
+        ChannelLayout::Mono,
+        FrameLayout::Interleaved,
+        {},
+        44100,
+        16,
+        0
+    };
+    AudioFormatDescriptor surround71{
+        SampleFormat::Float32,
+        ChannelLayout::Surround71,
+        FrameLayout::Planar,
+        {},
+        96000,
+        32,
+        0
+    };
+
+    ASSERT(mono.is_valid());
+    ASSERT(mono.effective_channel_mask() == kMonoMask);
+    ASSERT(mono.bytes_per_frame() == 2);
+    ASSERT(surround71.is_valid());
+    ASSERT(surround71.effective_channel_mask() == kSurround71Mask);
+    ASSERT(surround71.channel_count() == 8);
+    ASSERT(surround71.bytes_per_frame() == 32);
+}
+
 static void equality_same() {
     AudioFormatDescriptor a;
     a.sample_format = SampleFormat::Float32;
@@ -136,10 +202,14 @@ void run_audio_format_descriptor_contract_tests(ContractTestRunner& runner) {
     runner.run("invalid_zero_bits", invalid_zero_bits);
     runner.run("invalid_mismatched_valid_bits", invalid_mismatched_valid_bits);
     runner.run("invalid_mismatched_container_bits", invalid_mismatched_container_bits);
+    runner.run("invalid_unknown_frame_layout", invalid_unknown_frame_layout);
+    runner.run("invalid_channel_mask_mismatch", invalid_channel_mask_mismatch);
     runner.run("channel_count_derived", channel_count_derived);
     runner.run("bytes_per_frame_calculation", bytes_per_frame_calculation);
     runner.run("int24_stereo_uses_32_bit_container", int24_stereo_uses_32_bit_container);
     runner.run("explicit_container_bits_normalize_equality", explicit_container_bits_normalize_equality);
+    runner.run("implicit_and_explicit_channel_masks_normalize_equality", implicit_and_explicit_channel_masks_normalize_equality);
+    runner.run("common_layouts_have_consistent_masks_and_frame_sizes", common_layouts_have_consistent_masks_and_frame_sizes);
     runner.run("equality_same", equality_same);
     runner.run("equality_different", equality_different);
     std::cout << "\n";

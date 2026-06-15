@@ -1,0 +1,83 @@
+import QtQuick
+import "../artwork"
+import "../../tokens"
+
+ListView {
+    id: root
+    property var contentModel
+
+    height: 50
+    spacing: 24
+    model: root.contentModel
+    orientation: ListView.Horizontal
+    boundsBehavior: Flickable.StopAtBounds
+    flickDeceleration: 2800
+    maximumFlickVelocity: 2400
+    snapMode: ListView.SnapToItem
+    clip: true
+
+    Theme { id: theme }
+
+    delegate: Item {
+        width: Math.max(190, Math.min(238, (root.width - 72) / 4.35))
+        height: 50
+
+        AlbumArtwork {
+            id: art
+            width: 44
+            height: 44
+            radiusValue: 5
+            variant: model.artVariant
+            sourceUrl: model.coverUrl
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+        }
+
+        Column {
+            anchors.left: art.right
+            anchors.leftMargin: 10
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            spacing: 2
+
+            Text {
+                width: parent.width
+                text: model.title
+                color: theme.text
+                font.pixelSize: 13
+                font.weight: Font.DemiBold
+                elide: Text.ElideRight
+            }
+
+            Text {
+                width: parent.width
+                text: model.subtitle
+                color: theme.muted
+                font.pixelSize: 12
+                elide: Text.ElideRight
+            }
+
+            Text {
+                width: parent.width
+                text: model.note
+                color: theme.faint
+                font.pixelSize: 11
+                elide: Text.ElideRight
+            }
+        }
+
+        Rectangle {
+            width: 1
+            height: 34
+            color: theme.line
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            visible: index < root.count - 1
+        }
+    }
+
+    ShelfEdgeFade {
+        height: parent.height
+        anchors.right: parent.right
+    }
+}

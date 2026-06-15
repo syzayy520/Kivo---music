@@ -1,0 +1,44 @@
+module KivoMusic
+typeinfo KivoMusicQt.qmltypes
+prefer :/qt/qml/KivoMusic/
+App 1.0 ui/qml/App.qml
+Theme 1.0 ui/qml/tokens/Theme.qml
+HomeWindow 1.0 ui/qml/windows/HomeWindow.qml
+HomePage 1.0 ui/qml/pages/home/HomePage.qml
+DiscoveryPage 1.0 ui/qml/pages/discovery/DiscoveryPage.qml
+LibraryPage 1.0 ui/qml/pages/library/LibraryPage.qml
+SearchPage 1.0 ui/qml/pages/search/SearchPage.qml
+AlbumArtwork 1.0 ui/qml/components/artwork/AlbumArtwork.qml
+GeneratedAlbumArtwork 1.0 ui/qml/components/artwork/GeneratedAlbumArtwork.qml
+AlbumTile 1.0 ui/qml/components/content/AlbumTile.qml
+AlbumShelfSection 1.0 ui/qml/components/content/AlbumShelfSection.qml
+ContinueListeningCard 1.0 ui/qml/components/content/ContinueListeningCard.qml
+ContinueListeningSection 1.0 ui/qml/components/content/ContinueListeningSection.qml
+HomeRecommendationSection 1.0 ui/qml/components/content/HomeRecommendationSection.qml
+LibraryAddedSection 1.0 ui/qml/components/content/LibraryAddedSection.qml
+RecentListenStrip 1.0 ui/qml/components/content/RecentListenStrip.qml
+RecentListeningSection 1.0 ui/qml/components/content/RecentListeningSection.qml
+ShelfEdgeFade 1.0 ui/qml/components/content/ShelfEdgeFade.qml
+TopPickCard 1.0 ui/qml/components/content/TopPickCard.qml
+DiscoveryCard 1.0 ui/qml/components/discovery/DiscoveryCard.qml
+ArtistTile 1.0 ui/qml/components/library/ArtistTile.qml
+TrackRow 1.0 ui/qml/components/library/TrackRow.qml
+SearchResultRow 1.0 ui/qml/components/search/SearchResultRow.qml
+NavigationItem 1.0 ui/qml/components/navigation/NavigationItem.qml
+NavigationGlyph 1.0 ui/qml/components/navigation/NavigationGlyph.qml
+SidebarBrand 1.0 ui/qml/components/navigation/SidebarBrand.qml
+Sidebar 1.0 ui/qml/components/navigation/Sidebar.qml
+TopBar 1.0 ui/qml/components/shell/TopBar.qml
+OpenFileButton 1.0 ui/qml/components/shell/OpenFileButton.qml
+WindowDragRegion 1.0 ui/qml/components/shell/WindowDragRegion.qml
+WindowControlButton 1.0 ui/qml/components/shell/WindowControlButton.qml
+AudioStatusText 1.0 ui/qml/components/transport/AudioStatusText.qml
+PlaybackControlCluster 1.0 ui/qml/components/transport/PlaybackControlCluster.qml
+TransportBar 1.0 ui/qml/components/transport/TransportBar.qml
+TransportButton 1.0 ui/qml/components/transport/TransportButton.qml
+TransportTrackInfo 1.0 ui/qml/components/transport/TransportTrackInfo.qml
+VolumeCluster 1.0 ui/qml/components/transport/VolumeCluster.qml
+SignalPathPanel 1.0 ui/qml/components/truth/SignalPathPanel.qml
+TruthBadge 1.0 ui/qml/components/truth/TruthBadge.qml
+CustomScrollBar 1.0 ui/qml/components/common/CustomScrollBar.qml
+

@@ -16,6 +16,13 @@ static void default_snapshot_is_not_bit_perfect() {
 static void bit_perfect_via_report() {
     OutputTruthSnapshot snapshot;
     snapshot.bitperfect.bit_perfect_achieved = true;
+    snapshot.bitperfect.evidence_complete = true;
+    snapshot.bitperfect.requested_exclusive = true;
+    snapshot.bitperfect.actual_exclusive = true;
+    snapshot.bitperfect.formats_match = true;
+    snapshot.bitperfect.no_processing_active = true;
+    snapshot.bitperfect.no_engine_in_path = true;
+    snapshot.bitperfect.no_sample_mutation = true;
     ASSERT(snapshot.is_bit_perfect());
 }
 

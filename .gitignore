@@ -1,0 +1,81 @@
+# Build artifacts
+.build/
+build/
+out/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+x64/
+Debug/
+Release/
+
+# Qt build artifacts
+.qt/
+*.qmlc
+*.jsc
+
+# Compiled binaries
+artifacts/
+*.exe
+*.dll
+*.lib
+*.pdb
+*.obj
+*.o
+*.a
+*.so
+*.dylib
+
+# Node.js
+node_modules/
+dist/
+.vite/
+.cache/
+coverage/
+.turbo/
+.next/
+.nuxt/
+
+# Rust
+target/
+
+# Sensitive files
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+
+# IDE files
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.sln.docstates
+*.ncb
+*.opensdf
+*.sdf
+
+# Agent/Tool directories
+.claude/
+.codebuddy/
+.workbuddy/
+
+# OS files
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Temp files
+*.tmp
+*.bak
+*.swp
+*.log
+
+# Audit working files
+audit_gen.py
+gen_audit.py
+w.py
+write_audit.py

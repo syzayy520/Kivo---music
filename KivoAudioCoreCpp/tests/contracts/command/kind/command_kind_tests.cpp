@@ -28,6 +28,7 @@ void command_kind_values(ContractTestRunner& runner) {
         ASSERT(static_cast<uint8_t>(CommandKind::Flush) == 9);
         ASSERT(static_cast<uint8_t>(CommandKind::SetVolume) == 10);
         ASSERT(static_cast<uint8_t>(CommandKind::SetOutput) == 11);
+        ASSERT(static_cast<uint8_t>(CommandKind::Shutdown) == 12);
     });
 }
 

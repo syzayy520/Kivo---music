@@ -1,0 +1,18 @@
+{
+    "classes": [
+        {
+            "className": "SearchFilterModel",
+            "lineNumber": 11,
+            "object": true,
+            "qualifiedClassName": "SearchFilterModel",
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QAbstractListModel"
+                }
+            ]
+        }
+    ],
+    "inputFile": "search_filter_model.h",
+    "outputRevision": 68
+}

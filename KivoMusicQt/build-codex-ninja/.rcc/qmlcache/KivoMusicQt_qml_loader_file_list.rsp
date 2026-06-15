@@ -1,0 +1,46 @@
+--resource
+F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.qt/rcc/qmake_KivoMusic.qrc
+--resource
+F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.qt/rcc/KivoMusicQt_raw_qml_0.qrc
+--resource
+F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.qt/rcc/KivoMusicQt_raw_qml_0_extra_qmldirs.qrc
+/qt/qml/KivoMusic/ui/qml/App.qml
+/qt/qml/KivoMusic/ui/qml/tokens/Theme.qml
+/qt/qml/KivoMusic/ui/qml/windows/HomeWindow.qml
+/qt/qml/KivoMusic/ui/qml/pages/home/HomePage.qml
+/qt/qml/KivoMusic/ui/qml/pages/discovery/DiscoveryPage.qml
+/qt/qml/KivoMusic/ui/qml/pages/library/LibraryPage.qml
+/qt/qml/KivoMusic/ui/qml/pages/search/SearchPage.qml
+/qt/qml/KivoMusic/ui/qml/components/artwork/AlbumArtwork.qml
+/qt/qml/KivoMusic/ui/qml/components/artwork/GeneratedAlbumArtwork.qml
+/qt/qml/KivoMusic/ui/qml/components/content/AlbumTile.qml
+/qt/qml/KivoMusic/ui/qml/components/content/AlbumShelfSection.qml
+/qt/qml/KivoMusic/ui/qml/components/content/ContinueListeningCard.qml
+/qt/qml/KivoMusic/ui/qml/components/content/ContinueListeningSection.qml
+/qt/qml/KivoMusic/ui/qml/components/content/HomeRecommendationSection.qml
+/qt/qml/KivoMusic/ui/qml/components/content/LibraryAddedSection.qml
+/qt/qml/KivoMusic/ui/qml/components/content/RecentListenStrip.qml
+/qt/qml/KivoMusic/ui/qml/components/content/RecentListeningSection.qml
+/qt/qml/KivoMusic/ui/qml/components/content/ShelfEdgeFade.qml
+/qt/qml/KivoMusic/ui/qml/components/content/TopPickCard.qml
+/qt/qml/KivoMusic/ui/qml/components/discovery/DiscoveryCard.qml
+/qt/qml/KivoMusic/ui/qml/components/library/ArtistTile.qml
+/qt/qml/KivoMusic/ui/qml/components/library/TrackRow.qml
+/qt/qml/KivoMusic/ui/qml/components/search/SearchResultRow.qml
+/qt/qml/KivoMusic/ui/qml/components/navigation/NavigationItem.qml
+/qt/qml/KivoMusic/ui/qml/components/navigation/NavigationGlyph.qml
+/qt/qml/KivoMusic/ui/qml/components/navigation/SidebarBrand.qml
+/qt/qml/KivoMusic/ui/qml/components/navigation/Sidebar.qml
+/qt/qml/KivoMusic/ui/qml/components/shell/TopBar.qml
+/qt/qml/KivoMusic/ui/qml/components/shell/OpenFileButton.qml
+/qt/qml/KivoMusic/ui/qml/components/shell/WindowDragRegion.qml
+/qt/qml/KivoMusic/ui/qml/components/shell/WindowControlButton.qml
+/qt/qml/KivoMusic/ui/qml/components/transport/AudioStatusText.qml
+/qt/qml/KivoMusic/ui/qml/components/transport/PlaybackControlCluster.qml
+/qt/qml/KivoMusic/ui/qml/components/transport/TransportBar.qml
+/qt/qml/KivoMusic/ui/qml/components/transport/TransportButton.qml
+/qt/qml/KivoMusic/ui/qml/components/transport/TransportTrackInfo.qml
+/qt/qml/KivoMusic/ui/qml/components/transport/VolumeCluster.qml
+/qt/qml/KivoMusic/ui/qml/components/truth/SignalPathPanel.qml
+/qt/qml/KivoMusic/ui/qml/components/truth/TruthBadge.qml
+/qt/qml/KivoMusic/ui/qml/components/common/CustomScrollBar.qml

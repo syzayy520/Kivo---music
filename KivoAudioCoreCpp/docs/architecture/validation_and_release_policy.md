@@ -2,8 +2,9 @@
 
 **Purpose:** Define validation gates, release criteria, and quality assurance requirements for each phase.  
 **Scope:** All phases from P0-B onward.  
-**Current Phase Rule:** P0-B uses smoke gates for structural validation.  
-**Last Updated:** P0-B (V10.1)  
+**Current Phase Rule:** P0-P requires full build, test, repository, binary,
+package, compliance, privacy, and release-matrix evidence.
+**Last Updated:** 2026-06-12
 
 ## 1. Purpose
 
@@ -13,26 +14,20 @@ This policy governs how each phase is validated before proceeding to the next. I
 
 Applies to all phase transitions, gate scripts, and release criteria within KivoAudioCoreCpp/.
 
-## 3. Current Phase Rule (P0-B)
+## 3. Current Phase Rule (P0-P)
 
-P0-B validation uses smoke gates:
-- Forbidden token gate (smoke)
-- Genealogy gate (smoke)
-- No empty forest gate (smoke)
-- No audio runtime gate (smoke)
-- Policy substance gate (smoke)
-- Dependency/license gate (smoke)
-- Toolchain/configure gate (smoke)
-
-Configure-only smoke PASS does NOT mean build/test/runtime PASS.
+P0-P validation builds twice from clean Release directories, runs full CTest
+and repository gates, verifies binary identity, exports, PE hardening, version
+resources, package hashes, symbol separation, privacy, notices, SBOM, and
+signature status. Missing external evidence blocks commercial approval.
 
 ## 4. Allowed
 
-- Smoke-level gates for P0-B
-- Full gates for P0-C+ phases
+- Full gates for every release candidate
 - Phase-specific gate criteria
 - Environment classification (blocked/available)
 - Honest failure reporting
+- Explicit engineering-candidate classification when external gates are open
 
 ## 5. Forbidden
 
@@ -43,10 +38,13 @@ Configure-only smoke PASS does NOT mean build/test/runtime PASS.
 - Network access from gate scripts
 - Admin-requiring gate scripts
 - False PASS when environment is blocked
+- Commercial approval while signing, legal, source, installer, or laboratory
+  evidence is open
 
 ## 6. Gate / Check Method
 
-- `run_cpp_audio_core_gates.ps1` aggregates all gate results
+- `run_cpp_audio_core_gates.ps1` aggregates repository gates
+- `run_release_candidate.ps1` aggregates release build and package evidence
 - Each gate script has specific scope and output format
 - Gate results must be copy-pasteable into closeout
 
@@ -67,20 +65,16 @@ Configure-only smoke PASS does NOT mean build/test/runtime PASS.
 
 ## 9. Deferred Items
 
-- CI/CD pipeline integration
-- Automated regression testing
-- Performance benchmarking gates
-- Device compatibility matrix validation
+- CI signing service integration
+- Product installer integration
+- External device-lab automation
 
 ## 10. Go / No-Go Decision
 
 | Condition | Classification |
 |-----------|---------------|
-| All gates PASS, git clean, push clear | GO_TO_P0_C |
-| Toolchain blocked but docs/policy complete | DOCS_AND_GATES_COMPLETE_BUT_NO_GO_TO_P0_C_UNTIL_TOOLCHAIN_CONFIRMED |
-| Scope violation | NO_GO_SCOPE_VIOLATION |
-| Policy placeholder only | NO_GO_POLICY_PLACEHOLDER |
-| Dirty working tree | NO_GO_DIRTY_TREE |
-| Runtime/platform pollution | NO_GO_RUNTIME_OR_PLATFORM_POLLUTION |
+| Engineering gates pass, external gates open | ENGINEERING_RC_READY_COMMERCIAL_RELEASE_BLOCKED |
+| Engineering and external gates pass | COMMERCIAL_RELEASE_APPROVED |
+| Build, test, gate, reproducibility, or package failure | RELEASE_ENGINEERING_FAILED |
 
 **Iron Rule 51:** Environment must be classified honestly; cannot fabricate PASS.

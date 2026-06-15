@@ -16,7 +16,8 @@ enum class CommandKind : uint8_t {
     SkipBackward,
     Flush,
     SetVolume,
-    SetOutput
+    SetOutput,
+    Shutdown
 };
 
 } // namespace kivo::core::contract

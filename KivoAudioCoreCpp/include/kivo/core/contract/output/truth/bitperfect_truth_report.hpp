@@ -24,15 +24,27 @@ namespace kivo::core::contract {
 // =============================================================================
 struct BitPerfectTruthReport {
     bool bit_perfect_achieved = false;
+    bool evidence_complete = false;
+    bool requested_exclusive = false;
+    bool actual_exclusive = false;
     bool formats_match = false;
     bool no_processing_active = false;
     bool no_engine_in_path = false;
+    bool no_sample_mutation = false;
     BitPerfectRejectionReason rejection_reason;
     std::optional<ResampleDecision> resample;
 
     // --- Convenience ---
     [[nodiscard]] bool is_bit_perfect() const noexcept {
-        return bit_perfect_achieved;
+        return bit_perfect_achieved
+            && evidence_complete
+            && requested_exclusive
+            && actual_exclusive
+            && formats_match
+            && no_processing_active
+            && no_engine_in_path
+            && no_sample_mutation
+            && !rejection_reason.has_reason();
     }
 
     [[nodiscard]] bool was_rejected() const noexcept {

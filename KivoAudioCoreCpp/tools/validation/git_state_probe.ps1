@@ -5,7 +5,7 @@
 
 param(
     [string]$ProjectRoot,
-    [string]$RemoteRef = "origin/master"
+    [string]$RemoteRef
 )
 
 $ErrorActionPreference = "Stop"
@@ -14,6 +14,33 @@ if (-not $ProjectRoot) {
     $ProjectRoot = Join-Path $PSScriptRoot "..\.."
 }
 $ProjectRoot = (Resolve-Path $ProjectRoot).Path
+
+function Find-GitSafeDirectory {
+    param([Parameter(Mandatory = $true)][string]$StartPath)
+
+    $current = (Resolve-Path $StartPath).Path
+    while ($current) {
+        if (Test-Path (Join-Path $current ".git")) {
+            return $current.Replace("\", "/")
+        }
+
+        $parent = Split-Path $current -Parent
+        if (-not $parent -or $parent -eq $current) {
+            break
+        }
+        $current = $parent
+    }
+
+    return $StartPath.Replace("\", "/")
+}
+
+$GitSafeDirectory = Find-GitSafeDirectory -StartPath $ProjectRoot
+
+function Invoke-ProjectGit {
+    param([Parameter(ValueFromRemainingArguments = $true)][string[]]$Arguments)
+
+    & git -c "safe.directory=$GitSafeDirectory" @Arguments
+}
 
 Push-Location $ProjectRoot
 try {
@@ -26,10 +53,17 @@ try {
     Write-Host "============================================================================="
     Write-Host ""
 
-    $status = git status --short
-    $branch = git branch --show-current
-    $head = git rev-parse HEAD
-    $remote = git rev-parse $RemoteRef
+    $branch = Invoke-ProjectGit branch --show-current
+    if (-not $RemoteRef) {
+        $RemoteRef = Invoke-ProjectGit rev-parse --abbrev-ref --symbolic-full-name "@{upstream}" 2>$null
+        if (-not $RemoteRef) {
+            $RemoteRef = "origin/master"
+        }
+    }
+
+    $status = Invoke-ProjectGit status --short
+    $head = Invoke-ProjectGit rev-parse HEAD
+    $remote = Invoke-ProjectGit rev-parse $RemoteRef
 
     Write-Host "Branch: $branch"
     Write-Host "HEAD:   $head"

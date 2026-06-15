@@ -1,0 +1,46 @@
+{
+    "classes": [
+        {
+            "className": "SearchModelBundle",
+            "lineNumber": 9,
+            "object": true,
+            "properties": [
+                {
+                    "constant": true,
+                    "designable": true,
+                    "final": false,
+                    "index": 0,
+                    "name": "results",
+                    "read": "results",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "SearchResultModel*",
+                    "user": false
+                },
+                {
+                    "constant": true,
+                    "designable": true,
+                    "final": false,
+                    "index": 1,
+                    "name": "filters",
+                    "read": "filters",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "SearchFilterModel*",
+                    "user": false
+                }
+            ],
+            "qualifiedClassName": "SearchModelBundle",
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QObject"
+                }
+            ]
+        }
+    ],
+    "inputFile": "search_model_bundle.h",
+    "outputRevision": 68
+}

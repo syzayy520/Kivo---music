@@ -1,0 +1,12 @@
+-I
+F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja
+-I
+F:/Files/开发/Kivo Music/KivoMusicQt/.qt/6.8.3/msvc2022_64/qml
+--resource
+F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.qt/rcc/qmake_KivoMusic.qrc
+--resource
+F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.qt/rcc/KivoMusicQt_raw_qml_0.qrc
+--resource
+F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.qt/rcc/KivoMusicQt_raw_qml_0_extra_qmldirs.qrc
+--module
+KivoMusic

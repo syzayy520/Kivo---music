@@ -1,0 +1,22 @@
+适用于 .NET Framework MSBuild 版本 17.14.40+3e7442088
+
+  Copying KivoMusicQt qml sources into build dir
+  1>Automatic MOC and UIC for target KivoMusicQt
+  Running AUTOMOC file extraction for target KivoMusicQt
+  Running moc --collect-json for target KivoMusicQt
+  Generating .rcc/qmlcache/KivoMusicQt_ui/qml/App_qml.cpp, .rcc/qmlcache/KivoMusicQt_ui/qml/App_qml.cpp.aotstats
+  Generating .rcc/qmlcache/KivoMusicQt_ui/qml/components/shell/TopBar_qml.cpp, .rcc/qmlcache/KivoMusicQt_ui/qml/components/shell/TopBar_qml.cpp.aotstats
+  Generating .rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/PlaybackControlCluster_qml.cpp, .rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/PlaybackControlCluster_qml.cpp.aotstats
+  Generating .rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/TransportBar_qml.cpp, .rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/TransportBar_qml.cpp.aotstats
+  Generating .rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/VolumeCluster_qml.cpp, .rcc/qmlcache/KivoMusicQt_ui/qml/components/transport/VolumeCluster_qml.cpp.aotstats
+  Running rcc for resource KivoMusicQt_raw_qml_0
+  main.cpp
+  qrc_KivoMusicQt_raw_qml_0.cpp
+  App_qml.cpp
+  TopBar_qml.cpp
+  PlaybackControlCluster_qml.cpp
+  TransportBar_qml.cpp
+  VolumeCluster_qml.cpp
+  正在生成代码...
+    正在创建库 F:/Files/开发/Kivo Music/KivoMusicQt/build/Release/KivoMusicQt.lib 和对象 F:/Files/开发/Kivo Music/KivoMusicQt/build/Release/KivoMusicQt.exp
+  KivoMusicQt.vcxproj -> F:\Files\开发\Kivo Music\KivoMusicQt\build\Release\KivoMusicQt.exe

@@ -1,0 +1,51 @@
+--bare
+-I
+F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja
+-I
+F:/Files/开发/Kivo Music/KivoMusicQt/.qt/6.8.3/msvc2022_64/qml
+--resource
+F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.qt/rcc/qmake_KivoMusic.qrc
+--resource
+F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.qt/rcc/KivoMusicQt_raw_qml_0.qrc
+--resource
+F:/Files/开发/Kivo Music/KivoMusicQt/build-codex-ninja/.qt/rcc/KivoMusicQt_raw_qml_0_extra_qmldirs.qrc
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/App.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/tokens/Theme.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/windows/HomeWindow.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/pages/home/HomePage.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/pages/discovery/DiscoveryPage.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/pages/library/LibraryPage.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/pages/search/SearchPage.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/artwork/AlbumArtwork.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/artwork/GeneratedAlbumArtwork.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/content/AlbumTile.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/content/AlbumShelfSection.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/content/ContinueListeningCard.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/content/ContinueListeningSection.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/content/HomeRecommendationSection.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/content/LibraryAddedSection.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/content/RecentListenStrip.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/content/RecentListeningSection.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/content/ShelfEdgeFade.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/content/TopPickCard.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/discovery/DiscoveryCard.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/library/ArtistTile.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/library/TrackRow.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/search/SearchResultRow.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/navigation/NavigationItem.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/navigation/NavigationGlyph.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/navigation/SidebarBrand.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/navigation/Sidebar.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/shell/TopBar.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/shell/OpenFileButton.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/shell/WindowDragRegion.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/shell/WindowControlButton.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/transport/AudioStatusText.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/transport/PlaybackControlCluster.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/transport/TransportBar.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/transport/TransportButton.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/transport/TransportTrackInfo.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/transport/VolumeCluster.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/truth/SignalPathPanel.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/truth/TruthBadge.qml
+F:/Files/开发/Kivo Music/KivoMusicQt/ui/qml/components/common/CustomScrollBar.qml
