@@ -31,7 +31,9 @@ endif()
 find_package(Qt6 REQUIRED COMPONENTS Quick QuickControls2 Sql)
 qt_standard_project_setup(REQUIRES 6.5)
 if (COMMAND qt_policy)
-    qt_policy(SET QTP0004 NEW)
+    if (${Qt6_VERSION} VERSION_GREATER_EQUAL "6.8")
+        qt_policy(SET QTP0004 NEW)
+    endif()
 endif()
 
 qt_add_executable(KivoMusicQt
