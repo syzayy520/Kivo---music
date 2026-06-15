@@ -1,0 +1,74 @@
+name: Kivo Music Qt CI
+
+on:
+  pull_request:
+    paths:
+      - "KivoMusicQt/**"
+      - ".github/workflows/kivo-music-qt-ci.yml"
+  push:
+    branches:
+      - master
+      - main
+    paths:
+      - "KivoMusicQt/**"
+      - ".github/workflows/kivo-music-qt-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kivo-music-qt-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: powershell
+
+env:
+  KIVO_QT_VERSION: "6.8.3"
+  KIVO_QT_HOST: "windows"
+  KIVO_QT_TARGET: "desktop"
+  KIVO_QT_ARCH: "win64_msvc2022_64"
+
+jobs:
+  qt-configure-build:
+    name: Qt configure and build
+    runs-on: windows-2022
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Install Qt with aqtinstall
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --upgrade aqtinstall
+          python -m aqt install-qt `
+            $env:KIVO_QT_HOST `
+            $env:KIVO_QT_TARGET `
+            $env:KIVO_QT_VERSION `
+            $env:KIVO_QT_ARCH `
+            --outputdir "$env:RUNNER_TEMP\qt"
+
+          $qtRoot = Join-Path $env:RUNNER_TEMP "qt\$env:KIVO_QT_VERSION\msvc2022_64"
+          $qtConfig = Join-Path $qtRoot "lib\cmake\Qt6\Qt6Config.cmake"
+          if (!(Test-Path $qtConfig)) {
+            throw "Qt install verification failed. Missing: $qtConfig"
+          }
+
+          "KIVO_QT_ROOT=$qtRoot" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "CMAKE_PREFIX_PATH=$qtRoot" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          Write-Host "KIVO_QT_ROOT=$qtRoot"
+
+      - name: Configure KivoMusicQt
+        run: |
+          cmake -S .\KivoMusicQt `
+            -B .\KivoMusicQt\out\ci-build `
+            -G "Visual Studio 17 2022" -A x64 `
+            -DCMAKE_PREFIX_PATH="$env:KIVO_QT_ROOT" `
+            -DQT_HOST_PATH="$env:KIVO_QT_ROOT"
+
+      - name: Build KivoMusicQt
+        run: |
+          cmake --build .\KivoMusicQt\out\ci-build `
+            --config Release --parallel 2
