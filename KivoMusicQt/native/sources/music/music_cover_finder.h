@@ -6,4 +6,5 @@
 class MusicCoverFinder final {
 public:
     static QString findFor(const QFileInfo& audioFile);
+    static bool supportsEmbeddedArtwork();
 };

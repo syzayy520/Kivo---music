@@ -9,15 +9,31 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Set Qt paths explicitly to avoid path encoding issues
-set(QT_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/.qt/6.8.3/msvc2022_64")
-list(APPEND CMAKE_PREFIX_PATH "${QT_ROOT}")
-set(QT_HOST_PATH "${QT_ROOT}")
+# Qt path resolution: KIVO_QT_ROOT > CMAKE_PREFIX_PATH > local .qt/ fallback
+if(DEFINED ENV{KIVO_QT_ROOT} AND IS_DIRECTORY "$ENV{KIVO_QT_ROOT}")
+    set(QT_ROOT "$ENV{KIVO_QT_ROOT}")
+    message(STATUS "Using KIVO_QT_ROOT: ${QT_ROOT}")
+elseif(DEFINED CMAKE_PREFIX_PATH AND IS_DIRECTORY "${CMAKE_PREFIX_PATH}")
+    message(STATUS "Using CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
+elseif(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/.qt/6.8.3/msvc2022_64")
+    set(QT_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/.qt/6.8.3/msvc2022_64")
+    message(STATUS "Using local .qt/ fallback: ${QT_ROOT}")
+else()
+    message(FATAL_ERROR
+        "Qt6 not found. Set KIVO_QT_ROOT, CMAKE_PREFIX_PATH, or install Qt to .qt/6.8.3/msvc2022_64")
+endif()
 
-find_package(Qt6 REQUIRED COMPONENTS Quick QuickControls2 Sql QuickEffectsPrivate)
+if(DEFINED QT_ROOT)
+    list(APPEND CMAKE_PREFIX_PATH "${QT_ROOT}")
+    set(QT_HOST_PATH "${QT_ROOT}")
+endif()
+
+find_package(Qt6 REQUIRED COMPONENTS Quick QuickControls2 Sql)
 qt_standard_project_setup(REQUIRES 6.5)
 if (COMMAND qt_policy)
-    qt_policy(SET QTP0004 NEW)
+    if (${Qt6_VERSION} VERSION_GREATER_EQUAL "6.8")
+        qt_policy(SET QTP0004 NEW)
+    endif()
 endif()
 
 qt_add_executable(KivoMusicQt
@@ -204,7 +220,6 @@ target_link_libraries(KivoMusicQt
         Qt6::Quick
         Qt6::QuickControls2
         Qt6::Sql
-        Qt6::QuickEffectsPrivate
 )
 
 if (MSVC)

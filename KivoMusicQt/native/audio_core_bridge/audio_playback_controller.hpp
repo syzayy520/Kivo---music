@@ -10,11 +10,12 @@
 #include <QStringList>
 #include <memory>
 
+#include "queue/play_queue.hpp"
+#include "queue/playback_mode.hpp"
+
 namespace kivo::qt::audio_bridge {
 
 class AudioPlaybackControllerImpl;
-class PlayQueue;
-class PlaybackMode;
 
 // Qt-facing audio playback controller
 // Thread-safe: all public methods can be called from UI thread

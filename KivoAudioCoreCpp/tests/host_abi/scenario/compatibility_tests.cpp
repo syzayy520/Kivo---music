@@ -45,7 +45,8 @@ static_assert(
 
 void c_header_is_usable() {
     HOST_ABI_ASSERT(kivo_host_abi_c_contract_size() > 0u);
-    HOST_ABI_ASSERT(KIVO_AUDIO_ABI_VERSION_MAJOR == 1u);
+    static_assert(KIVO_AUDIO_ABI_VERSION_MAJOR == 1u,
+        "ABI major version must be 1");
 }
 
 void versioned_structs_accept_tail_extension() {

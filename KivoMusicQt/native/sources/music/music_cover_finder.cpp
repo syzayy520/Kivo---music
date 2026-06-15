@@ -52,3 +52,9 @@ QString MusicCoverFinder::findFor(const QFileInfo& audioFile) {
 
     return {};
 }
+
+bool MusicCoverFinder::supportsEmbeddedArtwork() {
+    // Embedded artwork extraction requires FFmpeg SDK (KIVO_FFMPEG_ROOT).
+    // Currently only sidecar cover files are supported.
+    return false;
+}
