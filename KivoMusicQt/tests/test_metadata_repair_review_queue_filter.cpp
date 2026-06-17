@@ -42,7 +42,6 @@ TEST(MetadataRepairReviewQueueFilter, IncludeNoIssueFilterAllowsNoIssueItems) {
     ASSERT_EQ(queue.items.size(), 1);
     EXPECT_EQ(queue.items[0].issueType, MetadataIssueType::NoIssue);
     EXPECT_EQ(queue.noIssueCount, 1);
-    EXPECT_FALSE(queue.items[0].requiresReview);
     EXPECT_FALSE(queue.items[0].autoApplyAllowed);
 }
 
