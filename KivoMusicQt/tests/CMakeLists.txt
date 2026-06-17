@@ -97,8 +97,8 @@ add_kivo_test(test_metadata_repair_pipeline
     ../native/metadata_intelligence/pipeline/metadata_repair_pipeline.cpp
 )
 
-add_kivo_test(test_metadata_repair_review_queue
-    test_metadata_repair_review_queue.cpp
+add_kivo_test(test_metadata_repair_review_queue_basic
+    test_metadata_repair_review_queue_basic.cpp
     ../native/metadata_intelligence/validation/metadata_value_validator.cpp
     ../native/metadata_intelligence/confidence/swap_detector.cpp
     ../native/metadata_intelligence/repair/swap_corrector.cpp
@@ -106,4 +106,35 @@ add_kivo_test(test_metadata_repair_review_queue
     ../native/metadata_intelligence/pipeline/metadata_repair_pipeline.cpp
     ../native/metadata_intelligence/review/metadata_repair_review_queue.cpp
 )
+
+add_kivo_test(test_metadata_repair_review_queue_filter
+    test_metadata_repair_review_queue_filter.cpp
+    ../native/metadata_intelligence/validation/metadata_value_validator.cpp
+    ../native/metadata_intelligence/confidence/swap_detector.cpp
+    ../native/metadata_intelligence/repair/swap_corrector.cpp
+    ../native/metadata_intelligence/report/metadata_repair_report.cpp
+    ../native/metadata_intelligence/pipeline/metadata_repair_pipeline.cpp
+    ../native/metadata_intelligence/review/metadata_repair_review_queue.cpp
+)
+
+add_kivo_test(test_metadata_repair_review_queue_sorting
+    test_metadata_repair_review_queue_sorting.cpp
+    ../native/metadata_intelligence/validation/metadata_value_validator.cpp
+    ../native/metadata_intelligence/confidence/swap_detector.cpp
+    ../native/metadata_intelligence/repair/swap_corrector.cpp
+    ../native/metadata_intelligence/report/metadata_repair_report.cpp
+    ../native/metadata_intelligence/pipeline/metadata_repair_pipeline.cpp
+    ../native/metadata_intelligence/review/metadata_repair_review_queue.cpp
+)
+
+add_kivo_test(test_metadata_repair_review_queue_safety
+    test_metadata_repair_review_queue_safety.cpp
+    ../native/metadata_intelligence/validation/metadata_value_validator.cpp
+    ../native/metadata_intelligence/confidence/swap_detector.cpp
+    ../native/metadata_intelligence/repair/swap_corrector.cpp
+    ../native/metadata_intelligence/report/metadata_repair_report.cpp
+    ../native/metadata_intelligence/pipeline/metadata_repair_pipeline.cpp
+    ../native/metadata_intelligence/review/metadata_repair_review_queue.cpp
+)
+
 
