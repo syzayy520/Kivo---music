@@ -76,6 +76,11 @@ target_sources(KivoMusicQt
         native/metadata_intelligence/report/metadata_repair_report.cpp
         native/metadata_intelligence/pipeline/metadata_repair_pipeline.hpp
         native/metadata_intelligence/pipeline/metadata_repair_pipeline.cpp
+        native/metadata_intelligence/review/metadata_repair_review_filter.hpp
+        native/metadata_intelligence/review/metadata_repair_review_item.hpp
+        native/metadata_intelligence/review/metadata_repair_review_queue.hpp
+        native/metadata_intelligence/review/metadata_repair_review_queue.cpp
+
         native/models/search/demo_search_seed.cpp
         native/models/search/demo_search_seed.h
         native/models/search/search_filter_model.cpp

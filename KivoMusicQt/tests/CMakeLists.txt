@@ -96,3 +96,14 @@ add_kivo_test(test_metadata_repair_pipeline
     ../native/metadata_intelligence/report/metadata_repair_report.cpp
     ../native/metadata_intelligence/pipeline/metadata_repair_pipeline.cpp
 )
+
+add_kivo_test(test_metadata_repair_review_queue
+    test_metadata_repair_review_queue.cpp
+    ../native/metadata_intelligence/validation/metadata_value_validator.cpp
+    ../native/metadata_intelligence/confidence/swap_detector.cpp
+    ../native/metadata_intelligence/repair/swap_corrector.cpp
+    ../native/metadata_intelligence/report/metadata_repair_report.cpp
+    ../native/metadata_intelligence/pipeline/metadata_repair_pipeline.cpp
+    ../native/metadata_intelligence/review/metadata_repair_review_queue.cpp
+)
+
