@@ -68,8 +68,14 @@ target_sources(KivoMusicQt
         native/metadata_intelligence/validation/metadata_value_validator.cpp
         native/metadata_intelligence/confidence/swap_detector.hpp
         native/metadata_intelligence/confidence/swap_detector.cpp
+        native/metadata_intelligence/repair/id3_field_swap/field_swap_candidate.hpp
         native/metadata_intelligence/repair/swap_corrector.hpp
         native/metadata_intelligence/repair/swap_corrector.cpp
+        native/metadata_intelligence/report/metadata_repair_issue_summary.hpp
+        native/metadata_intelligence/report/metadata_repair_report.hpp
+        native/metadata_intelligence/report/metadata_repair_report.cpp
+        native/metadata_intelligence/pipeline/metadata_repair_pipeline.hpp
+        native/metadata_intelligence/pipeline/metadata_repair_pipeline.cpp
         native/models/search/demo_search_seed.cpp
         native/models/search/demo_search_seed.h
         native/models/search/search_filter_model.cpp
