@@ -74,6 +74,10 @@ desktop.ini
 *.swp
 *.log
 
+# Build / install transcript logs
+*_build.txt
+build_log*.txt
+
 # Audit working files
 audit_gen.py
 gen_audit.py
