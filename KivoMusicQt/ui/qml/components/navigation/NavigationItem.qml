@@ -5,12 +5,14 @@
 
 import QtQuick
 import QtQuick.Controls
-import "../../tokens"
+import KivoMusic
 
 Button {
     id: root
     property bool current: false
     property string pageKey: ""
+    // 图标种类显式传入,避免依赖(已本地化的)文本去推断 —— 单一职责。
+    property string kind: ""
 
     function iconKind() {
         const v = text.toLowerCase();
@@ -37,20 +39,26 @@ Button {
     font.pixelSize: 13
     font.weight: current ? Font.DemiBold : Font.Normal
 
-    Theme { id: theme }
+    // E5 无障碍: 导航按钮
+    Accessible.role: Accessible.Button
+    Accessible.name: root.text
+    Accessible.description: root.current ? qsTr("Selected") : ""
+    Accessible.checkable: true
+    Accessible.checked: root.current
+
 
     // ── Background ──────────────────────────────────────────
     background: Rectangle {
         id: bg
         radius: 8
         color: {
-            if (root.current) return "#f2e9ea";
-            if (root.hovered) return "#f5f2f3";
+            if (root.current) return Theme.accentSoft;
+            if (root.hovered) return Theme.lineSubtle;
             return "transparent";
         }
         opacity: root.down ? 0.85 : 1.0
 
-        // Active indicator - left accent bar
+        // Active indicator - left accent bar (Kivo gold)
         Rectangle {
             anchors.left: parent.left
             anchors.leftMargin: 2
@@ -58,7 +66,7 @@ Button {
             width: 3
             height: root.current ? 18 : 0
             radius: 2
-            color: theme.accentPink
+            color: Theme.accent
 
             Behavior on height {
                 NumberAnimation { duration: 200; easing.type: Easing.OutBack }
@@ -86,7 +94,7 @@ Button {
         NavigationGlyph {
             width: 18
             height: 18
-            kind: root.iconKind()
+            kind: root.kind.length > 0 ? root.kind : root.iconKind()
             active: root.current
             anchors.verticalCenter: parent.verticalCenter
 
@@ -97,7 +105,7 @@ Button {
 
         Text {
             text: root.text
-            color: root.current ? theme.accentPink : theme.text
+            color: root.current ? Theme.accentText : Theme.text
             font: root.font
             anchors.verticalCenter: parent.verticalCenter
             elide: Text.ElideRight

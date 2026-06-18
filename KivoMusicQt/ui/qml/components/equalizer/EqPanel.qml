@@ -6,7 +6,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Effects
-import "../../tokens"
+import KivoMusic
 
 Item {
     id: root
@@ -18,12 +18,32 @@ Item {
     property var bandLabels: ["32","64","125","250","500","1k","2k","4k","8k","16k"]
     property string activePreset: "Flat"
 
-    Theme { id: theme }
+    // Forward every gain change to the audio engine (no-op until DLL EQ support ships).
+    onBandGainsChanged: {
+        if (typeof audioController !== "undefined")
+            audioController.setEqBands(bandGains)
+    }
+
+    // EQ preset lookup table (10-band, Hz: 32 64 125 250 500 1k 2k 4k 8k 16k).
+    function presetGains(name) {
+        var presets = {
+            "Flat":       [ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
+            "Rock":       [ 4,  3,  1, -1, -1,  1,  3,  4,  4,  3],
+            "Pop":        [-1,  0,  2,  3,  3,  2,  0, -1, -1, -1],
+            "Jazz":       [ 3,  2,  1,  1, -1, -1,  0,  1,  2,  2],
+            "Classical":  [ 3,  2,  0, -1, -1, -1,  0,  2,  3,  4],
+            "Vocal":      [-2, -2,  0,  2,  3,  3,  2,  1,  0, -1],
+            "Bass Boost": [ 7,  6,  4,  2,  0, -1, -1, -1, -1, -1],
+            "Treble":     [-1, -1, -1,  0,  0,  1,  2,  3,  5,  6]
+        }
+        return presets[name] || presets["Flat"]
+    }
+
 
     // Dim background
     Rectangle {
         anchors.fill: parent
-        color: "#80000000"
+        color: Theme.npScrimHeavy
         opacity: root.visible ? 1.0 : 0.0
         Behavior on opacity { NumberAnimation { duration: 200 } }
 
@@ -39,8 +59,8 @@ Item {
         height: 360
         anchors.centerIn: parent
         radius: 16
-        color: theme.panel
-        border.color: "#e0e0e0"
+        color: Theme.panel
+        border.color: Theme.line
         border.width: 1
 
         // Shadow
@@ -48,7 +68,7 @@ Item {
         layer.effect: MultiEffect {
             shadowEnabled: true
             shadowBlur: 0.4
-            shadowColor: "#20000000"
+            shadowColor: Theme.shadowModal
             shadowVerticalOffset: 8
         }
 
@@ -58,23 +78,23 @@ Item {
             spacing: 16
 
             // Title bar
-            Row {
+            Item {
                 width: parent.width
-                spacing: 12
+                height: 28
 
                 Text {
-                    text: "Equalizer"
+                    text: qsTr("Equalizer")
                     font.pixelSize: 20
                     font.weight: Font.Bold
-                    color: theme.text
+                    color: Theme.text
+                    anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
                 }
-
-                Item { width: 1; height: 1 }  // spacer
 
                 Button {
                     text: "\u2715"
                     onClicked: root.visible = false
+                    anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     flat: true
                 }
@@ -93,12 +113,12 @@ Item {
 
                         background: Rectangle {
                             radius: 6
-                            color: root.activePreset === modelData ? "#0071e3" : "#f0f0f0"
+                            color: root.activePreset === modelData ? Theme.eqPositive : Theme.lineSubtle
                         }
 
                         contentItem: Text {
                             text: parent.text
-                            color: root.activePreset === modelData ? "white" : theme.muted
+                            color: root.activePreset === modelData ? Theme.npText : Theme.muted
                             font: parent.font
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
@@ -106,8 +126,7 @@ Item {
 
                         onClicked: {
                             root.activePreset = modelData;
-                            // Apply preset gains
-                            var gains = eqPresets.gainsFor(modelData);
+                            var gains = root.presetGains(modelData);
                             for (var i = 0; i < gains.length; i++) {
                                 root.bandGains[i] = gains[i];
                             }
@@ -131,6 +150,7 @@ Item {
                         onGainChanged: function(newGain) {
                             root.bandGains[index] = newGain;
                             root.activePreset = "Custom";
+                            root.bandGainsChanged()
                         }
                     }
                 }
@@ -142,22 +162,23 @@ Item {
                 spacing: 12
 
                 Button {
-                    text: "Reset to Flat"
+                    text: qsTr("Reset to Flat")
                     flat: true
                     font.pixelSize: 12
                     onClicked: {
                         root.activePreset = "Flat";
                         for (var i = 0; i < 10; i++) root.bandGains[i] = 0;
                         root.bandGainsChanged();
+                        if (typeof audioController !== "undefined")
+                            audioController.setEqBands(root.bandGains);
                     }
                 }
 
                 Button {
-                    text: "Save as Custom"
+                    text: qsTr("Save as Custom")
                     flat: true
                     font.pixelSize: 12
                     onClicked: {
-                        // Persist custom EQ settings
                         console.log("EQ saved:", JSON.stringify(root.bandGains));
                     }
                 }

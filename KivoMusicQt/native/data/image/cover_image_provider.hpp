@@ -1,8 +1,10 @@
 // =============================================================================
 // Kivo Music Qt - cover_image_provider.hpp
-// 职责: C++ QQuickImageProvider — LRU内存缓存 + 本地文件加载
-// QML: Image { source: "image://covers/Rolling Stones_Let It Bleed" }
-// 流程: 先查LRU缓存 → 再查本地MusicCoverFinder → 异步触发MusicCoverFetcher
+// 职责: QQuickImageProvider — 按需解码 + LRU 内存缓存
+// QML:  Image { source: "image://artwork/" + localFilePath }
+// 注:   engine.addImageProvider("artwork", new CoverImageProvider)
+//       Qt 接管所有权; 用 globalArtworkProvider()/setGlobalArtworkProvider()
+//       在控制器侧调 preload()（可选预热，不调也能工作）。
 // =============================================================================
 
 #pragma once
@@ -18,33 +20,32 @@ namespace kivo::qt::data {
 
 class CoverImageProvider : public QQuickImageProvider {
 public:
-    static CoverImageProvider& instance();
+    CoverImageProvider();
+    ~CoverImageProvider() override = default;
 
+    // QQuickImageProvider interface.
+    // id = local file path as-is (no percent-encoding — Qt passes the raw QString).
     QImage requestImage(const QString& id, QSize* size, const QSize& requestedSize) override;
 
-    // 外部调用：通知有新封面文件可用
-    void notifyCoverAvailable(const QString& artist, const QString& album, const QString& localPath);
+    // Optional: pre-populate cache on a background thread before QML requests.
+    void preload(const QString& localPath);
 
     void clearCache();
     int cacheSize() const;
 
 private:
-    explicit CoverImageProvider();
-    ~CoverImageProvider() override = default;
-
-    QImage loadAndCache(const QString& key, const QString& path, const QSize& requestedSize);
+    QImage decodeScaled(const QString& path, const QSize& requestedSize) const;
     void evictIfNeeded();
-    QString makeKey(const QString& artist, const QString& album) const;
-
-    struct CacheEntry {
-        QImage image;
-        QString filePath;
-    };
 
     mutable QMutex mutex_;
-    QHash<QString, CacheEntry> cache_;
+    QHash<QString, QImage> cache_;
     QStringList lruOrder_;
-    int maxCacheSize_ = 64;
+    static constexpr int kMaxCacheEntries = 64;
 };
+
+// Non-owning global — set once in main.cpp after addImageProvider().
+// Lets AudioPlaybackController call preload() without a ctor-parameter refactor.
+CoverImageProvider* globalArtworkProvider() noexcept;
+void setGlobalArtworkProvider(CoverImageProvider* p) noexcept;
 
 } // namespace kivo::qt::data

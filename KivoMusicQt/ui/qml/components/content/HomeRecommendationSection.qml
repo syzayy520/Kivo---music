@@ -1,6 +1,6 @@
 import QtQuick
 import "."
-import "../../tokens"
+import KivoMusic
 
 Column {
     id: root
@@ -8,22 +8,24 @@ Column {
     property var contentModel
     spacing: 8
 
-    Theme { id: theme }
 
     Column {
-        spacing: 1
+        spacing: 2
 
         Text {
-            text: "Top Picks for You"
-            color: theme.text
-            font.pixelSize: 18
-            font.weight: Font.DemiBold
+            text: qsTr("Recommended for You")
+            color: Theme.text
+            font.pixelSize: Theme.fontSectionTitle
+            font.weight: Font.Bold
+            font.letterSpacing: -0.2
         }
 
         Text {
-            text: "Curated from your local library"
-            color: theme.muted
-            font.pixelSize: 13
+            text: qsTr("From your local library")
+            color: Theme.text
+            opacity: Theme.subtitleOpacity
+            font.pixelSize: Theme.fontSubtitle
+            font.weight: Font.Medium
         }
     }
 
@@ -49,7 +51,7 @@ Column {
 
             delegate: TopPickCard {
                 width: shelf.cardWidth
-                eyebrow: index === 0 ? "Made for You" : model.note
+                eyebrow: index === 0 ? qsTr("Made for You") : (model.note ?? "")
                 title: model.title
                 subtitle: model.subtitle
                 artVariant: model.artVariant

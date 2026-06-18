@@ -5,13 +5,12 @@
 
 import QtQuick
 import QtQuick.Controls
-import "../../tokens"
+import KivoMusic
 
 Item {
     id: root
     property string appVersion: "1.0.0"
 
-    Theme { id: theme }
 
     Column {
         anchors.centerIn: parent
@@ -28,7 +27,7 @@ Item {
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
             text: "Kivo Music"
-            color: theme.text
+            color: Theme.text
             font.pixelSize: 28
             font.weight: Font.Bold
         }
@@ -36,14 +35,14 @@ Item {
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
             text: "Version " + root.appVersion
-            color: theme.muted
+            color: Theme.muted
             font.pixelSize: 14
         }
 
         Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             width: 200; height: 1
-            color: "#e5e5ea"
+            color: Theme.line
         }
 
         // ── Info ──────────────────────────────────────────
@@ -53,48 +52,48 @@ Item {
 
             Row {
                 spacing: 12
-                Text { text: "Developer:"; color: theme.muted; font.pixelSize: 13; width: 100; horizontalAlignment: Text.AlignRight }
-                Text { text: "Kivo Team"; color: theme.text; font.pixelSize: 13 }
+                Text { text: "Developer:"; color: Theme.muted; font.pixelSize: 13; width: 100; horizontalAlignment: Text.AlignRight }
+                Text { text: "Kivo Team"; color: Theme.text; font.pixelSize: 13 }
             }
             Row {
                 spacing: 12
-                Text { text: "Engine:"; color: theme.muted; font.pixelSize: 13; width: 100; horizontalAlignment: Text.AlignRight }
-                Text { text: "Kivo Audio Core 1.0"; color: theme.text; font.pixelSize: 13 }
+                Text { text: "Engine:"; color: Theme.muted; font.pixelSize: 13; width: 100; horizontalAlignment: Text.AlignRight }
+                Text { text: "Kivo Audio Core 1.0"; color: Theme.text; font.pixelSize: 13 }
             }
             Row {
                 spacing: 12
-                Text { text: "Framework:"; color: theme.muted; font.pixelSize: 13; width: 100; horizontalAlignment: Text.AlignRight }
-                Text { text: "Qt 6.8.3 + QML"; color: theme.text; font.pixelSize: 13 }
+                Text { text: "Framework:"; color: Theme.muted; font.pixelSize: 13; width: 100; horizontalAlignment: Text.AlignRight }
+                Text { text: "Qt 6.8.3 + QML"; color: Theme.text; font.pixelSize: 13 }
             }
             Row {
                 spacing: 12
-                Text { text: "Audio:"; color: theme.muted; font.pixelSize: 13; width: 100; horizontalAlignment: Text.AlignRight }
-                Text { text: "FFmpeg (LGPL)"; color: theme.text; font.pixelSize: 13 }
+                Text { text: "Audio:"; color: Theme.muted; font.pixelSize: 13; width: 100; horizontalAlignment: Text.AlignRight }
+                Text { text: "FFmpeg (LGPL)"; color: Theme.text; font.pixelSize: 13 }
             }
             Row {
                 spacing: 12
-                Text { text: "Build:"; color: theme.muted; font.pixelSize: 13; width: 100; horizontalAlignment: Text.AlignRight }
-                Text { text: "MSVC 2022 x64"; color: theme.text; font.pixelSize: 13 }
+                Text { text: "Build:"; color: Theme.muted; font.pixelSize: 13; width: 100; horizontalAlignment: Text.AlignRight }
+                Text { text: "MSVC 2022 x64"; color: Theme.text; font.pixelSize: 13 }
             }
         }
 
         Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             width: 200; height: 1
-            color: "#e5e5ea"
+            color: Theme.line
         }
 
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
             text: "© 2026 Kivo. All rights reserved."
-            color: theme.faint
+            color: Theme.faint
             font.pixelSize: 12
         }
 
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
             text: "This software includes open-source components.\nFFmpeg (LGPL) | Qt Framework (LGPL)"
-            color: theme.faint
+            color: Theme.faint
             font.pixelSize: 11
             horizontalAlignment: Text.AlignHCenter
             lineHeight: 1.4

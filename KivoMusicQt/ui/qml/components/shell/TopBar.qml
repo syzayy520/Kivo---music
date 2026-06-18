@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Dialogs
-import "../../tokens"
+import KivoMusic
 
 Item {
     id: root
@@ -9,13 +9,13 @@ Item {
     signal maximizeRequested()
     signal closeRequested()
     signal dragRequested()
+    signal searchRequested()
 
-    Theme { id: theme }
 
     FileDialog {
         id: fileDialog
-        title: "Open Audio File"
-        nameFilters: ["Audio Files (*.flac *.mp3 *.m4a *.wav *.aac *.ogg *.opus)", "All Files (*)"]
+        title: qsTr("Open Audio File")
+        nameFilters: [qsTr("Audio Files") + " (*.flac *.mp3 *.m4a *.wav *.aac *.ogg *.opus)", qsTr("All Files") + " (*)"]
         fileMode: FileDialog.OpenFile
 
         onAccepted: {
@@ -35,44 +35,34 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         spacing: 14
 
+        // 打开文件(本地播放器的核心导入入口)。移除了原先无功能的 < / > 假导航箭头。
         OpenFileButton {
             anchors.verticalCenter: parent.verticalCenter
             onTriggered: fileDialog.open()
         }
 
         Text {
-            text: "<"
-            font.pixelSize: 22
-            color: theme.text
-            anchors.verticalCenter: parent.verticalCenter
-        }
-
-        Text {
-            text: ">"
-            font.pixelSize: 22
-            color: theme.faint
-            anchors.verticalCenter: parent.verticalCenter
-        }
-
-        Text {
             text: root.pageTitle
-            color: theme.text
-            font.pixelSize: 30
-            font.weight: Font.Bold
+            color: Theme.text
+            font.pixelSize: 24
+            font.weight: Font.DemiBold
             anchors.verticalCenter: parent.verticalCenter
-            leftPadding: 10
+            leftPadding: 6
         }
     }
 
     Rectangle {
-        width: 268
-        height: 34
-        radius: 17
-        color: theme.panel
-        border.color: theme.line
+        id: searchBox
+        width: 232
+        height: 32
+        radius: 16
+        // 弱化:更柔的底 + 更淡的发丝边,不与内容争视觉焦点。
+        color: searchMa.containsMouse ? Theme.panelHover : Theme.panelSoft
+        border.color: Theme.lineSubtle
         anchors.right: windowControls.left
         anchors.rightMargin: 20
         anchors.verticalCenter: parent.verticalCenter
+        Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
         Row {
             anchors.left: parent.left
@@ -87,7 +77,7 @@ Item {
                 onPaint: {
                     const ctx = getContext("2d");
                     ctx.clearRect(0, 0, width, height);
-                    ctx.strokeStyle = theme.faint;
+                    ctx.strokeStyle = Theme.faint;
                     ctx.lineWidth = 1.5;
                     ctx.beginPath();
                     ctx.arc(width * 0.43, height * 0.42, width * 0.28, 0, Math.PI * 2);
@@ -100,11 +90,19 @@ Item {
             }
 
             Text {
-                text: "Find in Kivo"
-                color: theme.faint
+                text: qsTr("Search")
+                color: Theme.faint
                 font.pixelSize: 13
                 anchors.verticalCenter: parent.verticalCenter
             }
+        }
+
+        MouseArea {
+            id: searchMa
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: root.searchRequested()
         }
     }
 
@@ -115,9 +113,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         spacing: 2
 
-        ThemeToggleButton {
-            anchors.verticalCenter: parent.verticalCenter
-        }
+        // 主题切换已收进「设置 › 外观」,不再孤零零占据右上角(见设计批评)。
 
         WindowControlButton {
             controlType: "minimize"

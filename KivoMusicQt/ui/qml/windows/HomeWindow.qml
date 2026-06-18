@@ -1,9 +1,9 @@
 import QtQuick
-import "../tokens"
+import KivoMusic
 import "../components/navigation"
 import "../components/shell"
 import "../components/transport"
-import "../animations"
+import "../components/transport/queue"
 import "../pages/discovery"
 import "../pages/home"
 import "../pages/library"
@@ -18,40 +18,56 @@ Item {
     signal closeRequested()
     signal dragRequested()
     readonly property string currentTitle: {
-        if (currentPage === "home") return "Home";
-        if (currentPage === "artists") return "Artists";
-        if (currentPage === "albums") return "Albums";
-        if (currentPage === "songs") return "Songs";
-        if (currentPage === "new") return "New";
-        if (currentPage === "radio") return "Radio";
-        if (currentPage === "made") return "Made for You";
-        if (currentPage === "search") return "Search";
-        if (currentPage === "settings") return "Settings";
-        if (currentPage === "privacy") return "Privacy Policy";
-        if (currentPage === "eula") return "License Agreement";
-        if (currentPage === "about") return "About Kivo Music";
-        return "Library";
+        if (currentPage === "home") return qsTr("Home");
+        if (currentPage === "recent") return qsTr("Recently Added");
+        if (currentPage === "artists") return qsTr("Artists");
+        if (currentPage === "albums") return qsTr("Albums");
+        if (currentPage === "songs") return qsTr("Songs");
+        if (currentPage === "favorites") return qsTr("Favorites");
+        if (currentPage === "search") return qsTr("Search");
+        if (currentPage === "settings") return qsTr("Settings");
+        return qsTr("Library");
     }
 
-    Theme { id: theme }
+    // Helper: focus the search field after the search page loads.
+    function _focusSearchField() {
+        Qt.callLater(function() {
+            if (!pageLoader.item) return
+            // SearchPage's TextField has objectName "searchField" and focus:true,
+            // so it auto-focuses on load. This is a fallback to force it.
+            const field = pageLoader.item.children.length > 0
+                ? _findObjectByName(pageLoader.item, "searchField") : null
+            if (field) field.forceActiveFocus()
+        })
+    }
+
+    function _findObjectByName(parent, name) {
+        if (!parent) return null
+        if (parent.objectName === name) return parent
+        for (let i = 0; i < parent.children.length; i++) {
+            const found = _findObjectByName(parent.children[i], name)
+            if (found) return found
+        }
+        return null
+    }
+
 
     Rectangle {
         anchors.fill: parent
-        color: theme.page
+        color: Theme.page
     }
 
     // File drop area for drag-and-drop support
     FileDropArea {
         id: fileDropArea
-        audioController: audioController
     }
 
     Sidebar {
         id: sidebar
-        width: theme.railWidth
+        width: Theme.railWidth
         currentPage: root.currentPage
         anchors.top: parent.top
-        anchors.bottom: parent.bottom
+        anchors.bottom: transport.top
         anchors.left: parent.left
         onPageRequested: root.currentPage = pageKey
     }
@@ -74,9 +90,15 @@ Item {
             onMaximizeRequested: root.maximizeRequested()
             onCloseRequested: root.closeRequested()
             onDragRequested: root.dragRequested()
+            onSearchRequested: {
+                root.currentPage = "search"
+                _focusSearchField()
+            }
         }
 
         // ── Page Loader with Apple Music transitions ──────────
+        // D9 修复: 原实现用 Qt.createQmlObject 拼接字符串创建动画,target 对象引用可能非法。
+        // 改为声明式 SequentialAnimation + Translate 位移(不与 anchors 冲突)。
         Loader {
             id: pageLoader
             anchors.top: topBar.bottom
@@ -84,77 +106,65 @@ Item {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             asynchronous: true
+            opacity: 0
+
+            // Translate Y offset 用于滑入/滑出; 与 anchors 正交, 无冲突警告。
+            transform: Translate { id: pageSlide; y: 14 }
 
             property string _pendingPage: ""
-            property var _fadeOutAnim: null
-            property var _fadeInAnim: null
+
+            // ── 淡出动画 ─────────────────────────────────────
+            SequentialAnimation {
+                id: _fadeOut
+                PauseAnimation { duration: 30 }
+                ParallelAnimation {
+                    NumberAnimation {
+                        target: pageLoader; property: "opacity"
+                        to: 0; duration: 180; easing.type: Easing.InQuad
+                    }
+                    NumberAnimation {
+                        target: pageSlide; property: "y"
+                        to: 14; duration: 180; easing.type: Easing.InQuad
+                    }
+                }
+                ScriptAction { script: pageLoader._onFadeOutDone() }
+            }
+
+            // ── 淡入动画 ─────────────────────────────────────
+            SequentialAnimation {
+                id: _fadeIn
+                PauseAnimation { duration: 40 }
+                ParallelAnimation {
+                    NumberAnimation {
+                        target: pageLoader; property: "opacity"
+                        from: 0; to: 1; duration: 280; easing.type: Easing.OutCubic
+                    }
+                    NumberAnimation {
+                        target: pageSlide; property: "y"
+                        from: 14; to: 0; duration: 280; easing.type: Easing.OutCubic
+                    }
+                }
+                ScriptAction { script: pageLoader._pendingPage = "" }
+            }
 
             function switchPage(pageKey) {
-                if (_pendingPage !== "" || (sourceComponent && opacity < 1)) {
-                    return; // 正在切换中，忽略
-                }
+                if (_pendingPage !== "") return;
                 _pendingPage = pageKey;
-
-                // 淡出当前页面
-                var targetY = y;
-                opacity = 1;
-                y = targetY;
-
-                var outAnim = Qt.createQmlObject(
-                    'import QtQuick; SequentialAnimation { ' +
-                    '  PauseAnimation { duration: 30 } ' +
-                    '  ParallelAnimation { ' +
-                    '    NumberAnimation { target: pageLoader; property: "opacity"; from: 1; to: 0; duration: 180; easing.type: Easing.InQuad } ' +
-                    '    NumberAnimation { target: pageLoader; property: "y"; from: ' + targetY + '; to: ' + (targetY + 14) + '; duration: 180; easing.type: Easing.InQuad } ' +
-                    '  } ' +
-                    '  ScriptAction { script: pageLoader._onFadeOutDone(); } ' +
-                    '}',
-                    pageLoader
-                );
-                _fadeOutAnim = outAnim;
-                outAnim.start();
+                _fadeOut.start();
             }
 
             function _onFadeOutDone() {
-                _fadeOutAnim = null;
-                var newSource = getPageComponent();
-                if (newSource !== sourceComponent) {
-                    sourceComponent = newSource;
-                }
-
-                // 淡入新页面
-                var targetY = y;
-                y = targetY + 14;
-                opacity = 0;
-
-                var inAnim = Qt.createQmlObject(
-                    'import QtQuick; SequentialAnimation { ' +
-                    '  PauseAnimation { duration: 40 } ' +
-                    '  ParallelAnimation { ' +
-                    '    NumberAnimation { target: pageLoader; property: "opacity"; from: 0; to: 1; duration: 280; easing.type: Easing.OutCubic } ' +
-                    '    NumberAnimation { target: pageLoader; property: "y"; from: ' + (targetY + 14) + '; to: ' + targetY + '; duration: 280; easing.type: Easing.OutCubic } ' +
-                    '  } ' +
-                    '  ScriptAction { script: pageLoader._onFadeInDone(); } ' +
-                    '}',
-                    pageLoader
-                );
-                _fadeInAnim = inAnim;
-                inAnim.start();
-            }
-
-            function _onFadeInDone() {
-                _fadeInAnim = null;
-                _pendingPage = "";
-                y = anchors.topMargin || 0;
+                const newSource = getPageComponent();
+                if (newSource !== sourceComponent) sourceComponent = newSource;
+                pageLoader.opacity = 0;
+                pageSlide.y = 14;
+                _fadeIn.start();
             }
 
             function getPageComponent() {
                 if (_pendingPage === "home") return homePageComponent;
                 if (_pendingPage === "search") return searchPageComponent;
                 if (_pendingPage === "settings") return settingsPageComponent;
-                if (_pendingPage === "privacy") return privacyPageComponent;
-                if (_pendingPage === "eula") return eulaPageComponent;
-                if (_pendingPage === "about") return aboutPageComponent;
                 if (_pendingPage === "new" || _pendingPage === "radio" || _pendingPage === "made")
                     return discoveryPageComponent;
                 return libraryPageComponent;
@@ -162,21 +172,7 @@ Item {
 
             sourceComponent: homePageComponent
 
-            Component.onCompleted: {
-                opacity = 0;
-                y = y + 14;
-                var initAnim = Qt.createQmlObject(
-                    'import QtQuick; SequentialAnimation { ' +
-                    '  PauseAnimation { duration: 500 } ' +
-                    '  ParallelAnimation { ' +
-                    '    NumberAnimation { target: pageLoader; property: "opacity"; from: 0; to: 1; duration: 350; easing.type: Easing.OutCubic } ' +
-                    '    NumberAnimation { target: pageLoader; property: "y"; from: ' + y + '; to: ' + (y - 14) + '; duration: 350; easing.type: Easing.OutCubic } ' +
-                    '  } ' +
-                    '}',
-                    pageLoader
-                );
-                initAnim.start();
-            }
+            Component.onCompleted: _fadeIn.start()
 
             Connections {
                 target: root
@@ -215,33 +211,35 @@ Item {
 
     Component {
         id: settingsPageComponent
-        SettingsPage {
-            onShowPrivacyPolicy: root.currentPage = "privacy"
-            onShowEula: root.currentPage = "eula"
-            onShowAbout: root.currentPage = "about"
-        }
-    }
-
-    Component {
-        id: privacyPageComponent
-        PrivacyPolicy {}
-    }
-
-    Component {
-        id: eulaPageComponent
-        EulaPage {}
-    }
-
-    Component {
-        id: aboutPageComponent
-        AboutPage {}
+        // New navigable settings shell (rail + detail). Privacy / EULA / About are
+        // now sub-routes INSIDE it (AboutLegalPage), not top-level currentPage peers.
+        SettingsShell {}
     }
 
     TransportBar {
         id: transport
-        anchors.left: sidebar.right
+        anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        height: theme.transportHeight + 54
+        height: Theme.transportHeight + 14
+        onExpandRequested: nowPlayingView.open = true
+        onQueueRequested: playQueueDrawer.open = !playQueueDrawer.open
+    }
+
+    // ── Immersive now-playing (full-window, artwork-color background) ──
+    NowPlayingView {
+        id: nowPlayingView
+        objectName: "nowPlayingView"
+        anchors.fill: parent
+        z: 100
+    }
+
+    // ── Play-queue drawer (full-window overlay — must live here, not in the
+    //    thin transport bar, to slide in full-height from the right). ──
+    PlayQueueDrawer {
+        id: playQueueDrawer
+        objectName: "playQueueDrawer"
+        anchors.fill: parent
+        z: 101
     }
 }

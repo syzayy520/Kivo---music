@@ -16,6 +16,9 @@ public:
         const QList<MusicFileRecord>& musicRecords,
         QObject* parent = nullptr);
 
+    // Swap in real scan results (UI thread only). No-op when empty.
+    void applyMusicRecords(const QList<MusicFileRecord>& musicRecords);
+
     SearchResultModel* results();
     SearchFilterModel* filters();
 

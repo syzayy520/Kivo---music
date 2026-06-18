@@ -1,6 +1,6 @@
 import QtQuick
 import "../artwork"
-import "../../tokens"
+import KivoMusic
 
 Item {
     id: root
@@ -14,7 +14,6 @@ Item {
 
     height: width + 66
 
-    Theme { id: theme }
 
     MouseArea {
         anchors.fill: parent
@@ -41,7 +40,7 @@ Item {
         Text {
             width: parent.width
             text: root.eyebrow
-            color: theme.muted
+            color: Theme.muted
             font.pixelSize: 11
             font.weight: Font.DemiBold
             elide: Text.ElideRight
@@ -50,7 +49,7 @@ Item {
         Text {
             width: parent.width
             text: root.title
-            color: theme.text
+            color: Theme.text
             font.pixelSize: 14
             font.weight: Font.DemiBold
             elide: Text.ElideRight
@@ -59,7 +58,7 @@ Item {
         Text {
             width: parent.width
             text: root.subtitle
-            color: theme.muted
+            color: Theme.muted
             font.pixelSize: 12
             elide: Text.ElideRight
         }

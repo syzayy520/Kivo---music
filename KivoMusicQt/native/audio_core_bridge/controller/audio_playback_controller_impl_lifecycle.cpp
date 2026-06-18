@@ -23,6 +23,11 @@ AudioPlaybackControllerImpl::AudioPlaybackControllerImpl(
 }
 
 AudioPlaybackControllerImpl::~AudioPlaybackControllerImpl() {
+    // Stop pumping BEFORE tearing down the engine the pump thread calls into.
+    if (pumpWorker_) {
+        pumpWorker_->stop();
+        pumpWorker_.reset();
+    }
     stopSnapshotPolling();
     engineHandle_.reset();
 }
@@ -57,10 +62,39 @@ void AudioPlaybackControllerImpl::initialize() {
     }
 
     engineHandle_ = std::move(engineResult.value());
+
+    // Cache whether the connected core writes the ABI 1.1.0 timebase snapshot
+    // tail (render rate / total frames / resample fact). On an older core the
+    // flag is absent and the snapshot reader treats the tail as unknown ("--:--").
+    {
+        kivo_audio_capabilities_v1 caps{};
+        caps.struct_size = sizeof(caps);
+        caps.struct_version = KIVO_AUDIO_ABI_STRUCT_VERSION_1;
+        const auto& fns = libraryGuard_->functions();
+        if (fns.getCapabilities
+            && fns.getCapabilities(engineHandle_->raw(), &caps)
+                   == KIVO_AUDIO_RESULT_OK) {
+            timebaseSnapshotSupported_ =
+                (caps.capability_flags
+                 & KIVO_AUDIO_CAPABILITY_PLAYBACK_TIMEBASE_SNAPSHOT) != 0u;
+            truthSnapshotSupported_ =
+                (caps.capability_flags
+                 & KIVO_AUDIO_CAPABILITY_BIT_PERFECT_TRUTH) != 0u;
+        }
+    }
+
     snapshotTimer_ = new QTimer(owner_);
     QObject::connect(snapshotTimer_, &QTimer::timeout, [this]() {
         pollSnapshot();
     });
+
+    // Drive the producer pump on its own thread so audio production is immune to
+    // UI-thread jank (the cause of intermittent playback stutter). It is the sole
+    // producer of the engine's SPSC queue; pacing is adaptive (cheap when idle).
+    pumpWorker_ = std::make_unique<AudioPumpWorker>([this]() {
+        return pumpStep();
+    });
+    pumpWorker_->start();
 }
 
 } // namespace kivo::qt::audio_bridge

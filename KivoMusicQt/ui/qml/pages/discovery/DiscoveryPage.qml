@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import "../../components/discovery"
-import "../../tokens"
+import KivoMusic
 
 Item {
     id: root
@@ -14,7 +14,6 @@ Item {
             ? "Library-aware mixes for focused listening"
             : "New albums and scans from local and NAS sources"
 
-    Theme { id: theme }
 
     ScrollView {
         anchors.fill: parent
@@ -33,7 +32,7 @@ Item {
                 x: pageColumn.contentMargin
                 width: pageColumn.contentWidth
                 text: root.summaryText
-                color: theme.text
+                color: Theme.text
                 font.pixelSize: 14
                 font.weight: Font.DemiBold
             }

@@ -54,6 +54,13 @@ int TrackListModel::count() const {
     return static_cast<int>(m_items.size());
 }
 
+QStringList TrackListModel::filePaths() const {
+    QStringList result;
+    result.reserve(m_items.size());
+    for (const auto& item : m_items) result.append(item.filePath);
+    return result;
+}
+
 void TrackListModel::setItems(QList<TrackListItem> items) {
     beginResetModel();
     m_items = std::move(items);

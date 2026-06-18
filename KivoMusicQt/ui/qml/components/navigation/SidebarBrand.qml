@@ -1,38 +1,39 @@
 import QtQuick
-import "../../tokens"
+import KivoMusic
 
-Row {
+Item {
     id: root
     height: 38
-    spacing: 10
-
-    Theme { id: theme }
 
     Rectangle {
+        id: logoTile
         width: 30
         height: 30
         radius: 8
-        color: theme.ink
+        color: Theme.ink
+        anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
 
         Text {
             anchors.centerIn: parent
             text: "K"
-            color: "#f4d06f"
+            color: Theme.brandK
             font.pixelSize: 15
             font.weight: Font.Bold
         }
     }
 
     Column {
-        width: parent.width - 42
+        anchors.left: logoTile.right
+        anchors.leftMargin: 10
+        anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
         spacing: 1
 
         Text {
             width: parent.width
             text: "Kivo Music"
-            color: theme.text
+            color: Theme.text
             font.pixelSize: 15
             font.weight: Font.DemiBold
             elide: Text.ElideRight
@@ -40,8 +41,8 @@ Row {
 
         Text {
             width: parent.width
-            text: "Local Hi-Fi Library"
-            color: theme.muted
+            text: qsTr("Local Hi-Fi Library")
+            color: Theme.muted
             font.pixelSize: 11
             elide: Text.ElideRight
         }

@@ -38,6 +38,12 @@ public:
     bool isOpen() const;
     int currentVersion() const;
 
+    // Resolved database file path (so a worker thread can open its OWN
+    // per-thread connection to the same file). Set during initialize().
+    QString databasePath() const;
+
+    static constexpr int kLatestSchemaVersion = 1;
+
 signals:
     void opened();
     void migrationCompleted(int fromVersion, int toVersion);
@@ -54,6 +60,7 @@ private:
     QString defaultDbPath() const;
 
     QSqlDatabase db_;
+    QString dbPath_;
     mutable QMutex mutex_;
     bool initialized_ = false;
     int schemaVersion_ = 0;

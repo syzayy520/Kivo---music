@@ -1,6 +1,6 @@
 import QtQuick
 import "../artwork"
-import "../../tokens"
+import KivoMusic
 
 Rectangle {
     id: root
@@ -14,9 +14,8 @@ Rectangle {
 
     height: 58
     radius: 7
-    color: mouseArea.containsMouse ? "#f5f7f9" : "transparent"
+    color: mouseArea.containsMouse ? Theme.lineSubtle : "transparent"
 
-    Theme { id: theme }
 
     Behavior on color {
         ColorAnimation { duration: 120; easing.type: Easing.OutQuad }
@@ -56,7 +55,7 @@ Rectangle {
         Text {
             width: parent.width
             text: root.title
-            color: theme.text
+            color: Theme.text
             font.pixelSize: 14
             font.weight: Font.DemiBold
             elide: Text.ElideRight
@@ -65,7 +64,7 @@ Rectangle {
         Text {
             width: parent.width
             text: root.detail
-            color: theme.muted
+            color: Theme.muted
             font.pixelSize: 12
             elide: Text.ElideRight
         }
@@ -75,7 +74,7 @@ Rectangle {
         id: metaText
         width: 160
         text: root.meta
-        color: theme.muted
+        color: Theme.muted
         font.pixelSize: 12
         horizontalAlignment: Text.AlignRight
         anchors.right: parent.right

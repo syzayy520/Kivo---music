@@ -9,7 +9,6 @@
 #include <QString>
 #include <QStringList>
 #include <QVector>
-#include <QMutex>
 
 namespace kivo::qt::audio_bridge {
 
@@ -21,6 +20,7 @@ class PlayQueue : public QAbstractListModel {
     enum Roles {
         FilePathRole = Qt::UserRole + 1,
         DisplayNameRole,
+        ArtistRole,
         IndexRole
     };
 
@@ -63,7 +63,10 @@ signals:
 private:
     QString displayName(const QString& filePath) const;
 
-    mutable QMutex mutex_;
+    // PlayQueue is a QAbstractListModel: it is touched ONLY on the UI thread
+    // (openFile / onEndOfStream / QML). No mutex — a QAbstractListModel cannot be
+    // made thread-safe by one, and holding a lock across begin/endInsertRows
+    // self-deadlocks (the attached view re-enters rowCount()/data()).
     QVector<QString> queue_;
     int currentIndex_ = -1;
 };

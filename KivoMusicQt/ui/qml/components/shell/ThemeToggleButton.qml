@@ -5,7 +5,7 @@
 
 import QtQuick
 import QtQuick.Controls
-import "../../tokens"
+import KivoMusic
 
 Button {
     id: root
@@ -15,27 +15,26 @@ Button {
     text: ""
     font.pixelSize: 16
 
-    Theme { id: theme }
 
     contentItem: Text {
         anchors.centerIn: parent
-        text: theme.isDark ? "☀️" : "🌙"
+        text: Theme.isDark ? "☀️" : "🌙"
         font.pixelSize: 16
     }
 
     background: Rectangle {
         radius: 8
-        color: root.hovered ? theme.panelHover : "transparent"
+        color: root.hovered ? Theme.panelHover : "transparent"
 
         Behavior on color {
             ColorAnimation { duration: 150 }
         }
     }
 
-    onClicked: theme.toggle()
+    onClicked: Theme.toggle()
 
     ToolTip {
-        text: theme.isDark ? "Switch to Light Mode" : "Switch to Dark Mode"
+        text: Theme.isDark ? "Switch to Light Mode" : "Switch to Dark Mode"
         delay: 600
     }
 }

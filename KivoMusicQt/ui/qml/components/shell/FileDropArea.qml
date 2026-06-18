@@ -4,11 +4,14 @@
 // =============================================================================
 
 import QtQuick
+import KivoMusic
 
 DropArea {
     id: root
 
-    property var audioController: null
+    // audioController is a global QML context property (set in main.cpp); use it
+    // directly. A local same-named property + `audioController: audioController`
+    // binding self-references and triggers a binding loop.
     signal filesDropped(var fileUrls)
 
     anchors.fill: parent
@@ -40,7 +43,7 @@ DropArea {
     Rectangle {
         id: dropOverlay
         anchors.fill: parent
-        color: "#20000000"
+        color: Theme.scrim
         visible: false
         z: 9999
 
@@ -49,8 +52,8 @@ DropArea {
             width: 320
             height: 200
             radius: 20
-            color: "#e6ffffff"
-            border.color: "#40000000"
+            color: Theme.panel
+            border.color: Theme.line
             border.width: 2
 
             Column {
@@ -65,17 +68,19 @@ DropArea {
 
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: "Drop audio files here"
-                    color: "#333333"
+                    text: qsTr("Drop audio files here")
+                    color: Theme.text
                     font.pixelSize: 20
-                    font.bold: true
+                    font.weight: Font.Bold
+                    font.family: Theme.fontFamily
                 }
 
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: "FLAC / MP3 / WAV / AAC"
-                    color: "#888888"
+                    text: "FLAC · MP3 · WAV · AAC"
+                    color: Theme.muted
                     font.pixelSize: 14
+                    font.family: Theme.fontFamily
                 }
             }
         }

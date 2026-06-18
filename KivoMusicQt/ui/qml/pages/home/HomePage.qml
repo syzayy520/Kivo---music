@@ -2,12 +2,11 @@ import QtQuick
 import QtQuick.Controls
 import "../../components/content"
 import "../../components/common"
-import "../../tokens"
+import KivoMusic
 
 Item {
     id: root
 
-    Theme { id: theme }
 
     ScrollView {
         id: scroll
@@ -26,7 +25,7 @@ Item {
             readonly property real contentWidth: width - contentMargin * 2
 
             width: scroll.availableWidth
-            spacing: 22
+            spacing: 30
 
             HomeRecommendationSection {
                 x: homeColumn.contentMargin
@@ -43,7 +42,7 @@ Item {
             }
 
             AlbumShelfSection {
-                title: "Recently Added"
+                title: qsTr("Recently Added")
                 x: homeColumn.contentMargin
                 width: homeColumn.contentWidth
                 contentWidth: width
@@ -51,7 +50,7 @@ Item {
             }
 
             AlbumShelfSection {
-                title: "Rediscover"
+                title: qsTr("Rediscover")
                 x: homeColumn.contentMargin
                 width: homeColumn.contentWidth
                 contentWidth: width
@@ -59,16 +58,18 @@ Item {
             }
 
             AlbumShelfSection {
-                title: "After Hours"
+                title: qsTr("Not Heard in a While")
                 x: homeColumn.contentMargin
                 width: homeColumn.contentWidth
                 contentWidth: width
                 contentModel: libraryModels ? libraryModels.afterHours : null
             }
 
+            // 安全留白:浮动播放条(≈ transportHeight + 浮动外边距)会盖住底部内容,
+            // 这里预留 = 播放条高度 + 余量,确保最后一行专辑不被遮挡。
             Item {
                 width: 1
-                height: 76
+                height: Theme.transportHeight + 72
             }
         }
     }

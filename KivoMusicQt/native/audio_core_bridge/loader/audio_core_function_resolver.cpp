@@ -52,6 +52,12 @@ error::VoidResult AudioCoreFunctionResolver::resolveAll() {
         "kivo_audio_get_snapshot", true);
     if (result.isFailed()) return result;
 
+    // Optional (ABI 1.2.0). A 1.1.0 core leaves this null and the truth surface
+    // degrades to "Unknown" — not a load failure.
+    (void)resolveFunction(
+        reinterpret_cast<void**>(&functions_.getTruth),
+        "kivo_audio_get_truth", false);
+
     fullyResolved_ = true;
     return error::success();
 }

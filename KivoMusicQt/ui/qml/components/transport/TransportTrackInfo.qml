@@ -5,7 +5,7 @@
 
 import QtQuick
 import "../artwork"
-import "../../tokens"
+import KivoMusic
 
 Item {
     id: root
@@ -16,7 +16,6 @@ Item {
 
     height: 48
 
-    Theme { id: theme }
 
     AlbumArtwork {
         id: art
@@ -24,15 +23,7 @@ Item {
         height: 44
         radiusValue: 8
         sourceUrl: root.coverUrl
-        variant: {
-            var str = (audioController.artist || "") + "_" + (audioController.title || "");
-            var hash = 0;
-            for (var i = 0; i < str.length; i++) {
-                hash = ((hash << 5) - hash) + str.charCodeAt(i);
-                hash |= 0;
-            }
-            return Math.abs(hash);
-        }
+        variant: audioController.coverVariantSeed
         playing: root.playing
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
@@ -47,8 +38,9 @@ Item {
 
         Text {
             width: parent.width
-            text: root.title
-            color: theme.text
+            // 占位文案在表现层本地化:后端无曲目时给空串。
+            text: root.title.length > 0 ? root.title : qsTr("Not Playing")
+            color: Theme.text
             font.pixelSize: 12
             font.weight: Font.Medium
             elide: Text.ElideRight
@@ -56,8 +48,8 @@ Item {
 
         Text {
             width: parent.width
-            text: root.subtitle
-            color: theme.muted
+            text: root.subtitle.length > 0 ? root.subtitle : qsTr("Select a song to start playing")
+            color: Theme.muted
             font.pixelSize: 10
             elide: Text.ElideRight
         }

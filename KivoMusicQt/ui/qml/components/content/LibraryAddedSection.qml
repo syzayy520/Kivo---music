@@ -1,6 +1,6 @@
 import QtQuick
 import "."
-import "../../tokens"
+import KivoMusic
 
 Column {
     id: root
@@ -8,27 +8,29 @@ Column {
     property var contentModel
     spacing: 14
 
-    Theme { id: theme }
 
-    Row {
+    Item {
         width: root.contentWidth
+        height: 24
 
         Text {
-            text: "Recently Added"
-            color: theme.text
-            font.pixelSize: 18
-            font.weight: Font.DemiBold
-        }
-
-        Item {
-            width: Math.max(12, parent.width - 186)
-            height: 1
+            text: qsTr("Recently Added")
+            color: Theme.text
+            font.pixelSize: Theme.fontSectionTitle
+            font.weight: Font.Bold
+            font.letterSpacing: -0.2
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
         }
 
         Text {
-            text: "See All >"
-            color: theme.muted
-            font.pixelSize: 13
+            text: qsTr("All ›")
+            color: Theme.text
+            opacity: Theme.subtitleOpacity
+            font.pixelSize: Theme.fontSubtitle
+            font.weight: Font.Medium
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
         }
     }
 

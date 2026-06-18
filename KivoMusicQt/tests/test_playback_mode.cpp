@@ -63,6 +63,30 @@ TEST_F(PlaybackModeTest, ShuffleInRange) {
     }
 }
 
+// Regression guard for the end-of-stream auto-advance bug: onEndOfStream() used
+// to call PlayQueue::next() directly, so Shuffle silently degraded to "play the
+// next sequential track" (always currentIndex+1). The fix routes auto-advance
+// through nextIndex(), which for Shuffle must scatter across the queue and never
+// lock onto currentIndex+1. P(false failure) = (1/10)^100 ≈ 0, so this is not
+// flaky despite asserting on randomness.
+TEST_F(PlaybackModeTest, ShuffleDoesNotDeterministicallyPickNextSequential) {
+    mode_->setMode(PlaybackMode::Mode::Shuffle);
+    constexpr int kCurrentIndex = 3;
+    constexpr int kTotalCount = 10;
+    bool sawNonSequential = false;
+    for (int i = 0; i < 100; ++i) {
+        const int idx = mode_->nextIndex(kCurrentIndex, kTotalCount);
+        ASSERT_GE(idx, 0);
+        ASSERT_LT(idx, kTotalCount);
+        if (idx != kCurrentIndex + 1) {
+            sawNonSequential = true;
+        }
+    }
+    EXPECT_TRUE(sawNonSequential)
+        << "Shuffle nextIndex() returned currentIndex+1 on every one of 100 "
+           "draws — auto-advance is behaving sequentially, not shuffling.";
+}
+
 TEST_F(PlaybackModeTest, ModeStrings) {
     mode_->setMode(PlaybackMode::Mode::Sequential);
     EXPECT_EQ(mode_->modeString(), "Sequential");

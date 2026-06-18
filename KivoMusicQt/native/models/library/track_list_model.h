@@ -37,6 +37,7 @@ public:
 
     int count() const;
     void setItems(QList<TrackListItem> items);
+    QStringList filePaths() const;
 
 signals:
     void countChanged();

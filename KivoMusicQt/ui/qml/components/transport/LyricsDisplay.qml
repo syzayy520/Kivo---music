@@ -4,7 +4,7 @@
 // =============================================================================
 
 import QtQuick
-import "../../tokens"
+import KivoMusic
 
 Item {
     id: root
@@ -15,7 +15,6 @@ Item {
     height: hasContent ? 44 : 0
     clip: true
 
-    Theme { id: theme }
 
     Behavior on height {
         NumberAnimation { duration: 300; easing.type: Easing.OutCubic }
@@ -30,7 +29,7 @@ Item {
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
             text: root.currentText
-            color: theme.text
+            color: Theme.text
             font.pixelSize: 14
             font.weight: Font.DemiBold
             maximumLineCount: 1
@@ -47,7 +46,7 @@ Item {
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
             text: root.nextText
-            color: theme.muted
+            color: Theme.muted
             font.pixelSize: 12
             font.weight: Font.Normal
             maximumLineCount: 1

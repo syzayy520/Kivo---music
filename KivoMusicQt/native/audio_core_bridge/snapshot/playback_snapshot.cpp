@@ -37,7 +37,8 @@ QString PlaybackSnapshot::durationText() const {
 
 error::BridgeResult<PlaybackSnapshot> PlaybackSnapshotReader::read(
     const loader::AudioCoreFunctions& functions,
-    kivo_audio_handle engine) {
+    kivo_audio_handle engine,
+    bool timebaseSupported) {
 
     if (!functions.getSnapshot) {
         return error::BridgeResult<PlaybackSnapshot>::failed(
@@ -66,24 +67,45 @@ error::BridgeResult<PlaybackSnapshot> PlaybackSnapshotReader::read(
     snapshot.state = mapState(abiSnapshot.state);
     snapshot.renderedFrames = abiSnapshot.rendered_position_frames;
     snapshot.decodedFrames = abiSnapshot.decoded_frames;
-    snapshot.position = std::chrono::milliseconds(
-        static_cast<int64_t>((abiSnapshot.rendered_position_frames * 1000ull) / 48000ull));
-    snapshot.duration = std::chrono::milliseconds(0);
-    snapshot.hasValidPosition = abiSnapshot.rendered_position_frames > 0;
+    // Natural end-of-stream marker: incremented once per completed drain (the
+    // ABI v1 field is already populated; the reader requests the full v1 struct).
+    snapshot.successfulDrains = abiSnapshot.successful_drains;
+    // Real timebase (ABI 1.1.0 tail). Gate on the capability so a mismatched
+    // older core (which zero-fills the tail) reports "unknown" instead of a
+    // bogus rate. rate > 0 is the universal guard for both position & duration.
+    const uint32_t rate =
+        timebaseSupported ? abiSnapshot.render_sample_rate : 0u;
+    const uint64_t rendered = abiSnapshot.rendered_position_frames;
+    snapshot.renderSampleRate = rate;
 
-    if (abiSnapshot.decoded_frames > 0) {
-        snapshot.progress =
-            static_cast<double>(abiSnapshot.rendered_position_frames)
-            / static_cast<double>(abiSnapshot.decoded_frames);
-        snapshot.progress = std::clamp(snapshot.progress, 0.0, 1.0);
-    }
+    snapshot.position = rate > 0u
+        ? std::chrono::milliseconds(
+              static_cast<int64_t>((rendered * 1000ull) / rate))
+        : std::chrono::milliseconds(0);
+    snapshot.hasValidPosition = rate > 0u && rendered > 0u;
+
+    snapshot.totalFrames = timebaseSupported ? abiSnapshot.total_frames : 0ull;
+    snapshot.hasDuration = timebaseSupported
+        && abiSnapshot.total_frames_known != 0u
+        && rate > 0u
+        && snapshot.totalFrames > 0ull;
+    snapshot.duration = snapshot.hasDuration
+        ? std::chrono::milliseconds(
+              static_cast<int64_t>((snapshot.totalFrames * 1000ull) / rate))
+        : std::chrono::milliseconds(0);
+
+    // Progress is rendered / true-total (not the moving decoded_frames counter,
+    // which drifts). 0 when the duration is unknown.
+    snapshot.progress = snapshot.hasDuration
+        ? std::clamp(static_cast<double>(rendered)
+                         / static_cast<double>(snapshot.totalFrames),
+                     0.0, 1.0)
+        : 0.0;
 
     return error::BridgeResult<PlaybackSnapshot>::ok(snapshot);
 }
 
 PlaybackState PlaybackSnapshotReader::mapState(int abiState) {
-    // Map Host ABI state codes to our enum
-    // TODO: get actual state codes from Host ABI header
     switch (abiState) {
         case KIVO_AUDIO_STATE_PLAYING: return PlaybackState::Playing;
         case KIVO_AUDIO_STATE_PAUSED: return PlaybackState::Paused;

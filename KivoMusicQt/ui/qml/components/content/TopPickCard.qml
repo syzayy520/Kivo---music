@@ -6,7 +6,7 @@
 import QtQuick
 import QtQuick.Effects
 import "../artwork"
-import "../../tokens"
+import KivoMusic
 
 Item {
     id: root
@@ -22,14 +22,13 @@ Item {
 
     height: card.y + card.height + 8
 
-    Theme { id: theme }
 
     // ── Eyebrow ────────────────────────────────────────────────
     Text {
         id: eyebrowText
         width: parent.width
         text: root.eyebrow
-        color: theme.muted
+        color: Theme.muted
         font.pixelSize: 12
         font.weight: Font.Medium
         elide: Text.ElideRight
@@ -44,7 +43,7 @@ Item {
         y: 20
         radius: 10
         clip: true
-        color: "#f0f1f4"
+        color: Theme.panelSoft
 
         // Subtle lift on hover
         scale: hoverArea.containsMouse ? 1.02 : 1.0
@@ -56,7 +55,7 @@ Item {
         layer.enabled: true
         layer.effect: MultiEffect {
             shadowEnabled: true
-            shadowColor: hoverArea.containsMouse ? "#2a000000" : "#14000000"
+            shadowColor: hoverArea.containsMouse ? Theme.shadowModal : Theme.shadowPanel
             shadowBlur: hoverArea.containsMouse ? 0.55 : 0.3
             shadowVerticalOffset: hoverArea.containsMouse ? 10 : 4
         }
@@ -68,21 +67,23 @@ Item {
             sourceUrl: root.coverUrl
         }
 
-        // ── Gradient overlay ───────────────────────────────
+        // ── Legibility scrim ───────────────────────────────
+        // 顶部留空(露出封面),底部~30% 压成实深色,保证叠加白字在任何封面(含浅色封面)
+        // 上都清晰可读。深色叠层在亮/暗主题下都正确(白字永远落在暗底上)。
         Rectangle {
             anchors.fill: parent
             gradient: Gradient {
                 GradientStop { position: 0.0; color: "#00000000" }
-                GradientStop { position: 0.45; color: root.hasCover ? "#00061113" : "#000a1113" }
-                GradientStop { position: 0.75; color: root.hasCover ? "#45111318" : "#4a111318" }
-                GradientStop { position: 1.0; color: root.hasCover ? "#8a111318" : "#95111318" }
+                GradientStop { position: 0.42; color: "#00060a0e" }
+                GradientStop { position: 0.68; color: "#660a0d12" }
+                GradientStop { position: 1.0; color: "#dc0a0d12" }
             }
         }
 
         // ── Editorial badge ────────────────────────────────
         Text {
-            text: "✦ Editor's Pick"
-            color: "#ffffff"
+            text: qsTr("✦ Editor's Pick")
+            color: Theme.npText
             opacity: root.editorial ? 0.9 : 0
             font.pixelSize: 10
             font.weight: Font.DemiBold
@@ -110,7 +111,7 @@ Item {
             Text {
                 width: parent.width
                 text: root.title
-                color: "#ffffff"
+                color: Theme.npText
                 font.pixelSize: root.editorial ? (root.hasCover ? 24 : 28) : (root.hasCover ? 17 : 18)
                 font.weight: Font.Bold
                 lineHeight: 0.96
@@ -122,7 +123,7 @@ Item {
             Text {
                 width: parent.width
                 text: root.subtitle
-                color: "#e8eaed"
+                color: Theme.npTextCard
                 font.pixelSize: 11
                 font.weight: Font.Medium
                 wrapMode: Text.WordWrap

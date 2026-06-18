@@ -5,12 +5,11 @@
 
 import QtQuick
 import QtQuick.Controls
-import "../../tokens"
+import KivoMusic
 
 ScrollBar {
     id: control
 
-    Theme { id: theme }
 
     implicitWidth: 8
     implicitHeight: 8
@@ -20,7 +19,7 @@ ScrollBar {
         implicitHeight: 6
         radius: 3
 
-        color: control.pressed ? theme.muted : (control.hovered ? "#a0a4ab" : "#c0c4cb")
+        color: control.pressed ? Theme.muted : (control.hovered ? Theme.faint : Theme.inactive)
         opacity: control.active || control.hovered ? 1.0 : 0.4
 
         Behavior on color {

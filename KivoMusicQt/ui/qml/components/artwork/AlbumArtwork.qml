@@ -1,7 +1,9 @@
 // =============================================================================
 // Kivo Music Qt - AlbumArtwork.qml
-// Album artwork with rotation animation during playback.
-// Shows real cover if available, otherwise generated colorful artwork.
+// Album artwork — a still, pristine hero. Shows the real embedded cover if
+// available, otherwise the generated fallback. (No vinyl-spin: a rotating SQUARE
+// cover reads as broken; premium players keep the art still and let the ambient
+// carry the "playing" energy. `playing` is kept for API compatibility.)
 // =============================================================================
 
 import QtQuick
@@ -16,22 +18,6 @@ Item {
     readonly property bool coverReady: coverImage.status === Image.Ready
 
     clip: true
-
-    // Rotation animation
-    RotationAnimation {
-        id: spinAnimation
-        target: artworkContainer
-        property: "rotation"
-        from: 0
-        to: 360
-        duration: 20000
-        loops: Animation.Infinite
-        running: root.playing
-        easing.type: Easing.Linear
-        onRunningChanged: {
-            if (!running) artworkContainer.rotation = 0
-        }
-    }
 
     Item {
         id: artworkContainer

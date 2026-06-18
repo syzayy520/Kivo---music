@@ -1,40 +1,42 @@
 import QtQuick
 import "."
-import "../../tokens"
+import KivoMusic
 
 Column {
     id: root
     property string title: ""
-    property string actionText: "See All >"
+    property string actionText: qsTr("All ›")
     property real contentWidth: width
     property var contentModel
     readonly property int cardCount: contentModel ? contentModel.count : 0
     spacing: 14
     visible: cardCount > 0
 
-    Theme { id: theme }
 
-    Row {
+    Item {
         width: root.contentWidth
+        height: 24
 
         Text {
             id: titleText
             text: root.title
-            color: theme.text
-            font.pixelSize: 18
-            font.weight: Font.DemiBold
-        }
-
-        Item {
-            width: Math.max(12, parent.width - titleText.width - action.width - 24)
-            height: 1
+            color: Theme.text
+            font.pixelSize: Theme.fontSectionTitle
+            font.weight: Font.Bold
+            font.letterSpacing: -0.2
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
         }
 
         Text {
             id: action
             text: root.actionText
-            color: theme.muted
-            font.pixelSize: 13
+            color: Theme.text
+            opacity: Theme.subtitleOpacity
+            font.pixelSize: Theme.fontSubtitle
+            font.weight: Font.Medium
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
         }
     }
 

@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Effects
-import "../../tokens"
+import "../common"
+import KivoMusic
 
 Column {
     id: root
@@ -8,16 +9,22 @@ Column {
     property string durationText: ""
     property real progress: 0
     property bool playing: false
+    property bool loading: false
+    // 0=Sequential 1=Shuffle 2=RepeatOne 3=RepeatAll (from audioController.playbackModeValue)
+    property int playbackModeValue: 0
 
     signal playPauseClicked()
     signal previousClicked()
     signal nextClicked()
     signal seekRequested(real position)
+    signal shuffleClicked()
+    signal repeatClicked()
 
-    width: 300
-    spacing: 4
+    // Wider than the old floating-capsule cluster so the scrubber has real
+    // presence on the full-width bar (Apple Music gives the center a big chunk).
+    width: 460
+    spacing: 6
 
-    Theme { id: theme }
 
     Row {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -25,6 +32,8 @@ Column {
 
         TransportButton {
             kind: "shuffle"
+            active: root.playbackModeValue === 1  // Shuffle
+            onClicked: root.shuffleClicked()
         }
 
         TransportButton {
@@ -35,6 +44,7 @@ Column {
         TransportButton {
             kind: root.playing ? "pause" : "play"
             primary: true
+            loading: root.loading
             onClicked: root.playPauseClicked()
         }
 
@@ -44,7 +54,10 @@ Column {
         }
 
         TransportButton {
-            kind: "repeat"
+            // repeat-one shows the "1" badge; both repeat states tint active
+            kind: root.playbackModeValue === 2 ? "repeat-one" : "repeat"
+            active: root.playbackModeValue === 2 || root.playbackModeValue === 3
+            onClicked: root.repeatClicked()
         }
     }
 
@@ -56,101 +69,24 @@ Column {
         Text {
             width: 30
             text: root.elapsedText
-            color: theme.faint
+            color: Theme.faint
             font.pixelSize: 10
             horizontalAlignment: Text.AlignRight
             anchors.verticalCenter: parent.verticalCenter
         }
 
-        Rectangle {
-            id: progressTrack
+        SeekBar {
             width: parent.width - 78
-            height: progressMouseArea.containsMouse || progressMouseArea.pressed ? 4 : 3
-            radius: height / 2
-            color: theme.transportTrack
             anchors.verticalCenter: parent.verticalCenter
-
-            Behavior on height {
-                NumberAnimation { duration: 120; easing.type: Easing.OutQuad }
-            }
-
-            Rectangle {
-                id: progressFill
-                width: parent.width * Math.max(0, Math.min(1, root.progress))
-                height: parent.height
-                radius: parent.radius
-                color: theme.transportFill
-
-                Behavior on width {
-                    enabled: !progressMouseArea.pressed
-                    NumberAnimation { duration: 140; easing.type: Easing.OutQuad }
-                }
-            }
-
-            Rectangle {
-                id: progressHandle
-                width: 10
-                height: 10
-                radius: 5
-                color: "#ffffff"
-                border.color: theme.transportFill
-                border.width: 1
-                x: Math.max(-width / 2, Math.min(progressFill.width - width / 2, progressTrack.width - width / 2))
-                anchors.verticalCenter: parent.verticalCenter
-                opacity: progressMouseArea.containsMouse || progressMouseArea.pressed ? 1.0 : 0.0
-                scale: progressMouseArea.pressed ? 1.2 : 1.0
-
-                Behavior on opacity {
-                    NumberAnimation { duration: 150; easing.type: Easing.OutQuad }
-                }
-
-                Behavior on scale {
-                    NumberAnimation { duration: 100; easing.type: Easing.OutBack }
-                }
-
-                layer.enabled: true
-                layer.effect: MultiEffect {
-                    shadowEnabled: true
-                    shadowColor: "#26000000"
-                    shadowBlur: 0.25
-                    shadowVerticalOffset: 2
-                }
-            }
-
-            MouseArea {
-                id: progressMouseArea
-                anchors.fill: parent
-                anchors.margins: -8
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-
-                property real pressedProgress: 0
-
-                onPressed: function(mouse) {
-                    pressedProgress = Math.max(0, Math.min(1, mouse.x / width));
-                }
-
-                onPositionChanged: function(mouse) {
-                    if (pressed) {
-                        pressedProgress = Math.max(0, Math.min(1, mouse.x / width));
-                    }
-                }
-
-                onReleased: {
-                    root.seekRequested(pressedProgress);
-                }
-
-                onClicked: function(mouse) {
-                    const position = Math.max(0, Math.min(1, mouse.x / width));
-                    root.seekRequested(position);
-                }
-            }
+            progress: root.progress
+            // 默认 trackColor/fillColor 即主题令牌,handle 白色 —— 与原播放条观感一致。
+            onSeekRequested: function(position) { root.seekRequested(position) }
         }
 
         Text {
             width: 30
             text: root.durationText
-            color: theme.faint
+            color: Theme.faint
             font.pixelSize: 10
             horizontalAlignment: Text.AlignLeft
             anchors.verticalCenter: parent.verticalCenter

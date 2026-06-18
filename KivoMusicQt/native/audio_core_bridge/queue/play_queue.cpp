@@ -1,9 +1,12 @@
 // =============================================================================
 // Kivo Music Qt - play_queue.cpp
 // 职责: 播放队列——QAbstractListModel 实现
+// 线程: 仅 UI 线程访问（QAbstractListModel 本就不可跨线程）。不加锁——在
+//       begin/endInsertRows 期间持锁会被附加视图重入 rowCount()/data() 而自死锁。
 // =============================================================================
 
 #include "play_queue.hpp"
+#include "../../sources/music/music_filename_parser.h"
 #include <QFileInfo>
 
 namespace kivo::qt::audio_bridge {
@@ -14,54 +17,47 @@ PlayQueue::PlayQueue(QObject* parent) : QAbstractListModel(parent) {
 
 int PlayQueue::rowCount(const QModelIndex& parent) const {
     Q_UNUSED(parent);
-    QMutexLocker locker(&mutex_);
     return static_cast<int>(queue_.size());
 }
 
 QVariant PlayQueue::data(const QModelIndex& index, int role) const {
-    QMutexLocker locker(&mutex_);
     if (!index.isValid() || index.row() < 0 || index.row() >= queue_.size())
         return {};
 
     const QString& path = queue_.at(index.row());
     switch (role) {
-        case FilePathRole: return path;
+        case FilePathRole:    return path;
         case DisplayNameRole: return displayName(path);
-        case IndexRole: return index.row();
-        default: return {};
+        case ArtistRole:      return MusicFilenameParser::parse(QFileInfo(path).completeBaseName()).artist;
+        case IndexRole:       return index.row();
+        default:              return {};
     }
 }
 
 QHash<int, QByteArray> PlayQueue::roleNames() const {
     return {
-        {FilePathRole, "filePath"},
+        {FilePathRole,    "filePath"},
         {DisplayNameRole, "displayName"},
-        {IndexRole, "trackIndex"}
+        {ArtistRole,      "artist"},
+        {IndexRole,       "trackIndex"}
     };
 }
 
 QString PlayQueue::displayName(const QString& filePath) const {
-    QFileInfo fi(filePath);
-    const QString base = fi.completeBaseName();
-    const QStringList parts = base.split(" - ");
-    if (parts.size() >= 2) {
-        return parts[1].trimmed();
-    }
-    return base;
+    // Use the SAME parser as the library so the queue shows the song TITLE (the
+    // last "Artist - Title" segment), not the artist. One source of truth.
+    return MusicFilenameParser::parse(QFileInfo(filePath).completeBaseName()).title;
 }
 
 void PlayQueue::addTrack(const QString& filePath) {
-    {
-        QMutexLocker locker(&mutex_);
-        const int pos = queue_.size();
-        beginInsertRows(QModelIndex(), pos, pos);
-        queue_.append(filePath);
-        endInsertRows();
+    const int pos = queue_.size();
+    beginInsertRows(QModelIndex(), pos, pos);
+    queue_.append(filePath);
+    endInsertRows();
 
-        if (queue_.size() == 1) {
-            currentIndex_ = 0;
-            emit currentTrackChanged();
-        }
+    if (queue_.size() == 1) {
+        currentIndex_ = 0;
+        emit currentTrackChanged();
     }
     emit queueChanged();
 }
@@ -69,23 +65,19 @@ void PlayQueue::addTrack(const QString& filePath) {
 void PlayQueue::addTracks(const QStringList& filePaths) {
     if (filePaths.isEmpty()) return;
 
-    {
-        QMutexLocker locker(&mutex_);
-        const int oldSize = queue_.size();
-        beginInsertRows(QModelIndex(), oldSize, oldSize + filePaths.size() - 1);
-        queue_.append(filePaths);
-        endInsertRows();
+    const int oldSize = queue_.size();
+    beginInsertRows(QModelIndex(), oldSize, oldSize + filePaths.size() - 1);
+    queue_.append(filePaths);
+    endInsertRows();
 
-        if (oldSize == 0 && !queue_.isEmpty()) {
-            currentIndex_ = 0;
-            emit currentTrackChanged();
-        }
+    if (oldSize == 0 && !queue_.isEmpty()) {
+        currentIndex_ = 0;
+        emit currentTrackChanged();
     }
     emit queueChanged();
 }
 
 void PlayQueue::removeTrack(int index) {
-    QMutexLocker locker(&mutex_);
     if (index < 0 || index >= queue_.size()) return;
 
     beginRemoveRows(QModelIndex(), index, index);
@@ -104,7 +96,6 @@ void PlayQueue::removeTrack(int index) {
 }
 
 void PlayQueue::clear() {
-    QMutexLocker locker(&mutex_);
     if (queue_.isEmpty()) return;
     beginResetModel();
     queue_.clear();
@@ -115,7 +106,6 @@ void PlayQueue::clear() {
 }
 
 void PlayQueue::moveTrack(int fromIndex, int toIndex) {
-    QMutexLocker locker(&mutex_);
     if (fromIndex < 0 || fromIndex >= queue_.size() ||
         toIndex < 0 || toIndex >= queue_.size()) return;
     if (fromIndex == toIndex) return;
@@ -133,7 +123,6 @@ void PlayQueue::moveTrack(int fromIndex, int toIndex) {
 }
 
 bool PlayQueue::next() {
-    QMutexLocker locker(&mutex_);
     if (queue_.isEmpty()) return false;
     if (currentIndex_ + 1 < queue_.size()) {
         currentIndex_++;
@@ -145,7 +134,6 @@ bool PlayQueue::next() {
 }
 
 bool PlayQueue::previous() {
-    QMutexLocker locker(&mutex_);
     if (queue_.isEmpty()) return false;
     if (currentIndex_ > 0) {
         currentIndex_--;
@@ -156,7 +144,6 @@ bool PlayQueue::previous() {
 }
 
 void PlayQueue::setCurrentIndex(int index) {
-    QMutexLocker locker(&mutex_);
     if (index >= 0 && index < queue_.size()) {
         currentIndex_ = index;
         emit currentTrackChanged();
@@ -164,24 +151,20 @@ void PlayQueue::setCurrentIndex(int index) {
 }
 
 QString PlayQueue::currentTrack() const {
-    QMutexLocker locker(&mutex_);
     if (currentIndex_ >= 0 && currentIndex_ < queue_.size())
         return queue_.at(currentIndex_);
     return {};
 }
 
 bool PlayQueue::hasNext() const {
-    QMutexLocker locker(&mutex_);
     return currentIndex_ + 1 < queue_.size();
 }
 
 bool PlayQueue::hasPrevious() const {
-    QMutexLocker locker(&mutex_);
     return currentIndex_ > 0;
 }
 
 QStringList PlayQueue::getQueue() const {
-    QMutexLocker locker(&mutex_);
     QStringList result;
     result.reserve(queue_.size());
     for (const auto& p : queue_) result.append(p);
@@ -189,7 +172,6 @@ QStringList PlayQueue::getQueue() const {
 }
 
 QString PlayQueue::getTrackAt(int index) const {
-    QMutexLocker locker(&mutex_);
     if (index >= 0 && index < queue_.size())
         return queue_.at(index);
     return {};

@@ -1,6 +1,6 @@
 import QtQuick
 import "."
-import "../../tokens"
+import KivoMusic
 
 Column {
     id: root
@@ -9,13 +9,13 @@ Column {
     readonly property int cardCount: contentModel ? contentModel.count : 0
     spacing: 12
 
-    Theme { id: theme }
 
     Text {
-        text: "Pick Up Listening"
-        color: theme.text
-        font.pixelSize: 18
-        font.weight: Font.DemiBold
+        text: qsTr("Continue Listening")
+        color: Theme.text
+        font.pixelSize: Theme.fontSectionTitle
+        font.weight: Font.Bold
+        font.letterSpacing: -0.2
     }
 
     Row {

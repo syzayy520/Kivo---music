@@ -10,7 +10,8 @@ Item {
     id: root
 
     property var window: null
-    property var audioController: null
+    // audioController is a global QML context property (set in main.cpp) — used
+    // directly below. A local same-named property would self-reference (loop).
 
     // Capture all key events
     focus: true

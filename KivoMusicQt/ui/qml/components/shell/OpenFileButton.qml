@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Effects
-import "../../tokens"
+import KivoMusic
 
 Rectangle {
     id: root
@@ -9,13 +9,12 @@ Rectangle {
     width: 34
     height: 34
     radius: 17
-    color: mouseArea.containsMouse ? "#ffffff" : "#f5f6f8"
-    border.color: mouseArea.containsMouse ? "#d7dbe1" : "#e4e7ec"
+    color: mouseArea.containsMouse ? Theme.panel : Theme.panelSoft
+    border.color: mouseArea.containsMouse ? Theme.sidebarBorder : Theme.line
     border.width: 1
     scale: mouseArea.pressed ? 0.96 : 1.0
     opacity: mouseArea.pressed ? 0.9 : 1.0
 
-    Theme { id: theme }
 
     Behavior on color {
         ColorAnimation { duration: 120; easing.type: Easing.OutQuad }
@@ -36,7 +35,7 @@ Rectangle {
     layer.enabled: true
     layer.effect: MultiEffect {
         shadowEnabled: true
-        shadowColor: "#20000000"
+        shadowColor: Theme.shadowModal
         shadowBlur: mouseArea.containsMouse ? 0.42 : 0.24
         shadowVerticalOffset: mouseArea.containsMouse ? 4 : 2
 
@@ -65,7 +64,7 @@ Rectangle {
         onPaint: {
             const ctx = getContext("2d");
             ctx.clearRect(0, 0, width, height);
-            ctx.strokeStyle = theme.ink;
+            ctx.strokeStyle = Theme.ink;
             ctx.lineWidth = 1.45;
             ctx.lineCap = "round";
             ctx.lineJoin = "round";

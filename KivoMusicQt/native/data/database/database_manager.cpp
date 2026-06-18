@@ -32,6 +32,7 @@ bool DatabaseManager::initialize(const QString& dbPath) {
     if (initialized_) return true;
 
     const QString path = dbPath.isEmpty() ? defaultDbPath() : dbPath;
+    dbPath_ = path;
 
     // Ensure directory exists
     QDir().mkpath(QFileInfo(path).absolutePath());
@@ -72,6 +73,11 @@ bool DatabaseManager::isOpen() const {
 
 int DatabaseManager::currentVersion() const {
     return schemaVersion_;
+}
+
+QString DatabaseManager::databasePath() const {
+    QMutexLocker locker(&mutex_);
+    return dbPath_;
 }
 
 QString DatabaseManager::defaultDbPath() const {
@@ -186,9 +192,32 @@ bool DatabaseManager::rollbackTransaction() {
 }
 
 bool DatabaseManager::migrate(int targetVersion) {
-    Q_UNUSED(targetVersion);
-    // Future: versioned migrations
-    return true;
+    QMutexLocker locker(&mutex_);
+    if (!initialized_) {
+        return false;
+    }
+    // Read the current schema version (createTables seeds v1).
+    int current = 0;
+    {
+        QSqlQuery q(db_);
+        if (q.exec("SELECT COALESCE(MAX(version), 0) FROM schema_version")
+            && q.next()) {
+            current = q.value(0).toInt();
+        }
+    }
+    schemaVersion_ = current;
+
+    if (current == targetVersion) {
+        return true;  // up to date — v1 == latest is a tested no-op
+    }
+    if (current > targetVersion) {
+        // Database written by a newer build than this app understands.
+        emit error(QStringLiteral("Database schema is newer than this build"));
+        return false;
+    }
+    // No forward migrations are defined yet (only the v1 schema exists). When a
+    // real v2 lands, apply its steps here and bump schema_version transactionally.
+    return false;
 }
 
 } // namespace kivo::qt::data

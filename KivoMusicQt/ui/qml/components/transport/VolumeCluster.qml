@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Effects
-import "../../tokens"
+import KivoMusic
 
 Row {
     id: root
@@ -10,18 +10,26 @@ Row {
 
     spacing: 7
 
-    Theme { id: theme }
+    // E5 无障碍 (Accessible 附加属性无 value/min/max,见 SeekBar 注释)
+    Accessible.role: Accessible.Slider
+    Accessible.name: qsTr("Volume") + " " + Math.round(root.volume * 100) + "%"
+
 
     Canvas {
+        id: volIcon
         width: 18
         height: 18
         anchors.verticalCenter: parent.verticalCenter
 
+        // 接入主题:之前硬编码深灰 #3a3e45,在暗色播放条上几乎不可见。
+        property color iconColor: Theme.muted
+        onIconColorChanged: requestPaint()
+
         onPaint: {
             const ctx = getContext("2d");
             ctx.clearRect(0, 0, width, height);
-            ctx.strokeStyle = "#3a3e45";
-            ctx.fillStyle = "#3a3e45";
+            ctx.strokeStyle = volIcon.iconColor;
+            ctx.fillStyle = volIcon.iconColor;
             ctx.lineWidth = 1.35;
             ctx.lineCap = "round";
             ctx.lineJoin = "round";
@@ -45,7 +53,7 @@ Row {
         width: 52
         height: volumeMouseArea.containsMouse || volumeMouseArea.pressed ? 4 : 3
         radius: height / 2
-        color: theme.transportTrack
+        color: Theme.transportTrack
         anchors.verticalCenter: parent.verticalCenter
 
         Behavior on height {
@@ -57,7 +65,7 @@ Row {
             width: parent.width * Math.max(0, Math.min(1, root.volume))
             height: parent.height
             radius: parent.radius
-            color: theme.transportFill
+            color: Theme.transportFill
 
             Behavior on width {
                 enabled: !volumeMouseArea.pressed
@@ -70,8 +78,8 @@ Row {
             width: 10
             height: 10
             radius: 5
-            color: "#ffffff"
-            border.color: theme.transportFill
+            color: Theme.npText
+            border.color: Theme.transportFill
             border.width: 1
             x: Math.max(-width / 2, Math.min(volumeFill.width - width / 2, volumeTrack.width - width / 2))
             anchors.verticalCenter: parent.verticalCenter
@@ -117,7 +125,11 @@ Row {
             }
 
             function updateVolume(x) {
-                const newVolume = Math.max(0, Math.min(1, x / width));
+                // D6 修复: MouseArea 通过 anchors.margins: -6 向外扩展了 6px,
+                // 直接用 x / width 包含了 margin 偏移和更宽的除数,导致音量偏低。
+                // 正确做法: 映射回 volumeTrack 坐标系再归一化。
+                const mapped = volumeMouseArea.mapToItem(volumeTrack, x, 0);
+                const newVolume = Math.max(0, Math.min(1, mapped.x / volumeTrack.width));
                 root.volumeRequested(newVolume);
             }
         }

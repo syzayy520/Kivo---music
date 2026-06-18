@@ -5,12 +5,11 @@
 
 import QtQuick
 import QtQuick.Controls
-import "../../tokens"
+import KivoMusic
 
 Item {
     id: root
 
-    Theme { id: theme }
 
     Flickable {
         anchors.fill: parent
@@ -23,7 +22,7 @@ Item {
             contentItem: Rectangle {
                 implicitWidth: 6
                 radius: 3
-                color: "#d0d0d5"
+                color: Theme.inactive
             }
         }
 
@@ -34,22 +33,22 @@ Item {
 
             Text {
                 text: "Privacy Policy"
-                color: theme.text
+                color: Theme.text
                 font.pixelSize: 28
                 font.weight: Font.Bold
             }
 
             Text {
                 text: "Last updated: June 2026"
-                color: theme.muted
+                color: Theme.muted
                 font.pixelSize: 13
             }
 
-            Rectangle { width: parent.width; height: 1; color: "#e5e5ea" }
+            Rectangle { width: parent.width; height: 1; color: Theme.line }
 
             Text {
                 text: "1. Information We Collect"
-                color: theme.text
+                color: Theme.text
                 font.pixelSize: 18
                 font.weight: Font.DemiBold
             }
@@ -57,7 +56,7 @@ Item {
             Text {
                 width: parent.width
                 text: "Kivo Music is a local audio player. We do NOT collect, store, or transmit any personal information to external servers. All your music library data, playlists, and preferences are stored exclusively on your local device.\n\nWe do not require account registration, and we do not track your listening habits."
-                color: theme.muted
+                color: Theme.muted
                 font.pixelSize: 14
                 lineHeight: 1.5
                 wrapMode: Text.WordWrap
@@ -65,7 +64,7 @@ Item {
 
             Text {
                 text: "2. Local Data Storage"
-                color: theme.text
+                color: Theme.text
                 font.pixelSize: 18
                 font.weight: Font.DemiBold
             }
@@ -73,7 +72,7 @@ Item {
             Text {
                 width: parent.width
                 text: "Kivo Music stores the following data locally on your device:\n\n• Music library index (file paths, metadata)\n• Playlists and playback queue\n• Application preferences (theme, volume, playback mode)\n• Cached album artwork\n\nAll data is stored in your local AppData folder and is never shared with third parties."
-                color: theme.muted
+                color: Theme.muted
                 font.pixelSize: 14
                 lineHeight: 1.5
                 wrapMode: Text.WordWrap
@@ -81,7 +80,7 @@ Item {
 
             Text {
                 text: "3. Network Usage"
-                color: theme.text
+                color: Theme.text
                 font.pixelSize: 18
                 font.weight: Font.DemiBold
             }
@@ -89,7 +88,7 @@ Item {
             Text {
                 width: parent.width
                 text: "Kivo Music may make network requests only for the following purposes:\n\n• Fetching album artwork from MusicBrainz Cover Art Archive (when no local cover is found)\n• Fetching synchronized lyrics from online lyric databases (when no local .lrc file is found)\n\nThese requests are made directly from your device and do not pass through any Kivo-controlled servers. No personal data is included in these requests."
-                color: theme.muted
+                color: Theme.muted
                 font.pixelSize: 14
                 lineHeight: 1.5
                 wrapMode: Text.WordWrap
@@ -97,7 +96,7 @@ Item {
 
             Text {
                 text: "4. Third-Party Services"
-                color: theme.text
+                color: Theme.text
                 font.pixelSize: 18
                 font.weight: Font.DemiBold
             }
@@ -105,7 +104,7 @@ Item {
             Text {
                 width: parent.width
                 text: "Kivo Music uses the following third-party libraries:\n\n• FFmpeg (LGPL) — Audio decoding\n• Qt Framework (LGPL) — User interface\n\nThese libraries run entirely on your device and do not transmit data externally."
-                color: theme.muted
+                color: Theme.muted
                 font.pixelSize: 14
                 lineHeight: 1.5
                 wrapMode: Text.WordWrap
@@ -113,7 +112,7 @@ Item {
 
             Text {
                 text: "5. Your Rights"
-                color: theme.text
+                color: Theme.text
                 font.pixelSize: 18
                 font.weight: Font.DemiBold
             }
@@ -121,7 +120,7 @@ Item {
             Text {
                 width: parent.width
                 text: "Since Kivo Music does not collect any personal data, there is no personal data to access, modify, or delete. You can clear all local application data at any time through Windows Settings → Apps → Kivo Music → Advanced Options → Reset."
-                color: theme.muted
+                color: Theme.muted
                 font.pixelSize: 14
                 lineHeight: 1.5
                 wrapMode: Text.WordWrap
@@ -129,7 +128,7 @@ Item {
 
             Text {
                 text: "6. Contact"
-                color: theme.text
+                color: Theme.text
                 font.pixelSize: 18
                 font.weight: Font.DemiBold
             }
@@ -137,7 +136,7 @@ Item {
             Text {
                 width: parent.width
                 text: "If you have questions about this privacy policy, please contact us at:\n\nkivo.music.app@gmail.com"
-                color: theme.muted
+                color: Theme.muted
                 font.pixelSize: 14
                 lineHeight: 1.5
                 wrapMode: Text.WordWrap

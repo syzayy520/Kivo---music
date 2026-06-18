@@ -1,150 +1,102 @@
 // =============================================================================
 // Kivo Music - TransportBar.qml
-// Apple Music-level transport bar with live lyrics preview and polished glass
+// Full-width, bottom-flush player bar (Apple Music desktop idiom). Anchored —
+// NOT a floating capsule — so it reads as part of the system, not a dialog.
+// Frosted-glass fill + a single top hairline; track info left, controls center,
+// right cluster right. Spectrum/lyrics float just above the bar during playback.
 // =============================================================================
 
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Effects
-import "../../tokens"
+import KivoMusic
 import "../visualizer"
 
 Item {
     id: root
 
-    Theme { id: theme }
+    // Emitted when the user taps the track info — opens the immersive now-playing.
+    signal expandRequested()
+    // Emitted by the queue button — HomeWindow hosts the queue drawer at top level
+    // (a thin transport bar can't host a full-height overlay).
+    signal queueRequested()
 
-    // ── Audio Visualizer ──────────────────────────────────────
-    // Apple Music style: 32-bar spectrum above the capsule
-    Row {
-        id: visualizerRow
+    // ── Spectrum visualizer, floating just above the bar ─────────────────────
+    // E9: 24-band spring-physics spectrum (aesthetic; real FFT pending).
+    SpectrumView {
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: capsule.top
-        anchors.bottomMargin: 12
-        spacing: 2
+        anchors.bottom: bar.top
+        anchors.bottomMargin: 8
+        playing: audioController.playing
         visible: audioController.playing
-
-        Repeater {
-            model: 32
-
-            WaveformBar {
-                id: waveformBar
-                targetHeight: {
-                    if (!audioController.playing) return 4;
-                    // 模拟频谱：中间高，两边低，随机波动
-                    var centerDist = Math.abs(index - 15.5) / 15.5;
-                    var baseHeight = 4 + (1 - centerDist) * 28;
-                    var randomFactor = 0.6 + Math.random() * 0.8;
-                    return baseHeight * randomFactor;
-                }
-                active: audioController.playing
-
-                // ── 周期性刷新高度 ──────────────────────
-                Timer {
-                    interval: 120 + index * 15
-                    repeat: true
-                    running: audioController.playing
-                    onTriggered: {
-                        var centerDist = Math.abs(index - 15.5) / 15.5;
-                        var baseHeight = 4 + (1 - centerDist) * 28;
-                        var randomFactor = 0.6 + Math.random() * 0.8;
-                        waveformBar.targetHeight = baseHeight * randomFactor;
-                    }
-                }
-            }
-        }
+        opacity: audioController.playing ? 1 : 0
+        Behavior on opacity { NumberAnimation { duration: 200 } }
     }
 
-    // ── Lyrics display above capsule ──────────────────────────
+    // ── Lyrics line, floating just above the bar ─────────────────────────────
     LyricsDisplay {
         id: lyricsDisplay
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: capsule.top
-        anchors.bottomMargin: 8
-        width: Math.min(parent.width - 200, 600)
-        currentText: ""
-        nextText: ""
+        anchors.bottom: bar.top
+        anchors.bottomMargin: 6
+        width: Math.min(parent.width - 360, 600)
+        currentText: lyricsController.currentLine
+        nextText: lyricsController.nextLine
     }
 
-    // ── Backdrop blur layer ──────────────────────────────────
+    // ── Full-width bar ───────────────────────────────────────────────────────
     Rectangle {
-        anchors.fill: capsule
-        anchors.margins: -40
-        color: "transparent"
-
-        layer.enabled: true
-        layer.effect: MultiEffect {
-            blurEnabled: true
-            blur: 1.4
-            blurMax: 120
-            blurMultiplier: 1.0
-        }
-    }
-
-    // ── Main Capsule ─────────────────────────────────────────
-    Rectangle {
-        id: capsule
-        width: Math.min(parent.width - 280, 860)
-        height: 64
-        radius: 16
-
-        // Apple Music-style frosted glass
-        gradient: Gradient {
-            GradientStop { position: 0.0; color: "#f4fafafa" }
-            GradientStop { position: 0.5; color: "#f2f8f8f8" }
-            GradientStop { position: 1.0; color: "#f0f6f6f6" }
-        }
-        border.color: "#14ffffff"
-        border.width: 1
-
-        anchors.horizontalCenter: parent.horizontalCenter
+        id: bar
+        anchors.left: parent.left
+        anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 28
+        height: Theme.transportHeight
 
-        // ── Enhanced Shadow ───────────────────────────────
-        layer.enabled: true
-        layer.effect: MultiEffect {
-            shadowEnabled: true
-            shadowColor: "#3a000000"
-            shadowBlur: 0.9
-            shadowVerticalOffset: 28
-            shadowHorizontalOffset: 0
-        }
+        // Frosted-glass fill — theme-aware, translucent so the page reads through.
+        color: Theme.transportGlass
 
-        // ── Top highlight edge ────────────────────────────
+        // Single top hairline instead of an all-around drop shadow — this is what
+        // makes it feel anchored to the window rather than floating above it.
         Rectangle {
-            width: parent.width - 40
-            height: 1
-            radius: 1
-            color: "#ffffff"
-            opacity: 0.8
-            anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
-            anchors.topMargin: 1
-        }
-
-        // ── Bottom subtle line ────────────────────────────
-        Rectangle {
-            width: parent.width - 50
+            anchors.left: parent.left
+            anchors.right: parent.right
             height: 1
-            radius: 1
-            color: "#d0d3d8"
-            opacity: 0.18
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 2
+            color: Theme.transportGlassBorder
+        }
+        // Whisper-soft lift so the bar separates from bright content above it.
+        Rectangle {
+            anchors.bottom: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 6
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: "#00000000" }
+                GradientStop { position: 1.0; color: Theme.isDark ? "#1a000000" : "#0d000000" }
+            }
         }
 
-        // ── Left: Track Info ──────────────────────────────
+        // ── Left: Track Info ──────────────────────────────────
         TransportTrackInfo {
             id: trackInfo
-            width: 240
+            width: 260
             title: audioController.title
             subtitle: audioController.artist
             coverUrl: audioController.coverArtPath
             playing: audioController.playing
             anchors.left: parent.left
-            anchors.leftMargin: 16
+            anchors.leftMargin: 20
             anchors.verticalCenter: parent.verticalCenter
+        }
+
+        // Tap the track info to open the immersive now-playing view.
+        MouseArea {
+            anchors.fill: trackInfo
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: root.expandRequested()
+            ToolTip.visible: containsMouse
+            ToolTip.text: qsTr("Open Now Playing")
         }
 
         // ── Center: Playback Controls ──────────────────────
@@ -154,6 +106,8 @@ Item {
             durationText: audioController.durationText
             progress: audioController.progress
             playing: audioController.playing
+            loading: audioController.loading
+            playbackModeValue: audioController.playbackModeValue
             anchors.centerIn: parent
 
             onPlayPauseClicked: audioController.togglePlayPause()
@@ -162,56 +116,44 @@ Item {
             onSeekRequested: function(position) {
                 audioController.seekTo(position)
             }
+            onShuffleClicked: audioController.toggleShuffle()
+            onRepeatClicked: audioController.cycleRepeat()
         }
 
         // ── Right: Controls ───────────────────────────────
-        Row {
+        TransportRightCluster {
             anchors.right: parent.right
-            anchors.rightMargin: 16
+            anchors.rightMargin: 20
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 10
-
-            // Queue toggle
-            TransportButton {
-                id: queueBtn
-                width: 28; height: 28
-                kind: "queue"
-                onClicked: playQueuePanel.visible = !playQueuePanel.visible
+            volume: audioController.volume
+            truthSampleRate: audioController.truthSampleRate
+            onQueueRequested: root.queueRequested()
+            onLyricsToggled: {
+                // TODO: 打开歌词文件选择对话框，或自动查找同名.lrc
             }
-
-            // Lyrics toggle
-            TransportButton {
-                id: lyricsBtn
-                width: 28; height: 28
-                kind: "lyrics"
-                opacity: 1.0
-                onClicked: {
-                    // Toggle lyrics display — will be wired when lyrics data is available
-                    lyricsDisplay.currentText = lyricsDisplay.currentText ? "" : "Lyrics coming soon...";
-                    lyricsDisplay.nextText = "";
-                }
-            }
-
-            AudioStatusText {
-                width: 100
-                statusText: audioController.formatText
-                anchors.verticalCenter: parent.verticalCenter
-            }
-
-            VolumeCluster {
-                volume: audioController.volume
-                anchors.verticalCenter: parent.verticalCenter
-
-                onVolumeRequested: function(newVolume) {
-                    audioController.volume = newVolume
-                }
+            onVolumeRequested: (newVolume) => {
+                audioController.volume = newVolume
+                if (typeof settingsController !== "undefined")
+                    settingsController.setValue("audio/volume", newVolume)
             }
         }
     }
 
-    // ── Play Queue Panel (overlay) ───────────────────────────
-    PlayQueuePanel {
-        id: playQueuePanel
-        anchors.fill: parent
+    // ── Lyrics sync ticker ────────────────────────────────────────────────────
+    Timer {
+        interval: 200
+        running: audioController.playing && lyricsController.hasLyrics
+        repeat: true
+        onTriggered: {
+            // audioController 暂时没有 elapsedMs property，先用 progress * duration 估算
+            // TODO: 添加 audioController.elapsedMs Q_PROPERTY
+            const durationText = audioController.durationText  // "mm:ss"
+            const parts = durationText.split(':')
+            if (parts.length === 2) {
+                const totalMs = (parseInt(parts[0]) * 60 + parseInt(parts[1])) * 1000
+                const elapsedMs = totalMs * audioController.progress
+                lyricsController.updatePosition(Math.floor(elapsedMs))
+            }
+        }
     }
 }

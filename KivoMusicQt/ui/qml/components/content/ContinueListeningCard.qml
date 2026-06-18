@@ -1,6 +1,6 @@
 import QtQuick
 import "../artwork"
-import "../../tokens"
+import KivoMusic
 
 Rectangle {
     id: root
@@ -19,12 +19,13 @@ Rectangle {
 
     height: 92
     radius: 9
-    color: "#ffffff"
-    border.color: "#e7e3e1"
+    color: cardMouse.containsMouse ? Theme.cardHover : Theme.card
+    border.color: Theme.cardBorder
+    Behavior on color { ColorAnimation { duration: 120 } }
 
-    Theme { id: theme }
 
     MouseArea {
+        id: cardMouse
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
@@ -55,7 +56,7 @@ Rectangle {
 
         Text {
             text: root.title
-            color: theme.text
+            color: Theme.text
             font.pixelSize: 15
             font.weight: Font.DemiBold
             elide: Text.ElideRight
@@ -63,14 +64,14 @@ Rectangle {
 
         Text {
             text: root.artist
-            color: theme.muted
+            color: Theme.muted
             font.pixelSize: 12
             elide: Text.ElideRight
         }
 
         Text {
             text: root.detailText
-            color: theme.muted
+            color: Theme.muted
             font.pixelSize: 12
             elide: Text.ElideRight
         }
@@ -79,14 +80,14 @@ Rectangle {
             width: parent.width
             height: 2
             radius: 1
-            color: "#dfe3e8"
+            color: Theme.transportTrack
             visible: root.progress > 0
 
             Rectangle {
                 width: parent.width * Math.max(0, Math.min(1, root.progress))
                 height: parent.height
                 radius: 1
-                color: theme.accent
+                color: Theme.accent
             }
         }
     }
@@ -96,18 +97,30 @@ Rectangle {
         width: 34
         height: 34
         radius: 17
-        color: "#f7f8fa"
-        border.color: "#e2e5e9"
+        color: playMouse.containsMouse ? Theme.accentSoft : Theme.panelSoft
+        border.color: Theme.line
         anchors.right: parent.right
         anchors.rightMargin: 14
         anchors.verticalCenter: parent.verticalCenter
+        Behavior on color { ColorAnimation { duration: 120 } }
+
+        MouseArea {
+            id: playMouse
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: {
+                if (root.filePath.length > 0)
+                    root.playRequested(root.filePath)
+            }
+        }
 
         Canvas {
             anchors.fill: parent
             onPaint: {
                 const ctx = getContext("2d");
                 ctx.clearRect(0, 0, width, height);
-                ctx.fillStyle = theme.ink;
+                ctx.fillStyle = Theme.accentText;
                 ctx.beginPath();
                 ctx.moveTo(width * 0.42, height * 0.32);
                 ctx.lineTo(width * 0.42, height * 0.68);
@@ -120,7 +133,7 @@ Rectangle {
 
     Text {
         text: "..."
-        color: theme.muted
+        color: Theme.muted
         font.pixelSize: 16
         anchors.right: parent.right
         anchors.rightMargin: 17

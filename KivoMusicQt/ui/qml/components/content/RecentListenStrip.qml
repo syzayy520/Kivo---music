@@ -1,6 +1,6 @@
 import QtQuick
 import "../artwork"
-import "../../tokens"
+import KivoMusic
 
 ListView {
     id: root
@@ -16,7 +16,6 @@ ListView {
     snapMode: ListView.SnapToItem
     clip: true
 
-    Theme { id: theme }
 
     delegate: Item {
         width: Math.max(190, Math.min(238, (root.width - 72) / 4.35))
@@ -53,7 +52,7 @@ ListView {
             Text {
                 width: parent.width
                 text: model.title
-                color: theme.text
+                color: Theme.text
                 font.pixelSize: 13
                 font.weight: Font.DemiBold
                 elide: Text.ElideRight
@@ -62,7 +61,7 @@ ListView {
             Text {
                 width: parent.width
                 text: model.subtitle
-                color: theme.muted
+                color: Theme.muted
                 font.pixelSize: 12
                 elide: Text.ElideRight
             }
@@ -70,7 +69,7 @@ ListView {
             Text {
                 width: parent.width
                 text: model.note
-                color: theme.faint
+                color: Theme.faint
                 font.pixelSize: 11
                 elide: Text.ElideRight
             }
@@ -79,7 +78,7 @@ ListView {
         Rectangle {
             width: 1
             height: 34
-            color: theme.line
+            color: Theme.line
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             visible: index < root.count - 1

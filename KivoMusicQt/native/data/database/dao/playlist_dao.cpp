@@ -123,14 +123,17 @@ bool PlaylistDao::addTrack(int playlistId, const PlaylistTrackRecord& track) {
         nextOrder = countQ.value(0).toInt() + 1;
     }
 
+    // Coalesce null QStrings → '' to avoid NOT NULL constraint failures.
+    auto nn = [](const QString& s) { return s.isNull() ? QString(QLatin1String("")) : s; };
+
     q.prepare(
         "INSERT INTO playlist_tracks (playlist_id, file_path, title, artist, album, duration_ms, track_order) "
         "VALUES (?, ?, ?, ?, ?, ?, ?)");
     q.addBindValue(playlistId);
-    q.addBindValue(track.filePath);
-    q.addBindValue(track.title);
-    q.addBindValue(track.artist);
-    q.addBindValue(track.album);
+    q.addBindValue(nn(track.filePath));
+    q.addBindValue(nn(track.title));
+    q.addBindValue(nn(track.artist));
+    q.addBindValue(nn(track.album));
     q.addBindValue(track.durationMs);
     q.addBindValue(nextOrder);
 
@@ -153,16 +156,17 @@ bool PlaylistDao::addTracks(int playlistId, const QVector<PlaylistTrackRecord>& 
         nextOrder = countQ.value(0).toInt() + 1;
     }
 
+    auto nn = [](const QString& s) { return s.isNull() ? QString(QLatin1String("")) : s; };
     DatabaseManager::instance().beginTransaction();
     for (const auto& track : tracks) {
         q.prepare(
             "INSERT INTO playlist_tracks (playlist_id, file_path, title, artist, album, duration_ms, track_order) "
             "VALUES (?, ?, ?, ?, ?, ?, ?)");
         q.addBindValue(playlistId);
-        q.addBindValue(track.filePath);
-        q.addBindValue(track.title);
-        q.addBindValue(track.artist);
-        q.addBindValue(track.album);
+        q.addBindValue(nn(track.filePath));
+        q.addBindValue(nn(track.title));
+        q.addBindValue(nn(track.artist));
+        q.addBindValue(nn(track.album));
         q.addBindValue(track.durationMs);
         q.addBindValue(nextOrder++);
         if (!q.exec()) {

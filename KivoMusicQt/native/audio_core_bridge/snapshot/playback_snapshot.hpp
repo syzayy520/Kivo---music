@@ -30,6 +30,10 @@ struct PlaybackSnapshot {
     bool hasValidPosition = false;
     uint64_t renderedFrames = 0;
     uint64_t decodedFrames = 0;
+    uint64_t successfulDrains = 0;  // cumulative natural-EOS drain completions (engine lifetime)
+    uint32_t renderSampleRate = 0;  // processed/negotiated render rate, Hz (0 = unknown)
+    uint64_t totalFrames = 0;       // full source length in frames (0 = unknown)
+    bool hasDuration = false;       // true only when a real total duration is known
 
     // Format as user-friendly strings
     QString positionText() const;
@@ -47,7 +51,8 @@ public:
     // Read snapshot from engine
     static error::BridgeResult<PlaybackSnapshot> read(
         const loader::AudioCoreFunctions& functions,
-        kivo_audio_handle engine);
+        kivo_audio_handle engine,
+        bool timebaseSupported = false);
 
 private:
     static PlaybackState mapState(int abiState);

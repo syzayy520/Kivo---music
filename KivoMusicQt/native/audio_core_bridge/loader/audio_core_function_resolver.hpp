@@ -38,6 +38,9 @@ struct AudioCoreFunctions {
     using GetSnapshotFn = kivo_audio_result (*)(
         kivo_audio_handle handle,
         kivo_audio_snapshot_v1* snapshot);
+    using GetTruthFn = kivo_audio_result (*)(
+        kivo_audio_handle handle,
+        kivo_audio_truth_v1* truth);
 
     CreateFn create = nullptr;
     DestroyFn destroy = nullptr;
@@ -46,6 +49,7 @@ struct AudioCoreFunctions {
     SubmitCommandFn submitCommand = nullptr;
     PumpFn pump = nullptr;
     GetSnapshotFn getSnapshot = nullptr;
+    GetTruthFn getTruth = nullptr;  // optional (ABI 1.2.0); null on an older core
 };
 
 // Resolves all Host ABI functions from a loaded DLL

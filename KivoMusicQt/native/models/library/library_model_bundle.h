@@ -6,6 +6,8 @@
 #include "../../sources/music/music_file_record.h"
 
 #include <QObject>
+#include <QVariantList>
+#include <QList>
 
 class LibraryModelBundle final : public QObject {
     Q_OBJECT
@@ -27,6 +29,23 @@ public:
         const QList<MusicFileRecord>& musicRecords,
         QObject* parent = nullptr);
 
+    // Swap in real scan results (UI thread only — resets the models). A no-op
+    // when empty, so a failed/empty scan keeps the demo shelves on screen.
+    void applyMusicRecords(const QList<MusicFileRecord>& musicRecords);
+
+    // Drill-down: every track by this artist, as a QVariantList of {title, artist,
+    // album, filePath, coverUrl, artVariant} maps (QML Repeater consumes directly).
+    Q_INVOKABLE QVariantList tracksForArtist(const QString& artist) const;
+    Q_INVOKABLE QVariantList tracksForAlbum(const QString& album) const;
+
+    // Live search over the real library: case-insensitive match on title/artist/
+    // album. Returns SearchResultRow-shaped maps {title, detail, meta, filePath,
+    // coverUrl, artVariant}, capped so a broad query stays responsive.
+    Q_INVOKABLE QVariantList searchTracks(const QString& query) const;
+
+    // All file paths from a named track model ("songs"/"favorites"/"focus"/"videos").
+    Q_INVOKABLE QStringList trackFilePaths(const QString& kind) const;
+
     AlbumListModel* albums();
     AlbumListModel* topPicks();
     AlbumListModel* pins();
@@ -41,6 +60,9 @@ public:
     TrackListModel* videos();
 
 private:
+    void seedDemo();
+
+    QList<MusicFileRecord> m_records;  // raw scan results, for on-demand drill-down
     AlbumListModel m_albums;
     AlbumListModel m_topPicks;
     AlbumListModel m_pins;

@@ -1,14 +1,13 @@
 import QtQuick
-import "../../tokens"
+import KivoMusic
 
 Text {
     id: root
     property string statusText: ""
 
-    Theme { id: theme }
 
     text: root.statusText
-    color: "#7c828b"
+    color: Theme.muted
     font.pixelSize: 10
     font.weight: Font.Medium
     elide: Text.ElideRight

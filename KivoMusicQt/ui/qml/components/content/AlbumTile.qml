@@ -6,7 +6,7 @@
 import QtQuick
 import QtQuick.Effects
 import "../artwork"
-import "../../tokens"
+import KivoMusic
 
 Item {
     id: root
@@ -17,10 +17,10 @@ Item {
     property url coverUrl: ""
     property string filePath: ""
     signal playRequested(string filePath)
+    signal activated(string albumTitle)  // drill-down to album detail
 
     height: width + 62
 
-    Theme { id: theme }
 
     MouseArea {
         id: hoverArea
@@ -28,10 +28,11 @@ Item {
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         propagateComposedEvents: true
-        onClicked: {
-            if (root.filePath.length > 0)
-                root.playRequested(root.filePath)
-        }
+        Accessible.role: Accessible.Button
+        Accessible.name: root.title + (root.subtitle.length > 0 ? ", " + root.subtitle : "")
+        Accessible.description: qsTr("Play")
+        Accessible.onPressAction: { if (root.filePath.length > 0) root.playRequested(root.filePath) }
+        onClicked: root.activated(root.title)
     }
 
     Column {
@@ -65,7 +66,7 @@ Item {
                 layer.enabled: true
                 layer.effect: MultiEffect {
                     shadowEnabled: true
-                    shadowColor: hoverArea.containsMouse ? "#3a000000" : "#1a000000"
+                    shadowColor: hoverArea.containsMouse ? Theme.shadowModal : Theme.shadowPanel
                     shadowBlur: hoverArea.containsMouse ? 0.75 : 0.4
                     shadowVerticalOffset: hoverArea.containsMouse ? 14 : 6
                 }
@@ -81,8 +82,8 @@ Item {
                 width: 36
                 height: 36
                 radius: 18
-                color: "#fafafa"
-                opacity: hoverArea.containsMouse ? 0.96 : 0.0
+                color: Theme.accent
+                opacity: hoverArea.containsMouse ? 0.97 : 0.0
                 scale: hoverArea.containsMouse ? 1.0 : 0.8
 
                 Behavior on opacity {
@@ -95,7 +96,7 @@ Item {
                 layer.enabled: true
                 layer.effect: MultiEffect {
                     shadowEnabled: true
-                    shadowColor: "#3a000000"
+                    shadowColor: Theme.shadowModal
                     shadowBlur: 0.35
                     shadowVerticalOffset: 3
                 }
@@ -108,13 +109,22 @@ Item {
                     onPaint: {
                         const ctx = getContext("2d");
                         ctx.clearRect(0, 0, width, height);
-                        ctx.fillStyle = theme.text;
+                        ctx.fillStyle = Theme.accentInk;
                         ctx.beginPath();
                         ctx.moveTo(width * 0.32, height * 0.22);
                         ctx.lineTo(width * 0.32, height * 0.78);
                         ctx.lineTo(width * 0.78, height * 0.50);
                         ctx.closePath();
                         ctx.fill();
+                    }
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        mouse.accepted = true
+                        if (root.filePath.length > 0) root.playRequested(root.filePath)
                     }
                 }
             }
@@ -124,7 +134,7 @@ Item {
         Text {
             width: parent.width
             text: root.title
-            color: theme.text
+            color: Theme.text
             font.pixelSize: 13
             font.weight: Font.DemiBold
             lineHeight: 1.2
@@ -136,7 +146,7 @@ Item {
         Text {
             width: parent.width
             text: root.subtitle
-            color: theme.muted
+            color: Theme.muted
             font.pixelSize: 12
             lineHeight: 1.2
             maximumLineCount: 1
@@ -148,7 +158,7 @@ Item {
             visible: root.note.length > 0
             width: parent.width
             text: root.note
-            color: theme.accentPink
+            color: Theme.accentText
             font.pixelSize: 11
             font.weight: Font.Medium
             maximumLineCount: 1

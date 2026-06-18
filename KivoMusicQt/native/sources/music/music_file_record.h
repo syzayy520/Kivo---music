@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QMetaType>
 #include <QString>
 
 struct MusicFileRecord {
@@ -12,3 +13,6 @@ struct MusicFileRecord {
     QString coverPath;
     int artVariant = 0;
 };
+
+// Carried across the library-scan worker thread boundary via queued signals.
+Q_DECLARE_METATYPE(MusicFileRecord)

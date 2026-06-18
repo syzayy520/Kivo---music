@@ -119,22 +119,24 @@ bool looksNightRelated(const MusicFileRecord& record) {
 }
 
 QString sourceMoodNote(const MusicFileRecord& record, int slot) {
+    // 去流媒体算法味:用本地资料库的人话标签,而非 "Recommended song" 这类推荐腔。
+    // (当前 UI 默认中文;语言切换 .ts 基建落地后再统一走 translate()。)
     const auto source = record.sourceLabel.toCaseFolded();
     if (looksNightRelated(record)) {
-        return QStringLiteral("Late-night pick");
+        return QStringLiteral("深夜聆听");
     }
     if (source.contains(QStringLiteral("nas"))) {
         return slot % 2 == 0
-            ? QStringLiteral("From NAS")
-            : QStringLiteral("Network favorite");
+            ? QStringLiteral("来自 NAS")
+            : QStringLiteral("网络资料库");
     }
     if (slot % 3 == 0) {
-        return QStringLiteral("Good to hear again");
+        return QStringLiteral("很久没听");
     }
     if (slot % 3 == 1) {
-        return QStringLiteral("Recommended song");
+        return QStringLiteral("本地精选");
     }
-    return QStringLiteral("Local favorite");
+    return QStringLiteral("最近常听");
 }
 
 QList<AlbumListItem> coveredFirst(QList<AlbumListItem> items) {

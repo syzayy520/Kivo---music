@@ -1,5 +1,5 @@
 import QtQuick
-import "../../tokens"
+import KivoMusic
 
 Rectangle {
     id: root
@@ -9,7 +9,11 @@ Rectangle {
     width: 42
     height: 32
     radius: 6
-    color: controlType === "close" && mouseArea.containsMouse ? "#e5484d" : mouseArea.containsMouse ? "#edf0f4" : "transparent"
+    color: controlType === "close" && mouseArea.containsMouse ? Theme.winClose : mouseArea.containsMouse ? Theme.winControlHover : "transparent"
+
+    Accessible.role: Accessible.Button
+    Accessible.name: controlType === "minimize" ? qsTr("Minimize") : controlType === "maximize" ? qsTr("Maximize") : qsTr("Close")
+    Accessible.onPressAction: root.triggered()
 
     // 添加平滑过渡
     Behavior on color {
@@ -21,7 +25,6 @@ Rectangle {
         NumberAnimation { duration: 80; easing.type: Easing.OutQuad }
     }
 
-    Theme { id: theme }
 
     Canvas {
         id: iconCanvas
@@ -32,7 +35,7 @@ Rectangle {
         onPaint: {
             const ctx = getContext("2d");
             ctx.clearRect(0, 0, width, height);
-            ctx.strokeStyle = root.controlType === "close" && mouseArea.containsMouse ? "#ffffff" : theme.text;
+            ctx.strokeStyle = root.controlType === "close" && mouseArea.containsMouse ? Theme.npText : Theme.text;
             ctx.lineWidth = 1.45;
             ctx.lineCap = "round";
             ctx.lineJoin = "round";

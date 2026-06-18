@@ -5,13 +5,14 @@
 // =============================================================================
 
 import QtQuick
+import KivoMusic
 
 Rectangle {
     id: bar
 
     // ── 公共属性 ────────────────────────────────────────────
     property real targetHeight: 8     // 目标高度（由父组件驱动）
-    property color barColor: "#0071e3"
+    property color barColor: Theme.accent
     property bool active: true        // 是否激活动画
 
     width: 3

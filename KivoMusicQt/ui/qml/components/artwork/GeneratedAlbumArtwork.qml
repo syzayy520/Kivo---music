@@ -9,12 +9,21 @@ Rectangle {
     clip: true
     color: "#101319"
 
+    // Cohesive, desaturated "after-dark" set — all deep and low-chroma so a wall
+    // of fallback covers reads as ONE curated collection, not a rainbow of demo
+    // tiles. The canvas glow/silhouette overlay (below) supplies the per-tile
+    // variation; the bases stay quiet. (Apple Music's calm comes from restraint.)
     readonly property var palette: [
-        ["#111722", "#05070c"], ["#e84b5e", "#154e74"], ["#d7c19a", "#515949"],
-        ["#06080d", "#24374b"], ["#e9edf1", "#aeb7c2"], ["#073456", "#020914"],
-        ["#8c1024", "#2a1019"], ["#d9e3d5", "#3e675c"], ["#181512", "#5b402c"],
-        ["#efeff2", "#8d8e95"], ["#b88b4f", "#4a3a2b"], ["#d9b5a5", "#6c2638"],
-        ["#092b50", "#06101f"]
+        ["#202533", "#0c0e15"],  // slate blue
+        ["#27222f", "#0f0d14"],  // plum charcoal
+        ["#1b2722", "#0c100e"],  // deep forest
+        ["#2a2420", "#120f0d"],  // umber
+        ["#1f2a31", "#0d1113"],  // steel teal
+        ["#2a2129", "#110d12"],  // muted mauve
+        ["#1d2433", "#0b0e15"],  // midnight navy
+        ["#2b2722", "#121010"],  // warm taupe
+        ["#222a2c", "#0d100f"],  // pine
+        ["#262030", "#0f0c13"]   // indigo charcoal
     ]
 
     gradient: Gradient {
@@ -25,8 +34,12 @@ Rectangle {
     Canvas {
         anchors.fill: parent
         antialiasing: true
+        // P2 修复: 当 root (GeneratedAlbumArtwork) 不可见时, Canvas 仍可能接到 requestPaint。
+        // 加 visible 绑定使 Qt Quick 在隐藏时跳过渲染树, 并在 onPaint 开头提前返回。
+        visible: root.visible
 
         onPaint: {
+            if (!root.visible) return;
             const ctx = getContext("2d");
             const w = width;
             const h = height;
@@ -85,9 +98,11 @@ Rectangle {
                 ctx.fillRect(w * 0.62, 0, w * 0.025, h);
                 silhouette(0.52, 0.94, 1.45);
             } else if (mode === 4) {
-                ctx.fillStyle = "rgba(255,255,255,0.42)";
+                // "Liner notes" — kept dark for collection cohesion: a whisper-light
+                // wash with light text bars, instead of the old white page.
+                ctx.fillStyle = "rgba(255,255,255,0.05)";
                 ctx.fillRect(0, 0, w, h);
-                ctx.fillStyle = "rgba(20,23,29,0.62)";
+                ctx.fillStyle = "rgba(232,234,237,0.34)";
                 ctx.fillRect(w * 0.22, h * 0.18, w * 0.54, h * 0.08);
                 ctx.fillRect(w * 0.22, h * 0.31, w * 0.38, h * 0.055);
                 silhouette(0.50, 0.95, 1.18);
