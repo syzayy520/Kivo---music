@@ -1,5 +1,8 @@
 #include "../state/playback_runtime_coordinator_state.hpp"
 
+#include "kivo/core/output/truth/evidence/bit_perfect_evidence_builder.hpp"
+#include "kivo/core/output/truth/evaluation/bit_perfect_truth_evaluator.hpp"
+
 namespace kivo::core::playback {
 
 PlaybackRuntimeSnapshot
@@ -8,6 +11,31 @@ PlaybackRuntimeCoordinator::Impl::snapshot() const noexcept {
     PlaybackRuntimeSnapshot result{};
     result.active = active_;
     result.format = format_;
+    result.total_frames = total_frames_;
+    result.total_frames_known = total_frames_known_;
+    result.source_sample_rate = source_sample_rate_;
+    result.resample_active = resample_active_;
+    // P2 audio-truth: build the (previously dead) evidence + evaluate the verdict
+    // here, under mutex_, off the realtime thread. Only when active — an idle/
+    // released runtime leaves both default, so is_complete()==false and the host
+    // reports EvidenceIncomplete (never a stale verdict). Both calls are
+    // noexcept/alloc-free.
+    if (active_) {
+        result.bit_perfect_evidence = output::build_bit_perfect_evidence(
+            requested_output_mode_,
+            actual_output_mode_,
+            source_format_,
+            format_.format,
+            device_format_,
+            /*host_audio_engine_in_path=*/false,
+            policy_allows_bit_perfect_,
+            conversion_snapshot_,
+            producer_ ? producer_->snapshot().processing
+                      : processing::AudioProcessingSnapshot{});
+        result.bit_perfect_report =
+            output::evaluate_bit_perfect_truth(result.bit_perfect_evidence)
+                .report;
+    }
     result.decode_generation = decode_generation_;
     result.render_generations = generations_;
     result.session = session_.snapshot();

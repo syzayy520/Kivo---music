@@ -8,6 +8,10 @@
 #include "kivo/core/playback/runtime/coordinator/playback_runtime_coordinator.hpp"
 #include "kivo/core/observability/category/decode_failure_category.hpp"
 #include "kivo/core/render/queue/spsc_audio_block_queue.hpp"
+#include "kivo/core/contract/sample_position.hpp"
+#include "kivo/core/contract/format/descriptor/audio_format_descriptor.hpp"
+#include "kivo/core/render/format/render_output_mode.hpp"
+#include "kivo/core/processing/snapshot/audio_conversion_snapshot.hpp"
 
 namespace kivo::core::playback {
 
@@ -27,6 +31,9 @@ public:
         const PlaybackCommand& command) noexcept;
     [[nodiscard]] PlaybackRuntimeResult seek(
         const PlaybackCommand& command) noexcept;
+    [[nodiscard]] PlaybackRuntimeResult set_volume(
+        const PlaybackCommand& command,
+        double gain) noexcept;
     [[nodiscard]] PlaybackRuntimeResult recover() noexcept;
     [[nodiscard]] DecodeRenderQueueProducerResult produce_step() noexcept;
     [[nodiscard]] render::RenderPumpResult render_step() noexcept;
@@ -103,6 +110,20 @@ private:
     std::unique_ptr<render::SpscAudioBlockQueue> queue_{};
     std::unique_ptr<DecodeRenderQueueProducer> producer_{};
     contract::RenderFormat format_{};
+    contract::FrameCount total_frames_{0};
+    bool total_frames_known_{false};
+    uint32_t source_sample_rate_{0};
+    bool resample_active_{false};
+    // P2 bit-perfect-evidence inputs, captured at open under mutex_ (the extra
+    // inputs build_bit_perfect_evidence needs beyond format_ / producer snapshot).
+    contract::AudioFormatDescriptor source_format_{};
+    contract::AudioFormatDescriptor device_format_{};
+    processing::AudioConversionSnapshot conversion_snapshot_{};
+    render::RenderOutputMode requested_output_mode_{
+        render::RenderOutputMode::Shared};
+    render::RenderOutputMode actual_output_mode_{
+        render::RenderOutputMode::Shared};
+    bool policy_allows_bit_perfect_{false};
     render::RenderGenerationSet generations_{};
     decode::DecodeGeneration decode_generation_{};
     render::SpscAudioBlockQueueConfiguration queue_configuration_{};

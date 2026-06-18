@@ -53,7 +53,8 @@ bool FfmpegAvioBridge::open(
 
 void FfmpegAvioBridge::close() noexcept {
     if (context_ != nullptr) {
-        av_freep(&context_->buffer);
+        // D4 修复: avio_context_free 内部会 av_freep buffer; 先手动 av_freep 是多余的,
+        // 虽然 av_freep 置 NULL 后不会双重释放, 但移除以明确职责归属于 FFmpeg。
         avio_context_free(&context_);
     }
     source_ = nullptr;

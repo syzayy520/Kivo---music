@@ -17,6 +17,7 @@ namespace {
     case KIVO_AUDIO_COMMAND_FLUSH: return Kind::Flush;
     case KIVO_AUDIO_COMMAND_CLOSE_SOURCE: return Kind::CloseSource;
     case KIVO_AUDIO_COMMAND_SHUTDOWN: return Kind::Shutdown;
+    case KIVO_AUDIO_COMMAND_SET_VOLUME: return Kind::SetVolume;
     default: return Kind::Unknown;
     }
 }
@@ -37,6 +38,19 @@ kivo_audio_result HostAudioEngine::submit(
         last_result_ = KIVO_AUDIO_RESULT_INVALID_ARGUMENT;
         return last_result_;
     }
+    // SET_VOLUME carries its gain in requested_frame as Q40.24. Decode and
+    // range-check it HERE so the core never receives an out-of-range gain; the
+    // overload is invisible below the ABI (the core sees a plain double).
+    double set_volume_gain = 0.0;
+    if (kind == core::contract::CommandKind::SetVolume) {
+        set_volume_gain =
+            static_cast<double>(command.requested_frame)
+            / static_cast<double>(KIVO_AUDIO_VOLUME_GAIN_FIXED_ONE);
+        if (set_volume_gain > 1.0) {
+            last_result_ = KIVO_AUDIO_RESULT_INVALID_ARGUMENT;
+            return last_result_;
+        }
+    }
     const core::playback::PlaybackCommand core_command{
         {command.command_id},
         kind,
@@ -51,7 +65,9 @@ kivo_audio_result HostAudioEngine::submit(
     const auto runtime_result =
         kind == core::contract::CommandKind::Seek
             ? runtime_.seek(core_command)
-            : runtime_.execute(core_command);
+            : kind == core::contract::CommandKind::SetVolume
+                ? runtime_.set_volume(core_command, set_volume_gain)
+                : runtime_.execute(core_command);
     const auto result = map_runtime_result(runtime_result);
     last_result_ = result;
     lock.unlock();

@@ -147,6 +147,34 @@ PlaybackRuntimeResult PlaybackRuntimeCoordinator::Impl::open(
     queue_ = std::move(staged_queue);
     producer_ = std::move(staged_producer);
     format_ = render_open.accepted_format();
+    // P1-3/4: capture the real total duration + source rate from the validated
+    // probe so the host can render true time/rate (the ABI snapshot grows a tail
+    // for these in step 5). Written under the same lock as format_; read only via
+    // snapshot() under the same mutex_ — never on the realtime render path.
+    {
+        const auto& probe = decode_open.probe();
+        total_frames_ = probe.duration_frames;
+        total_frames_known_ = probe.duration_known;
+        source_sample_rate_ = probe.resample.source_rate;
+        resample_active_ =
+            probe.resample.source_rate != probe.resample.target_rate;
+        // P2 bit-perfect-evidence inputs. device_format == render format is
+        // valid ONLY because render_open_request_.format_policy is Exact (set
+        // below): the renderer negotiated the device against the exact requested
+        // format, so the accepted format IS the device-delivered format. This is
+        // NOT an independent device measurement. requested==actual mode because
+        // the renderer accepted the requested mode (no separate downgrade signal
+        // exists yet). policy_allows_bit_perfect is a CONSERVATIVE proxy: only
+        // true when Exclusive was requested, so it can never falsely assert
+        // bit-perfect — it can only gate it off.
+        source_format_ = probe.native_format.format;
+        device_format_ = format_.format;
+        conversion_snapshot_ = probe.conversion_snapshot;
+        requested_output_mode_ = render_request.output_mode;
+        actual_output_mode_ = render_request.output_mode;
+        policy_allows_bit_perfect_ =
+            render_request.output_mode == render::RenderOutputMode::Exclusive;
+    }
     generations_ = generations;
     decode_generation_ = request.decode_generation;
     queue_configuration_ = request.queue_configuration;

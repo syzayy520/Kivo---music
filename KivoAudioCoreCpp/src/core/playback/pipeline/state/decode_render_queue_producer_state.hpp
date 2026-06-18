@@ -22,6 +22,7 @@ public:
     [[nodiscard]] bool allocate() noexcept;
     [[nodiscard]] DecodeRenderQueueProducerResult step() noexcept;
     [[nodiscard]] DecodeRenderQueueProducerResult prefetch() noexcept;
+    [[nodiscard]] bool set_volume(double volume) noexcept;
     [[nodiscard]] DecodeRenderQueueProducerSnapshot snapshot() const noexcept;
 
 private:

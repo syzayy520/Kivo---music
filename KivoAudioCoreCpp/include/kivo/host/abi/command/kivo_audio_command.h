@@ -12,8 +12,17 @@ typedef enum kivo_audio_command_kind {
     KIVO_AUDIO_COMMAND_SEEK = 4,
     KIVO_AUDIO_COMMAND_FLUSH = 5,
     KIVO_AUDIO_COMMAND_CLOSE_SOURCE = 6,
-    KIVO_AUDIO_COMMAND_SHUTDOWN = 7
+    KIVO_AUDIO_COMMAND_SHUTDOWN = 7,
+    /* ABI 1.1.0: runtime software-volume change. */
+    KIVO_AUDIO_COMMAND_SET_VOLUME = 8
 } kivo_audio_command_kind;
+
+/* For KIVO_AUDIO_COMMAND_SET_VOLUME ONLY, the command's `requested_frame` field
+   carries the linear volume gain as Q40.24 fixed point (gain * (1 << 24)); the
+   valid range is [0, KIVO_AUDIO_VOLUME_GAIN_FIXED_ONE] == [0.0, 1.0]. For every
+   other command `requested_frame` keeps its usual meaning (an absolute PCM frame
+   position for SEEK). The command struct layout is unchanged (additive ABI). */
+#define KIVO_AUDIO_VOLUME_GAIN_FIXED_ONE 16777216u  /* 1 << 24 */
 
 typedef struct kivo_audio_command_v1 {
     uint32_t struct_size;

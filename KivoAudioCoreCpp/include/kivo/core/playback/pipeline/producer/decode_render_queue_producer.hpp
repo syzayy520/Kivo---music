@@ -31,6 +31,9 @@ public:
 
     [[nodiscard]] DecodeRenderQueueProducerResult step() noexcept;
     [[nodiscard]] DecodeRenderQueueProducerResult prefetch() noexcept;
+    // Runtime volume update applied to the embedded processing chain. False if
+    // there is no chain or the new gain is rejected (e.g. bit-perfect conflict).
+    [[nodiscard]] bool set_volume(double volume) noexcept;
     [[nodiscard]] DecodeRenderQueueProducerSnapshot snapshot() const noexcept;
 
 private:

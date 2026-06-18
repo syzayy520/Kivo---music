@@ -34,6 +34,9 @@ public:
     [[nodiscard]] kivo_audio_result snapshot(
         void* snapshot,
         uint32_t snapshot_size) noexcept;
+    [[nodiscard]] kivo_audio_result truth(
+        void* truth,
+        uint32_t truth_size) noexcept;
     void shutdown_for_destroy() noexcept;
 
 private:

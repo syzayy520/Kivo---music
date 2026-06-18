@@ -459,11 +459,13 @@ add_library(kivo_playback_runtime STATIC
     src/core/playback/runtime/state/playback_runtime_coordinator_state.cpp
     src/core/playback/runtime/step/playback_runtime_step.cpp
     src/core/playback/runtime/transport/playback_runtime_transport.cpp
+    src/core/playback/runtime/volume/playback_runtime_volume.cpp
 )
 target_link_libraries(kivo_playback_runtime
     PUBLIC
         kivo_playback_pipeline
         kivo_playback_session
+        kivo_output_truth
 )
 target_include_directories(kivo_playback_runtime PUBLIC include/)
 target_compile_features(kivo_playback_runtime PUBLIC cxx_std_20)
@@ -1015,6 +1017,7 @@ if(WIN32
         src/host/abi/engine/host_audio_engine_lifecycle.cpp
         src/host/abi/engine/host_audio_engine_pump.cpp
         src/host/abi/engine/host_audio_engine_snapshot.cpp
+        src/host/abi/engine/host_audio_engine_truth.cpp
         src/host/abi/handle/host_handle_registry.cpp
         src/host/abi/mapping/host_result_mapping.cpp
         src/host/abi/source/host_callback_byte_source.cpp

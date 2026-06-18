@@ -14,7 +14,14 @@ typedef enum kivo_audio_capability_flag {
     KIVO_AUDIO_CAPABILITY_SOFTWARE_VOLUME = 1ull << 5u,
     KIVO_AUDIO_CAPABILITY_DITHER = 1ull << 6u,
     KIVO_AUDIO_CAPABILITY_SANITIZED_DIAGNOSTICS = 1ull << 7u,
-    KIVO_AUDIO_CAPABILITY_EXTENDED_DIAGNOSTIC_SNAPSHOT = 1ull << 8u
+    KIVO_AUDIO_CAPABILITY_EXTENDED_DIAGNOSTIC_SNAPSHOT = 1ull << 8u,
+    /* ABI 1.1.0: core writes the playback-timebase snapshot tail
+       (render_sample_rate / total_frames[_known] / source_sample_rate /
+       resample_active). Absent => host must treat the tail as unknown. */
+    KIVO_AUDIO_CAPABILITY_PLAYBACK_TIMEBASE_SNAPSHOT = 1ull << 9u,
+    /* ABI 1.2.0: kivo_audio_get_truth() returns evidence-gated bit-perfect
+       truth. Absent => host must treat all truth fields as Unknown. */
+    KIVO_AUDIO_CAPABILITY_BIT_PERFECT_TRUTH = 1ull << 10u
 } kivo_audio_capability_flag;
 
 typedef enum kivo_audio_thread_rule_flag {

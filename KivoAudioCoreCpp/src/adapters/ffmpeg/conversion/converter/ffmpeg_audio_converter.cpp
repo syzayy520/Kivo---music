@@ -53,6 +53,20 @@ bool FfmpegAudioConverter::open(
         *context_,
         render_format_.format.sample_rate,
         snapshot_);
+
+    // Pre-reserve output buffer based on first frame size + 2× resampler
+    // headroom, so convert_samples() never heap-allocates in steady state.
+    const auto bytes_per_frame = render_format_.format.bytes_per_frame();
+    if (bytes_per_frame > 0 && frame.nb_samples > 0) {
+        const auto estimated = swr_get_out_samples(context_, frame.nb_samples);
+        if (estimated > 0) {
+            try {
+                output_.reserve(
+                    static_cast<size_t>(estimated) * bytes_per_frame * 2);
+            } catch (...) {}
+        }
+    }
+
     failure_ = core::decode::DecodeFailure::None;
     return true;
 }

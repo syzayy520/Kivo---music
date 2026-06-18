@@ -93,6 +93,14 @@ DecodeRenderQueueProducer::prefetch() noexcept {
         : DecodeRenderQueueProducerResult{};
 }
 
+bool DecodeRenderQueueProducer::set_volume(double volume) noexcept {
+    return impl_ ? impl_->set_volume(volume) : false;
+}
+
+bool DecodeRenderQueueProducer::Impl::set_volume(double volume) noexcept {
+    return processing_ ? processing_->set_volume(volume) : false;
+}
+
 DecodeRenderQueueProducerSnapshot
 DecodeRenderQueueProducer::snapshot() const noexcept {
     return impl_

@@ -170,4 +170,19 @@ kivo_audio_result KIVO_AUDIO_CALL kivo_audio_get_snapshot(
         : KIVO_AUDIO_RESULT_INVALID_HANDLE;
 }
 
+kivo_audio_result KIVO_AUDIO_CALL kivo_audio_get_truth(
+    kivo_audio_handle handle,
+    kivo_audio_truth_v1* truth) {
+    if (!kivo::host::abi::valid_output_structure_prefix(
+            truth,
+            KIVO_AUDIO_TRUTH_V1_BASE_SIZE)) {
+        return KIVO_AUDIO_RESULT_INVALID_STRUCT;
+    }
+    const auto truth_size = truth->struct_size;
+    auto engine = engine_for(handle);
+    return engine
+        ? engine->truth(truth, truth_size)
+        : KIVO_AUDIO_RESULT_INVALID_HANDLE;
+}
+
 } // extern "C"

@@ -35,6 +35,9 @@ public:
         const PlaybackCommand& command) noexcept;
     [[nodiscard]] PlaybackRuntimeResult seek(
         const PlaybackCommand& command) noexcept;
+    [[nodiscard]] PlaybackRuntimeResult set_volume(
+        const PlaybackCommand& command,
+        double gain) noexcept;
     [[nodiscard]] PlaybackRuntimeResult recover() noexcept;
 
     [[nodiscard]] DecodeRenderQueueProducerResult produce_step() noexcept;

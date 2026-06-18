@@ -38,6 +38,14 @@ PlaybackRuntimeResult PlaybackRuntimeCoordinator::seek(
         : runtime_result::failed(PlaybackRuntimeFailure::BoundaryFailure);
 }
 
+PlaybackRuntimeResult PlaybackRuntimeCoordinator::set_volume(
+    const PlaybackCommand& command,
+    double gain) noexcept {
+    return impl_
+        ? impl_->set_volume(command, gain)
+        : runtime_result::failed(PlaybackRuntimeFailure::BoundaryFailure);
+}
+
 PlaybackRuntimeResult PlaybackRuntimeCoordinator::recover() noexcept {
     return impl_
         ? impl_->recover()

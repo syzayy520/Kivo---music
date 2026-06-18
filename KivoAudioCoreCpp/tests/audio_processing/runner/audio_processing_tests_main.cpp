@@ -27,7 +27,11 @@ int main() {
         {"bit_perfect_conflicts_are_rejected",
          bit_perfect_conflicts_are_rejected},
         {"invalid_policy_is_rejected",
-         invalid_policy_is_rejected}
+         invalid_policy_is_rejected},
+        {"chain_set_volume_recomputes_gain_dither_and_bypass",
+         chain_set_volume_recomputes_gain_dither_and_bypass},
+        {"chain_set_volume_refuses_under_bit_perfect",
+         chain_set_volume_refuses_under_bit_perfect}
     };
     int passed = 0;
     std::cout << "=== Audio Processing Tests ===\n\n";

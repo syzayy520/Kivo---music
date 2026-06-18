@@ -660,7 +660,8 @@ $runtimeFamilyRules = @(
             "snapshot",
             "state",
             "step",
-            "transport"
+            "transport",
+            "volume"
         )
     },
     @{

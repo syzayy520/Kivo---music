@@ -1,9 +1,9 @@
 # Host ABI Integration Contract
 
-**ABI:** Kivo Audio ABI 1.0.0
+**ABI:** Kivo Audio ABI 1.1.0
 **Applies to:** `kivo_audio_core.dll`
 **Date:** 2026-06-12
-**Last Updated:** P0-O, 2026-06-12
+**Last Updated:** P1 frontend integration, 2026-06-16 (1.0.0 → 1.1.0, additive)
 
 ## Purpose
 
@@ -60,6 +60,26 @@ Callers zero-initialize a structure, set its size and version, then fill known
 fields. ABI 1 accepts a structure larger than the known version-1 size and
 ignores its tail. A major ABI change may break compatibility. Minor and patch
 changes must preserve all existing version-1 layouts and enum values.
+
+## ABI 1.1.0 Additions (additive, backward compatible)
+
+Minor bump from 1.0.0. `KIVO_AUDIO_ABI_STRUCT_VERSION_1` and every frozen
+version-1 prefix are unchanged; old callers compile and run unchanged.
+
+- **`KIVO_AUDIO_COMMAND_SET_VOLUME = 8`** — runtime software-volume command. For
+  this command *only*, `kivo_audio_command_v1.requested_frame` carries the linear
+  gain as Q40.24 fixed point (`gain * KIVO_AUDIO_VOLUME_GAIN_FIXED_ONE`,
+  `1 << 24`), valid range `[0, 1<<24] == [0.0, 1.0]`; out-of-range →
+  `INVALID_ARGUMENT`. For all other commands `requested_frame` keeps its meaning
+  (an absolute PCM frame for SEEK). The command struct layout/size is unchanged.
+- **Snapshot timebase tail** appended to `kivo_audio_snapshot_v1` after
+  `source_replacements`: `render_sample_rate`, `total_frames_known`,
+  `total_frames`, `source_sample_rate`, `resample_active`. `0` means unknown.
+  `render_sample_rate` is the processed/negotiated render rate (NOT a bit-perfect
+  claim); `source_sample_rate` + `resample_active` expose the resample fact.
+- **`KIVO_AUDIO_CAPABILITY_PLAYBACK_TIMEBASE_SNAPSHOT = 1<<9`** — set when the
+  core writes the timebase tail. A host that does not see this flag must treat
+  the tail as unknown (an older DLL leaves it zero via the `min`-size memcpy).
 
 ## Handle Lifetime
 

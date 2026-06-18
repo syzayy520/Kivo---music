@@ -82,6 +82,16 @@ bool PlaybackRuntimeCoordinator::Impl::release_runtime() noexcept {
     const auto render_result = renderer_.close();
     active_ = false;
     format_ = {};
+    total_frames_ = 0;
+    total_frames_known_ = false;
+    source_sample_rate_ = 0;
+    resample_active_ = false;
+    source_format_ = {};
+    device_format_ = {};
+    conversion_snapshot_ = {};
+    requested_output_mode_ = render::RenderOutputMode::Shared;
+    actual_output_mode_ = render::RenderOutputMode::Shared;
+    policy_allows_bit_perfect_ = false;
     generations_ = {};
     decode_generation_ = {};
     render_open_request_ = {};

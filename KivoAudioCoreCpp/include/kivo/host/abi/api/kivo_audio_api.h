@@ -7,6 +7,7 @@
 #include "kivo/host/abi/handle/kivo_audio_handle.h"
 #include "kivo/host/abi/result/kivo_audio_result.h"
 #include "kivo/host/abi/snapshot/kivo_audio_snapshot.h"
+#include "kivo/host/abi/snapshot/kivo_audio_truth.h"
 #include "kivo/host/abi/source/kivo_audio_source.h"
 
 #if defined(_WIN32)
@@ -55,6 +56,13 @@ KIVO_AUDIO_API kivo_audio_result KIVO_AUDIO_CALL kivo_audio_pump(
 KIVO_AUDIO_API kivo_audio_result KIVO_AUDIO_CALL kivo_audio_get_snapshot(
     kivo_audio_handle handle,
     kivo_audio_snapshot_v1* snapshot);
+
+/* ABI 1.2.0: bit-perfect truth. Gated by KIVO_AUDIO_CAPABILITY_BIT_PERFECT_TRUTH;
+   a host that does not see that capability must not call this and must treat
+   truth as Unknown. */
+KIVO_AUDIO_API kivo_audio_result KIVO_AUDIO_CALL kivo_audio_get_truth(
+    kivo_audio_handle handle,
+    kivo_audio_truth_v1* truth);
 
 #ifdef __cplusplus
 }

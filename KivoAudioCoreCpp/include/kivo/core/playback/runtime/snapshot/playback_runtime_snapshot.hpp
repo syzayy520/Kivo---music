@@ -5,6 +5,9 @@
 
 #include "kivo/core/contract/error/domain/error_domain.hpp"
 #include "kivo/core/contract/format/roles/render_format.hpp"
+#include "kivo/core/contract/sample_position.hpp"
+#include "kivo/core/contract/output/truth/bitperfect_truth_report.hpp"
+#include "kivo/core/output/truth/evidence/bit_perfect_evidence.hpp"
 #include "kivo/core/decode/failure/decode_failure.hpp"
 #include "kivo/core/decode/generation/decode_generation.hpp"
 #include "kivo/core/observability/category/decode_failure_category.hpp"
@@ -19,6 +22,19 @@ namespace kivo::core::playback {
 struct PlaybackRuntimeSnapshot {
     bool active{false};
     contract::RenderFormat format{};
+    // P1-3/4: real timebase for the host. total_frames is the source's full
+    // length (0 / known=false when the container does not declare one).
+    // source_sample_rate + resample_active expose the resample fact (truth);
+    // the processed render rate lives in `format.format.sample_rate`.
+    contract::FrameCount total_frames{0};
+    bool total_frames_known{false};
+    uint32_t source_sample_rate{0};
+    bool resample_active{false};
+    // P2 audio-truth: the full bit-perfect evidence + evaluated verdict, built
+    // from the coordinator's captured inputs when active. Core-only C++ types;
+    // the host ABI flattens them into kivo_audio_truth_v1 (never crossed raw).
+    output::BitPerfectEvidence bit_perfect_evidence{};
+    contract::BitPerfectTruthReport bit_perfect_report{};
     decode::DecodeGeneration decode_generation{};
     render::RenderGenerationSet render_generations{};
     PlaybackSessionSnapshot session{};

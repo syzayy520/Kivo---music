@@ -175,6 +175,17 @@ PlaybackCommandResult PlaybackSessionController::Impl::submit(
             return accept(command.id, previous);
         }
         break;
+    case contract::CommandKind::SetVolume:
+        // State-neutral runtime control: a loaded, non-idle source can have its
+        // software volume adjusted without changing CoreState. Ordering and
+        // session-generation are already validated above (monotonic command id +
+        // active-session match).
+        if (snapshot_.state == contract::CoreState::Ready
+            || snapshot_.state == contract::CoreState::Playing
+            || snapshot_.state == contract::CoreState::Paused) {
+            return accept(command.id, previous);
+        }
+        break;
     case contract::CommandKind::Shutdown:
         if (snapshot_.session_generation != 0
             && command.generation.generation

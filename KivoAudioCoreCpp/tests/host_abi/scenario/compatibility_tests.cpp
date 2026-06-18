@@ -45,7 +45,9 @@ static_assert(
 
 void c_header_is_usable() {
     HOST_ABI_ASSERT(kivo_host_abi_c_contract_size() > 0u);
-    HOST_ABI_ASSERT(KIVO_AUDIO_ABI_VERSION_MAJOR == 1u);
+    // Compile-time invariant: assert it as such (runtime-asserting a constant
+    // trips MSVC C4127 under /W4 /WX). Matches the static_assert at line 33.
+    static_assert(KIVO_AUDIO_ABI_VERSION_MAJOR == 1u);
 }
 
 void versioned_structs_accept_tail_extension() {
@@ -126,6 +128,49 @@ void extended_diagnostic_snapshot_is_advertised() {
     HOST_ABI_ASSERT(snapshot.format_negotiation_attempts == 0u);
     HOST_ABI_ASSERT(snapshot.device_reopen_attempts == 0u);
     HOST_ABI_ASSERT(snapshot.render_underrun_events == 0u);
+    HOST_ABI_ASSERT(
+        kivo_audio_destroy(handle) == KIVO_AUDIO_RESULT_OK);
+}
+
+void bit_perfect_truth_is_advertised_and_honest_when_idle() {
+    const auto handle = create_engine();
+
+    auto capabilities = output_structure<kivo_audio_capabilities_v1>();
+    HOST_ABI_ASSERT(
+        kivo_audio_get_capabilities(handle, &capabilities)
+        == KIVO_AUDIO_RESULT_OK);
+    HOST_ABI_ASSERT(
+        (capabilities.capability_flags
+            & KIVO_AUDIO_CAPABILITY_BIT_PERFECT_TRUTH) != 0u);
+
+    // No source open => no evidence => must report EVIDENCE_INCOMPLETE and must
+    // NEVER claim bit-perfect, and modes/flags stay Unknown/absent.
+    auto truth = output_structure<kivo_audio_truth_v1>();
+    HOST_ABI_ASSERT(
+        kivo_audio_get_truth(handle, &truth) == KIVO_AUDIO_RESULT_OK);
+    HOST_ABI_ASSERT(truth.struct_size == sizeof(kivo_audio_truth_v1));
+    HOST_ABI_ASSERT(truth.evidence_complete == 0u);
+    HOST_ABI_ASSERT(
+        truth.verdict
+        == KIVO_AUDIO_BIT_PERFECT_VERDICT_EVIDENCE_INCOMPLETE);
+    HOST_ABI_ASSERT(
+        truth.verdict != KIVO_AUDIO_BIT_PERFECT_VERDICT_BIT_PERFECT);
+    HOST_ABI_ASSERT(truth.requested_mode == KIVO_AUDIO_TRUTH_MODE_UNKNOWN);
+    HOST_ABI_ASSERT(truth.actual_mode == KIVO_AUDIO_TRUTH_MODE_UNKNOWN);
+    HOST_ABI_ASSERT(truth.known_mask == 0u);
+    HOST_ABI_ASSERT(
+        kivo_audio_destroy(handle) == KIVO_AUDIO_RESULT_OK);
+}
+
+void truth_getter_rejects_invalid_struct() {
+    const auto handle = create_engine();
+    kivo_audio_truth_v1 truth{};  // struct_size 0 => below base size
+    HOST_ABI_ASSERT(
+        kivo_audio_get_truth(handle, &truth)
+        == KIVO_AUDIO_RESULT_INVALID_STRUCT);
+    HOST_ABI_ASSERT(
+        kivo_audio_get_truth(handle, nullptr)
+        == KIVO_AUDIO_RESULT_INVALID_STRUCT);
     HOST_ABI_ASSERT(
         kivo_audio_destroy(handle) == KIVO_AUDIO_RESULT_OK);
 }

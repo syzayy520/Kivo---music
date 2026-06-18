@@ -24,10 +24,22 @@ public:
         contract::FrameCount frame_count) noexcept;
     [[nodiscard]] AudioProcessingSnapshot snapshot() const noexcept;
 
+    // Runtime volume update. Re-runs build_audio_processing_plan with the new
+    // gain so the effective_gain / volume_active / strict_bypass / dither_active
+    // tuple is recomputed by the SAME logic (and tolerance) as open time, then
+    // mirrored into the snapshot. Returns false and leaves the chain unchanged
+    // if the new configuration is invalid (e.g. a non-unity volume while
+    // bit-perfect is required). The caller serializes this with process() and
+    // snapshot() under the coordinator mutex, so the tuple is never torn.
+    [[nodiscard]] bool set_volume(double volume) noexcept;
+
 private:
-    explicit AudioProcessingChain(AudioProcessingPlan plan) noexcept;
+    AudioProcessingChain(
+        AudioProcessingPlan plan,
+        AudioProcessingConfiguration configuration) noexcept;
 
     AudioProcessingPlan plan_{};
+    AudioProcessingConfiguration configuration_{};
     AudioProcessingSnapshot snapshot_{};
     uint64_t dither_state_{0};
 };

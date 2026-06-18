@@ -76,6 +76,12 @@ kivo_audio_result HostAudioEngine::snapshot(
     result.stale_commands_rejected =
         diagnostics.stale_commands_rejected;
     result.source_replacements = diagnostics.source_replacements;
+    // ABI 1.1.0 timebase tail (gated host-side by PLAYBACK_TIMEBASE_SNAPSHOT).
+    result.render_sample_rate = current.format.format.sample_rate;
+    result.total_frames_known = current.total_frames_known ? 1u : 0u;
+    result.total_frames = current.total_frames;
+    result.source_sample_rate = current.source_sample_rate;
+    result.resample_active = current.resample_active ? 1u : 0u;
 
     std::memcpy(
         snapshot,

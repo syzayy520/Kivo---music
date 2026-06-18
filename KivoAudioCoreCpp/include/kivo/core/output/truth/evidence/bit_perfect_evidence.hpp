@@ -41,6 +41,10 @@ struct BitPerfectEvidence {
             && dither_active.has_value()
             && policy_allows_bit_perfect.has_value();
     }
+
+    // Embedded in PlaybackRuntimeSnapshot, which uses a defaulted operator==.
+    [[nodiscard]] bool operator==(
+        const BitPerfectEvidence&) const noexcept = default;
 };
 
 } // namespace kivo::core::output

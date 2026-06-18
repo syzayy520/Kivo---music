@@ -78,6 +78,17 @@ typedef struct kivo_audio_snapshot_v1 {
     uint64_t drain_timeouts;
     uint64_t stale_commands_rejected;
     uint64_t source_replacements;
+    /* ABI 1.1.0 additive tail — playback timebase (gated by the capability flag
+       KIVO_AUDIO_CAPABILITY_PLAYBACK_TIMEBASE_SNAPSHOT). All 0 == unknown on an
+       older core. Field order keeps natural alignment (two uint32 before the
+       uint64). render_sample_rate is the PROCESSED/negotiated render rate (NOT a
+       bit-perfect claim); source_sample_rate + resample_active expose the
+       resample fact. struct_version stays _1 (frozen prefix unchanged). */
+    uint32_t render_sample_rate;
+    uint32_t total_frames_known;
+    uint64_t total_frames;
+    uint32_t source_sample_rate;
+    uint32_t resample_active;
 } kivo_audio_snapshot_v1;
 
 #define KIVO_AUDIO_SNAPSHOT_V1_BASE_SIZE \
